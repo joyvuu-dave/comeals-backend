@@ -27,5 +27,15 @@ module Comeals
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+
+    # CORS
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => :any
+      end
+    end
+
   end
 end
