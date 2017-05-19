@@ -4,14 +4,14 @@ class ApplicationController < ActionController::Base
   include Pundit
   protect_from_forgery with: :exception
 
-  def current_user
+  def current_identity
     # array = ActionController::HttpAuthentication::Token.token_and_options(request)
     # @current_user ||= Key.find_by(token: array.nil? ? nil : array[0])&.identity
-    @current_user = nil
+    @current_identity = nil
   end
 
   def current_manager
-    @current_manager ||= current_user if current_user.class.equal?(Manager)
+    @current_manager ||= current_identity if current_identity.class.equal?(Manager)
   end
 
   def signed_in_manager?
@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_resident
-    @current_resident ||= current_user if current_user.class.equal?(Resident)
+    @current_resident ||= current_identity if current_identity.class.equal?(Resident)
   end
 
   def signed_in_resident?
