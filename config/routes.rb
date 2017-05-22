@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   constraints subdomain: 'admin' do
     devise_for :admin_users, ActiveAdmin::Devise.config
     ActiveAdmin.routes(self)
-    get '/:any', to: 'static#invalid_admin'
+    match '*path', to: redirect('/login'), via: :all
   end
 
   # Manager Pages
@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     get '/manager/:id', to: 'managers#show'
     get '/community/:id', to: 'managers#community'
     get '/password-reset/:id', to: 'managers#password_reset'
-    get '/:any', to: 'static#invalid_www'
+    match '*path', to: redirect('/'), via: :all
   end
 
   # API
@@ -26,13 +26,13 @@ Rails.application.routes.draw do
         get '/communities/:id', to: 'communities#show'
       end
     end
-    get '/:any', to: 'static#invalid_api'
+    match '*path', to: redirect('/'), via: :all
   end
 
   # Root
-  constraints subdomain: '' do
-    root to: 'static#root_blank'
-    get '/:any', to: 'static#invalid_blank'
+  constraints subdomain: false do
+    root to: 'static#blank'
+    get '*path', to: 'static#blank'
   end
 
   # Member Pages (swans.comeals.com, etc.)

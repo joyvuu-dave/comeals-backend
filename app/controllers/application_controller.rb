@@ -40,7 +40,7 @@ class ApplicationController < ActionController::Base
 
   def handle_invalid_domain
     if invalid_domain?
-      render plain: "Invalid Domain: #{subdomain}", status: :bad_request and return
+      render html: "<h1>Invalid Domain: #{subdomain}</h1>".html_safe, status: :bad_request and return
     end
   end
 end
