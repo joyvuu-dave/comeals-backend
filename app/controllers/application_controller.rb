@@ -1,13 +1,15 @@
 class ApplicationController < ActionController::Base
+  include Pundit
   before_action :handle_invalid_domain
 
-  include Pundit
-  protect_from_forgery with: :exception
-
   def current_identity
-    # array = ActionController::HttpAuthentication::Token.token_and_options(request)
-    # @current_user ||= Key.find_by(token: array.nil? ? nil : array[0])&.identity
-    @current_identity = nil
+    case request.format
+    when Mime[:atom]
+      array = ActionController::HttpAuthentication::Token.token_and_options(request)
+      @current_identity ||= Key.find_by(token: array.nil? ? nil : array[0])&.identity
+    else
+      @current_identity = Key.find_by(token: cookies[:token])&.identity
+    end
   end
 
   def current_manager

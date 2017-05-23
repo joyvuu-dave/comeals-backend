@@ -10,11 +10,11 @@ class StaticController < ApplicationController
       redirect_to current_resident_path and return
     end
 
-    render html: "<h1>Welcome to Comeals! Start managing your community now!</h1>".html_safe and return
+    render 'static/main'
   end
 
   def root_api
-    render json: { error: 'No root resource.' }, status: :bad_request and return
+    render json: { error: 'No resource.' }, status: :bad_request and return
   end
 
   def invalid_api
@@ -53,6 +53,9 @@ class StaticController < ApplicationController
 
   def invalid_member
     render html: "<h1>#{current_community.name} does not have that page.</h1>".html_safe
+  end
+
+  def sign_up
   end
 
   private

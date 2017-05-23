@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   # Manager Pages
   constraints subdomain: 'www' do
     root to: 'static#root_www'
-    get '/sign-up', to: 'managers#sign_up'
+    get '/sign-up', to: 'static#sign_up'
     get '/login', to: 'managers#login'
     get '/manager/:id', to: 'managers#show'
     get '/community/:id', to: 'managers#community'
@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     root to: 'static#root_api'
     namespace :api do
       namespace :v1 do
+        post '/managers', to: 'managers#create'
         get '/residents/:id', to: 'residents#show'
         get '/communities/:id', to: 'communities#show'
       end

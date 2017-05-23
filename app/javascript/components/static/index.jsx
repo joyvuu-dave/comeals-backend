@@ -1,5 +1,5 @@
-import React from 'react';
-import $ from 'jquery';
+import React from 'react'
+import $ from 'jquery'
 import 'fullcalendar'
 import 'fullcalendar/dist/fullcalendar.css'
 
@@ -16,4 +16,4 @@ class StaticIndex extends React.Component {
   }
 }
 
-export default StaticIndex;
+export default StaticIndex

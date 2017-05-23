@@ -10,7 +10,6 @@ class MembersController < ApplicationController
   end
 
   def calendar
-    render plain: 'Calendar'
   end
 
   def meal

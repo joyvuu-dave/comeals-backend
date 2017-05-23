@@ -8,5 +8,6 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import StaticIndex from 'components/static/index'
+import SignUp from 'components/static/sign_up'
 import WebpackerReact from 'webpacker-react'
-WebpackerReact.setup({StaticIndex}) // ES6 shorthand for {StaticIndex: StaticIndex}
+WebpackerReact.setup({StaticIndex, SignUp})
