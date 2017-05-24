@@ -9,5 +9,7 @@
 
 import StaticIndex from 'components/static/index'
 import SignUp from 'components/static/sign_up'
+import ManagersShow from 'components/managers/show'
+
 import WebpackerReact from 'webpacker-react'
-WebpackerReact.setup({StaticIndex, SignUp})
+WebpackerReact.setup({StaticIndex, SignUp, ManagersShow})

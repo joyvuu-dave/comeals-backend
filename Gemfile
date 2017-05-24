@@ -25,7 +25,7 @@ gem 'coffee-rails', '~> 4.2'
 gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-gem 'webpacker', github: 'rails/webpacker'
+gem 'webpacker'
 gem 'webpacker-react'
 gem 'annotate', github: 'ctran/annotate_models', branch: 'develop'
 gem 'rack-cors', :require => 'rack/cors'

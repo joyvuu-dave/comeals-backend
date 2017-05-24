@@ -12,7 +12,6 @@ class ManagersController < ApplicationController
   end
 
   def show
-    render plain: "Manager Info Page\nManager: #{current_manager.email}\nSigned In Resident: #{signed_in_resident?}"
   end
 
   def community
