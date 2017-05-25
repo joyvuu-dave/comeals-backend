@@ -9,10 +9,11 @@ Rails.application.routes.draw do
   # Manager Pages
   constraints subdomain: 'www' do
     root to: 'static#root_www'
-    get '/sign-up', to: 'static#sign_up'
+    get '/sign-up', to: 'managers#sign_up'
     get '/login', to: 'managers#login'
     get '/manager/:id', to: 'managers#show'
-    get '/community/:id', to: 'managers#community'
+    get '/communities/new', to: 'communities#new'
+    get '/communities/:id', to: 'communities#show'
     get '/password-reset/:id', to: 'managers#password_reset'
     match '*path', to: redirect('/'), via: :all
   end
@@ -23,7 +24,10 @@ Rails.application.routes.draw do
     namespace :api do
       namespace :v1 do
         post '/managers', to: 'managers#create'
+        get '/managers/communities', to: 'managers#communities'
+        post '/managers/token', to: 'managers#token'
         get '/residents/:id', to: 'residents#show'
+        post '/communities', to: 'communities#create'
         get '/communities/:id', to: 'communities#show'
       end
     end
@@ -33,7 +37,7 @@ Rails.application.routes.draw do
   # Root
   constraints subdomain: false do
     root to: 'static#blank'
-    get '*path', to: 'static#blank'
+    match '*path', to: redirect('/'), via: :all
   end
 
   # Member Pages (swans.comeals.com, etc.)
@@ -46,5 +50,5 @@ Rails.application.routes.draw do
   get '/units/:id', to: 'members#unit'
   get '/report', to: 'members#report'
   get '/password-reset/:id', to: 'members#password_reset'
-  get '/:any', to: 'static#invalid_member'
+  match '*path', to: redirect('/'), via: :all
 end

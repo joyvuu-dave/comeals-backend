@@ -55,9 +55,6 @@ class StaticController < ApplicationController
     render html: "<h1>#{current_community.name} does not have that page.</h1>".html_safe
   end
 
-  def sign_up
-  end
-
   private
   def inspect_subdomain
     subdomain ||= request.subdomain

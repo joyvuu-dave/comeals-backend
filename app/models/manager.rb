@@ -14,7 +14,11 @@
 #
 
 class Manager < ApplicationRecord
+  attr_reader :password
+
   has_one :key, as: :identity, dependent: :destroy
+  has_many :community_managers
+  has_many :communities, through: :community_managers
 
   before_save { self.email = email.downcase }
   before_save :update_token

@@ -4,11 +4,12 @@ class ApplicationController < ActionController::Base
 
   def current_identity
     case request.format
-    when Mime[:atom]
+    when Mime[:json]
       array = ActionController::HttpAuthentication::Token.token_and_options(request)
+      Rails.logger.info "Auth token: #{array}"
       @current_identity ||= Key.find_by(token: array.nil? ? nil : array[0])&.identity
     else
-      @current_identity = Key.find_by(token: cookies[:token])&.identity
+      @current_identity ||= Key.find_by(token: cookies[:token])&.identity
     end
   end
 
@@ -42,7 +43,12 @@ class ApplicationController < ActionController::Base
 
   def handle_invalid_domain
     if invalid_domain?
-      render html: "<h1>Invalid Domain: #{subdomain}</h1>".html_safe, status: :bad_request and return
+      case request.format
+      when Mime[:json]
+        render json: { message: "Invalid domain: #{subdomain}" }, status: :bad_request and return
+      else
+        render plain: "Invalid Domain: #{subdomain}", status: :bad_request and return
+      end
     end
   end
 end

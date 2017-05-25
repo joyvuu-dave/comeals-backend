@@ -4,11 +4,9 @@ class ManagersController < ApplicationController
   end
 
   def sign_up
-    render plain: "Sign Up Page (manager)\nSigned In Manager: #{signed_in_manager?}\nSigned In Resident: #{signed_in_resident?}"
   end
 
   def login
-    render plain: "Login Page (manager)\nSigned In Manager: #{signed_in_manager?}\nSigned In Resident: #{signed_in_resident?}"
   end
 
   def show
