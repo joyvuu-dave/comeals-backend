@@ -3,7 +3,7 @@ import { LocalForm, Control } from 'react-redux-form'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 
-class SignUp extends React.Component {
+class ManagersSignUp extends React.Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {
@@ -13,7 +13,7 @@ class SignUp extends React.Component {
     })
     .then(function (response) {
       if(response.status === 200) {
-        Cookie.set('token', response.data.token, { expires: 365 })
+        Cookie.set('token', response.data.token, { expires: 7300, domain: '.comeals.dev' })
         window.location.href = `/manager/${response.data.id}`
       }
     })
@@ -61,4 +61,4 @@ class SignUp extends React.Component {
   }
 }
 
-export default SignUp
+export default ManagersSignUp

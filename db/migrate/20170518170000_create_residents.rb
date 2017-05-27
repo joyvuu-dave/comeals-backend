@@ -2,6 +2,7 @@ class CreateResidents < ActiveRecord::Migration[5.1]
   def change
     create_table :residents do |t|
       t.string :name, null: false
+      t.string :email, null: false
       t.references :community, foreign_key: true, null: false
       t.references :unit, foreign_key: true, null: false
       t.boolean :vegetarian, null: false, default: false
@@ -14,5 +15,6 @@ class CreateResidents < ActiveRecord::Migration[5.1]
     end
 
     add_index :residents, [:name, :community_id], unique: true
+    add_index :residents, :email, unique: true
   end
 end

@@ -56,8 +56,8 @@ class ManagersShow extends React.Component {
   }
 
   logout() {
-    Cookie.remove('token')
-    window.location.href = '/'
+    Cookie.remove('token', { domain: '.comeals.dev' })
+    window.location.href = "http://www.comeals.dev"
   }
 
   createCommunity() {

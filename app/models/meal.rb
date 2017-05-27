@@ -35,7 +35,7 @@ class Meal < ApplicationRecord
   attr_readonly :cap
 
   belongs_to :community
-  belongs_to :reconciliation
+  belongs_to :reconciliation, optional: true
 
   has_many :bills, dependent: :destroy
   has_many :meal_residents, inverse_of: :meal, dependent: :destroy
@@ -43,7 +43,7 @@ class Meal < ApplicationRecord
   has_many :residents, through: :meal_residents
 
   validates :date, presence: true
-  validates :max, numericality: { only_integer: true }, unless: "max.nil?"
+  validates :max, numericality: { only_integer: true }, unless: Proc.new { |a| a.max.nil? }
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
@@ -133,8 +133,13 @@ class Meal < ApplicationRecord
 
       community = Community.find(community_id)
 
-      if Meal.new(date: start_date, cap: community.cap, community_id: community_id).save
+      # if Meal.new(date: start_date, cap: community.cap, community_id: community_id).save
+      #   num_meals_created += 1
+      # end
+      if meal = Meal.new(date: start_date, cap: community.cap, community_id: community_id).save
         num_meals_created += 1
+      else
+        Rails.logger.info meal.errors
       end
 
       # If common dinner was on a Sunday, we

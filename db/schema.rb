@@ -154,6 +154,7 @@ ActiveRecord::Schema.define(version: 20170518212133) do
 
   create_table "residents", force: :cascade do |t|
     t.string "name", null: false
+    t.string "email", null: false
     t.bigint "community_id", null: false
     t.bigint "unit_id", null: false
     t.boolean "vegetarian", default: false, null: false
@@ -164,6 +165,7 @@ ActiveRecord::Schema.define(version: 20170518212133) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["community_id"], name: "index_residents_on_community_id"
+    t.index ["email"], name: "index_residents_on_email", unique: true
     t.index ["name", "community_id"], name: "index_residents_on_name_and_community_id", unique: true
     t.index ["unit_id"], name: "index_residents_on_unit_id"
   end

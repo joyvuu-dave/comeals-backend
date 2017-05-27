@@ -4,6 +4,7 @@
 #
 #  id              :integer          not null, primary key
 #  name            :string           not null
+#  email           :string           not null
 #  community_id    :integer          not null
 #  unit_id         :integer          not null
 #  vegetarian      :boolean          default(FALSE), not null
@@ -17,6 +18,7 @@
 # Indexes
 #
 #  index_residents_on_community_id           (community_id)
+#  index_residents_on_email                  (email) UNIQUE
 #  index_residents_on_name_and_community_id  (name,community_id) UNIQUE
 #  index_residents_on_unit_id                (unit_id)
 #
@@ -38,7 +40,8 @@ class Resident < ApplicationRecord
   has_many :meals, through: :meal_residents
   has_many :guests, dependent: :destroy
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :community_id }
+  validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :multiplier, numericality: { only_integer: true }
 
   before_save :update_token

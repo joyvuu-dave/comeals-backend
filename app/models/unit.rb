@@ -32,4 +32,8 @@ class Unit < ApplicationRecord
     return 0 if Meal.unreconciled.count == 0
     residents.reduce(0) { |sum, resident| sum + resident.bills.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).count }
   end
+
+  def number_of_occupants
+    residents.count
+  end
 end

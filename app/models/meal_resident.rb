@@ -38,6 +38,7 @@ class MealResident < ApplicationRecord
 
   validates :meal, presence: true
   validates :resident, presence: true
+  validates_uniqueness_of :meal_id, { scope: :resident_id }
   validates :community, presence: true
   validates :multiplier, numericality: { only_integer: true }
 

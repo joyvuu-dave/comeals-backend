@@ -34,4 +34,8 @@ class Reconciliation < ApplicationRecord
   def update_meals
     Meal.where(community_id: community_id).unreconciled.joins(:bills).update_all(reconciliation_id: id)
   end
+
+  def number_of_meals
+    meals.count
+  end
 end

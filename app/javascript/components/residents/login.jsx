@@ -3,18 +3,19 @@ import { LocalForm, Control } from 'react-redux-form'
 import axios from 'axios'
 import Cookie from 'js-cookie'
 
-class ManagersLogin extends React.Component {
+class ResidentsLogin extends React.Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {
-    axios.post("http://api.comeals.dev/api/v1/managers/token", {
+    axios.post("http://api.comeals.dev/api/v1/residents/token", {
       email: values.email,
       password: values.password
     })
     .then(function (response) {
       if(response.status === 200) {
+        console.log('data', response.data)
         Cookie.set('token', response.data.token, { expires: 7300, domain: '.comeals.dev' })
-        window.location.href = `/manager/${response.data.id}`
+        window.location.href = `http://${response.data.slug}.comeals.dev/calendar`
       }
     })
     .catch(function (error) {
@@ -61,4 +62,4 @@ class ManagersLogin extends React.Component {
   }
 }
 
-export default ManagersLogin
+export default ResidentsLogin

@@ -19,7 +19,7 @@
 class Community < ApplicationRecord
   include FriendlyId
   friendly_id :name, :use => :slugged
-  validates :name, uniqueness: true, presence: true
+  validates :name, uniqueness: { case_sensitive: false }
 
   def cap
     read_attribute(:cap) || Float::INFINITY

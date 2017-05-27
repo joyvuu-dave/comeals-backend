@@ -67,4 +67,8 @@ class Bill < ApplicationRecord
     return amount_cents if meal.cost == 0
     (amount_cents / meal.cost).to_f.round(2) * amount_cents
   end
+
+  def reconciled?
+    meal.reconciled?
+  end
 end

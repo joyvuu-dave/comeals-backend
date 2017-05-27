@@ -36,6 +36,10 @@ gem 'mini_racer'
 gem 'friendly_id'
 gem 'scrypt'
 gem 'bootsnap'
+gem 'faker'
+gem 'money-rails'
+gem 'counter_culture'
+gem 'rails_12factor', group: :production
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

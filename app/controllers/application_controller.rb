@@ -29,8 +29,8 @@ class ApplicationController < ActionController::Base
     current_resident.present?
   end
 
-  def current_community
-    @current_community ||= Community.find_by(slug: subdomain)
+  def signed_out?
+    !signed_in_manager? && !signed_in_resident?
   end
 
   def subdomain
@@ -38,17 +38,14 @@ class ApplicationController < ActionController::Base
   end
 
   def invalid_domain?
-    current_community.nil? && !['www', 'admin', 'api', ''].include?(subdomain)
+    Community.find_by(slug: subdomain).nil? && !['www', 'admin', 'api', ''].include?(subdomain)
   end
 
   def handle_invalid_domain
-    if invalid_domain?
-      case request.format
-      when Mime[:json]
-        render json: { message: "Invalid domain: #{subdomain}" }, status: :bad_request and return
-      else
-        render plain: "Invalid Domain: #{subdomain}", status: :bad_request and return
-      end
-    end
+    not_found if invalid_domain?
+  end
+
+  def not_found
+    render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return
   end
 end
