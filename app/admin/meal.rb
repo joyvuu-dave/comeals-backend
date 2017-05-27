@@ -1,6 +1,6 @@
 ActiveAdmin.register Meal do
   # STRONG PARAMS
-  permit_params :date, guests_attributes: [:id, :name, :multiplier, :resident_id, :meal_id, :_destroy], resident_ids: []
+  permit_params :date, :subdomain, :community_id, guests_attributes: [:id, :name, :multiplier, :resident_id, :meal_id, :_destroy], resident_ids: []
 
   # CONFIG
   config.filters = false
@@ -10,7 +10,8 @@ ActiveAdmin.register Meal do
   # INDEX
   index do
     column :date
-    column :number_of_attendees, sortable: false
+    column :community
+    column :attendees, sortable: false
     column :modified_cost do |meal|
       number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
     end
@@ -18,7 +19,7 @@ ActiveAdmin.register Meal do
       number_to_currency(meal.unit_cost.to_f / 100) unless meal.unit_cost == 0
     end
     column 'Number of Bills', :bills_count
-    column :reconciled, sortable: false
+    column :reconciled?, sortable: false
 
     actions
   end
@@ -27,6 +28,7 @@ ActiveAdmin.register Meal do
   show do
     attributes_table do
       row :date
+      row :community
       row :modified_cost do |meal|
         number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
       end
@@ -55,6 +57,7 @@ ActiveAdmin.register Meal do
   form do |f|
     f.inputs do
       f.input :date, as: :datepicker
+      f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
       f.input :residents, as: :check_boxes, label: 'Attendees', collection: Resident.order('name')
     end
     f.inputs do

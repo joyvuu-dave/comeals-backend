@@ -1,6 +1,6 @@
 ActiveAdmin.register Bill do
   # STRONG PARAMS
-  permit_params :meal_id, :resident_id, :amount
+  permit_params :meal_id, :resident_id, :community_id, :amount, :subdomain
 
   # CONFIG
   config.per_page = 10
@@ -37,7 +37,8 @@ ActiveAdmin.register Bill do
   form do |f|
     f.inputs do
       f.input :meal, label: 'Common Meal Date', collection: Meal.order('date DESC').map { |i| [i.date, i.id] }
-      f.input :resident, label: 'Cook', collection: Resident.adult.order('name')
+      f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
+      f.input :resident_id, as: :select, include_blank: false, label: 'Cook', collection: Resident.adult.order('name')
       f.input :amount, label: '$'
     end
 

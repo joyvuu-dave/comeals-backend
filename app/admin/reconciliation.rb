@@ -11,6 +11,9 @@ ActiveAdmin.register Reconciliation do
 
   # FORM
   form do |f|
+    f.inputs do
+      f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
+    end
     f.actions
     f.semantic_errors
   end

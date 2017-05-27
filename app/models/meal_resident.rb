@@ -32,6 +32,7 @@ class MealResident < ApplicationRecord
   belongs_to :community
 
   before_validation :set_multiplier
+  before_validation :set_community_id
 
   counter_culture :meal
   counter_culture :meal, column_name: 'meal_residents_multiplier', delta_column: 'multiplier'
@@ -44,6 +45,10 @@ class MealResident < ApplicationRecord
 
   def set_multiplier
     self.multiplier = resident.multiplier
+  end
+
+  def set_community_id
+    self.community_id = meal.community_id
   end
 
   def cost

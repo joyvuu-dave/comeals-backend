@@ -31,6 +31,8 @@
 class Resident < ApplicationRecord
   attr_reader :password
 
+  scope :adult, -> { where("multiplier >= 2") }
+
   belongs_to :community
   belongs_to :unit
 

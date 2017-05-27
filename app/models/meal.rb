@@ -43,6 +43,7 @@ class Meal < ApplicationRecord
   has_many :residents, through: :meal_residents
 
   validates :date, presence: true
+  validates :community, presence: true
   validates :max, numericality: { only_integer: true }, unless: Proc.new { |a| a.max.nil? }
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }

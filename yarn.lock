@@ -2656,8 +2656,8 @@ math-expression-evaluator@^1.2.14:
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.17.tgz#de819fdbcd84dccd8fae59c6aeb79615b9d266ac"
 
 mathjs@^3.11.5:
-  version "3.13.1"
-  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-3.13.1.tgz#591ad98c80e87c5d5997eb626137b1efad44ae71"
+  version "3.13.2"
+  resolved "https://registry.yarnpkg.com/mathjs/-/mathjs-3.13.2.tgz#4cfa5ce2d008af5a18b19a27f11c98fbc6c6c041"
   dependencies:
     complex.js "2.0.1"
     decimal.js "7.1.1"

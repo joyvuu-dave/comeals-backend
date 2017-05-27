@@ -35,6 +35,8 @@ class Bill < ApplicationRecord
   counter_culture :resident, column_name: 'bill_costs', delta_column: 'amount_cents'
 
   delegate :multiplier, to: :meal
+  delegate :date, to: :meal
+  delegate :unit, to: :resident
 
   validates :meal, presence: true
   validates :resident, presence: true

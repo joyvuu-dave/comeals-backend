@@ -28,6 +28,9 @@ module Comeals
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+    # Allow all params
+    config.action_controller.permit_all_parameters = true
+
 
     # CORS
     config.middleware.insert_before 0, Rack::Cors do
