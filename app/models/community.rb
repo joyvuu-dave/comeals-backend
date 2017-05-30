@@ -17,8 +17,8 @@
 #
 
 class Community < ApplicationRecord
-  include FriendlyId
-  friendly_id :name, :use => :slugged
+  extend FriendlyId
+  friendly_id :name, use: :slugged
   validates :name, uniqueness: { case_sensitive: false }
 
   def cap

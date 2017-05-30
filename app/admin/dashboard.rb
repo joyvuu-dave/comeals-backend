@@ -10,7 +10,7 @@ ActiveAdmin.register_page 'Dashboard' do
         panel "Units - #{Unit.count(true)}" do
           ul do
             Unit.order('name').map do |unit|
-              li link_to(unit.name, unit_path(unit))
+              li link_to(unit.name, admin_unit_path(unit))
             end
           end
         end
@@ -20,7 +20,7 @@ ActiveAdmin.register_page 'Dashboard' do
         panel "Residents - #{Resident.count(true)}" do
           ul do
             Resident.order('name').map do |resident|
-              li link_to(resident.name, resident_path(resident))
+              li link_to(resident.name, admin_resident_path(resident))
             end
           end
         end
@@ -30,7 +30,7 @@ ActiveAdmin.register_page 'Dashboard' do
         panel "Meals - #{Meal.count(true)}" do
           ul do
             Meal.order('date DESC').map do |meal|
-              li link_to(meal.date, meal_path(meal))
+              li link_to(meal.date, admin_meal_path(meal))
             end
           end
         end
@@ -39,8 +39,8 @@ ActiveAdmin.register_page 'Dashboard' do
       column do
         panel 'Averages' do
           ul do
-            #li "Cost per adult: $#{Meal.average_cost_per_adult}"
-            #li "Attendees per meal: #{Meal.average_number_of_attendees}"
+            li "Cost per adult: #{Meal.unreconciled_ave_cost}"
+            li "Attendees per meal: #{Meal.unreconciled_ave_number_of_attendees}"
           end
         end
       end

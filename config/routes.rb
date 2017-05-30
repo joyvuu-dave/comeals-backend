@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # ActiveAdmin
   constraints subdomain: 'admin' do
-    devise_for :admin_users, ActiveAdmin::Devise.config
+    devise_for :admin_users, ActiveAdmin::Devise.config.merge(:path => '')
     ActiveAdmin.routes(self)
   end
 

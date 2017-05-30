@@ -40,7 +40,7 @@
     "webpack": "^2.6.0",
     "webpack-manifest-plugin": "^1.1.0",
     "webpack-merge": "^4.1.0",
-    "webpacker-react": "^0.2.1"
+    "webpacker-react": "^0.3.0"
   },
   "devDependencies": {
     "webpack-dev-server": "^2.4.5"
