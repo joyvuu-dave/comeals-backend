@@ -29,6 +29,8 @@ Rails.application.routes.draw do
         get '/residents/:id', to: 'residents#show'
         post '/communities', to: 'communities#create'
         get '/communities/:id', to: 'communities#show'
+        get '/meals', to: 'meals#index'
+        get '/bills', to: 'bills#index'
       end
     end
   end

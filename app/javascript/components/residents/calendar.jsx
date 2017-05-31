@@ -7,7 +7,12 @@ import Cookie from 'js-cookie'
 class ResidentsCalendar extends React.Component {
   componentDidMount() {
     const { calendar } = this.refs
-    $(calendar).fullCalendar()
+    $(calendar).fullCalendar({
+      eventSources: [
+        {url: 'http://api.comeals.dev/api/v1/meals', color: '#729f98'},
+        {url: 'http://api.comeals.dev/api/v1/bills', color: '#aa863a'}
+      ]
+    })
   }
 
   logout() {

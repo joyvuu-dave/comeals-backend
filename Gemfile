@@ -40,6 +40,7 @@ gem 'faker'
 gem 'money-rails'
 gem 'counter_culture'
 gem 'rails_12factor', group: :production
+gem 'active_model_serializers', github: 'rails-api/active_model_serializers', branch: '0-10-stable'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -47,6 +48,7 @@ gem 'rails_12factor', group: :production
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:ruby, :mri, :mingw, :x64_mingw]
+  gem 'rspec-rails', '~> 3.6'
 end
 
 group :development do

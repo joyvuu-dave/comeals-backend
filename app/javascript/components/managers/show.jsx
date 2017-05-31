@@ -69,7 +69,9 @@ class ManagersShow extends React.Component {
       return(<div>
               <h3>Communities</h3>
               {this.state.communities.map((community) =>
-                  <h4 key={community.id.toString()}>{community.name}</h4>
+                  <a href={"/communities/" + community.id} key={community.id.toString()}>
+                    <h4>{community.name}</h4>
+                  </a>
               )}
             </div>)
     } else {

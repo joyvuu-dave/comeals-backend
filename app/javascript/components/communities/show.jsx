@@ -47,6 +47,10 @@ class CommunitiesShow extends React.Component {
     return(<div>
             <h3>Id: {this.state.id}</h3>
             <h3>Name: {this.state.name}</h3>
+            <ul>
+              <li>Create units / residents</li>
+              <li>Create meals</li>
+            </ul>
           </div>)
   }
 }
