@@ -42,6 +42,8 @@ class Resident < ApplicationRecord
   has_many :meals, through: :meal_residents
   has_many :guests, dependent: :destroy
 
+  counter_culture :unit
+
   validates :multiplier, numericality: { only_integer: true }
   validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :community_id }
 

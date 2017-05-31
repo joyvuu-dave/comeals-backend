@@ -4,7 +4,7 @@ ActiveAdmin.register Meal do
 
   # CONFIG
   config.filters = false
-  config.per_page = 1000
+  config.per_page = 100
   config.sort_order = 'date_desc'
 
   controller do
@@ -18,6 +18,13 @@ ActiveAdmin.register Meal do
     column :date
     column :community
     column :attendees, sortable: false
+    column :max
+    column :subsidized?
+    column :max_cost do |meal|
+      number_to_currency(meal.max_cost.to_f / 100)
+    end
+    column :balanced?
+    column :whats_wrong
     column :modified_cost do |meal|
       number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
     end
@@ -35,6 +42,8 @@ ActiveAdmin.register Meal do
     attributes_table do
       row :date
       row :community
+      row :max
+      row :subsidized?
       row :modified_cost do |meal|
         number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
       end
@@ -53,7 +62,7 @@ ActiveAdmin.register Meal do
       end
       table_for meal.bills.all do
         column 'Bills' do |bill|
-          link_to "#{bill.resident.name} - #{number_to_currency(bill.amount.to_f / 100)}", admin_bill_path(bill)
+          link_to "#{bill.resident.name} - #{number_to_currency(bill.amount)}", admin_bill_path(bill)
         end
       end
     end
@@ -64,6 +73,7 @@ ActiveAdmin.register Meal do
     f.inputs do
       f.input :date, as: :datepicker
       f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
+      f.input :max
       f.input :residents, as: :check_boxes, label: 'Attendees', collection: Resident.includes(:unit).order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
     end
     f.inputs do

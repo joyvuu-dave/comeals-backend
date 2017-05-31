@@ -1,7 +1,7 @@
 ActiveAdmin.register Reconciliation do
   # CONFIG
   config.filters = false
-  config.per_page = 100
+  config.per_page = 10
 
   # INDEX
   index do

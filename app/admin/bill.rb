@@ -3,7 +3,7 @@ ActiveAdmin.register Bill do
   permit_params :meal_id, :resident_id, :community_id, :amount, :subdomain
 
   # CONFIG
-  config.per_page = 1000
+  config.per_page = 100
   config.sort_order = 'date'
 
   controller do
@@ -18,7 +18,9 @@ ActiveAdmin.register Bill do
     column :reconciled?
     column :resident, sortable: 'residents.name'
     column :unit, sortable: 'units.name'
-    column :amount
+    column :amount do |bill|
+      number_to_currency(bill.amount) unless bill.amount == 0
+    end
 
     actions
   end
@@ -29,7 +31,9 @@ ActiveAdmin.register Bill do
       row :date
       row :resident
       row :unit
-      row :amount
+      row :amount do |bill|
+        number_to_currency(bill.amount) unless bill.amount == 0
+      end
     end
   end
 

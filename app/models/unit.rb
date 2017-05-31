@@ -2,11 +2,12 @@
 #
 # Table name: units
 #
-#  id           :integer          not null, primary key
-#  name         :string           not null
-#  community_id :integer          not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id              :integer          not null, primary key
+#  name            :string           not null
+#  community_id    :integer          not null
+#  residents_count :integer          default(0), not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 # Indexes
 #
@@ -36,6 +37,6 @@ class Unit < ApplicationRecord
   end
 
   def number_of_occupants
-    residents.count
+    residents_count
   end
 end

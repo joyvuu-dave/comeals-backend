@@ -1,6 +1,6 @@
 ActiveAdmin.register Resident do
   # STRONG PARAMS
-  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password
+  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian
 
   # CONFIG
   config.filters = false
@@ -28,7 +28,16 @@ ActiveAdmin.register Resident do
         { :meals => :residents },
         { :guests => :meal },
         { :guests => :resident },
-        :community)
+        { :community => :bills },
+        { :community => :community_managers },
+        { :community => :managers },
+        { :community => :meals },
+        { :community => :meal_residents },
+        { :community => :reconciliations },
+        { :community => :residents },
+        { :community => :guests },
+        { :community => :units }
+      )
     end
   end
 

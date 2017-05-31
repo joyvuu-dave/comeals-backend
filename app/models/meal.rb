@@ -32,8 +32,6 @@
 class Meal < ApplicationRecord
   scope :unreconciled, -> { where(reconciliation_id: nil) }
 
-  attr_readonly :cap
-
   belongs_to :community
   belongs_to :reconciliation, optional: true
 
@@ -114,11 +112,12 @@ class Meal < ApplicationRecord
   # Report Methods
   def self.unreconciled_ave_cost
     val = 2 * ((Meal.unreconciled.pluck(:cost).reduce(&:+).to_i / Meal.unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }.to_f) / 100.to_f)
-    "$#{sprintf('%0.02f', val)}/adult"
+    val.nan? ? '--' : "$#{sprintf('%0.02f', val)}/adult"
   end
 
   def self.unreconciled_ave_number_of_attendees
-    (Meal.unreconciled.reduce(0) { |sum, meal| sum + meal.attendees } / Meal.unreconciled.count.to_f).round(1)
+    val = (Meal.unreconciled.reduce(0) { |sum, meal| sum + meal.attendees } / Meal.unreconciled.count.to_f).round(1)
+    val.nan? ? '--' : val
   end
 
   def self.create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
