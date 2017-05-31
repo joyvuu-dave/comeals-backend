@@ -3,7 +3,7 @@ ActiveAdmin.register Bill do
   permit_params :meal_id, :resident_id, :community_id, :amount, :subdomain
 
   # CONFIG
-  config.per_page = 10
+  config.per_page = 1000
   config.sort_order = 'date'
 
   controller do
@@ -38,7 +38,7 @@ ActiveAdmin.register Bill do
     f.inputs do
       f.input :meal, label: 'Common Meal Date', collection: Meal.order('date DESC').map { |i| [i.date, i.id] }
       f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
-      f.input :resident_id, as: :select, include_blank: false, label: 'Cook', collection: Resident.adult.order('name')
+      f.input :resident_id, as: :select, include_blank: false, label: 'Cook', collection: Resident.includes(:unit).adult.order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
       f.input :amount, label: '$'
     end
 

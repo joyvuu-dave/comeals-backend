@@ -1,10 +1,10 @@
 ActiveAdmin.register Unit do
   # STRONG PARAMS
-  permit_params :name
+  permit_params :name, :community_id
 
   # CONFIG
   config.filters = false
-  config.per_page = 10
+  config.per_page = 100
   config.sort_order = 'name_asc'
 
   # ACTIONS
@@ -29,8 +29,8 @@ ActiveAdmin.register Unit do
         number_to_currency(unit.balance.to_f / 100) unless unit.balance == 0
       end
       table_for unit.residents.order('name ASC') do
-        column 'Name' do |resident|
-          link_to resident.name, resident
+        column 'Residents' do |resident|
+          link_to resident.name, admin_resident_path(resident)
         end
       end
     end
@@ -40,6 +40,7 @@ ActiveAdmin.register Unit do
   form do |f|
     f.inputs do
       f.input :name
+      f.input :community, include_blank: false
     end
 
     f.actions

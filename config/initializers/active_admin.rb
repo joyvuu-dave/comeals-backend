@@ -36,7 +36,7 @@ ActiveAdmin.setup do |config|
   config.default_namespace = :admin
 
   config.namespace :admin do |admin|
-    admin.route_options = { path: '' }
+    config.route_options = { path: '' }
   end
   #
   # You can customize the settings for each namespace by using

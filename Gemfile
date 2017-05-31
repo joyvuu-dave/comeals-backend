@@ -40,6 +40,7 @@ gem 'faker'
 gem 'money-rails'
 gem 'counter_culture'
 gem 'rails_12factor', group: :production
+gem 'goldiloader'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

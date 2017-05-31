@@ -4,8 +4,14 @@ ActiveAdmin.register Meal do
 
   # CONFIG
   config.filters = false
-  config.per_page = 10
+  config.per_page = 1000
   config.sort_order = 'date_desc'
+
+  controller do
+    def scoped_collection
+      end_of_association_chain.includes(:community, :bills)
+    end
+  end
 
   # INDEX
   index do
@@ -37,7 +43,7 @@ ActiveAdmin.register Meal do
       end
       table_for meal.residents.order('name ASC') do
         column 'Residents Attendance' do |resident|
-          link_to resident.name, resident
+          link_to resident.name, admin_resident_path(resident)
         end
       end
       table_for meal.guests.order('name ASC') do
@@ -47,7 +53,7 @@ ActiveAdmin.register Meal do
       end
       table_for meal.bills.all do
         column 'Bills' do |bill|
-          link_to "#{bill.resident.name} - #{number_to_currency(bill.amount.to_f / 100)}", bill
+          link_to "#{bill.resident.name} - #{number_to_currency(bill.amount.to_f / 100)}", admin_bill_path(bill)
         end
       end
     end
@@ -58,7 +64,7 @@ ActiveAdmin.register Meal do
     f.inputs do
       f.input :date, as: :datepicker
       f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
-      f.input :residents, as: :check_boxes, label: 'Attendees', collection: Resident.order('name')
+      f.input :residents, as: :check_boxes, label: 'Attendees', collection: Resident.includes(:unit).order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
     end
     f.inputs do
       f.has_many :guests, allow_destroy: true, heading: 'Guests', new_record: true do |g|
