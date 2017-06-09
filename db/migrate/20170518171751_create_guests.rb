@@ -4,7 +4,7 @@ class CreateGuests < ActiveRecord::Migration[5.1]
       t.references :meal, foreign_key: true, null: false
       t.references :resident, foreign_key: true, null: false
       t.integer :multiplier, null: false, default: 2
-      t.string :name, null: false
+      t.string :name, null: false, default: ''
       t.boolean :vegetarian, null: false, default: false
       t.boolean :late, null: false, default: false
 

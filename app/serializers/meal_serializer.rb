@@ -13,6 +13,7 @@
 #  guests_multiplier         :integer          default(0), not null
 #  description               :text
 #  max                       :integer
+#  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null
 #  reconciliation_id         :integer
 #  created_at                :datetime         not null

@@ -11,6 +11,7 @@ class CreateMeals < ActiveRecord::Migration[5.1]
       t.integer :guests_multiplier, null: false, default: 0
       t.text :description
       t.integer :max
+      t.boolean :closed, null: false, default: false
       t.references :community, foreign_key: true, null: false
       t.references :reconciliation, foreign_key: true
 

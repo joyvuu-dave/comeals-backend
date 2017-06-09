@@ -36,7 +36,7 @@ puts "#{CommunityManager.count} CommunityManager created"
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
                     multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password')
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
-                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password')
+                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password', vegetarian: true)
   end
 end
 
@@ -66,10 +66,18 @@ Meal.all.each do |meal|
                    resident_id: resident.id,
                    meal_id: meal.id)
     else
-      MealResident.create!(resident_id: resident.id,
-                          meal_id: meal.id,
-                          multiplier: resident.multiplier,
-                          community_id: community.id)
+      if index % 13 == 0
+        MealResident.create!(resident_id: resident.id,
+                            meal_id: meal.id,
+                            multiplier: resident.multiplier,
+                            community_id: community.id,
+                            late: true)
+      else
+        MealResident.create!(resident_id: resident.id,
+                            meal_id: meal.id,
+                            multiplier: resident.multiplier,
+                            community_id: community.id)
+      end
     end
   end
 end
@@ -81,19 +89,19 @@ puts "#{MealResident.count} MealResidents created"
 Meal.all.each_with_index do |meal, index|
   ids = Resident.pluck(:id).shuffle[0..1]
   if index % 2 == 0 && index % 3 == 0
-    Bill.create!(meal_id: meal.id, resident_id: ids[0],
+    Bill.create(meal_id: meal.id, resident_id: ids[0],
                 amount_cents: (3500..6500).to_a.shuffle[0], community_id: community.id)
-    Bill.create!(meal_id: meal.id, resident_id: ids[1],
+    Bill.create(meal_id: meal.id, resident_id: ids[1],
                 amount_cents: 0, community_id: community.id)
   elsif index % 2 == 0
-    Bill.create!(meal_id: meal.id, resident_id: ids[0],
+    Bill.create(meal_id: meal.id, resident_id: ids[0],
                 amount_cents: (2500..3500).to_a.shuffle[0], community_id: community.id)
-    Bill.create!(meal_id: meal.id, resident_id: ids[1],
+    Bill.create(meal_id: meal.id, resident_id: ids[1],
                 amount_cents: (3500..4500).to_a.shuffle[0], community_id: community.id)
   else
-    Bill.create!(meal_id: meal.id, resident_id: ids[0],
+    Bill.create(meal_id: meal.id, resident_id: ids[0],
                 amount_cents: (5500..6500).to_a.shuffle[0], community_id: community.id)
-    Bill.create!(meal_id: meal.id, resident_id: ids[1],
+    Bill.create(meal_id: meal.id, resident_id: ids[1],
                 amount_cents: (6500..7500).to_a.shuffle[0], community_id: community.id)
   end
 end
@@ -117,10 +125,18 @@ Meal.all.each do |meal|
                    resident_id: resident.id,
                    meal_id: meal.id)
     else
-      MealResident.create(resident_id: resident.id,
-                          meal_id: meal.id,
-                          multiplier: resident.multiplier,
-                          community_id: community.id)
+      if index % 13 == 0
+        MealResident.create(resident_id: resident.id,
+                            meal_id: meal.id,
+                            multiplier: resident.multiplier,
+                            community_id: community.id,
+                            late: true)
+      else
+        MealResident.create(resident_id: resident.id,
+                            meal_id: meal.id,
+                            multiplier: resident.multiplier,
+                            community_id: community.id)
+      end
     end
   end
 end
@@ -132,19 +148,19 @@ puts "#{MealResident.count} MealResidents created"
 Meal.all.each_with_index do |meal, index|
   ids = Resident.pluck(:id).shuffle[0..1]
   if index % 3 == 0 && index % 4 == 0
-    Bill.create!(meal_id: meal.id, resident_id: ids[0],
+    Bill.create(meal_id: meal.id, resident_id: ids[0],
                 amount_cents: (3500..6500).to_a.shuffle[0], community_id: community.id)
-    Bill.create!(meal_id: meal.id, resident_id: ids[1],
+    Bill.create(meal_id: meal.id, resident_id: ids[1],
                 amount_cents: 0, community_id: community.id)
   elsif index % 3 == 0
-    Bill.create!(meal_id: meal.id, resident_id: ids[0],
+    Bill.create(meal_id: meal.id, resident_id: ids[0],
                 amount_cents: (2500..3500).to_a.shuffle[0], community_id: community.id)
-    Bill.create!(meal_id: meal.id, resident_id: ids[1],
+    Bill.create(meal_id: meal.id, resident_id: ids[1],
                 amount_cents: (3500..4500).to_a.shuffle[0], community_id: community.id)
   elsif index % 4 == 0
-    Bill.create!(meal_id: meal.id, resident_id: ids[0],
+    Bill.create(meal_id: meal.id, resident_id: ids[0],
                 amount_cents: (5500..6500).to_a.shuffle[0], community_id: community.id)
-    Bill.create!(meal_id: meal.id, resident_id: ids[1],
+    Bill.create(meal_id: meal.id, resident_id: ids[1],
                 amount_cents: (6500..7500).to_a.shuffle[0], community_id: community.id)
   end
 end

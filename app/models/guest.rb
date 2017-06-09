@@ -6,7 +6,7 @@
 #  meal_id     :integer          not null
 #  resident_id :integer          not null
 #  multiplier  :integer          default(2), not null
-#  name        :string           not null
+#  name        :string           default(""), not null
 #  vegetarian  :boolean          default(FALSE), not null
 #  late        :boolean          default(FALSE), not null
 #  created_at  :datetime         not null
@@ -30,7 +30,6 @@ class Guest < ApplicationRecord
   counter_culture :meal
   counter_culture :meal, column_name: 'guests_multiplier', delta_column: 'multiplier'
 
-  validates :name, presence: true
   validates :meal, presence: true
   validates :resident, presence: true
   validates :multiplier, numericality: { only_integer: true }
@@ -38,4 +37,5 @@ class Guest < ApplicationRecord
   def cost
     meal.unit_cost * multiplier
   end
+
 end

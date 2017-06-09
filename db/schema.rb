@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 20170530165903) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["community_id"], name: "index_bills_on_community_id"
+    t.index ["meal_id", "resident_id"], name: "index_bills_on_meal_id_and_resident_id", unique: true
     t.index ["meal_id"], name: "index_bills_on_meal_id"
     t.index ["resident_id"], name: "index_bills_on_resident_id"
   end
@@ -95,7 +96,7 @@ ActiveRecord::Schema.define(version: 20170530165903) do
     t.bigint "meal_id", null: false
     t.bigint "resident_id", null: false
     t.integer "multiplier", default: 2, null: false
-    t.string "name", null: false
+    t.string "name", default: "", null: false
     t.boolean "vegetarian", default: false, null: false
     t.boolean "late", default: false, null: false
     t.datetime "created_at", null: false
@@ -148,6 +149,7 @@ ActiveRecord::Schema.define(version: 20170530165903) do
     t.integer "guests_multiplier", default: 0, null: false
     t.text "description"
     t.integer "max"
+    t.boolean "closed", default: false, null: false
     t.bigint "community_id", null: false
     t.bigint "reconciliation_id"
     t.datetime "created_at", null: false

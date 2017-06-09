@@ -13,9 +13,10 @@
 #
 # Indexes
 #
-#  index_bills_on_community_id  (community_id)
-#  index_bills_on_meal_id       (meal_id)
-#  index_bills_on_resident_id   (resident_id)
+#  index_bills_on_community_id             (community_id)
+#  index_bills_on_meal_id                  (meal_id)
+#  index_bills_on_meal_id_and_resident_id  (meal_id,resident_id) UNIQUE
+#  index_bills_on_resident_id              (resident_id)
 #
 # Foreign Keys
 #
@@ -38,12 +39,19 @@ class Bill < ApplicationRecord
   delegate :date, to: :meal
   delegate :unit, to: :resident
 
+  before_validation :set_community_id
+
   validates :meal, presence: true
   validates :resident, presence: true
   validates :community, presence: true
   validates :amount_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates_uniqueness_of :resident_id, scope: :meal_id
 
   monetize :amount_cents
+
+  def set_community_id
+    self.community_id = meal&.community_id
+  end
 
   # DERIVED DATA
   def reimburseable_amount

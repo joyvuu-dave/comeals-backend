@@ -13,6 +13,7 @@
 #  guests_multiplier         :integer          default(0), not null
 #  description               :text
 #  max                       :integer
+#  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null
 #  reconciliation_id         :integer
 #  created_at                :datetime         not null
@@ -36,13 +37,14 @@ class Meal < ApplicationRecord
   belongs_to :reconciliation, optional: true
 
   has_many :bills, dependent: :destroy
+  has_many :cooks, through: :bills, source: :resident
   has_many :meal_residents, inverse_of: :meal, dependent: :destroy
   has_many :guests, inverse_of: :meal, dependent: :destroy
   has_many :residents, through: :meal_residents
 
   validates :date, presence: true
   validates :community, presence: true
-  validates :max, numericality: { only_integer: true }, unless: Proc.new { |a| a.max.nil? }
+  validates :max, numericality: { greater_than_or_equal_to: :attendees }, allow_nil: true
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }

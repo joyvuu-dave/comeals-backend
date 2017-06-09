@@ -34,6 +34,7 @@ module ApplicationHelper
     return first if names.count(first) == 1
 
     # Scenario #3: first name is not unique
+    # FIXME: doesn't guarantee unique string
     return "#{first} #{last[0]}"
   end
 end

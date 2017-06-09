@@ -10,5 +10,7 @@ class CreateBills < ActiveRecord::Migration[5.1]
       t.timestamps
     end
 
+    add_index :bills, [:meal_id, :resident_id], unique: true
+
   end
 end

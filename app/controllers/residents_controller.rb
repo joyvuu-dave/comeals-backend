@@ -5,10 +5,6 @@ class ResidentsController < ApplicationController
   def calendar
   end
 
-  def meal
-    render plain: 'Meal'
-  end
-
   def bill
     render plain: 'Bill'
   end

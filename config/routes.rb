@@ -30,7 +30,17 @@ Rails.application.routes.draw do
         post '/communities', to: 'communities#create'
         get '/communities/:id', to: 'communities#show'
         get '/meals', to: 'meals#index'
+        get '/meals/:meal_id', to: 'meals#show'
+        get '/meals/:meal_id/attendees', to: 'meals#show_attendees'
+        post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_resident'
+        delete '/meals/:meal_id/residents/:resident_id', to: 'meals#destroy_resident'
+        patch '/meals/:meal_id/residents/:resident_id', to: 'meals#update_resident'
+        post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_guest'
+        delete '/meals/:meal_id/residents/:resident_id', to: 'meals#destroy_guest'
+        get '/meals/:meal_id/cooks', to: 'meals#show_cooks'
+        patch '/meals/:meal_id', to: 'meals#update_meal_and_bills'
         get '/bills', to: 'bills#index'
+        get '/bills/:id', to: 'bills#show'
       end
     end
   end
@@ -43,7 +53,7 @@ Rails.application.routes.draw do
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
   get '/calendar', to: 'residents#calendar'
-  get '/meals/:id', to: 'residents#meal'
+  get '/meals/:id/edit', to: 'meals#show'
   get '/bills/:id', to: 'residents#bill'
   get '/residents/:id', to: 'residents#resident'
   get '/units/:id', to: 'residents#unit'

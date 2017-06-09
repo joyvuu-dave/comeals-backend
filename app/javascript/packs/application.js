@@ -16,6 +16,8 @@ import ManagersLogin from 'components/managers/login'
 import ManagersShow from 'components/managers/show'
 import ManagersSignUp from 'components/managers/sign_up'
 
+// Meal Pages
+import MealsShow from 'components/meals/show'
 
 // Resident Pages
 import ResidentsCalendar from 'components/residents/calendar'
@@ -28,6 +30,7 @@ WebpackerReact.setup({
   ManagersLogin,
   ManagersShow,
   ManagersSignUp,
+  MealsShow,
   ResidentsCalendar,
   ResidentsLogin
 })

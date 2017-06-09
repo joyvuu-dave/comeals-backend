@@ -11,6 +11,10 @@ module Api
         render json: bills
       end
 
+      def show
+        render json: Bill.find_by(params[:id])
+      end
+
     end
   end
 end
