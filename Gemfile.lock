@@ -20,7 +20,7 @@ GIT
 
 GIT
   remote: https://github.com/rails/rails.git
-  revision: 0908dec7e533a94fad7c2f5a3b9d09d9c71fe1ea
+  revision: 428090d6946aaddbdc33e7d4c744f99eaee7ed2a
   branch: 5-1-stable
   specs:
     actioncable (5.1.1)
@@ -190,7 +190,7 @@ GEM
     libv8 (5.3.332.38.5)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
-    mail (2.6.5)
+    mail (2.6.6)
       mime-types (>= 1.16, < 4)
     method_source (0.8.2)
     mime-types (3.1)
