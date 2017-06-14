@@ -26,6 +26,6 @@ class UnitSerializer < ActiveModel::Serializer
              :meals_cooked
 
   def balance
-    ActionController::Base.helpers.number_to_currency(object.balance/100.to_f)
+    ActionController::Base.helpers.number_to_currency(object.balance / 100.to_f)
   end
 end

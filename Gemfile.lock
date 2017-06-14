@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: https://github.com/rails-api/active_model_serializers.git
-  revision: a89e78c6555d31df6f7ac9bfac693dff87eb0680
+  revision: 1e4d117b99094a9f40e7a9e0eb2b69a6db773752
   branch: 0-10-stable
   specs:
     active_model_serializers (0.10.6)
@@ -20,7 +20,7 @@ GIT
 
 GIT
   remote: https://github.com/rails/rails.git
-  revision: 428090d6946aaddbdc33e7d4c744f99eaee7ed2a
+  revision: 6334a05372f22a5a0df0e08e81aada104195c039
   branch: 5-1-stable
   specs:
     actioncable (5.1.1)
@@ -128,7 +128,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
-    counter_culture (1.6.2)
+    counter_culture (1.7.0)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
       after_commit_action (~> 1.0)
@@ -216,7 +216,7 @@ GEM
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
     orm_adapter (0.5.0)
-    pg (0.20.0)
+    pg (0.21.0)
     polyamorous (1.3.1)
       activerecord (>= 3.0)
     puma (3.9.1)

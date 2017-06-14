@@ -1,4 +1,5 @@
 class AttendeeSerializer < ActiveModel::Serializer
+  cache key: 'attendee'
   attributes :resident_id,
              :meal_id,
              :name,

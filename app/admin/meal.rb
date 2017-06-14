@@ -17,7 +17,7 @@ ActiveAdmin.register Meal do
   index do
     column :date
     column :community
-    column :attendees, sortable: false
+    column :attendees_count, sortable: false
     column :max
     column :subsidized?
     column :max_cost do |meal|
@@ -50,7 +50,7 @@ ActiveAdmin.register Meal do
       row :unit_cost do |meal|
         number_to_currency(meal.unit_cost.to_f / 100) unless meal.unit_cost == 0
       end
-      table_for meal.residents.order('name ASC') do
+      table_for meal.attendees.order('name ASC') do
         column 'Residents Attendance' do |resident|
           link_to resident.name, admin_resident_path(resident)
         end

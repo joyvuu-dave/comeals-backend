@@ -36,7 +36,7 @@ module Api
       end
 
       def update_resident
-        if @meal_resident.update_attributes(late: params[:late])
+        if @meal_resident.update_attributes(meal_params)
           render json: { message: 'MealResident updated.' } and return
         else
           render json: { message: 'Could not update MealResident.' }, status: :bad_request and return
@@ -49,7 +49,7 @@ module Api
       end
 
       def destroy_guest
-        if @meal.guests.where(resident_id: params[:resident_id])&.destroy
+        if @meal.guests.find_by(resident_id: params[:resident_id])&.destroy
           render json: { message: 'Guest was destroyed.' } and return
         else
           render json: { message: 'Guest could not be destroyed.' }, status: :bad_request and return
@@ -71,6 +71,10 @@ module Api
       end
 
       private
+      def meal_params
+        params.permit(:late, :vegetarian)
+      end
+
       def set_meal
         @meal ||= Meal.find_by(id: params[:meal_id])
       end

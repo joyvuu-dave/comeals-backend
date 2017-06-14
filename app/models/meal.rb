@@ -40,7 +40,8 @@ class Meal < ApplicationRecord
   has_many :cooks, through: :bills, source: :resident
   has_many :meal_residents, inverse_of: :meal, dependent: :destroy
   has_many :guests, inverse_of: :meal, dependent: :destroy
-  has_many :residents, through: :meal_residents
+  has_many :attendees, through: :meal_residents, source: :resident
+  has_many :residents, through: :community
 
   validates :date, presence: true
   validates :community, presence: true
@@ -58,7 +59,7 @@ class Meal < ApplicationRecord
     meal_residents_multiplier + guests_multiplier
   end
 
-  def attendees
+  def attendees_count
     meal_residents_count + guests_count
   end
 
