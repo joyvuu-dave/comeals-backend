@@ -1,4 +1,5 @@
 import React from 'react'
+import { observer } from 'mobx-react'
 
 class Meal extends React.Component {
   constructor(props) {
@@ -10,34 +11,34 @@ class Meal extends React.Component {
   }
 
   handleDescriptionChange(event) {
-    console.log(event.target.value)
+    this.props.store.setDescription(event.target.value)
   }
 
   handleMaxChange(event) {
-    console.log(event.target.value)
+    this.props.store.setMax(Number(event.target.value))
   }
 
   handleClosedChange(event) {
-    console.log(event.target.value)
+    this.props.store.setClosed(event.target.checked)
   }
 
   render() {
     return(
       <div>
         <label>Description
-          <textarea value={this.props.description} onChange={this.handleDescriptionChange} />
+          <textarea value={this.props.store.description} onChange={this.handleDescriptionChange} />
         </label>
         <br />
         <label>Max
-          <input type="text" value={this.props.max} onChange={this.handleMaxChange} />
+          <input type="text" value={this.props.store.max === 0 ? '' : this.props.store.max} onChange={this.handleMaxChange} />
         </label>
         <br />
         <label>Closed
-          <input type="checkbox" checked={this.props.closed} onChange={this.handleClosedChange} />
+          <input type="checkbox" checked={this.props.store.closed} onChange={this.handleClosedChange} />
         </label>
       </div>
     )
   }
 }
 
-export default Meal
+export default observer(Meal)

@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import { observer } from 'mobx-react'
 
 class Bill extends React.Component {
   constructor(props) {
@@ -48,4 +49,4 @@ class Bill extends React.Component {
   }
 }
 
-export default Bill
+export default observer(Bill)
