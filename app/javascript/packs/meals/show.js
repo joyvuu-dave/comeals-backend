@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     <Provider store={store}>
       <div>
+        <a href="/calendar">Calendar</a>{' '}
+        <button onClick={store.logout}>Logout</button>
         <h3>Cooks</h3>
         <Meal/>
         <Bills/>

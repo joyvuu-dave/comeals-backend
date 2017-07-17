@@ -41,9 +41,9 @@ class MealSerializer < ActiveModel::Serializer
     modifier = object.balanced? ? nil : "(#{object.id}#{object.subsidized? ? "*" : nil})"
 
     Date.today > object.date ?
-      "#{modifier} Dinner: #{object.attendees} present" :
+      "#{modifier} Dinner: #{object.attendees_count} present" :
       object.max ?
-        "#{modifier} Dinner: #{object.max} max (#{object.max - object.attendees} left)" :
+        "#{modifier} Dinner: #{object.max} max (#{object.max - object.attendees_count} left)" :
         "#{modifier} Dinner: no max"
   end
 

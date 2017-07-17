@@ -46,7 +46,7 @@ class BillSerializer < ActiveModel::Serializer
   end
 
   def url
-    "/bills/#{object.id}/edit"
+    "/meals/#{object.meal_id}/edit"
   end
 
   def description

@@ -119,7 +119,7 @@ class Meal < ApplicationRecord
   end
 
   def self.unreconciled_ave_number_of_attendees
-    val = (Meal.unreconciled.reduce(0) { |sum, meal| sum + meal.attendees } / Meal.unreconciled.count.to_f).round(1)
+    val = (Meal.unreconciled.reduce(0) { |sum, meal| sum + meal.attendees_count } / Meal.unreconciled.count.to_f).round(1)
     val.nan? ? '--' : val
   end
 

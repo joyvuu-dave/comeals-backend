@@ -1,5 +1,6 @@
 class ResidentsController < ApplicationController
   def login
+    render layout: 'current_resident'
   end
 
   def calendar

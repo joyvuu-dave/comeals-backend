@@ -1,6 +1,7 @@
 import { types, getParent } from "mobx-state-tree"
 import { v4 } from 'uuid'
 import axios from 'axios'
+import Cookie from 'js-cookie'
 
 const Meal = types.model(
     "Meal",
@@ -151,6 +152,10 @@ export const FormStore = types.model(
         },
         setClosed(val) {
             this.meal.closed = val
+        },
+        logout() {
+            Cookie.remove('token', { domain: '.comeals.dev' })
+            window.location.href = '/'
         },
         submit() {
             // Check for errors
