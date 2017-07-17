@@ -288,16 +288,20 @@ class AttendeeForm extends React.Component {
       <div>
         <h3>Attendee Form</h3>
         <table>
-          <tr>
-            <th>Name</th>
-            <th>Attending</th>
-            <th>Late</th>
-            <th>Veg</th>
-            <th>Guests</th>
-          </tr>
-          {this.state.attendees.map((resident) =>
-            <AttendeeComponent key={resident.resident_id} resident={resident} />
-          )}
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Attending</th>
+              <th>Late</th>
+              <th>Veg</th>
+              <th>Guests</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.attendees.map((resident) =>
+              <AttendeeComponent key={resident.resident_id} resident={resident} />
+            )}
+          </tbody>
         </table>
       </div>
     )
