@@ -45,7 +45,7 @@ class Meal < ApplicationRecord
 
   validates :date, presence: true
   validates :community, presence: true
-  validates :max, numericality: { greater_than_or_equal_to: :attendees_count }, allow_nil: true
+  validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }

@@ -17,16 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
   window.store = store
 
   ReactDOM.render(
-    <div>
-      <Provider store={store}>
-        <div>
-          <h3>Cook Form</h3>
-          <Meal/>
-          <Bills/>
-        </div>
-      </Provider>
-      <AttendeeForm meal_id={id} />
-    </div>,
+    <Provider store={store}>
+      <div>
+        <h3>Cooks</h3>
+        <Meal/>
+        <Bills/>
+        <AttendeeForm meal_id={id} />
+      </div>
+    </Provider>,
     document.getElementById("root")
   )
 })

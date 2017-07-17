@@ -23,8 +23,12 @@ module Api
       end
 
       def create_resident
-        meal_resident = @meal.meal_residents.find_or_create_by!(resident_id: params[:resident_id])
-        render json: meal_resident
+        meal_resident = @meal.meal_residents.find_or_create_by(resident_id: params[:resident_id])
+        if meal_resident.save
+          render json: meal_resident
+        else
+          render json: { message: meal_resident.errors.first[1] }, status: :bad_request
+        end
       end
 
       def destroy_resident
@@ -44,8 +48,13 @@ module Api
       end
 
       def create_guest
-        guest = @meal.guests.find_or_create_by!(resident_id: params[:resident_id])
-        render json: guest
+        guest = Guest.new(meal_id: @meal.id, resident_id: params[:resident_id])
+
+        if guest.save
+          render json: guest and return
+        else
+          render json: { message: guest.errors.first[1] }, status: :bad_request and return
+        end
       end
 
       def destroy_guest
@@ -62,7 +71,9 @@ module Api
 
       def update_meal_and_bills
         # Description, Max, Closed
-        @meal.update(:description => params[:description], :max => params[:max], :closed => params[:closed])
+        unless @meal.update(:description => params[:description], :max => params[:max], :closed => params[:closed])
+          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+        end
 
         # Cooks
         cook_ids = []
@@ -70,7 +81,7 @@ module Api
           cook_ids.push(bill['resident_id'])
         end
         @meal.update(:cook_ids => cook_ids)
-
+        @meal.reload
 
         # Bill Cost
         params[:bills].each do |bill|

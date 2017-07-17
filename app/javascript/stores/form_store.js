@@ -195,7 +195,7 @@ export const FormStore = types.model(
                  .then(function(response) {
                     if (response.status === 200) {
                         console.log(response.data)
-                        //window.alert('Form has been saved!')
+                        window.alert('Meal has been updated!')
                     }
                  })
                 .catch(function (error) {
@@ -212,9 +212,11 @@ export const FormStore = types.model(
                     // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
                     // http.ClientRequest in node.js
                     const request = error.request
+                    window.alert('Error: no response received from server.')
                   } else {
                     // Something happened in setting up the request that triggered an Error
                     const message = error.message
+                    window.alert('Error: could not submit form.')
                   }
                   const config = error.config
                 })

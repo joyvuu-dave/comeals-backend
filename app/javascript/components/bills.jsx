@@ -20,7 +20,7 @@ const Bills = inject("store")(
     <section>
       {store.bills.values().map(bill => <Bill key={bill.id} bill={bill} />)}
       <br />
-      <button onClick={e => store.submit()}>Submit</button>
+      <button onClick={e => store.submit()}>Update</button>
     </section>
   )
 )

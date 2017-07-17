@@ -42,6 +42,11 @@ class MealResident < ApplicationRecord
   validates :community, presence: true
   validates_uniqueness_of :meal_id, { scope: :resident_id }
   validates :multiplier, numericality: { only_integer: true }
+  validate :meal_has_open_spots
+
+  def meal_has_open_spots
+    errors.add(:base, "Meal has no open spots.") unless meal.max.nil? || meal.attendees_count < meal.max
+  end
 
   def set_multiplier
     self.multiplier = resident&.multiplier
