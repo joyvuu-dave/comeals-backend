@@ -11,7 +11,7 @@
 #  cost                      :integer          default(0), not null
 #  meal_residents_multiplier :integer          default(0), not null
 #  guests_multiplier         :integer          default(0), not null
-#  description               :text
+#  description               :text             default(""), not null
 #  max                       :integer
 #  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null
@@ -45,7 +45,7 @@ class Meal < ApplicationRecord
 
   validates :date, presence: true
   validates :community, presence: true
-  validates :max, numericality: { greater_than_or_equal_to: :attendees }, allow_nil: true
+  validates :max, numericality: { greater_than_or_equal_to: :attendees_count }, allow_nil: true
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
@@ -135,14 +135,12 @@ class Meal < ApplicationRecord
       end
 
       community = Community.find(community_id)
-
-      # if Meal.new(date: start_date, cap: community.cap, community_id: community_id).save
-      #   num_meals_created += 1
-      # end
-      if meal = Meal.new(date: start_date, cap: community.cap, community_id: community_id).save
+      temp = Meal.new(date: start_date, cap: community.cap, community_id: community_id)
+      if temp.save
         num_meals_created += 1
       else
-        Rails.logger.info meal.errors
+        puts temp.errors.to_s
+        byebug
       end
 
       # If common dinner was on a Sunday, we

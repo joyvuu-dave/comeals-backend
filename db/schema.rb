@@ -147,7 +147,7 @@ ActiveRecord::Schema.define(version: 20170530165903) do
     t.integer "cost", default: 0, null: false
     t.integer "meal_residents_multiplier", default: 0, null: false
     t.integer "guests_multiplier", default: 0, null: false
-    t.text "description"
+    t.text "description", default: "", null: false
     t.integer "max"
     t.boolean "closed", default: false, null: false
     t.bigint "community_id", null: false

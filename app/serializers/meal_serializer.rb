@@ -11,7 +11,7 @@
 #  cost                      :integer          default(0), not null
 #  meal_residents_multiplier :integer          default(0), not null
 #  guests_multiplier         :integer          default(0), not null
-#  description               :text
+#  description               :text             default(""), not null
 #  max                       :integer
 #  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null

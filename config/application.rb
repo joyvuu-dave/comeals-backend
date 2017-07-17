@@ -40,5 +40,8 @@ module Comeals
       end
     end
 
+    # Fuck Strong Params
+    config.action_controller.permit_all_parameters = true
+
   end
 end

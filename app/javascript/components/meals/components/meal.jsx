@@ -1,5 +1,5 @@
 import React from 'react'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 
 class Meal extends React.Component {
   constructor(props) {
@@ -23,19 +23,25 @@ class Meal extends React.Component {
   }
 
   render() {
-    return(
+    return (
       <div>
-        <label>Description
-          <textarea value={this.props.store.description} onChange={this.handleDescriptionChange} />
-        </label>
-        <br />
-        <label>Max
-          <input type="text" value={this.props.store.max === 0 ? '' : this.props.store.max} onChange={this.handleMaxChange} />
-        </label>
-        <br />
-        <label>Closed
-          <input type="checkbox" checked={this.props.store.closed} onChange={this.handleClosedChange} />
-        </label>
+        {this.props.store.loaded ?
+          <div>
+            <label>Description
+              <textarea value={this.props.store.meal.description} onChange={this.handleDescriptionChange} />
+            </label>
+            <br />
+            <label>Max
+              <input type="text" value={this.props.store.meal.max} onChange={this.handleMaxChange} />
+            </label>
+            <br />
+            <label>Closed
+              <input type="checkbox" checked={this.props.store.meal.closed} onChange={this.handleClosedChange} />
+            </label>
+          </div>
+          :
+          <h2>Loading meal...</h2>
+        }
       </div>
     )
   }

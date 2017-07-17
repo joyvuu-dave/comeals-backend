@@ -1,30 +1,25 @@
 import React from 'react'
 import axios from 'axios'
-import { observer } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 
 class Bill extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      resident_id: this.props.resident_id,
-      amount: this.formatAmount(this.props.amount_cents)
-    }
-
-    this.handleSelectChange = this.handleSelectChange.bind(this)
-    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleResidentChange = this.handleResidentChange.bind(this)
+    this.handleAmountChange = this.handleAmountChange.bind(this)
   }
 
-  handleSelectChange(event) {
-    this.setState({
-      resident_id: event.target.value
-    })
+  handleResidentChange(e) {
+    const index = this.props.index
+    const val = e.target.value
+    this.props.store.currentMeal.updateBillResident(index, val)
   }
 
-  handleInputChange(event) {
-    this.setState({
-      amount: event.target.value
-    })
+  handleAmountChange(e) {
+    const index = this.props.index
+    const val = e.target.value
+    this.props.store.currentMeal.updateBillAmount(index, val)
   }
 
   formatAmount(val) {
@@ -34,15 +29,17 @@ class Bill extends React.Component {
   }
 
   render() {
-    const self = this
+    const index = this.props.index
+    const residents = this.props.store.currentMeal.currentResidents
+    const bill = this.props.store.currentMeal.currentBills[index]
 
     return(
       <div>
-        <select value={this.state.resident_id} key={`select-${this.props.index}`} onChange={this.handleSelectChange}>
+        <select value={bill.currentAmountCents} key={`select-${this.props.index}`} onChange={this.handleResidentChange}>
           <option value={-1} key={`option-${this.props.index}`}></option>
-          {this.props.residents.map((resident) => <option value={resident.id} key={`${self.props.index}-${resident.id}`}>{resident.name}</option>)}
+          {residents.map((resident) => <option value={resident.currentId} key={`${self.props.index}-${resident.currentId}`}>{resident.currentName}</option>)}
         </select>
-        $<input type="text" value={this.state.amount} onChange={this.handleInputChange} />
+        $<input type="text" value={bill.currentAmountCents} onChange={this.handleAmountChange} />
         <br />
       </div>
     )

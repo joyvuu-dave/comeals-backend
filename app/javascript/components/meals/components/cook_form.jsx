@@ -1,54 +1,42 @@
 import React from 'react'
-import axios from 'axios'
-import Bill from './bill'
+import Bills from './bills'
 import Meal from './meal'
-import { observer } from 'mobx-react'
-
-class CookForm extends React.Component {
-
-  renderRealBills() {
-    const self = this
-    return (
-      <div>
-        {self.props.store.bills.map((bill, index) => <Bill
-          key={index}
-          index={index}
-          resident_id={bill.resident_id}
-          amount_cents={bill.amount_cents}
-          residents={self.props.store.residents} /> )}
-      </div>
-    )
-  }
-
-  renderDummyBills() {
-    const self = this
-    const dummyCount = Math.max(3 - this.props.store.bills.length, 0)
-
-    return (
-      <div>
-        {Array.from(Array(dummyCount)).map((val, index) => <Bill
-          key={index + self.props.store.bills.length}
-          index={index + self.props.store.bills.length}
-          residents={self.props.store.residents} /> )}
-      </div>
-    )
-  }
+import { inject, observer } from 'mobx-react'
 
 
-  render() {
-    return(
-      <div>
-        <h3>Cook Form</h3>
-        <form>
-          {this.renderRealBills()}
-          {this.renderDummyBills()}
-          <Meal
-            store={this.props.store}
-          />
-        </form>
-      </div>
-    )
-  }
-}
+const CookForm = inject("store")(
+  observer(({ store }) =>
+    <h2>
+      Hello, from CookForm!
+    </h2>
+  )
+)
 
-export default observer(CookForm)
+export default CookForm
+
+
+// class CookForm extends React.Component {
+//   render() {
+//     const loaded = this.props.store.currentLoaded
+
+//     let component = null
+//     if(loaded) {
+//       component = (
+//         <form>
+//           <Bills store={this.props.store} />
+//         </form>
+//       )
+//     } else {
+//       component = <h3>Loading "CookForm" component...</h3>
+//     }
+
+//     return(
+//       <div>
+//         <h3>Cook Form</h3>
+//         {component}
+//       </div>
+//     )
+//   }
+// }
+
+// export default observer(CookForm)

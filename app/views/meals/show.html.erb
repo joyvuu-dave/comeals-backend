@@ -1,1 +1,9 @@
-<%= react_component('MealsShow') %>
+
+<%= content_tag :div,
+  id: "meal-id",
+  data: {
+    id: @id
+}.to_json do %>
+<% end %>
+
+<%= javascript_pack_tag 'meals/show' %>

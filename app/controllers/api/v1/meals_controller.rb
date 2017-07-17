@@ -36,7 +36,7 @@ module Api
       end
 
       def update_resident
-        if @meal_resident.update_attributes(meal_params)
+        if @meal_resident.update(meal_resident_params)
           render json: { message: 'MealResident updated.' } and return
         else
           render json: { message: 'Could not update MealResident.' }, status: :bad_request and return
@@ -61,17 +61,27 @@ module Api
       end
 
       def update_meal_and_bills
-        # @meal.update_attributes(description: params[:description], max: params[:max], closed: params[:closed]) 
-        # @meal.cook_ids = params[:bills].map { |bill| bill[:resident_id] } 
-        # params[:bills].each do |bill| 
-        #   @meal.bills.find_by(resident_id: bill[:resident_id]).update_attributes(amount_cents: bill[:cost]) 
-        # end
+        # Description, Max, Closed
+        @meal.update(:description => params[:description], :max => params[:max], :closed => params[:closed])
 
-        render json: { message: 'Request processsed.' }
+        # Cooks
+        cook_ids = []
+        params[:bills].each do |bill|
+          cook_ids.push(bill['resident_id'])
+        end
+        @meal.update(:cook_ids => cook_ids)
+
+
+        # Bill Cost
+        params[:bills].each do |bill|
+          @meal.bills.find_by(resident_id: bill['resident_id']).update(amount_cents: bill['amount_cents'])
+        end
+
+        render json: { message: 'Form submitted.' }
       end
 
       private
-      def meal_params
+      def meal_resident_params
         params.permit(:late, :vegetarian)
       end
 
