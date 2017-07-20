@@ -47,11 +47,17 @@ class Meal < ApplicationRecord
   validates :community, presence: true
   validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
 
+  before_save :conditionally_set_max
+
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
 
   def cap
     read_attribute(:cap) || Float::INFINITY
+  end
+
+  def conditionally_set_max
+    self.max = nil if closed == false
   end
 
   # DERIVED DATA

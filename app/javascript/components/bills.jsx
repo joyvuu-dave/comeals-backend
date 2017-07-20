@@ -17,11 +17,11 @@ const Bill = inject("store")(
 
 const Bills = inject("store")(
   observer(({ store }) =>
-    <section>
+    <div>
       {store.bills.values().map(bill => <Bill key={bill.id} bill={bill} />)}
       <br />
-      <button onClick={e => store.submit()}>Update</button>
-    </section>
+      <button onClick={e => store.submit()}>Update Meal</button>
+    </div>
   )
 )
 

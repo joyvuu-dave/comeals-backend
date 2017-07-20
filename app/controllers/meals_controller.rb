@@ -1,6 +1,6 @@
 class MealsController < ApplicationController
   def show
-    @id = params[:id]
+    @meal = Meal.find(params[:id])
     render layout: 'current_resident'
   end
 end

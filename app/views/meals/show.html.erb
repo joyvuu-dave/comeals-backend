@@ -2,7 +2,8 @@
 <%= content_tag :div,
   id: "meal-id",
   data: {
-    id: @id
+    id: @meal.id,
+    date: @meal.date
 }.to_json do %>
 <% end %>
 

@@ -66,7 +66,7 @@ module Api
       end
 
       def show_cooks
-        render json: CookFormSerializer.new(@meal)
+        render json: CookFormSerializer.new(@meal), scope: @meal
       end
 
       def update_meal_and_bills

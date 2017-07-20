@@ -51,6 +51,7 @@
     "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
+    "prettier": "^1.5.3",
     "webpack-dev-server": "^2.4.5"
   }
 }

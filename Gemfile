@@ -26,7 +26,7 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 gem 'webpacker'
-gem 'annotate', github: 'ctran/annotate_models', branch: 'develop'
+gem 'annotate'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'activeadmin'
 gem 'devise'
@@ -39,7 +39,7 @@ gem 'faker'
 gem 'money-rails'
 gem 'counter_culture'
 gem 'rails_12factor', group: :production
-gem 'active_model_serializers', github: 'rails-api/active_model_serializers', branch: '0-10-stable'
+gem 'active_model_serializers', '~> 0.10'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
