@@ -71,7 +71,7 @@ module Api
 
       def update_meal_and_bills
         # Description, Max, Closed
-        unless @meal.update(:description => params[:description], :max => params[:max], :closed => params[:closed])
+        unless @meal.update(:description => params[:description], :max => params[:max])
           render json: { message: @meal.errors.first[1] }, status: :bad_request and return
         end
 
@@ -89,6 +89,22 @@ module Api
         end
 
         render json: { message: 'Form submitted.' }
+      end
+
+      def update_closed
+        if @meal.update(closed: params[:closed])
+          render json: { message: 'Meal closed value updated.' } and return
+        else
+          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+        end
+      end
+
+      def update_max
+        if @meal.update(max: params[:max])
+          render json: { message: 'Meal max value updated.' } and return
+        else
+          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+        end
       end
 
       private

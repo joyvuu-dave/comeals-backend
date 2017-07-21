@@ -6,6 +6,9 @@ import { DataStore } from '../../stores/data_store'
 
 import Meal from '../../components/meal'
 import Bills from '../../components/bills'
+import Extras from '../../components/extras'
+import Closed from '../../components/closed'
+import Info from '../../components/info'
 import AttendeeForm from '../../components/attendee_form'
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,16 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
     <Provider store={store}>
       <div>
         <header>
-          <a href="/calendar">Calendar</a>{' '}
-          <button onClick={store.logout}>Logout</button>
+          <button className="left" onClick={store.calendar}>Calendar</button>
+          <button className="right" onClick={store.logout}>Logout</button>
         </header>
+        <div id="subheader">
+          <Info />
+          <section className="cyan">
+            <Closed />
+            <Extras />
+          </section>
+        </div>
         <main>
-          <section>
+          <section className="green">
             <Meal/>
             <h3>Cooks</h3>
             <Bills/>
           </section>
-          <section>
+          <section className="yellow">
             <AttendeeForm />
           </section>
         </main>

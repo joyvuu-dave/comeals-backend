@@ -14,15 +14,58 @@
  */
 header {
   min-height: 50px;
-  border: 2px solid red;
+  background-color: orange;
+}
+
+#subheader {
+  display: grid;
+  min-height: 100px;
+  grid-template-columns: 2fr 1fr;
 }
 
 main {
   display: grid;
-  min-height: 910px;
+  min-height: 660px;
   grid-template-columns: 50% 50%;
 }
 
 section {
-  border: 2px solid green;
+  border: 1px solid black;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.warning {
+  background-color: red;
+}
+
+.success {
+  background-color: green;
+  color: white;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.pink {
+  background-color: pink;
+}
+
+.green {
+  background-color: green;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.cyan {
+  background-color: cyan;
 }

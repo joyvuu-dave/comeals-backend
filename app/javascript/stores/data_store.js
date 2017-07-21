@@ -44,9 +44,106 @@ const Meal = types.model(
     }
   },
   {
+    resetExtras() {
+      this.extras = "";
+      console.log('Extras reset to empty string.')
+      return "";
+    },
     setExtras(val) {
-      if (Number.isInteger(Number.parseInt(Number(val)))) {
-        this.extras = val
+      const previousExtras = this.extras;
+      const self = this;
+
+      // Scenario #1: empty string
+      if(val === "") {
+        this.extras = "";
+
+        axios.patch(`http://api.comeals.dev/api/v1/meals/${this.id}/max`, {max: null})
+          .then(function(response) {
+            if (response.status === 200) {
+              console.log("Patch Extras - Success!", response.data);
+            }
+
+            return ""; // return new value of extras as feedback when running function from console
+          })
+          .catch(function(error) {
+            console.log("Patch Extras - Fail!");
+            self.extras = previousExtras;
+
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              const data = error.response.data;
+              const status = error.response.status;
+              const headers = error.response.headers;
+
+              window.alert(data.message);
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+              // http.ClientRequest in node.js
+              const request = error.request;
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              const message = error.message;
+            }
+            const config = error.config;
+
+            return previousExtras; // return old value of extras as feedback when running function from console
+          });
+      }
+
+      // Scenario #2: positive integer
+      const num = Number.parseInt(Number(val));
+      if (Number.isInteger(num) && num >= 0) {
+        this.extras = String(num)
+
+        axios.patch(`http://api.comeals.dev/api/v1/meals/${this.id}/max`, {max: self.max})
+          .then(function(response) {
+            if (response.status === 200) {
+              console.log("Patch Extras - Success!", response.data);
+            }
+
+            return String(num);  // return new value of extras as feedback when running function from console
+          })
+          .catch(function(error) {
+            console.log("Patch Extras - Fail!");
+            self.extras = previousExtras;
+
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              const data = error.response.data;
+              const status = error.response.status;
+              const headers = error.response.headers;
+
+              window.alert(data.message);
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+              // http.ClientRequest in node.js
+              const request = error.request;
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              const message = error.message;
+            }
+            const config = error.config;
+
+            return previousExtras; // return old value of extras as feedback when running function from console
+          });
+      }
+    },
+    incrementExtras() {
+      const num = Number.parseInt(Number(this.extras))
+      if (Number.isInteger(num)) {
+        const temp = num + 1;
+        this.extras = String(temp);
+      }
+    },
+    decrementExtras() {
+      const num = Number.parseInt(Number(this.extras))
+      if (Number.isInteger(num)) {
+        const temp = num - 1;
+        this.extras = String(temp);
       }
     }
   }
@@ -64,7 +161,7 @@ const Resident = types.model(
     vegetarian: false,
     guests: 0,
     get form() {
-      return getParent(this);
+      return getParent(this, 2);
     }
   },
   {
@@ -74,6 +171,7 @@ const Resident = types.model(
       const self = this;
 
       if (val) {
+        self.form.form.meal.decrementExtras();
         axios
           .post(
             `http://api.comeals.dev/api/v1/meals/${this
@@ -86,7 +184,8 @@ const Resident = types.model(
           })
           .catch(function(error) {
             console.log("Post - Fail!");
-            this.attending = false;
+            self.attending = false;
+            self.form.form.meal.incrementExtras();
 
             if (error.response) {
               // The request was made and the server responded with a status code
@@ -108,6 +207,7 @@ const Resident = types.model(
             const config = error.config;
           });
       } else {
+        self.form.form.meal.incrementExtras();
         axios
           .delete(
             `http://api.comeals.dev/api/v1/meals/${this
@@ -121,6 +221,8 @@ const Resident = types.model(
           .catch(function(error) {
             console.log("Delete - Fail!");
             self.attending = true;
+            self.form.form.meal.decrementExtras();
+
             if (error.response) {
               // The request was made and the server responded with a status code
               // that falls out of the range of 2xx
@@ -212,6 +314,7 @@ const Resident = types.model(
     },
     addGuest() {
       this.guests = this.guests + 1
+      this.form.form.meal.decrementExtras();
 
       const self = this
       axios.post(`http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`)
@@ -222,7 +325,8 @@ const Resident = types.model(
       })
       .catch(function (error) {
         console.log('Guests Post - Fail!')
-        self.guests = self.guests - 1
+        self.guests = self.guests - 1;
+        self.form.form.meal.incrementExtras();
 
         if (error.response) {
           // The request was made and the server responded with a status code
@@ -246,6 +350,7 @@ const Resident = types.model(
     },
     removeGuest() {
       this.guests = this.guests - 1;
+      this.form.form.meal.incrementExtras();
 
       const self = this;
       axios.delete(`http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`)
@@ -256,7 +361,8 @@ const Resident = types.model(
       })
       .catch(function (error) {
         console.log('Guests Delete - Fail!')
-        self.guests = self.guests - 1;
+        self.guests -= 1;
+        self.form.form.meal.decrementExtras();
 
         if (error.response) {
           // The request was made and the server responded with a status code
@@ -404,13 +510,55 @@ export const DataStore = types.model(
       this.meal.description = val;
       return this.meal.description;
     },
-    setClosed(val) {
+    toggleClosed() {
+      const val = !this.meal.closed;
       this.meal.closed = val;
-      return val;
+
+      const self = this;
+      axios
+        .patch(`http://api.comeals.dev/api/v1/meals/${self.meal.id}/closed`, {closed: val})
+        .then(function(response) {
+          if (response.status === 200) {
+            console.log(response.data);
+
+            // If meal has been opened, re-set extras value
+            if (val === false) {
+              self.meal.resetExtras();
+            }
+          }
+        })
+        .catch(function(error) {
+          self.meal.closed = !val;
+          console.log('Meal closed patch - Fail!')
+
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+            window.alert("Error: no response received from server.");
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+            window.alert("Error: could not submit form.");
+          }
+          const config = error.config;
+        });
     },
     logout() {
       Cookie.remove("token", { domain: ".comeals.dev" });
       window.location.href = "/";
+    },
+    calendar() {
+      window.location.href = "/calendar";
     },
     submit() {
       // Check for errors with bills
@@ -451,7 +599,6 @@ export const DataStore = types.model(
         id: this.meal.id,
         description: this.meal.description,
         max: this.meal.max,
-        closed: this.meal.closed,
         bills: bills
       };
 
@@ -527,8 +674,9 @@ export const DataStore = types.model(
       if (data.max === null) {
         this.meal.extras = ''
       } else {
-        //const residents_count = data.residents
-        this.meal.extras = 99
+        const residents_count = data.residents.filter((resident) => resident.attending).length
+        const guests_count =  data.residents.map((resident) => resident.guests).reduce(function(sum, value) { return sum + value; }, 0);
+        this.meal.extras = String(residents_count + guests_count)
       }
 
       // Assign Residents
