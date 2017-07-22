@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/rails/rails.git
-  revision: b6e24dbfc8d68c82dd62f2e99d668dca8df9b7f1
+  revision: 2299149dcfc4727682d3a25ce039e9016283be60
   branch: 5-1-stable
   specs:
     actioncable (5.1.3.rc1)
@@ -187,7 +187,7 @@ GEM
     mini_portile2 (2.2.0)
     mini_racer (0.1.11)
       libv8 (~> 5.7)
-    minitest (5.10.2)
+    minitest (5.10.3)
     monetize (1.7.0)
       money (~> 6.9)
     money (6.9.0)
@@ -329,4 +329,4 @@ DEPENDENCIES
   webpacker
 
 BUNDLED WITH
-   1.15.2
+   1.15.3

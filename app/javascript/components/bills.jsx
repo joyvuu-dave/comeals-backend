@@ -1,7 +1,8 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
+import { v4 } from 'uuid'
 
-const Bill = inject("store")(
+const BillEdit = inject("store")(
   observer(({ store, bill }) =>
     <div>
       <select key={bill.id} value={bill.resident_id} onChange={e => bill.setResident(e.target.value)} >
@@ -15,12 +16,25 @@ const Bill = inject("store")(
   )
 )
 
+const BillShow = inject("store")(
+  observer(({ store, bill }) =>
+    <ul className={!bill.resident && "hidden"}>
+      <li key={v4()}>{bill.resident && bill.resident.name}</li>
+      <li key={bill.id}>{bill.amount}</li>
+    </ul>
+  )
+)
+
 const Bills = inject("store")(
   observer(({ store }) =>
     <div>
-      {store.bills.values().map(bill => <Bill key={bill.id} bill={bill} />)}
-      <br />
-      <button onClick={e => store.submit()}>Update Meal</button>
+      {store.bills.values().map((bill) => {
+        if (store.editMode) {
+          return (<BillEdit key={bill.id} bill={bill} />);
+        } else {
+          return (<BillShow key={bill.id} bill={bill} />);
+        }
+      })}
     </div>
   )
 )

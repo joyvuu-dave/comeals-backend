@@ -18,27 +18,6 @@ const Meal = types.model(
         return Number(this.extras) + this.form.attendeesCount
       }
     },
-    get maxIsValid() {
-      // Scenario #1: null
-      if (this.max === null) {
-        return true
-      }
-
-      // Scenario #2: not an integer
-      if (!Number.isInteger(this.max)) {
-        return false
-      }
-
-      // Scenario #3: less than attendees count
-      if (Number.isInteger(this.max) && this.max < this.form.attendeesCount) {
-        return false
-      }
-
-      // Scenario #4: greater than or equal to attendees count
-      if (Number.isInteger(this.max) && this.max >= this.form.attendeesCount) {
-        return true
-      }
-    },
     get form() {
       return getParent(this, 2);
     }
@@ -133,6 +112,10 @@ const Meal = types.model(
       }
     },
     incrementExtras() {
+      if (this.extras === "") {
+        return;
+      }
+
       const num = Number.parseInt(Number(this.extras))
       if (Number.isInteger(num)) {
         const temp = num + 1;
@@ -140,6 +123,10 @@ const Meal = types.model(
       }
     },
     decrementExtras() {
+      if (this.extras === "") {
+        return;
+      }
+
       const num = Number.parseInt(Number(this.extras))
       if (Number.isInteger(num)) {
         const temp = num - 1;
@@ -438,6 +425,7 @@ export const DataStore = types.model(
   "DataStore",
   {
     isLoading: true,
+    editMode: false,
     meal: types.maybe(types.reference(Meal)),
     meals: types.array(Meal),
     residentStore: types.optional(ResidentStore, {
@@ -506,6 +494,9 @@ export const DataStore = types.model(
     }
   },
   {
+    toggleEditMode() {
+      this.editMode = !this.editMode;
+    },
     setDescription(val) {
       this.meal.description = val;
       return this.meal.description;
@@ -567,12 +558,6 @@ export const DataStore = types.model(
         return;
       }
 
-      // Check for errors with extras
-      if (this.meal.maxIsValid === false) {
-        window.alert("Fix extras value before submitting.");
-        return;
-      }
-
       // Format Bills
       let bills = this.bills
         .values()
@@ -609,8 +594,8 @@ export const DataStore = types.model(
         .patch(`http://api.comeals.dev/api/v1/meals/${self.meal.id}`, obj)
         .then(function(response) {
           if (response.status === 200) {
+            self.toggleEditMode()
             console.log(response.data);
-            window.alert("Meal has been updated!");
           }
         })
         .catch(function(error) {
