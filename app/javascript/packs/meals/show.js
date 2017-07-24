@@ -31,8 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
   var channel = pusher.subscribe(`meal-${id}`);
   channel.bind('update', function(data) {
     console.log(data.message);
-    store.billStore.clear();
-    store.residentStore.clear();
+
+    if (store.billStore && store.billStore.bills) {
+      store.billStore.bills.clear();
+    }
+    if (store.residentStore && store.residentStore.residents) {
+      store.residentStore.residents.clear();
+    }
+
     store.loadDataAsync();
   });
 

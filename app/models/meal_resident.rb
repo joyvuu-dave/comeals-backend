@@ -31,6 +31,8 @@ class MealResident < ApplicationRecord
   belongs_to :resident
   belongs_to :community
 
+  audited associated_with: :meal
+
   before_validation :set_multiplier
   before_validation :set_community_id
 

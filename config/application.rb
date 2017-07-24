@@ -35,8 +35,8 @@ module Comeals
     # CORS
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins '*'
-        resource '*', :headers => :any, :methods => :any
+        origins /\A.*comeals.*\z/
+        resource '*', :headers => :any, :methods => [:get, :post, :put, :patch, :delete, :options], credentials: true
       end
     end
 

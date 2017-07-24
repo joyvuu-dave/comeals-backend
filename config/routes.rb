@@ -56,6 +56,7 @@ Rails.application.routes.draw do
   root to: 'static#root'
   get '/calendar', to: 'residents#calendar'
   get '/meals/:id/edit', to: 'meals#show'
+  get '/meals/:id/log', to: 'meals#log'
   get '/bills/:id', to: 'residents#bill'
   get '/residents/:id', to: 'residents#resident'
   get '/units/:id', to: 'residents#unit'

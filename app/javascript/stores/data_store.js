@@ -36,8 +36,14 @@ const Meal = types.model(
       if(val === "") {
         this.extras = "";
 
-        axios.patch(`http://api.comeals.dev/api/v1/meals/${this.id}/max`, {max: null})
-          .then(function(response) {
+        axios({
+          url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
+          method: 'patch',
+          data: {
+            max: null
+          },
+          withCredentials: true
+        }).then(function(response) {
             if (response.status === 200) {
               console.log("Patch Extras - Success!", response.data);
             }
@@ -76,8 +82,14 @@ const Meal = types.model(
       if (Number.isInteger(num) && num >= 0) {
         this.extras = String(num)
 
-        axios.patch(`http://api.comeals.dev/api/v1/meals/${this.id}/max`, {max: self.max})
-          .then(function(response) {
+        axios({
+          method: 'patch',
+          url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
+          data: {
+            max: self.max
+          },
+          withCredentials: true
+        }).then(function(response) {
             if (response.status === 200) {
               console.log("Patch Extras - Success!", response.data);
             }
@@ -159,12 +171,11 @@ const Resident = types.model(
 
       if (val) {
         self.form.form.meal.decrementExtras();
-        axios
-          .post(
-            `http://api.comeals.dev/api/v1/meals/${this
-              .meal_id}/residents/${this.id}`
-          )
-          .then(function(response) {
+        axios({
+          method: 'post',
+          url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+          withCredentials: true
+        }).then(function(response) {
             if (response.status === 200) {
               console.log("Post - Success!", response.data);
             }
@@ -195,12 +206,11 @@ const Resident = types.model(
           });
       } else {
         self.form.form.meal.incrementExtras();
-        axios
-          .delete(
-            `http://api.comeals.dev/api/v1/meals/${this
-              .meal_id}/residents/${this.id}`
-          )
-          .then(function(response) {
+        axios({
+          method: 'delete',
+          url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+          withCredentials: true
+        }).then(function(response) {
             if (response.status === 200) {
               console.log("Delete - Success!", response.data);
             }
@@ -235,8 +245,14 @@ const Resident = types.model(
       this.late = val;
 
       const self = this
-      axios.patch(`http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`, {late: val})
-      .then(function (response) {
+      axios({
+        method: 'patch',
+        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+        data: {
+          late: val
+        },
+        withCredentials: true
+      }).then(function (response) {
         if(response.status === 200) {
           console.log('Late click - Success!', response.data)
         }
@@ -269,8 +285,14 @@ const Resident = types.model(
       this.vegetarian = val;
 
       const self = this
-      axios.patch(`http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`, {vegetarian: val})
-      .then(function (response) {
+      axios({
+        method: 'patch',
+        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+        data: {
+          vegetarian: val
+        },
+        withCredentials: true
+      }).then(function (response) {
         if(response.status === 200) {
           console.log('Veg click - Success!', response.data)
         }
@@ -304,8 +326,11 @@ const Resident = types.model(
       this.form.form.meal.decrementExtras();
 
       const self = this
-      axios.post(`http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`)
-      .then(function (response) {
+      axios({
+        method: 'post',
+        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`,
+        withCredentials: true
+      }).then(function (response) {
         if(response.status === 200) {
           console.log('Guests Post - Success!', response.data)
         }
@@ -340,8 +365,11 @@ const Resident = types.model(
       this.form.form.meal.incrementExtras();
 
       const self = this;
-      axios.delete(`http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`)
-      .then(function (response) {
+      axios({
+        method: 'delete',
+        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`,
+        withCredentials: true
+      }).then(function (response) {
         if(response.status === 200) {
           console.log('Guests Delete - Success!', response.data)
         }
@@ -506,9 +534,12 @@ export const DataStore = types.model(
       this.meal.closed = val;
 
       const self = this;
-      axios
-        .patch(`http://api.comeals.dev/api/v1/meals/${self.meal.id}/closed`, {closed: val})
-        .then(function(response) {
+      axios({
+        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/closed`,
+        method: 'patch',
+        withCredentials: true,
+        data: { closed: val }
+      }).then(function(response) {
           if (response.status === 200) {
             console.log(response.data);
 
@@ -590,9 +621,12 @@ export const DataStore = types.model(
       console.log(obj);
 
       const self = this;
-      axios
-        .patch(`http://api.comeals.dev/api/v1/meals/${self.meal.id}`, obj)
-        .then(function(response) {
+      axios({
+        method: 'patch',
+        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}`,
+        data: obj,
+        withCredentials: true
+      }).then(function(response) {
           if (response.status === 200) {
             self.toggleEditMode()
             console.log(response.data);

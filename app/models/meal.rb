@@ -31,6 +31,9 @@
 #
 
 class Meal < ApplicationRecord
+  audited
+  has_associated_audits
+
   scope :unreconciled, -> { where(reconciliation_id: nil) }
 
   belongs_to :community
@@ -153,7 +156,6 @@ class Meal < ApplicationRecord
         num_meals_created += 1
       else
         puts temp.errors.to_s
-        byebug
       end
 
       # If common dinner was on a Sunday, we

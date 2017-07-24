@@ -30,6 +30,8 @@ class Bill < ApplicationRecord
   belongs_to :resident
   belongs_to :community
 
+  audited associated_with: :meal
+
   counter_culture :meal
   counter_culture :meal, column_name: 'cost', delta_column: 'amount_cents'
   counter_culture :resident

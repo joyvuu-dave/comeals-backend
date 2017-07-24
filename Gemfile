@@ -41,6 +41,7 @@ gem 'counter_culture'
 gem 'rails_12factor', group: :production
 gem 'active_model_serializers', '~> 0.10'
 gem 'pusher'
+gem 'audited', '~> 4.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

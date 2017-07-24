@@ -27,6 +27,8 @@ class Guest < ApplicationRecord
   belongs_to :meal, inverse_of: :guests, touch: true
   belongs_to :resident
 
+  audited associated_with: :meal
+
   counter_culture :meal
   counter_culture :meal, column_name: 'guests_multiplier', delta_column: 'multiplier'
 
