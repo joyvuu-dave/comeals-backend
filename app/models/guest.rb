@@ -24,7 +24,7 @@
 #
 
 class Guest < ApplicationRecord
-  belongs_to :meal, inverse_of: :guests
+  belongs_to :meal, inverse_of: :guests, touch: true
   belongs_to :resident
 
   counter_culture :meal

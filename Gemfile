@@ -40,6 +40,7 @@ gem 'money-rails'
 gem 'counter_culture'
 gem 'rails_12factor', group: :production
 gem 'active_model_serializers', '~> 0.10'
+gem 'pusher'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

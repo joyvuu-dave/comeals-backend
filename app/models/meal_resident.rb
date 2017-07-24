@@ -27,7 +27,7 @@
 #
 
 class MealResident < ApplicationRecord
-  belongs_to :meal, inverse_of: :meal_residents
+  belongs_to :meal, inverse_of: :meal_residents, touch: true
   belongs_to :resident
   belongs_to :community
 

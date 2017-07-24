@@ -20,6 +20,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const store = DataStore.create({meal: id, meals: [{id: id, date: date}]})
   window.store = store
 
+  // Enable pusher logging - don't include this in production
+  Pusher.logToConsole = true;
+
+  var pusher = new Pusher('8affd7213bb4643ca7f1', {
+    cluster: 'us2',
+    encrypted: true
+  });
+
+  var channel = pusher.subscribe(`meal-${id}`);
+  channel.bind('update', function(data) {
+    console.log(data.message);
+    store.billStore.clear();
+    store.residentStore.clear();
+    store.loadDataAsync();
+  });
+
   ReactDOM.render(
     <Provider store={store}>
       <div>

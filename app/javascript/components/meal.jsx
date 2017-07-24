@@ -11,7 +11,7 @@ const Meal = inject("store")(
       }
       <h4>Description</h4>
       {store.editMode ?
-        <textarea value={store.description} onChange={e => store.setDescription(e.target.value)} />
+        <textarea cols="75" rows="4" value={store.description} onChange={e => store.setDescription(e.target.value)} />
         :
         <p>{store.description}</p>
       }
