@@ -1,4 +1,7 @@
 ActiveAdmin.register Reconciliation do
+  # SCOPE
+  scope_to :current_admin_user
+
   # CONFIG
   config.filters = false
   config.per_page = 10

@@ -2,6 +2,9 @@ ActiveAdmin.register Meal do
   # STRONG PARAMS
   permit_params :date, :subdomain, :community_id, guests_attributes: [:id, :name, :multiplier, :resident_id, :meal_id, :_destroy], resident_ids: []
 
+  # SCOPE
+  scope_to :current_admin_user
+
   # CONFIG
   config.filters = false
   config.per_page = 100
@@ -74,14 +77,14 @@ ActiveAdmin.register Meal do
       f.input :date, as: :datepicker
       f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
       f.input :max
-      f.input :residents, as: :check_boxes, label: 'Attendees', collection: Resident.includes(:unit).order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
+      f.input :attendees, as: :check_boxes, label: 'Attendees', collection: Resident.where(community_id: 1).includes(:unit).order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
     end
     f.inputs do
       f.has_many :guests, allow_destroy: true, heading: 'Guests', new_record: true do |g|
         g.input :_destroy, as: :hidden
         g.input :name
         g.input :multiplier, label: 'Price Category', as: :select, include_blank: false, collection: [['Adult', 2], ['Child', 1]]
-        g.input :resident, label: 'Host', collection: Resident.order('name')
+        g.input :resident, label: 'Host', collection: Resident.where(community_id: 1).order('name')
         g.input :meal_id, as: :hidden, input_html: { value: meal.id }
       end
     end

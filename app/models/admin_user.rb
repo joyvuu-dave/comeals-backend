@@ -25,6 +25,24 @@
 class AdminUser < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, 
+  devise :database_authenticatable,
          :recoverable, :rememberable, :trackable, :validatable
+
+  has_one :community_admin_user
+  has_one :community, through: :community_admin_user
+
+  has_many :bills, through: :community
+  has_many :units, through: :community
+  has_many :meals, through: :community
+  has_many :reconciliations, through: :community
+  has_many :residents, through: :community
+  has_many :units, through: :community
+
+  def admin_users
+    AdminUser.where(id: id)
+  end
+
+  def communities
+    Community.where(id: community.id)
+  end
 end

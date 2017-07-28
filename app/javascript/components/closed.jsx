@@ -3,7 +3,7 @@ import { inject, observer } from 'mobx-react'
 
 const Closed = inject("store")(
   observer(({store}) =>
-    <button className={store.meal.closed ? "warning" : "success"} onClick={store.toggleClosed}>{store.meal.closed ? "Closed" : "Open"}</button>
+    <button className={"button " + store.meal.closed ? "is-warning" : "is-success"} onClick={store.toggleClosed}>{store.meal.closed ? "Closed" : "Open"}</button>
   )
 )
 

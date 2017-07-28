@@ -7,7 +7,7 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 # AdminUser
-AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password')
+admin_user = AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password')
 
 puts "#{AdminUser.count} AdminUser created"
 
@@ -16,6 +16,11 @@ puts "#{AdminUser.count} AdminUser created"
 community = Community.create!(name: "Swan's Way", cap: 250, rotation_length: 13)
 
 puts "#{Community.count} Community created"
+
+# CommunityAdminUser
+CommunityAdminUser.create!(community_id: community.id, admin_user_id: admin_user.id)
+
+puts "#{CommunityAdminUser.count} CommunityAdminUser created"
 
 # Managers
 manager = Manager.create!(email: 'manager@example.com', password: 'password')

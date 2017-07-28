@@ -2,6 +2,9 @@ ActiveAdmin.register Unit do
   # STRONG PARAMS
   permit_params :name, :community_id
 
+  # SCOPE
+  scope_to :current_admin_user
+
   # CONFIG
   config.filters = false
   config.per_page = 10

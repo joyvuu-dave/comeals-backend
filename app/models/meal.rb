@@ -128,17 +128,6 @@ class Meal < ApplicationRecord
     (cost / multiplier.to_f).ceil
   end
 
-  # Report Methods
-  def self.unreconciled_ave_cost
-    val = 2 * ((Meal.unreconciled.pluck(:cost).reduce(&:+).to_i / Meal.unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }.to_f) / 100.to_f)
-    val.nan? ? '--' : "$#{sprintf('%0.02f', val)}/adult"
-  end
-
-  def self.unreconciled_ave_number_of_attendees
-    val = (Meal.unreconciled.reduce(0) { |sum, meal| sum + meal.attendees_count } / Meal.unreconciled.count.to_f).round(1)
-    val.nan? ? '--' : val
-  end
-
   def self.create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
     # Are we finished?
     return num_meals_created if start_date >= end_date

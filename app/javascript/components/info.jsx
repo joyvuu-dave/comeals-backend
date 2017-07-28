@@ -4,7 +4,7 @@ import DisplayDate from './display_date'
 
 const Info = inject("store")(
   observer(({store}) =>
-    <section className="pink">
+    <section>
       <DisplayDate />
       <table>
         <thead>

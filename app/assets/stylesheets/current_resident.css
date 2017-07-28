@@ -12,60 +12,93 @@
  *
  *= require_self
  */
+
+:root {
+  --page-width: 800px;
+  --section-height: 600px;
+  --my-orange: #F4A261;
+  --bulma-gray: hsl(0, 0%, 48%);
+  --mango-tango: #FF8C42;
+  --hasana-yellow: #E9C46A;
+  --livid: #6699CC;
+}
+
+body {
+  background-color: var(--livid);
+}
+
 header {
-  min-height: 50px;
-  background-color: orange;
+  display: flex;
+  justify-content: space-between;
+  height: 35px;
+  background-color: var(--hasana-yellow);
 }
 
-#subheader {
-  display: grid;
-  min-height: 100px;
-  grid-template-columns: 2fr 1fr;
-}
-
+/* Flex container, centered content*/
 main {
-  display: grid;
-  min-height: 660px;
-  grid-template-columns: 50% 50%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  min-width: var(--page-width);
 }
 
-section {
+.center-box {
+  width: var(--page-width);
+  margin: 1em 0 1em 0;
+}
+
+.meal-box {
   border: 1px solid black;
 }
 
-.hidden {
-  visibility: hidden;
+#meal {
+  height: var(--section-height);
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 25px 1fr 1fr;
+  grid-template-areas:
+    "a1 a1 .   .  .  .   .  .  .   .  .  . "
+    "a2 a2 a2  a2 a3 a3  a3 a3 a3  a3 a3 a3"
+    "a4 a4 a4  a4 a4 a4  a5 a5 a5  a5 a5 a5";
 }
 
-.warning {
-  background-color: red;
+.date {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  grid-area: a2;
 }
 
-.success {
-  background-color: green;
-  color: white;
+.menu {
+  grid-area: a3;
+  display: grid;
+  grid-template-rows: 1fr 4fr;
 }
 
-.left {
-  float: left;
+.menu-title {
+
 }
 
-.right {
-  float: right;
+.menu-text {
+
 }
 
-.pink {
-  background-color: pink;
+.cooks {
+  grid-area: a4;
 }
 
-.green {
-  background-color: green;
+.info {
+  grid-area: a5;
 }
 
-.yellow {
-  background-color: yellow;
+#attendees {
+  min-height: var(--section-height);
 }
 
-.cyan {
-  background-color: cyan;
+.button-bar {
+  grid-area: a1;
+  display: flex;
+  justify-content: space-between;
 }

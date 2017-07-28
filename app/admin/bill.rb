@@ -2,6 +2,9 @@ ActiveAdmin.register Bill do
   # STRONG PARAMS
   permit_params :meal_id, :resident_id, :community_id, :amount, :subdomain
 
+  # SCOPE
+  scope_to :current_admin_user
+
   # CONFIG
   config.per_page = 100
   config.sort_order = 'date'

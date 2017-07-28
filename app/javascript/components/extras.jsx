@@ -16,7 +16,7 @@ const Extras = inject("store")(
           {store.meal.max !== null ? <span>{' '}Max:{store.meal.max}</span> : null}
         </label>
         :
-        <label className="hidden"><input type="text" placeholder="Placeholder" /></label>
+        <label className="is-hidden"><input type="text" placeholder="Placeholder" /></label>
       }
     </div>
   )

@@ -30,9 +30,22 @@ class Community < ApplicationRecord
   has_many :residents, dependent: :destroy
   has_many :guests, through: :residents, dependent: :destroy
   has_many :units, dependent: :destroy
+  has_many :community_admin_users, dependent: :destroy
+  has_many :admin_users, through: :community_admin_users
 
   def cap
     read_attribute(:cap) || Float::INFINITY
+  end
+
+  # Report Methods
+  def unreconciled_ave_cost
+    val = 2 * ((meals.unreconciled.pluck(:cost).reduce(&:+).to_i / meals.unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }.to_f) / 100.to_f)
+    val.nan? ? '--' : "$#{sprintf('%0.02f', val)}/adult"
+  end
+
+  def unreconciled_ave_number_of_attendees
+    val = (meals.unreconciled.reduce(0) { |sum, meal| sum + meal.attendees_count } / meals.unreconciled.count.to_f).round(1)
+    val.nan? ? '--' : val
   end
 
 end

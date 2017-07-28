@@ -2,6 +2,9 @@ ActiveAdmin.register Resident do
   # STRONG PARAMS
   permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian
 
+  # SCOPE
+  scope_to :current_admin_user
+
   # CONFIG
   config.filters = false
   config.per_page = 10

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724165619) do
+ActiveRecord::Schema.define(version: 20170726182816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,15 @@ ActiveRecord::Schema.define(version: 20170724165619) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_communities_on_name", unique: true
     t.index ["slug"], name: "index_communities_on_slug", unique: true
+  end
+
+  create_table "community_admin_users", force: :cascade do |t|
+    t.bigint "community_id"
+    t.bigint "admin_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_user_id"], name: "index_community_admin_users_on_admin_user_id"
+    t.index ["community_id"], name: "index_community_admin_users_on_community_id"
   end
 
   create_table "community_managers", force: :cascade do |t|
@@ -219,6 +228,8 @@ ActiveRecord::Schema.define(version: 20170724165619) do
   add_foreign_key "bills", "communities"
   add_foreign_key "bills", "meals"
   add_foreign_key "bills", "residents"
+  add_foreign_key "community_admin_users", "admin_users"
+  add_foreign_key "community_admin_users", "communities"
   add_foreign_key "community_managers", "communities"
   add_foreign_key "community_managers", "managers"
   add_foreign_key "guests", "meals"

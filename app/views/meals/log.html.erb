@@ -3,7 +3,7 @@
 <h2>Audits</h2>
 <ul>
 <% @meal.audits.each do |audit| %>
-  <li><%= "Person: #{audit.user.name}, Changes: #{audit.audited_changes}" %></li>
+  <li><%= "#{audit.user&.name || 'Admin'} made this change: #{audit.audited_changes}" %></li>
 <% end %>
 </ul>
 
@@ -11,6 +11,6 @@
 <h2>Assoicated Audits</h2>
 <ul>
 <% @meal.associated_audits.each do |audit| %>
-  <li><%= "Person: #{audit.user.name}, Changes: #{audit.audited_changes}" %></li>
+  <li><%= "Person: #{audit.user&.name || 'Admin'} made this change: #{audit.audited_changes}" %></li>
 <% end %>
 </ul>

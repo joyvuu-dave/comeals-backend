@@ -4,12 +4,19 @@ import { Provider } from 'mobx-react'
 
 import { DataStore } from '../../stores/data_store'
 
+import Header from '../../components/header'
 import Meal from '../../components/meal'
 import Bills from '../../components/bills'
 import Extras from '../../components/extras'
 import Closed from '../../components/closed'
 import Info from '../../components/info'
 import AttendeeForm from '../../components/attendee_form'
+import ButtonBar from '../../components/button_bar'
+import DateBox from '../../components/date_box'
+import MenuBox from '../../components/menu_box'
+import CooksBox from '../../components/cooks_box'
+import InfoBox from '../../components/info_box'
+import AttendeesBox from '../../components/attendees_box'
 
 document.addEventListener('DOMContentLoaded', () => {
   const node = document.getElementById('meal-id')
@@ -45,25 +52,19 @@ document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
     <Provider store={store}>
       <div>
-        <header>
-          <button className="left" onClick={store.calendar}>Calendar</button>
-          <button className="right" onClick={store.logout}>Logout</button>
-        </header>
-        <div id="subheader">
-          <Info />
-          <section className="cyan">
-            <Closed />
-            <Extras />
-          </section>
-        </div>
+        <Header />
         <main>
-          <section className="green">
-            <Meal/>
-            <h3>Cooks</h3>
-            <Bills/>
+          <section className="center-box">
+            <div id="meal">
+              <ButtonBar />
+              <DateBox />
+              <MenuBox />
+              <CooksBox />
+              <InfoBox />
+            </div>
           </section>
-          <section className="yellow">
-            <AttendeeForm />
+          <section className="center-box">
+            <AttendeesBox />
           </section>
         </main>
       </div>

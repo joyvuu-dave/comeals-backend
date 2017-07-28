@@ -23,7 +23,7 @@ class Unit < ApplicationRecord
   has_many :residents, dependent: :destroy
   belongs_to :community
 
-  validates :name, uniqueness: true, presence: true
+  validates_uniqueness_of :name, scope: :community_id
 
   # DERIVED DATA
   def balance

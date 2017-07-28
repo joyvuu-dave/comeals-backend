@@ -7,9 +7,9 @@ ActiveAdmin.register_page 'Dashboard' do
     # Here is an example of a simple dashboard with columns and panels.
     columns do
       column do
-        panel "Units - #{Unit.count(true)}" do
+        panel "Units - #{current_admin_user.units.count(true)}" do
           ul do
-            Unit.order('name').map do |unit|
+            current_admin_user.units.order('name').map do |unit|
               li link_to(unit.name, admin_unit_path(unit))
             end
           end
@@ -17,9 +17,9 @@ ActiveAdmin.register_page 'Dashboard' do
       end
 
       column do
-        panel "Residents - #{Resident.count(true)}" do
+        panel "Residents - #{current_admin_user.residents.count(true)}" do
           ul do
-            Resident.order('name').map do |resident|
+            current_admin_user.residents.order('name').map do |resident|
               li link_to(resident.name, admin_resident_path(resident))
             end
           end
@@ -27,9 +27,9 @@ ActiveAdmin.register_page 'Dashboard' do
       end
 
       column do
-        panel "Meals - #{Meal.count(true)}" do
+        panel "Meals - #{current_admin_user.meals.count(true)}" do
           ul do
-            Meal.order('date DESC').map do |meal|
+            current_admin_user.meals.order('date DESC').map do |meal|
               li link_to(meal.date, admin_meal_path(meal))
             end
           end
@@ -39,8 +39,8 @@ ActiveAdmin.register_page 'Dashboard' do
       column do
         panel 'Averages' do
           ul do
-            li "Cost per adult: #{Meal.unreconciled_ave_cost}"
-            li "Attendees per meal: #{Meal.unreconciled_ave_number_of_attendees}"
+            li "Cost per adult: #{current_admin_user.community.unreconciled_ave_cost}"
+            li "Attendees per meal: #{current_admin_user.community.unreconciled_ave_number_of_attendees}"
           end
         end
       end
