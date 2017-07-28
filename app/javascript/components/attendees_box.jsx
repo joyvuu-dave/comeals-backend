@@ -1,9 +1,13 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 
+const styles = {
+  minHeight: 'var(--section-height)'
+};
+
 const AttendeesBox = inject("store")(
   observer(({store}) =>
-    <div id="attendees">
+    <div style={styles}>
       <button className="button is-warning">Close</button>
       <table className="table">
         <thead>

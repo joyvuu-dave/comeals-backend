@@ -1,16 +1,21 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 
+
 const Header = inject("store")(
   observer(({store}) =>
-    <header>
-      <nav className="navbar-menu is-active">
-        <div className="navbar-end">
-          <a className="navbar-item" onClick={store.logout}>Logout</a>
-        </div>
-      </nav>
+    <header style={styles}>
+      <a className="navbar-item" onClick={store.logout}>Logout</a>
     </header>
   )
 )
 
 export default Header;
+
+
+const styles = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  height: '35px',
+  backgroundColor: 'var(--hasana-yellow)'
+}

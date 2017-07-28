@@ -2,7 +2,6 @@ import React from 'react'
 import Cookie from 'js-cookie'
 import axios from 'axios'
 
-
 class ManagersShow extends React.Component {
   constructor(props) {
     super(props)

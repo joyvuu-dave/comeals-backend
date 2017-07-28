@@ -53,9 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     <Provider store={store}>
       <div>
         <Header />
-        <main>
-          <section className="center-box">
-            <div id="meal">
+        <main style={styles.main}>
+          <section style={styles.section}>
+            <div style={styles.meal}>
               <ButtonBar />
               <DateBox />
               <MenuBox />
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <InfoBox />
             </div>
           </section>
-          <section className="center-box">
+          <section style={styles.section}>
             <AttendeesBox />
           </section>
         </main>
@@ -72,3 +72,28 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("root")
   )
 })
+
+/* Flex container, centered content*/
+const styles = {
+  main: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+    minWidth: 'var(--page-width)'
+  },
+  section: {
+    width: 'var(--page-width)',
+    margin: '1em 0 1em 0'
+  },
+  meal: {
+  height: 'var(--section-height)',
+  display: 'grid',
+  gridGap: '20px',
+  gridTemplateColumns: 'repeat(12, 1fr)',
+  gridTemplateRows: '25px 1fr 1fr',
+  gridTemplateAreas:
+   `"a1 a1 .   .  .  .   .  .  .   .  .  . "
+    "a2 a2 a2  a2 a3 a3  a3 a3 a3  a3 a3 a3"
+    "a4 a4 a4  a4 a4 a4  a5 a5 a5  a5 a5 a5"`
+  }
+};

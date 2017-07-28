@@ -14,10 +14,8 @@
  */
 
 :root {
-  --page-width: 800px;
+  --page-width: 600px;
   --section-height: 600px;
-  --my-orange: #F4A261;
-  --bulma-gray: hsl(0, 0%, 48%);
   --mango-tango: #FF8C42;
   --hasana-yellow: #E9C46A;
   --livid: #6699CC;
@@ -25,80 +23,4 @@
 
 body {
   background-color: var(--livid);
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  height: 35px;
-  background-color: var(--hasana-yellow);
-}
-
-/* Flex container, centered content*/
-main {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  min-width: var(--page-width);
-}
-
-.center-box {
-  width: var(--page-width);
-  margin: 1em 0 1em 0;
-}
-
-.meal-box {
-  border: 1px solid black;
-}
-
-#meal {
-  height: var(--section-height);
-  display: grid;
-  grid-gap: 20px;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 25px 1fr 1fr;
-  grid-template-areas:
-    "a1 a1 .   .  .  .   .  .  .   .  .  . "
-    "a2 a2 a2  a2 a3 a3  a3 a3 a3  a3 a3 a3"
-    "a4 a4 a4  a4 a4 a4  a5 a5 a5  a5 a5 a5";
-}
-
-.date {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  grid-area: a2;
-}
-
-.menu {
-  grid-area: a3;
-  display: grid;
-  grid-template-rows: 1fr 4fr;
-}
-
-.menu-title {
-
-}
-
-.menu-text {
-
-}
-
-.cooks {
-  grid-area: a4;
-}
-
-.info {
-  grid-area: a5;
-}
-
-#attendees {
-  min-height: var(--section-height);
-}
-
-.button-bar {
-  grid-area: a1;
-  display: flex;
-  justify-content: space-between;
 }

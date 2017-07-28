@@ -1,9 +1,14 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 
+const styles = {
+  gridArea: 'a4',
+  border: '1px solid'
+};
+
 const CooksBox = inject("store")(
   observer(({store}) =>
-    <div className="meal-box cooks">
+    <div style={styles}>
       <h2 className="title">Cooks</h2>
       <table className="table is-bordered is-striped is-narrow">
         <tbody>
