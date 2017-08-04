@@ -1,11 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
 
-import ManagersLogin from '../../components/managers/login'
+import ManagersLogin from "../../components/managers/login";
 
-document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(
-    <ManagersLogin />,
-    document.getElementById("root")
-  )
-})
+document.addEventListener("DOMContentLoaded", () => {
+  ReactDOM.render(<ManagersLogin />, document.getElementById("root"));
+});

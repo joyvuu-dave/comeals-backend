@@ -1,41 +1,86 @@
-import React from 'react'
-import { inject, observer } from 'mobx-react'
+import React from "react";
+import axios from "axios";
+import { inject, observer } from "mobx-react";
 
 const styles = {
-  minHeight: 'var(--section-height)'
+  minHeight: "var(--section-height)"
 };
 
-const AttendeesBox = inject("store")(
-  observer(({store}) =>
+const AttendeeComponent = inject("store")(
+  observer(({ store, resident }) =>
+    <tr>
+      <td>
+        {resident.name}{" "}
+        {resident.guests > 0 &&
+          <span className="badge badge-info">
+            {resident.guests} {resident.guests === 1 ? "Guest" : "Guests"}
+          </span>}
+      </td>
+      <td>
+        <input
+          type="checkbox"
+          checked={resident.attending}
+          onChange={e => resident.setAttending(e.target.checked)}
+          disabled={!store.canAdd || (resident.attending && store.meal.closed)}
+        />
+      </td>
+      <td>
+        <input
+          type="checkbox"
+          checked={resident.late}
+          onChange={e => resident.setLate(e.target.checked)}
+          disabled={!resident.attending}
+        />
+      </td>
+      <td>
+        <input
+          type="checkbox"
+          checked={resident.vegetarian}
+          onChange={e => resident.setVegetarian(e.target.checked)}
+          disabled={store.meal.closed || !resident.attending}
+        />
+      </td>
+      <td>
+        <button onClick={e => resident.addGuest()} disabled={!store.canAdd}>
+          + Guest
+        </button>{" "}
+        <button
+          onClick={e => resident.removeGuest()}
+          disabled={store.meal.closed || resident.guests === 0}
+        >
+          - Guest
+        </button>
+      </td>
+    </tr>
+  )
+);
+
+const AttendeeForm = inject("store")(
+  observer(({ store }) =>
     <div style={styles}>
-      <button className="button is-warning">Close</button>
-      <table className="table">
+      <button onClick={store.toggleClosed}>
+        {store.meal.closed ? "Re-Open Meal" : "Close Meal"}
+      </button>
+      <table>
         <thead>
           <tr>
             <th>Name</th>
             <th>Attending</th>
             <th>Late</th>
             <th>Veg</th>
-            <th>Guests</th>
-            <th></th>
+            <th />
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Bowen</td>
-            <td><input type="checkbox" className="checkbox-inout" /></td>
-            <td><input type="checkbox" className="checkbox-inout" /></td>
-            <td><input type="checkbox" className="checkbox-inout" /></td>
-            <td>0</td>
-            <td>
-              <button className="button is-small is-success">+ Guest</button>{' '}
-              <button className="button is-small is-warning">- Guest</button>
-            </td>
-          </tr>
+          {store.residents
+            .values()
+            .map(resident =>
+              <AttendeeComponent key={resident.id} resident={resident} />
+            )}
         </tbody>
       </table>
     </div>
   )
-)
+);
 
-export default AttendeesBox;
+export default AttendeeForm;

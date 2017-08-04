@@ -13,9 +13,9 @@ const Meal = types.model(
     date: types.Date,
     get max() {
       if (this.extras === "") {
-        return null
+        return null;
       } else {
-        return Number(this.extras) + this.form.attendeesCount
+        return Number(this.extras) + this.form.attendeesCount;
       }
     },
     get form() {
@@ -25,7 +25,7 @@ const Meal = types.model(
   {
     resetExtras() {
       this.extras = "";
-      console.log('Extras reset to empty string.')
+      console.log("Extras reset to empty string.");
       return "";
     },
     setExtras(val) {
@@ -33,17 +33,18 @@ const Meal = types.model(
       const self = this;
 
       // Scenario #1: empty string
-      if(val === "") {
+      if (val === "") {
         this.extras = "";
 
         axios({
           url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
-          method: 'patch',
+          method: "patch",
           data: {
             max: null
           },
           withCredentials: true
-        }).then(function(response) {
+        })
+          .then(function(response) {
             if (response.status === 200) {
               console.log("Patch Extras - Success!", response.data);
             }
@@ -80,21 +81,22 @@ const Meal = types.model(
       // Scenario #2: positive integer
       const num = Number.parseInt(Number(val));
       if (Number.isInteger(num) && num >= 0) {
-        this.extras = String(num)
+        this.extras = String(num);
 
         axios({
-          method: 'patch',
+          method: "patch",
           url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
           data: {
             max: self.max
           },
           withCredentials: true
-        }).then(function(response) {
+        })
+          .then(function(response) {
             if (response.status === 200) {
               console.log("Patch Extras - Success!", response.data);
             }
 
-            return String(num);  // return new value of extras as feedback when running function from console
+            return String(num); // return new value of extras as feedback when running function from console
           })
           .catch(function(error) {
             console.log("Patch Extras - Fail!");
@@ -128,7 +130,7 @@ const Meal = types.model(
         return;
       }
 
-      const num = Number.parseInt(Number(this.extras))
+      const num = Number.parseInt(Number(this.extras));
       if (Number.isInteger(num)) {
         const temp = num + 1;
         this.extras = String(temp);
@@ -139,7 +141,7 @@ const Meal = types.model(
         return;
       }
 
-      const num = Number.parseInt(Number(this.extras))
+      const num = Number.parseInt(Number(this.extras));
       if (Number.isInteger(num)) {
         const temp = num - 1;
         this.extras = String(temp);
@@ -147,7 +149,6 @@ const Meal = types.model(
     }
   }
 );
-
 
 const Resident = types.model(
   "Resident",
@@ -172,10 +173,12 @@ const Resident = types.model(
       if (val) {
         self.form.form.meal.decrementExtras();
         axios({
-          method: 'post',
-          url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+          method: "post",
+          url: `http://api.comeals.dev/api/v1/meals/${this
+            .meal_id}/residents/${this.id}`,
           withCredentials: true
-        }).then(function(response) {
+        })
+          .then(function(response) {
             if (response.status === 200) {
               console.log("Post - Success!", response.data);
             }
@@ -207,10 +210,12 @@ const Resident = types.model(
       } else {
         self.form.form.meal.incrementExtras();
         axios({
-          method: 'delete',
-          url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+          method: "delete",
+          url: `http://api.comeals.dev/api/v1/meals/${this
+            .meal_id}/residents/${this.id}`,
           withCredentials: true
-        }).then(function(response) {
+        })
+          .then(function(response) {
             if (response.status === 200) {
               console.log("Delete - Success!", response.data);
             }
@@ -244,121 +249,127 @@ const Resident = types.model(
     setLate(val) {
       this.late = val;
 
-      const self = this
+      const self = this;
       axios({
-        method: 'patch',
-        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+        method: "patch",
+        url: `http://api.comeals.dev/api/v1/meals/${this
+          .meal_id}/residents/${this.id}`,
         data: {
           late: val
         },
         withCredentials: true
-      }).then(function (response) {
-        if(response.status === 200) {
-          console.log('Late click - Success!', response.data)
-        }
       })
-      .catch(function (error) {
-        console.log('Late click - Fail!')
-        self.late = !val
+        .then(function(response) {
+          if (response.status === 200) {
+            console.log("Late click - Success!", response.data);
+          }
+        })
+        .catch(function(error) {
+          console.log("Late click - Fail!");
+          self.late = !val;
 
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data
-          const status = error.response.status
-          const headers = error.response.headers
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
 
-          window.alert(data.message)
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message
-        }
-        const config = error.config
-      })
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
     },
     setVegetarian(val) {
       this.vegetarian = val;
 
-      const self = this
+      const self = this;
       axios({
-        method: 'patch',
-        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}`,
+        method: "patch",
+        url: `http://api.comeals.dev/api/v1/meals/${this
+          .meal_id}/residents/${this.id}`,
         data: {
           vegetarian: val
         },
         withCredentials: true
-      }).then(function (response) {
-        if(response.status === 200) {
-          console.log('Veg click - Success!', response.data)
-        }
       })
-      .catch(function (error) {
-        console.log('Veg click - Fail!')
-        self.vegetarian = !val
+        .then(function(response) {
+          if (response.status === 200) {
+            console.log("Veg click - Success!", response.data);
+          }
+        })
+        .catch(function(error) {
+          console.log("Veg click - Fail!");
+          self.vegetarian = !val;
 
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data
-          const status = error.response.status
-          const headers = error.response.headers
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
 
-          window.alert(data.message)
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message
-        }
-        const config = error.config
-      })
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
     },
     addGuest() {
-      this.guests = this.guests + 1
+      this.guests = this.guests + 1;
       this.form.form.meal.decrementExtras();
 
-      const self = this
+      const self = this;
       axios({
-        method: 'post',
-        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`,
+        method: "post",
+        url: `http://api.comeals.dev/api/v1/meals/${this
+          .meal_id}/residents/${this.id}/guests`,
         withCredentials: true
-      }).then(function (response) {
-        if(response.status === 200) {
-          console.log('Guests Post - Success!', response.data)
-        }
       })
-      .catch(function (error) {
-        console.log('Guests Post - Fail!')
-        self.guests = self.guests - 1;
-        self.form.form.meal.incrementExtras();
+        .then(function(response) {
+          if (response.status === 200) {
+            console.log("Guests Post - Success!", response.data);
+          }
+        })
+        .catch(function(error) {
+          console.log("Guests Post - Fail!");
+          self.guests = self.guests - 1;
+          self.form.form.meal.incrementExtras();
 
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data
-          const status = error.response.status
-          const headers = error.response.headers
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
 
-          window.alert(data.message)
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message
-        }
-        const config = error.config
-      })
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
     },
     removeGuest() {
       this.guests = this.guests - 1;
@@ -366,38 +377,40 @@ const Resident = types.model(
 
       const self = this;
       axios({
-        method: 'delete',
-        url: `http://api.comeals.dev/api/v1/meals/${this.meal_id}/residents/${this.id}/guests`,
+        method: "delete",
+        url: `http://api.comeals.dev/api/v1/meals/${this
+          .meal_id}/residents/${this.id}/guests`,
         withCredentials: true
-      }).then(function (response) {
-        if(response.status === 200) {
-          console.log('Guests Delete - Success!', response.data)
-        }
       })
-      .catch(function (error) {
-        console.log('Guests Delete - Fail!')
-        self.guests -= 1;
-        self.form.form.meal.decrementExtras();
+        .then(function(response) {
+          if (response.status === 200) {
+            console.log("Guests Delete - Success!", response.data);
+          }
+        })
+        .catch(function(error) {
+          console.log("Guests Delete - Fail!");
+          self.guests -= 1;
+          self.form.form.meal.decrementExtras();
 
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data
-          const status = error.response.status
-          const headers = error.response.headers
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
 
-          window.alert(data.message)
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message
-        }
-        const config = error.config
-      })
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
     }
   }
 );
@@ -483,9 +496,8 @@ export const DataStore = types.model(
         }, 0);
     },
     get mealResidentsCount() {
-      return this.residents
-        .values()
-        .filter(resident => resident.attending).length;
+      return this.residents.values().filter(resident => resident.attending)
+        .length;
     },
     get attendeesCount() {
       return this.guestsCount + this.mealResidentsCount;
@@ -496,29 +508,31 @@ export const DataStore = types.model(
         .filter(resident => resident.attending && resident.vegetarian).length;
     },
     get omnivoreCount() {
-      return this.attendeesCount - this.vegetarianCount
+      return this.attendeesCount - this.vegetarianCount;
     },
     get lateCount() {
-      return this.residents
-        .values()
-        .filter(resident => resident.late).length;
+      return this.residents.values().filter(resident => resident.late).length;
     },
     get extras() {
       // Extras only show when the meal is closed
       if (!this.meal.closed) {
-        return 'n/a'
+        return "n/a";
       }
 
-      if (this.meal.closed && typeof this.meal.max === 'number') {
-        return this.meal.max - this.attendeesCount
+      if (this.meal.closed && typeof this.meal.max === "number") {
+        return this.meal.max - this.attendeesCount;
       } else {
-        return ''
+        return "";
       }
     },
     get canAdd() {
-      return (!this.meal.closed) ||
-             (this.meal.closed && this.extas === '') ||
-             (this.meal.closed && typeof this.extras === 'number' && this.extras >= 1)
+      return (
+        !this.meal.closed ||
+        (this.meal.closed && this.extas === "") ||
+        (this.meal.closed &&
+          typeof this.extras === "number" &&
+          this.extras >= 1)
+      );
     }
   },
   {
@@ -536,10 +550,11 @@ export const DataStore = types.model(
       const self = this;
       axios({
         url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/closed`,
-        method: 'patch',
+        method: "patch",
         withCredentials: true,
         data: { closed: val }
-      }).then(function(response) {
+      })
+        .then(function(response) {
           if (response.status === 200) {
             console.log(response.data);
 
@@ -551,7 +566,7 @@ export const DataStore = types.model(
         })
         .catch(function(error) {
           self.meal.closed = !val;
-          console.log('Meal closed patch - Fail!')
+          console.log("Meal closed patch - Fail!");
 
           if (error.response) {
             // The request was made and the server responded with a status code
@@ -581,6 +596,9 @@ export const DataStore = types.model(
     },
     calendar() {
       window.location.href = "/calendar";
+    },
+    history() {
+      window.open(`/meals/${this.id}/log`, "_blank");
     },
     submit() {
       // Check for errors with bills
@@ -622,13 +640,14 @@ export const DataStore = types.model(
 
       const self = this;
       axios({
-        method: 'patch',
+        method: "patch",
         url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}`,
         data: obj,
         withCredentials: true
-      }).then(function(response) {
+      })
+        .then(function(response) {
           if (response.status === 200) {
-            self.toggleEditMode()
+            self.toggleEditMode();
             console.log(response.data);
           }
         })
@@ -691,11 +710,17 @@ export const DataStore = types.model(
       this.meal.description = data.description;
       this.meal.closed = data.closed;
       if (data.max === null) {
-        this.meal.extras = ''
+        this.meal.extras = "";
       } else {
-        const residents_count = data.residents.filter((resident) => resident.attending).length
-        const guests_count =  data.residents.map((resident) => resident.guests).reduce(function(sum, value) { return sum + value; }, 0);
-        this.meal.extras = String(residents_count + guests_count)
+        const residents_count = data.residents.filter(
+          resident => resident.attending
+        ).length;
+        const guests_count = data.residents
+          .map(resident => resident.guests)
+          .reduce(function(sum, value) {
+            return sum + value;
+          }, 0);
+        this.meal.extras = String(residents_count + guests_count);
       }
 
       // Assign Residents
@@ -745,6 +770,12 @@ export const DataStore = types.model(
     },
     afterCreate() {
       this.loadDataAsync();
+    },
+    clearResidents() {
+      this.residentStore.residents.clear();
+    },
+    clearBills() {
+      this.billStore.bills.clear();
     }
   }
 );

@@ -1,11 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
 
-import ResidentsCalendar from '../../components/residents/calendar'
+import ResidentsCalendar from "../../components/residents/calendar";
 
-document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(
-    <ResidentsCalendar />,
-    document.getElementById("root")
-  )
-})
+document.addEventListener("DOMContentLoaded", () => {
+  ReactDOM.render(<ResidentsCalendar />, document.getElementById("root"));
+});

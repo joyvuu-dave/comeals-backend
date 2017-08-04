@@ -1,21 +1,24 @@
-import React from 'react'
-import { inject, observer } from 'mobx-react'
-
+import React from "react";
+import { inject, observer } from "mobx-react";
+import moment from "moment";
 
 const Header = inject("store")(
-  observer(({store}) =>
-    <header style={styles}>
-      <a className="navbar-item" onClick={store.logout}>Logout</a>
+  observer(({ store }) =>
+    <header style={styles.header}>
+      <a className="button button-link" onClick={store.logout}>
+        logout
+      </a>
     </header>
   )
-)
+);
 
 export default Header;
 
-
 const styles = {
-  display: 'flex',
-  justifyContent: 'flex-end',
-  height: '35px',
-  backgroundColor: 'var(--hasana-yellow)'
-}
+  header: {
+    display: "flex",
+    justifyContent: "flex-end",
+    height: "var(--input-height)",
+    backgroundColor: "var(--hasana-yellow)"
+  }
+};

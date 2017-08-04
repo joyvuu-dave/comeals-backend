@@ -1,11 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
 
-import CommunitiesNew from '../../components/communities/new'
+import CommunitiesNew from "../../components/communities/new";
 
-document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(
-    <CommunitiesNew />,
-    document.getElementById("root")
-  )
-})
+document.addEventListener("DOMContentLoaded", () => {
+  ReactDOM.render(<CommunitiesNew />, document.getElementById("root"));
+});

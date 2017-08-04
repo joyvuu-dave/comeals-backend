@@ -1,20 +1,33 @@
-import React from 'react'
-import { inject, observer } from 'mobx-react'
+import React from "react";
+import { inject, observer } from "mobx-react";
 
 const styles = {
-  border: '1px solid',
-  gridArea: 'a3',
-  display: 'grid',
-  gridTemplateRows: '1fr 4fr'
+  main: {
+    gridArea: "a3",
+    display: "grid",
+    gridTemplateRows: "1fr 4fr",
+    border: "0.5px solid",
+    borderRadius: "var(--button-border-radius"
+  },
+  text: {
+    height: "100%",
+    resize: "none"
+  }
 };
 
 const MenuBox = inject("store")(
-  observer(({store}) =>
-    <div style={styles}>
-      <div>Menu</div>
-      <div>Crawfish etoufe, beer, other</div>
+  observer(({ store }) =>
+    <div style={styles.main}>
+      <h2 className="title">Menu</h2>
+      <textarea
+        className={store.editMode ? "" : "offwhite"}
+        style={styles.text}
+        value={store.meal.description}
+        onChange={store.setDescription}
+        disabled={!store.editMode}
+      />
     </div>
   )
-)
+);
 
 export default MenuBox;
