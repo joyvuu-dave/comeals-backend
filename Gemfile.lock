@@ -89,6 +89,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
+    connection_pool (2.2.1)
     counter_culture (1.7.0)
       activerecord (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -298,6 +299,7 @@ DEPENDENCIES
   bootsnap
   byebug
   coffee-rails (~> 4.2)
+  connection_pool
   counter_culture
   dalli
   devise
