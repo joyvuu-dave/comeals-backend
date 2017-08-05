@@ -8,7 +8,7 @@ class ManagersSignUp extends React.Component {
   handleUpdate(form) {}
   handleSubmit(values) {
     axios
-      .post("http://api.comeals.dev/api/v1/managers", {
+      .post(`${window.host}api.comeals${window.topLevel}/api/v1/managers`, {
         email: values.email,
         password: values.password
       })
@@ -16,7 +16,7 @@ class ManagersSignUp extends React.Component {
         if (response.status === 200) {
           Cookie.set("token", response.data.token, {
             expires: 7300,
-            domain: ".comeals.dev"
+            domain: `.comeals${window.topLevel}`
           });
           window.location.href = `/manager/${response.data.id}`;
         }

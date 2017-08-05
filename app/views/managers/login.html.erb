@@ -1,1 +1,9 @@
+
+<%= content_tag :div,
+  id: "meal-id",
+  data: {
+    production: Rails.env.production?
+}.to_json do %>
+<% end %>
+
 <%= javascript_pack_tag 'managers/login' %>

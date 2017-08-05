@@ -1,2 +1,10 @@
+
+<%= content_tag :div,
+  id: "meal-id",
+  data: {
+    production: Rails.env.production?
+}.to_json do %>
+<% end %>
+
 <%= stylesheet_pack_tag 'residents/calendar' %>
 <%= javascript_pack_tag 'residents/calendar' %>

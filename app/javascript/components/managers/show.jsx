@@ -30,7 +30,9 @@ class ManagersShow extends React.Component {
 
     const self = this;
     axios
-      .get("http://api.comeals.dev/api/v1/managers/communities")
+      .get(
+        `${window.host}api.comeals${window.topLevel}/api/v1/managers/communities`
+      )
       .then(function(response) {
         if (response.status === 200) {
           self.setState({ communities: response.data.communities });
@@ -59,8 +61,8 @@ class ManagersShow extends React.Component {
   }
 
   logout() {
-    Cookie.remove("token", { domain: ".comeals.dev" });
-    window.location.href = "http://www.comeals.dev";
+    Cookie.remove("token", { domain: `.comeals${window.topLevel}` });
+    window.location.href = `${window.host}www.comeals${window.topLevel}`;
   }
 
   createCommunity() {

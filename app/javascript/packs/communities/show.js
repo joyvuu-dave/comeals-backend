@@ -8,6 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const data = JSON.parse(node.getAttribute("data"));
   const id = Number.parseInt(data.id);
   const name = data.name;
+  const production = data.production;
+  if (production) {
+    window.host = "https://";
+    window.topLevel = ".com";
+  } else {
+    window.host = "http://";
+    window.topLevel = ".dev";
+  }
 
   ReactDOM.render(
     <CommunitiesShow id={id} name={name} />,

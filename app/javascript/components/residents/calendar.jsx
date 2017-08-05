@@ -9,14 +9,20 @@ class ResidentsCalendar extends React.Component {
     const { calendar } = this.refs;
     $(calendar).fullCalendar({
       eventSources: [
-        { url: "http://api.comeals.dev/api/v1/meals", color: "#729f98" },
-        { url: "http://api.comeals.dev/api/v1/bills", color: "#aa863a" }
+        {
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals`,
+          color: "#729f98"
+        },
+        {
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/bills`,
+          color: "#aa863a"
+        }
       ]
     });
   }
 
   logout() {
-    Cookie.remove("token", { domain: ".comeals.dev" });
+    Cookie.remove("token", { domain: `.comeals${window.topLevel}` });
     window.location.href = "/";
   }
 

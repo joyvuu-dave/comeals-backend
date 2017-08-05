@@ -1,9 +1,17 @@
+
+<%= content_tag :div,
+  id: "meal-id",
+  data: {
+    production: Rails.env.production?
+}.to_json do %>
+<% end %>
+
 <h1>Welcome to Comeals</h1>
 <p>Manage your community!</p>
 <p>
   <h2>Manager</h2>
   <a href="/managers/sign-up">Sign Up</a>
-  <a href="http://admin.comeals.dev/">Login</a>
+  <a href="#{<%= Rails.env.production? ? 'https://' : 'http://' %>admin.comeals<%= Rails.env.production? ? '.com/' : '.dev/' %>}">Login</a>
 </p>
 
 </br>

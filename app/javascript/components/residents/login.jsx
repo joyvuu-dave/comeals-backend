@@ -8,19 +8,22 @@ class ResidentsLogin extends React.Component {
   handleUpdate(form) {}
   handleSubmit(values) {
     axios
-      .post("http://api.comeals.dev/api/v1/residents/token", {
-        email: values.email,
-        password: values.password
-      })
+      .post(
+        `${window.host}api.comeals${window.topLevel}/api/v1/residents/token`,
+        {
+          email: values.email,
+          password: values.password
+        }
+      )
       .then(function(response) {
         if (response.status === 200) {
           console.log("data", response.data);
           Cookie.set("token", response.data.token, {
             expires: 7300,
-            domain: ".comeals.dev"
+            domain: `.comeals${window.topLevel}`
           });
-          window.location.href = `http://${response.data
-            .slug}.comeals.dev/calendar`;
+          window.location.href = `${window.host}${response.data
+            .slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {

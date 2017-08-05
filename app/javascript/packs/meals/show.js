@@ -18,6 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const data = JSON.parse(node.getAttribute("data"));
   const id = Number.parseInt(data.id);
   const date = new Date(data.date);
+  const production = data.production;
+
+  if (production) {
+    window.host = "https://";
+    window.topLevel = ".com";
+  } else {
+    window.host = "http://";
+    window.topLevel = ".dev";
+  }
 
   const store = DataStore.create({
     meal: id,

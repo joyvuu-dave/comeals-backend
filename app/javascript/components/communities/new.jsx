@@ -7,7 +7,7 @@ class CommunitiesNew extends React.Component {
   handleUpdate(form) {}
   handleSubmit(values) {
     axios
-      .post("http://api.comeals.dev/api/v1/communities", {
+      .post(`${window.host}api.comeals${window.topLevel}/api/v1/communities`, {
         name: values.name
       })
       .then(function(response) {

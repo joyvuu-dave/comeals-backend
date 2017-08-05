@@ -8,10 +8,13 @@ class ManagersLogin extends React.Component {
   handleUpdate(form) {}
   handleSubmit(values) {
     axios
-      .post("http://api.comeals.dev/api/v1/managers/token", {
-        email: values.email,
-        password: values.password
-      })
+      .post(
+        `${window.host}api.comeals${window.topLevel}/api/v1/managers/token`,
+        {
+          email: values.email,
+          password: values.password
+        }
+      )
       .then(function(response) {
         if (response.status === 200) {
           Cookie.set("token", response.data.token, {

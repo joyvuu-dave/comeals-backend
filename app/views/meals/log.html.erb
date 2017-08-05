@@ -1,3 +1,12 @@
+
+<%= content_tag :div,
+  id: "meal-id",
+  data: {
+    production: Rails.env.production?
+}.to_json do %>
+<% end %>
+
+
 <h1><%= @meal.date %></h1>
 
 <table class="table-striped">

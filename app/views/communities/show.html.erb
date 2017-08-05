@@ -2,7 +2,8 @@
   id: "community",
   data: {
     id: @id,
-    name: @name
+    name: @name,
+    production: Rails.env.production?
 }.to_json do %>
 <% end %>
 

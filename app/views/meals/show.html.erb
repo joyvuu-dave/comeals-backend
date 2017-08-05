@@ -3,7 +3,8 @@
   id: "meal-id",
   data: {
     id: @meal.id,
-    date: @meal.date
+    date: @meal.date,
+    production: Rails.env.production?
 }.to_json do %>
 <% end %>
 

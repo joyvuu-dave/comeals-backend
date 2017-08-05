@@ -37,7 +37,8 @@ const Meal = types.model(
         this.extras = null;
 
         axios({
-          url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
+            .id}/max`,
           method: "patch",
           data: {
             max: null,
@@ -86,7 +87,8 @@ const Meal = types.model(
 
         axios({
           method: "patch",
-          url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
+            .id}/max`,
           data: {
             max: self.max,
             socket_id: window.socketId
@@ -176,7 +178,7 @@ const Resident = types.model(
         self.form.form.meal.decrementExtras();
         axios({
           method: "post",
-          url: `http://api.comeals.dev/api/v1/meals/${this
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
             .meal_id}/residents/${this.id}`,
           data: {
             socket_id: window.socketId
@@ -216,7 +218,7 @@ const Resident = types.model(
         self.form.form.meal.incrementExtras();
         axios({
           method: "delete",
-          url: `http://api.comeals.dev/api/v1/meals/${this
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
             .meal_id}/residents/${this.id}`,
           data: {
             socket_id: window.socketId
@@ -260,7 +262,7 @@ const Resident = types.model(
       const self = this;
       axios({
         method: "patch",
-        url: `http://api.comeals.dev/api/v1/meals/${this
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
           .meal_id}/residents/${this.id}`,
         data: {
           late: val,
@@ -303,7 +305,7 @@ const Resident = types.model(
       const self = this;
       axios({
         method: "patch",
-        url: `http://api.comeals.dev/api/v1/meals/${this
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
           .meal_id}/residents/${this.id}`,
         data: {
           vegetarian: val,
@@ -347,7 +349,7 @@ const Resident = types.model(
       const self = this;
       axios({
         method: "post",
-        url: `http://api.comeals.dev/api/v1/meals/${this
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
           .meal_id}/residents/${this.id}/guests`,
         data: {
           socket_id: window.socketId
@@ -391,7 +393,7 @@ const Resident = types.model(
       const self = this;
       axios({
         method: "delete",
-        url: `http://api.comeals.dev/api/v1/meals/${this
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
           .meal_id}/residents/${this.id}/guests`,
         data: {
           socket_id: window.socketId
@@ -580,7 +582,8 @@ export const DataStore = types.model(
       const self = this;
 
       axios({
-        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/closed`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
+          .meal.id}/closed`,
         method: "patch",
         withCredentials: true,
         data: {
@@ -646,7 +649,8 @@ export const DataStore = types.model(
       const self = this;
       axios({
         method: "patch",
-        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/description`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
+          .meal.id}/description`,
         data: obj,
         withCredentials: true
       })
@@ -718,7 +722,8 @@ export const DataStore = types.model(
       const self = this;
       axios({
         method: "patch",
-        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/bills`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
+          .meal.id}/bills`,
         data: obj,
         withCredentials: true
       })
@@ -753,7 +758,10 @@ export const DataStore = types.model(
     loadDataAsync() {
       const self = this;
       axios
-        .get(`http://api.comeals.dev/api/v1/meals/${self.meal.id}/cooks`)
+        .get(
+          `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal
+            .id}/cooks`
+        )
         .then(function(response) {
           if (response.status === 200) {
             window.data = response.data;
