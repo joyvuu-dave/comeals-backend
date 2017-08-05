@@ -172,6 +172,7 @@ GEM
       railties (>= 3.0)
     msgpack (1.1.0)
     multi_json (1.12.1)
+    newrelic_rpm (4.2.0.334)
     nio4r (2.1.0)
     nokogiri (1.8.0)
       mini_portile2 (~> 2.2.0)
@@ -308,6 +309,7 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   mini_racer
   money-rails
+  newrelic_rpm
   pg (~> 0.20)
   puma (~> 3.8)
   pundit
