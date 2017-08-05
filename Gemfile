@@ -40,6 +40,7 @@ gem 'counter_culture'
 gem 'active_model_serializers', '~> 0.10'
 gem 'pusher'
 gem 'audited', '~> 4.5'
+gem 'dalli'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
