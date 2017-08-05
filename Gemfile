@@ -42,6 +42,7 @@ gem 'pusher'
 gem 'audited', '~> 4.5'
 gem 'dalli'
 gem 'connection_pool'
+gem 'newrelic_rpm'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
