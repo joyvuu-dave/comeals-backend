@@ -1,16 +1,22 @@
 <h1><%= @meal.date %></h1>
 
-<h2>Audits</h2>
-<ul>
-<% @meal.audits.each do |audit| %>
-  <li><%= "#{audit.user&.name || 'Admin'} made this change: #{audit.audited_changes}" %></li>
-<% end %>
-</ul>
-
-
-<h2>Assoicated Audits</h2>
-<ul>
-<% @meal.associated_audits.each do |audit| %>
-  <li><%= "Person: #{audit.user&.name || 'Admin'} made this change: #{audit.audited_changes}" %></li>
-<% end %>
-</ul>
+<table class="table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      <th>Action</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% (@meal.associated_audits + @meal.audits).sort { |a,b| b.created_at <=> a.created_at }.each do |audit| %>
+    <tr>
+      <td><%= audit.id %></td>
+      <td><%= audit.user&.name || "Admin" %></td>
+      <td><%= "#{audit.auditable_type}, #{audit.action}" %></td>
+      <td><%= (ActiveSupport::TimeZone.find_tzinfo('Pacific Time (US & Canada)').utc_to_local(audit.created_at)).strftime("%B %d, %Y at %I:%M %p") %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
