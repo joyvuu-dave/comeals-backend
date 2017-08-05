@@ -1,5 +1,4 @@
 class CookFormSerializer < ActiveModel::Serializer
-  cache key: 'cook_form'
   attributes :id,
              :description,
              :max,
@@ -45,7 +44,7 @@ class CookFormSerializer < ActiveModel::Serializer
 
     private
     def meal_resident
-      @meal_resident ||= MealResident.find_by(meal_id: scope.id, resident_id: object.id)
+      @meal_resident = MealResident.find_by(meal_id: scope.id, resident_id: object.id)
     end
   end
 end
