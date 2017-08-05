@@ -124,12 +124,12 @@ module Api
       end
 
       def set_meal
-        @meal = Meal.find_by(id: params[:meal_id])
+        @meal ||= Meal.find_by(id: params[:meal_id])
         @meal.socket_id = params[:socket_id]
       end
 
       def set_meal_resident
-        @meal_resident = MealResident.find_by(meal_id: params[:meal_id], resident_id: params[:resident_id])
+        @meal_resident ||= MealResident.find_by(meal_id: params[:meal_id], resident_id: params[:resident_id])
       end
 
     end
