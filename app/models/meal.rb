@@ -34,6 +34,8 @@ class Meal < ApplicationRecord
   audited
   has_associated_audits
 
+  attr_accessor :socket_id
+
   scope :unreconciled, -> { where(reconciliation_id: nil) }
 
   belongs_to :community
@@ -65,9 +67,12 @@ class Meal < ApplicationRecord
   end
 
   def trigger_pusher
-    Pusher.trigger("meal-#{id}", 'update', {
-      message: 'meal updated'
-    })
+    Pusher.trigger(
+      "meal-#{id}",
+      'update',
+      { message: 'meal updated' },
+      { socket_id: self.socket_id }
+    )
   end
 
   # DERIVED DATA

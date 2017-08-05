@@ -69,12 +69,23 @@ module Api
         render json: CookFormSerializer.new(@meal), scope: @meal
       end
 
-      def update_meal_and_bills
-        # Description, Max, Closed
-        unless @meal.update(:description => params[:description], :max => params[:max])
+      def update_description
+        if @meal.update(:description => params[:description])
+          render json: { message: 'Description updated.' } and return
+        else
           render json: { message: @meal.errors.first[1] }, status: :bad_request and return
         end
+      end
 
+      def update_max
+        if @meal.update(:max => params[:max])
+          render json: { message: 'Max updated.' } and return
+        else
+          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+        end
+      end
+
+      def update_bills
         # Cooks
         cook_ids = []
         params[:bills].each do |bill|
@@ -114,6 +125,7 @@ module Api
 
       def set_meal
         @meal ||= Meal.find_by(id: params[:meal_id])
+        @meal.socket_id = params[:socket_id]
       end
 
       def set_meal_resident

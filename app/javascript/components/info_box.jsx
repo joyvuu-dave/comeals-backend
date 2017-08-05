@@ -3,18 +3,23 @@ import { inject, observer } from "mobx-react";
 import Extras from "./extras";
 
 const styles = {
-  borderBottom: "0.5px solid",
-  borderRight: "0.5px solid",
-  borderLeft: "0.5px solid",
-  gridArea: "a5",
-  borderRadius: "var(--button-border-radius"
+  main: {
+    border: "0.5px solid",
+    gridArea: "a5",
+    borderRadius: "var(--button-border-radius"
+  },
+  info: {
+    marginTop: "1rem"
+  }
 };
 
 const InfoBox = inject("store")(
   observer(({ store }) =>
-    <div style={styles}>
-      <h2 className="title">Attendees</h2>
-      <ul>
+    <div className="offwhite" style={styles.main}>
+      <div className="title">
+        <h2>Attendees</h2>
+      </div>
+      <ul style={styles.info}>
         <li>
           Total: {store.attendeesCount}
         </li>

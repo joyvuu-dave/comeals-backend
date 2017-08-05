@@ -3,7 +3,12 @@ import axios from "axios";
 import { inject, observer } from "mobx-react";
 
 const styles = {
-  minHeight: "var(--section-height)"
+  main: {
+    minHeight: "var(--section-height)"
+  },
+  table: {
+    backgroundColor: "hsl(0, 0%, 98%)"
+  }
 };
 
 const AttendeeComponent = inject("store")(
@@ -57,11 +62,11 @@ const AttendeeComponent = inject("store")(
 
 const AttendeeForm = inject("store")(
   observer(({ store }) =>
-    <div style={styles}>
+    <div style={styles.main}>
       <button onClick={store.toggleClosed}>
         {store.meal.closed ? "Re-Open Meal" : "Close Meal"}
       </button>
-      <table>
+      <table className="table-striped" style={styles.table}>
         <thead>
           <tr>
             <th>Name</th>

@@ -3,32 +3,28 @@ import { inject, observer } from "mobx-react";
 
 const styles = {
   main: {
-    padding: "0 0 0 1rem"
+    padding: "1rem 0 0 1rem"
   }
 };
 
 const Extras = inject("store")(
   observer(({ store }) =>
     <div style={styles.main}>
-      <br />
-      {store.meal.closed
-        ? <label>
-            Extras
+      <h5>Extras</h5>
+      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(val => {
+        return (
+          <span key={val}>
             <input
-              type="text"
-              value={store.extras}
+              key={val}
+              type="radio"
+              value={val}
+              checked={store.meal.extras === val}
               onChange={e => store.meal.setExtras(e.target.value)}
-              disabled={!store.meal.closed}
             />
-            {store.meal.max !== null
-              ? <span>
-                  {" "}Max:{store.meal.max}
-                </span>
-              : null}
-          </label>
-        : <label className="is-hidden">
-            <input type="text" placeholder="Placeholder" />
-          </label>}
+            {val}{" "}
+          </span>
+        );
+      })}
     </div>
   )
 );

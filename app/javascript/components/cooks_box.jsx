@@ -5,9 +5,9 @@ import { v4 } from "uuid";
 const styles = {
   main: {
     gridArea: "a4",
-    borderLeft: "0.5px solid",
-    borderBottom: "0.5px solid",
-    borderRadius: "var(--button-border-radius)"
+    border: "0.5px solid",
+    borderRadius: "var(--button-border-radius)",
+    minHeight: "calc(var(--section-height) * (1/2))"
   },
   grid: {
     display: "flex",
@@ -83,9 +83,18 @@ const Edit = inject("store")(
 
 const CooksBox = inject("store")(
   observer(({ store }) =>
-    <div style={styles.main}>
-      <h2 className="title">Cooks</h2>
-      {store.editMode ? <Edit /> : <Display />}
+    <div className="offwhite" style={styles.main}>
+      <div className="flex space-between title">
+        <h2>Cooks</h2>
+        <button
+          className={store.editBillsMode ? "button-inverse" : "button-danger"}
+          onClick={store.toggleEditBillsMode}
+        >
+          {store.editBillsMode ? "Save" : "Edit"}
+        </button>{" "}
+      </div>
+      <br />
+      {store.editBillsMode ? <Edit /> : <Display />}
     </div>
   )
 );

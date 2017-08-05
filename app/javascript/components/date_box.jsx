@@ -9,9 +9,7 @@ const styles = {
     alignItems: "center",
     flexDirection: "column",
     gridArea: "a2",
-    borderTop: "0.5px solid",
-    borderLeft: "0.5px solid",
-    borderBottom: "0.5px solid",
+    border: "0.5px solid",
     borderRadius: "var(--button-border-radius)",
     backgroundColor: "var(--hasana-yellow)"
   },

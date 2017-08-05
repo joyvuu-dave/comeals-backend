@@ -18,13 +18,23 @@ const styles = {
 const MenuBox = inject("store")(
   observer(({ store }) =>
     <div style={styles.main}>
-      <h2 className="title">Menu</h2>
+      <div className="flex space-between title">
+        <h2 className="width-15">Menu</h2>
+        <button
+          className={
+            store.editDescriptionMode ? "button-inverse" : "button-danger"
+          }
+          onClick={store.toggleEditDescriptionMode}
+        >
+          {store.editDescriptionMode ? "Save" : "Edit"}
+        </button>
+      </div>
       <textarea
-        className={store.editMode ? "" : "offwhite"}
+        className={store.editDescriptionMode ? "" : "offwhite"}
         style={styles.text}
         value={store.meal.description}
-        onChange={store.setDescription}
-        disabled={!store.editMode}
+        onChange={e => store.setDescription(e.target.value)}
+        disabled={!store.editDescriptionMode}
       />
     </div>
   )

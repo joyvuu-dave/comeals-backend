@@ -8,11 +8,11 @@ const Meal = types.model(
   {
     id: types.identifier(types.number),
     description: "",
-    extras: "",
+    extras: types.maybe(types.number),
     closed: false,
     date: types.Date,
     get max() {
-      if (this.extras === "") {
+      if (this.extras === null) {
         return null;
       } else {
         return Number(this.extras) + this.form.attendeesCount;
@@ -24,23 +24,24 @@ const Meal = types.model(
   },
   {
     resetExtras() {
-      this.extras = "";
-      console.log("Extras reset to empty string.");
-      return "";
+      this.extras = null;
+      console.log("Extras reset to null.");
+      return null;
     },
     setExtras(val) {
       const previousExtras = this.extras;
       const self = this;
 
       // Scenario #1: empty string
-      if (val === "") {
-        this.extras = "";
+      if (val === null) {
+        this.extras = null;
 
         axios({
           url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
           method: "patch",
           data: {
-            max: null
+            max: null,
+            socket_id: window.socketId
           },
           withCredentials: true
         })
@@ -49,7 +50,7 @@ const Meal = types.model(
               console.log("Patch Extras - Success!", response.data);
             }
 
-            return ""; // return new value of extras as feedback when running function from console
+            return null; // return new value of extras as feedback when running function from console
           })
           .catch(function(error) {
             console.log("Patch Extras - Fail!");
@@ -81,13 +82,14 @@ const Meal = types.model(
       // Scenario #2: positive integer
       const num = Number.parseInt(Number(val));
       if (Number.isInteger(num) && num >= 0) {
-        this.extras = String(num);
+        this.extras = num;
 
         axios({
           method: "patch",
           url: `http://api.comeals.dev/api/v1/meals/${this.id}/max`,
           data: {
-            max: self.max
+            max: self.max,
+            socket_id: window.socketId
           },
           withCredentials: true
         })
@@ -96,7 +98,7 @@ const Meal = types.model(
               console.log("Patch Extras - Success!", response.data);
             }
 
-            return String(num); // return new value of extras as feedback when running function from console
+            return num; // return new value of extras as feedback when running function from console
           })
           .catch(function(error) {
             console.log("Patch Extras - Fail!");
@@ -126,25 +128,25 @@ const Meal = types.model(
       }
     },
     incrementExtras() {
-      if (this.extras === "") {
+      if (this.extras === null) {
         return;
       }
 
       const num = Number.parseInt(Number(this.extras));
       if (Number.isInteger(num)) {
         const temp = num + 1;
-        this.extras = String(temp);
+        this.extras = temp;
       }
     },
     decrementExtras() {
-      if (this.extras === "") {
+      if (this.extras === null) {
         return;
       }
 
       const num = Number.parseInt(Number(this.extras));
       if (Number.isInteger(num)) {
         const temp = num - 1;
-        this.extras = String(temp);
+        this.extras = temp;
       }
     }
   }
@@ -176,6 +178,9 @@ const Resident = types.model(
           method: "post",
           url: `http://api.comeals.dev/api/v1/meals/${this
             .meal_id}/residents/${this.id}`,
+          data: {
+            socket_id: window.socketId
+          },
           withCredentials: true
         })
           .then(function(response) {
@@ -213,6 +218,9 @@ const Resident = types.model(
           method: "delete",
           url: `http://api.comeals.dev/api/v1/meals/${this
             .meal_id}/residents/${this.id}`,
+          data: {
+            socket_id: window.socketId
+          },
           withCredentials: true
         })
           .then(function(response) {
@@ -255,7 +263,8 @@ const Resident = types.model(
         url: `http://api.comeals.dev/api/v1/meals/${this
           .meal_id}/residents/${this.id}`,
         data: {
-          late: val
+          late: val,
+          socket_id: window.socketId
         },
         withCredentials: true
       })
@@ -297,7 +306,8 @@ const Resident = types.model(
         url: `http://api.comeals.dev/api/v1/meals/${this
           .meal_id}/residents/${this.id}`,
         data: {
-          vegetarian: val
+          vegetarian: val,
+          socket_id: window.socketId
         },
         withCredentials: true
       })
@@ -339,6 +349,9 @@ const Resident = types.model(
         method: "post",
         url: `http://api.comeals.dev/api/v1/meals/${this
           .meal_id}/residents/${this.id}/guests`,
+        data: {
+          socket_id: window.socketId
+        },
         withCredentials: true
       })
         .then(function(response) {
@@ -380,6 +393,9 @@ const Resident = types.model(
         method: "delete",
         url: `http://api.comeals.dev/api/v1/meals/${this
           .meal_id}/residents/${this.id}/guests`,
+        data: {
+          socket_id: window.socketId
+        },
         withCredentials: true
       })
         .then(function(response) {
@@ -389,7 +405,7 @@ const Resident = types.model(
         })
         .catch(function(error) {
           console.log("Guests Delete - Fail!");
-          self.guests -= 1;
+          self.guests = self.guests - 1;
           self.form.form.meal.decrementExtras();
 
           if (error.response) {
@@ -466,7 +482,8 @@ export const DataStore = types.model(
   "DataStore",
   {
     isLoading: true,
-    editMode: false,
+    editDescriptionMode: false,
+    editBillsMode: false,
     meal: types.maybe(types.reference(Meal)),
     meals: types.array(Meal),
     residentStore: types.optional(ResidentStore, {
@@ -536,8 +553,21 @@ export const DataStore = types.model(
     }
   },
   {
-    toggleEditMode() {
-      this.editMode = !this.editMode;
+    toggleEditDescriptionMode() {
+      const isSaving = this.editDescriptionMode;
+      this.editDescriptionMode = !this.editDescriptionMode;
+
+      if (isSaving) {
+        this.submitDescription();
+      }
+    },
+    toggleEditBillsMode() {
+      const isSaving = this.editBillsMode;
+      this.editBillsMode = !this.editBillsMode;
+
+      if (isSaving) {
+        this.submitBills();
+      }
     },
     setDescription(val) {
       this.meal.description = val;
@@ -548,11 +578,15 @@ export const DataStore = types.model(
       this.meal.closed = val;
 
       const self = this;
+
       axios({
         url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/closed`,
         method: "patch",
         withCredentials: true,
-        data: { closed: val }
+        data: {
+          closed: val,
+          socket_id: window.socketId
+        }
       })
         .then(function(response) {
           if (response.status === 200) {
@@ -600,7 +634,51 @@ export const DataStore = types.model(
     history() {
       window.open(`/meals/${this.id}/log`, "_blank");
     },
-    submit() {
+    submitDescription() {
+      let obj = {
+        id: this.meal.id,
+        description: this.meal.description,
+        socket_id: window.socketId
+      };
+
+      console.log(obj);
+
+      const self = this;
+      axios({
+        method: "patch",
+        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/description`,
+        data: obj,
+        withCredentials: true
+      })
+        .then(function(response) {
+          if (response.status === 200) {
+            console.log(response.data);
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+            window.alert("Error: no response received from server.");
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+            window.alert("Error: could not submit form.");
+          }
+          const config = error.config;
+        });
+    },
+    submitBills() {
       // Check for errors with bills
       if (this.bills.values().some(bill => bill.amountIsValid === false)) {
         window.alert("Fix bills before submitting.");
@@ -631,9 +709,8 @@ export const DataStore = types.model(
 
       let obj = {
         id: this.meal.id,
-        description: this.meal.description,
-        max: this.meal.max,
-        bills: bills
+        bills: bills,
+        socket_id: window.socketId
       };
 
       console.log(obj);
@@ -641,13 +718,12 @@ export const DataStore = types.model(
       const self = this;
       axios({
         method: "patch",
-        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}`,
+        url: `http://api.comeals.dev/api/v1/meals/${self.meal.id}/bills`,
         data: obj,
         withCredentials: true
       })
         .then(function(response) {
           if (response.status === 200) {
-            self.toggleEditMode();
             console.log(response.data);
           }
         })
@@ -710,7 +786,7 @@ export const DataStore = types.model(
       this.meal.description = data.description;
       this.meal.closed = data.closed;
       if (data.max === null) {
-        this.meal.extras = "";
+        this.meal.extras = null;
       } else {
         const residents_count = data.residents.filter(
           resident => resident.attending
@@ -720,7 +796,7 @@ export const DataStore = types.model(
           .reduce(function(sum, value) {
             return sum + value;
           }, 0);
-        this.meal.extras = String(residents_count + guests_count);
+        this.meal.extras = data.max - (residents_count + guests_count);
       }
 
       // Assign Residents

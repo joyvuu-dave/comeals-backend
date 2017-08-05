@@ -16,7 +16,7 @@
 :root {
   /* Heights */
   --container-width: 980px;
-  --section-height: 500px;
+  --section-height: 700px;
   /* Colors */
   --mango-tango: #ff8c42;
   --hasana-yellow: #e9c46a;
@@ -28,13 +28,17 @@ body {
   min-width: 1020px;
 }
 
+button:focus {
+  outline: none;
+}
+
 .offwhite {
   background-color: #ebebe4;
 }
 
 .title {
-  border-bottom: 1px solid;
-  padding: 1rem 0 0 1rem;
+  border-bottom: 0.5px solid;
+  padding: 1rem 1rem 0 1rem;
   background-color: var(--hasana-yellow);
   margin-bottom: 0;
 }
@@ -82,10 +86,10 @@ li {
 .flex.right {
   justify-content: flex-end;
 }
-.flex.between {
+.flex.space-between {
   justify-content: space-between;
 }
-.flex.around {
+.flex.space-around {
   justify-content: space-around;
 }
 

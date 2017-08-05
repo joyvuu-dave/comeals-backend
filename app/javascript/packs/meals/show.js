@@ -5,9 +5,7 @@ import { Provider } from "mobx-react";
 import { DataStore } from "../../stores/data_store";
 
 import Header from "../../components/header";
-import Meal from "../../components/meal";
 import Extras from "../../components/extras";
-import Closed from "../../components/closed";
 import ButtonBar from "../../components/button_bar";
 import DateBox from "../../components/date_box";
 import MenuBox from "../../components/menu_box";
@@ -21,15 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const id = Number.parseInt(data.id);
   const date = new Date(data.date);
 
-  const store = DataStore.create({ meal: id, meals: [{ id: id, date: date }] });
-  window.store = store;
+  const store = DataStore.create({
+    meal: id,
+    meals: [{ id: id, date: date }]
+  });
 
-  // Enable pusher logging - don't include this in production
-  Pusher.logToConsole = true;
+  window.store = store;
 
   var pusher = new Pusher("8affd7213bb4643ca7f1", {
     cluster: "us2",
     encrypted: true
+  });
+
+  window.socketId = null;
+  pusher.connection.bind("connected", function() {
+    window.socketId = pusher.connection.socket_id;
   });
 
   var channel = pusher.subscribe(`meal-${id}`);
@@ -87,9 +91,10 @@ const styles = {
   },
   meal: {
     display: "grid",
+    gridGap: "1rem",
     gridTemplateColumns: "repeat(12, 1fr)",
     gridTemplateRows:
-      "var(--input-height) calc(var(--section-height) * (1/3)) calc(var(--section-height) * (2/3))",
+      "calc(var(--input-height) + 1) calc(var(--section-height) * (1/4)) calc(var(--section-height) * (3/4))",
     gridTemplateAreas: `"a1 a1 a1  a1 a1 a1  a1 a1 a1  a1 a1 a1"
                         "a2 a2 a2  a2 a3 a3  a3 a3 a3  a3 a3 a3"
                         "a4 a4 a4  a4 a4 a4  a4 a4 a5  a5 a5 a5"`
