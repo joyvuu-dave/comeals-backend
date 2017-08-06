@@ -1,4 +1,4 @@
-class CookFormSerializer < ActiveModel::Serializer
+class MealFormSerializer < ActiveModel::Serializer
   attributes :id,
              :description,
              :max,

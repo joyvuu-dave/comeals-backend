@@ -66,8 +66,7 @@ module Api
       end
 
       def show_cooks
-        Rails.logger.info "\n\n\n\n\n**********\nMEAL:#{@meal&.id}\n**********\n\n\n\n\n"
-        render json: CookFormSerializer.new(@meal), scope: @meal
+        render json: MealFormSerializer.new(@meal), scope: @meal
       end
 
       def update_description
