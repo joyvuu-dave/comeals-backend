@@ -68,6 +68,7 @@ const AttendeeForm = inject("store")(
       <button onClick={store.toggleClosed}>
         {store.meal.closed ? "Re-Open Meal" : "Close Meal"}
       </button>
+      <br />
       <table className="table-striped" style={styles.table}>
         <thead>
           <tr>

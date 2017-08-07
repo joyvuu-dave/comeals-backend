@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <div>
+      <div className="outer-container">
         <Header />
         <div className="container">
           <section style={styles.section}>

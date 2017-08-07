@@ -26,12 +26,22 @@ body {
   background-color: var(--livid);
 }
 
+.outer-container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+  width: 100%;
+  min-width: 500px;
+}
+
 .container {
   margin-right: auto;
   margin-left: auto;
   padding-right: 15px;
   padding-left: 15px;
   width: 100%;
+  min-width: 500px;
 }
 
 .wrapper {
