@@ -34,6 +34,31 @@ body {
   width: 100%;
 }
 
+.wrapper {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-areas: "a1 a1 a1" "a2 a2 a2" "a3 a3 a3" "a4 a4 a4" "a5 a5 a5"
+    "a6 a6 a6";
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+  .wrapper {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-areas: "a1 a1 a1" "a2 a3 a3" "a4 a4 a5" "a6 a6 a6";
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+    width: 100%;
+  }
+}
+
 button:focus {
   outline: none;
 }

@@ -4,7 +4,9 @@ import { inject, observer } from "mobx-react";
 
 const styles = {
   main: {
-    minHeight: "var(--section-height)"
+    margin: "1em 0 1em 0",
+    minHeight: "var(--section-height)",
+    gridArea: "a6"
   },
   table: {
     backgroundColor: "hsl(0, 0%, 98%)"

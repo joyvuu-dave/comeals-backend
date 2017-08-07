@@ -65,17 +65,14 @@ document.addEventListener("DOMContentLoaded", () => {
         <Header />
         <div className="container">
           <section style={styles.section}>
-            <div style={styles.meal}>
+            <div className="wrapper">
               <ButtonBar />
               <DateBox />
               <MenuBox />
               <CooksBox />
               <InfoBox />
+              <AttendeesBox />
             </div>
-          </section>
-          <br />
-          <section style={styles.section}>
-            <AttendeesBox />
           </section>
           <footer style={styles.footer}>
             <h2 className="text-center text-muted">
@@ -97,16 +94,6 @@ const styles = {
   section: {
     margin: "1em 0 1em 0",
     minHeight: "var(--section-height)"
-  },
-  meal: {
-    display: "grid",
-    gridGap: "1rem",
-    gridTemplateColumns: "repeat(12, 1fr)",
-    gridTemplateRows:
-      "calc(var(--input-height) + 1) calc(var(--section-height) * (1/4)) calc(var(--section-height) * (3/4))",
-    gridTemplateAreas: `"a1 a1 a1  a1 a1 a1  a1 a1 a1  a1 a1 a1"
-                        "a2 a2 a2  a2 a3 a3  a3 a3 a3  a3 a3 a3"
-                        "a4 a4 a4  a4 a4 a4  a4 a4 a5  a5 a5 a5"`
   },
   footer: {
     margin: "3rem 3rem 3rem 3rem"
