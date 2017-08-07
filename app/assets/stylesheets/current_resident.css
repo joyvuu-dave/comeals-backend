@@ -15,7 +15,6 @@
 
 :root {
   /* Heights */
-  --container-width: 980px;
   --section-height: 700px;
   /* Colors */
   --mango-tango: #ff8c42;
@@ -25,7 +24,14 @@
 
 body {
   background-color: var(--livid);
-  min-width: 1020px;
+}
+
+.container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  width: 100%;
 }
 
 button:focus {
@@ -50,12 +56,6 @@ button:focus {
 li {
   list-style: none;
   padding: 0;
-}
-
-.container {
-  margin-left: auto;
-  margin-right: auto;
-  width: var(--container-width);
 }
 
 .flex {
