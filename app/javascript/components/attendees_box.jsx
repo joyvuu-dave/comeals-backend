@@ -10,6 +10,13 @@ const styles = {
   },
   table: {
     backgroundColor: "hsl(0, 0%, 98%)"
+  },
+  topButton: {
+    marginBottom: "1px",
+    fontFamily: "var(--font-monospace)"
+  },
+  lowerButton: {
+    fontFamily: "var(--font-monospace)"
   }
 };
 
@@ -24,34 +31,55 @@ const AttendeeComponent = inject("store")(
           </span>}
       </td>
       <td>
-        <input
-          type="checkbox"
-          checked={resident.attending}
-          onChange={e => resident.setAttending(e.target.checked)}
-          disabled={!store.canAdd || (resident.attending && store.meal.closed)}
-        />
+        <span className="switch">
+          <input
+            id="attending_switch"
+            type="checkbox"
+            className="switch"
+            checked={resident.attending}
+            onChange={e => resident.setAttending(e.target.checked)}
+            disabled={
+              !store.canAdd || (resident.attending && store.meal.closed)
+            }
+          />
+          <label for="attending_switch" />
+        </span>
       </td>
       <td>
-        <input
-          type="checkbox"
-          checked={resident.late}
-          onChange={e => resident.setLate(e.target.checked)}
-          disabled={!resident.attending}
-        />
+        <span className="switch">
+          <input
+            id="late_switch"
+            type="checkbox"
+            className="switch"
+            checked={resident.late}
+            onChange={e => resident.setLate(e.target.checked)}
+            disabled={!resident.attending}
+          />
+          <label for="late_switch" />
+        </span>
       </td>
       <td>
-        <input
-          type="checkbox"
-          checked={resident.vegetarian}
-          onChange={e => resident.setVegetarian(e.target.checked)}
-          disabled={store.meal.closed || !resident.attending}
-        />
+        <span className="switch">
+          <input
+            id="veg_switch"
+            type="checkbox"
+            checked={resident.vegetarian}
+            onChange={e => resident.setVegetarian(e.target.checked)}
+            disabled={store.meal.closed || !resident.attending}
+          />
+          <label for="veg_switch" />
+        </span>
       </td>
       <td>
-        <button onClick={e => resident.addGuest()} disabled={!store.canAdd}>
+        <button
+          style={styles.topButton}
+          onClick={e => resident.addGuest()}
+          disabled={!store.canAdd}
+        >
           + Guest
         </button>{" "}
         <button
+          style={styles.lowerButton}
           onClick={e => resident.removeGuest()}
           disabled={store.meal.closed || resident.guests === 0}
         >
