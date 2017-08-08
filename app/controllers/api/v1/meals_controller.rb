@@ -3,6 +3,7 @@ module Api
     class MealsController < ApplicationController
       before_action :set_meal, except: [:index]
       before_action :set_meal_resident, only: [:destroy_resident, :update_resident]
+      after_action :trigger_pusher, except: [:index, :show, :show_attendees, :show_cooks]
 
       def index
         if params[:start].present? && params[:end].present?
@@ -130,6 +131,10 @@ module Api
 
       def set_meal_resident
         @meal_resident ||= MealResident.find_by(meal_id: params[:meal_id], resident_id: params[:resident_id])
+      end
+
+      def trigger_pusher
+        @meal.trigger_pusher
       end
 
     end
