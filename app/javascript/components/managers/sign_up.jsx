@@ -45,21 +45,24 @@ class ManagersSignUp extends React.Component {
 
   render() {
     return (
-      <LocalForm
-        onUpdate={form => this.handleUpdate(form)}
-        onChange={values => this.handleChange(values)}
-        onSubmit={values => this.handleSubmit(values)}
-      >
-        <label>email</label>
-        <Control.text model=".email" />
-        <br />
+      <fieldset className="width-50">
+        <legend>Admin</legend>
+        <LocalForm
+          onUpdate={form => this.handleUpdate(form)}
+          onChange={values => this.handleChange(values)}
+          onSubmit={values => this.handleSubmit(values)}
+        >
+          <label>email</label>
+          <Control.text model=".email" className="width-75" />
+          <br />
 
-        <label>password</label>
-        <Control type="password" model=".password" />
-        <br />
+          <label>password</label>
+          <Control type="password" model=".password" className="width-75" />
+          <br />
 
-        <button type="submit">Submit</button>
-      </LocalForm>
+          <button type="submit">Submit</button>
+        </LocalForm>
+      </fieldset>
     );
   }
 }

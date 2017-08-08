@@ -84,7 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <footer style={styles.footer}>
             <h2 className="text-center text-muted">
               Made by{" "}
-              <a href="https://github.com/joyvuu-dave" className="text-muted">
+              <a
+                href="https://github.com/joyvuu-dave/comeals-rewrite"
+                target="_blank"
+                className="text-muted"
+              >
                 David
               </a>
             </h2>

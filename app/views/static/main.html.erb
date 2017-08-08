@@ -8,15 +8,17 @@
 
 <div class="container">
   <h1>Welcome to Comeals</h1>
-  <p>Manage your community!</p>
+  <br>
+  <p>
+    <h2>Community</h2>
+    <a href="/communities/new">Create</a>
+  </p>
+  <br>
   <p>
     <h2>Manager</h2>
-    <a href="/managers/sign-up">Sign Up</a>&nbsp&nbsp
     <a href="<%= Rails.env.production? ? 'https://' : 'http://' %>admin.comeals<%= Rails.env.production? ? '.com/' : '.dev/' %>">Login</a>
   </p>
-
-  </br>
-
+  <br>
   <p>
     <h2>Resident</h2>
     <a href="/residents/login">Login</a>
