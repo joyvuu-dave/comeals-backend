@@ -29,13 +29,15 @@ const MenuBox = inject("store")(
           {store.editDescriptionMode ? "Save" : "Edit"}
         </button>
       </div>
-      <textarea
-        className={store.editDescriptionMode ? "" : "offwhite"}
-        style={styles.text}
-        value={store.meal.description}
-        onChange={e => store.setDescription(e.target.value)}
-        disabled={!store.editDescriptionMode}
-      />
+      <div>
+        <textarea
+          className={store.editDescriptionMode ? "" : "offwhite"}
+          style={styles.text}
+          value={store.meal.description}
+          onChange={e => store.setDescription(e.target.value)}
+          disabled={!store.editDescriptionMode}
+        />
+      </div>
     </div>
   )
 );
