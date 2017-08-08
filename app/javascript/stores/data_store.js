@@ -863,6 +863,14 @@ export const DataStore = types.model(
     },
     afterCreate() {
       this.loadDataAsync();
+
+      // Hack for getting Header to be full-width on mobile
+      setTimeout(this.setHeaderWidth, 1000);
+    },
+    setHeaderWidth() {
+      const width = document.getElementsByTagName("body")[0].scrollWidth;
+      console.log("Scroll Width", width);
+      document.getElementById("header").style.width = `${width}px`;
     },
     clearResidents() {
       this.residentStore.residents.clear();

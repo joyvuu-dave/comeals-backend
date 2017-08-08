@@ -13,7 +13,7 @@ const styles = {
 
 const Header = inject("store")(
   observer(({ store }) =>
-    <header style={styles.header}>
+    <header style={styles.header} id="header">
       <a className="button button-link" onClick={store.logout}>
         logout
       </a>
