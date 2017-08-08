@@ -7,7 +7,7 @@ module Api
           cookies.permanent[:token] = manager.key.token
           render json: { id: manager.id, token: manager.key.token } and return
         else
-          render json: { message: manager.errors }, status: :bad_request and return
+          render json: { message: manager.errors.first[1] }, status: :bad_request and return
         end
       end
 

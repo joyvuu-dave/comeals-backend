@@ -45,24 +45,26 @@ const AttendeeComponent = inject("store")(
           </span>}
       </td>
       <td>
-        <span onClick={e => resident.toggleLate()} className="switch">
+        <span className="switch">
           <input
             id="late_switch"
             type="checkbox"
             className="switch"
             defaultChecked={resident.late}
+            onClick={e => resident.toggleLate()}
             disabled={!resident.attending}
           />
           <label htmlFor="late_switch" />
         </span>
       </td>
       <td>
-        <span onClick={e => resident.toggleVeg()} className="switch">
+        <span className="switch">
           <input
             id="veg_switch"
             type="checkbox"
             className="switch"
             defaultChecked={resident.vegetarian}
+            onClick={e => resident.toggleVeg()}
             disabled={store.meal.closed || !resident.attending}
           />
           <label htmlFor="veg_switch" />

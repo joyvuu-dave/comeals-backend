@@ -94,9 +94,7 @@ class ManagersShow extends React.Component {
   render() {
     return (
       <div>
-        ManagersShow Component
-        <br />
-        <button onClick={this.logout}>Logout</button>
+        <button onClick={this.logout}>Logout</button>{" "}
         <button onClick={this.createCommunity}>Create a Community</button>
         {this.communitiesBlock()}
       </div>
