@@ -21,9 +21,19 @@ const styles = {
 const DateBox = inject("store")(
   observer(({ store }) =>
     <div style={styles.main}>
-      <h2>
-        {moment(store.meal.date).format("ddd, MMM Do")}
-      </h2>
+      <div className="flex middle space-between">
+        <i
+          className="fa fa-chevron-left fa-lg padding-right-medium"
+          onClick={store.previousMeal}
+        />
+        <h2>
+          {moment(store.meal.date).format("ddd, MMM Do")}
+        </h2>
+        <i
+          className="fa fa-chevron-right fa-lg padding-left-medium"
+          onClick={store.nextMeal}
+        />
+      </div>
       <button className="button-success" onClick={store.calendar}>
         Calendar
       </button>

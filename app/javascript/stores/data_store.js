@@ -257,7 +257,8 @@ const Resident = types.model(
           });
       }
     },
-    setLate(val) {
+    toggleLate() {
+      const val = !this.late;
       this.late = val;
 
       const self = this;
@@ -300,7 +301,8 @@ const Resident = types.model(
           const config = error.config;
         });
     },
-    setVegetarian(val) {
+    toggleVeg() {
+      const val = !this.vegetarian;
       this.vegetarian = val;
 
       const self = this;
@@ -637,6 +639,12 @@ export const DataStore = types.model(
     },
     history() {
       window.open(`/meals/${this.id}/log`, "_blank");
+    },
+    previousMeal() {
+      window.location.href = `/meals/${this.id}/previous`;
+    },
+    nextMeal() {
+      window.location.href = `/meals/${this.id}/next`;
     },
     submitDescription() {
       let obj = {

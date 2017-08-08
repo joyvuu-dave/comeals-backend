@@ -57,7 +57,9 @@ Rails.application.routes.draw do
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
   get '/calendar', to: 'residents#calendar'
-  get '/meals/:id/edit', to: 'meals#show'
+  get '/meals/:id/edit', to: 'meals#show', as: :meal
+  get '/meals/:id/previous', to: 'meals#previous'
+  get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
   get '/bills/:id', to: 'residents#bill'
   get '/residents/:id', to: 'residents#resident'

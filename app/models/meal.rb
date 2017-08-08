@@ -53,7 +53,7 @@ class Meal < ApplicationRecord
   validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
 
   before_save :conditionally_set_max
-  after_commit :trigger_pusher, on: :update
+  before_save :trigger_pusher, on: :update
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
@@ -71,8 +71,9 @@ class Meal < ApplicationRecord
       "meal-#{id}",
       'update',
       { message: 'meal updated' },
-      { socket_id: self.socket_id }
+      { socket_id: socket_id }
     )
+    return true
   end
 
   # DERIVED DATA

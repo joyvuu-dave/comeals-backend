@@ -25,6 +25,9 @@ const styles = {
   },
   no: {
     cursor: "pointer"
+  },
+  button: {
+    marginBottom: "1px"
   }
 };
 
@@ -42,25 +45,24 @@ const AttendeeComponent = inject("store")(
           </span>}
       </td>
       <td>
-        <span className="switch">
+        <span onClick={e => resident.toggleLate()} className="switch">
           <input
             id="late_switch"
             type="checkbox"
             className="switch"
-            checked={resident.late}
-            onChange={e => resident.setLate(e.target.checked)}
+            defaultChecked={resident.late}
             disabled={!resident.attending}
           />
           <label htmlFor="late_switch" />
         </span>
       </td>
       <td>
-        <span className="switch">
+        <span onClick={e => resident.toggleVeg()} className="switch">
           <input
             id="veg_switch"
             type="checkbox"
-            checked={resident.vegetarian}
-            onChange={e => resident.setVegetarian(e.target.checked)}
+            className="switch"
+            defaultChecked={resident.vegetarian}
             disabled={store.meal.closed || !resident.attending}
           />
           <label htmlFor="veg_switch" />
@@ -89,7 +91,11 @@ const AttendeeComponent = inject("store")(
 const AttendeeForm = inject("store")(
   observer(({ store }) =>
     <div style={styles.main}>
-      <button onClick={store.toggleClosed}>
+      <button
+        onClick={store.toggleClosed}
+        style={styles.button}
+        className="button-big"
+      >
         {store.meal.closed ? "Re-Open Meal" : "Close Meal"}
       </button>
       <br />

@@ -68,6 +68,11 @@ button:focus {
   background-color: #ebebe4;
 }
 
+i:hover {
+  color: var(--almost-white);
+  cursor: pointer;
+}
+
 .title {
   border-bottom: 0.5px solid;
   padding: 1rem 1rem 0 1rem;
