@@ -17,9 +17,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const node = document.getElementById("meal-id");
   const data = JSON.parse(node.getAttribute("data"));
   const id = Number.parseInt(data.id);
-  const date = new Date(data.date);
-  const production = data.production;
 
+  // Gotta format our date obj because JavaScript
+  const dateArray = data.date.split("-");
+  const date = new Date(
+    dateArray[0],
+    Number(dateArray[1] - 1),
+    Number(dateArray[2])
+  );
+
+  const production = data.production;
   if (production) {
     window.host = "https://";
     window.topLevel = ".com";

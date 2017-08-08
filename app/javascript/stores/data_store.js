@@ -869,7 +869,6 @@ export const DataStore = types.model(
     },
     setHeaderWidth() {
       const width = document.getElementsByTagName("body")[0].scrollWidth;
-      console.log("Scroll Width", width);
       document.getElementById("header").style.width = `${width}px`;
     },
     clearResidents() {
