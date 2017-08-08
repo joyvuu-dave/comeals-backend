@@ -13,9 +13,9 @@ const styles = {
   },
   circle: {
     borderRadius: "50%",
-    border: "1px solid",
-    height: "100px",
-    width: "100px",
+    border: "1px solid var(--color-primary)",
+    height: "75px",
+    width: "75px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -31,24 +31,24 @@ const InfoBox = inject("store")(
         <h2>Attendees</h2>
       </div>
       <div className="flex">
-        <h3 style={styles.circle}>
+        <h4 style={styles.circle}>
           <div>Total</div>
           <div>
             {store.attendeesCount}
           </div>
-        </h3>
-        <h3 style={styles.circle}>
+        </h4>
+        <h4 style={styles.circle}>
           <div>Veg</div>
           <div>
             {store.vegetarianCount}
           </div>
-        </h3>
-        <h3 style={styles.circle}>
+        </h4>
+        <h4 style={styles.circle}>
           <div>Late</div>
           <div>
             {store.lateCount}
           </div>
-        </h3>
+        </h4>
       </div>
       {store.meal.closed && <Extras />}
     </div>

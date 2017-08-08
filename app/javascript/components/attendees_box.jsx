@@ -9,7 +9,7 @@ const styles = {
     gridArea: "a6"
   },
   table: {
-    backgroundColor: "hsl(0, 0%, 98%)"
+    backgroundColor: "var(--almost-white)"
   },
   topButton: {
     marginBottom: "1px",
@@ -17,33 +17,29 @@ const styles = {
   },
   lowerButton: {
     fontFamily: "var(--font-monospace)"
+  },
+  yes: {
+    backgroundColor: "var(--color-green)",
+    cursor: "pointer",
+    color: "var(--almost-white)"
+  },
+  no: {
+    cursor: "pointer"
   }
 };
 
 const AttendeeComponent = inject("store")(
   observer(({ store, resident }) =>
     <tr>
-      <td>
+      <td
+        onClick={e => resident.toggleAttending()}
+        style={resident.attending ? styles.yes : styles.no}
+      >
         {resident.name}{" "}
         {resident.guests > 0 &&
           <span className="badge badge-info">
             {resident.guests} {resident.guests === 1 ? "Guest" : "Guests"}
           </span>}
-      </td>
-      <td>
-        <span className="switch">
-          <input
-            id="attending_switch"
-            type="checkbox"
-            className="switch"
-            checked={resident.attending}
-            onChange={e => resident.setAttending(e.target.checked)}
-            disabled={
-              !store.canAdd || (resident.attending && store.meal.closed)
-            }
-          />
-          <label for="attending_switch" />
-        </span>
       </td>
       <td>
         <span className="switch">
@@ -55,7 +51,7 @@ const AttendeeComponent = inject("store")(
             onChange={e => resident.setLate(e.target.checked)}
             disabled={!resident.attending}
           />
-          <label for="late_switch" />
+          <label htmlFor="late_switch" />
         </span>
       </td>
       <td>
@@ -67,7 +63,7 @@ const AttendeeComponent = inject("store")(
             onChange={e => resident.setVegetarian(e.target.checked)}
             disabled={store.meal.closed || !resident.attending}
           />
-          <label for="veg_switch" />
+          <label htmlFor="veg_switch" />
         </span>
       </td>
       <td>
@@ -101,7 +97,6 @@ const AttendeeForm = inject("store")(
         <thead>
           <tr>
             <th>Name</th>
-            <th>Attending</th>
             <th>Late</th>
             <th>Veg</th>
             <th />

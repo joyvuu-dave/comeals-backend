@@ -169,7 +169,8 @@ const Resident = types.model(
     }
   },
   {
-    setAttending(val) {
+    toggleAttending() {
+      const val = !this.attending;
       this.attending = val;
 
       const self = this;

@@ -20,28 +20,19 @@
   --mango-tango: #ff8c42;
   --hasana-yellow: #e9c46a;
   --livid: #6699cc;
+  --almost-white: hsl(0, 0%, 98%);
 }
 
 body {
   background-color: var(--livid);
 }
 
-.outer-container {
+.container {
   margin-right: auto;
   margin-left: auto;
   padding-right: 0;
   padding-left: 0;
   width: 100%;
-  min-width: 500px;
-}
-
-.container {
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 15px;
-  padding-left: 15px;
-  width: 100%;
-  min-width: 500px;
 }
 
 .wrapper {
@@ -51,8 +42,8 @@ body {
     "a6 a6 a6";
   margin-right: auto;
   margin-left: auto;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: 0;
+  padding-left: 0;
   width: 100%;
 }
 
