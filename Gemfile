@@ -43,6 +43,7 @@ gem 'audited', '~> 4.5'
 gem 'dalli'
 gem 'connection_pool'
 gem 'newrelic_rpm'
+gem 'sendgrid-ruby'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -51,6 +52,7 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:ruby, :mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.6'
+  gem 'dotenv-rails'
 end
 
 group :development do

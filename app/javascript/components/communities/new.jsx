@@ -8,11 +8,14 @@ class CommunitiesNew extends React.Component {
   handleSubmit(values) {
     axios
       .post(`${window.host}api.comeals${window.topLevel}/api/v1/communities`, {
-        name: values.name
+        name: values.name,
+        email: values.email,
+        password: values.password
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `/communities/${response.data.id}`;
+          window.alert(response.data.message);
+          window.location.href = `${window.host}admin.comeals${window.topLevel}`;
         }
       })
       .catch(function(error) {
@@ -41,17 +44,32 @@ class CommunitiesNew extends React.Component {
     return (
       <div>
         <h2>Create a new Community</h2>
-        <LocalForm
-          onUpdate={form => this.handleUpdate(form)}
-          onChange={values => this.handleChange(values)}
-          onSubmit={values => this.handleSubmit(values)}
-        >
-          <label>name</label>
-          <Control.text model=".name" />
-          <br />
+        <p>
+          If you are a manager, enter your email and password below. Otherwise,
+          a new manager account will be created.
+        </p>
+        <fieldset className="width-50">
+          <legend>Community</legend>
+          <LocalForm
+            onUpdate={form => this.handleUpdate(form)}
+            onChange={values => this.handleChange(values)}
+            onSubmit={values => this.handleSubmit(values)}
+          >
+            <label>Community Name</label>
+            <Control.text model=".name" className="width-75" />
+            <br />
 
-          <button type="submit">Submit</button>
-        </LocalForm>
+            <label>Manager Email Address</label>
+            <Control.text model=".email" className="width-75" />
+            <br />
+
+            <label>Manager Password</label>
+            <Control type="password" model=".password" className="width-75" />
+            <br />
+
+            <button type="submit">Submit</button>
+          </LocalForm>
+        </fieldset>
       </div>
     );
   }
