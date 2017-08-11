@@ -9,6 +9,7 @@ class ManagersController < ApplicationController
   end
 
   def password_reset
-    render plain: "Password Reset (manager)\nManager: #{Key.find_by(params[:id]).identity.manager.email}"
+    #render plain: "Password Reset (manager)\nManager: #{Key.find_by(params[:id]).identity.manager.email}"
+    render plain: 'hi'
   end
 end

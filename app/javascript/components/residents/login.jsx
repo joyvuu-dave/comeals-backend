@@ -50,22 +50,32 @@ class ResidentsLogin extends React.Component {
 
   render() {
     return (
-      <LocalForm
-        onUpdate={form => this.handleUpdate(form)}
-        onChange={values => this.handleChange(values)}
-        onSubmit={values => this.handleSubmit(values)}
-      >
-        <fieldset>
-          <label>
-            <Control.text model=".email" placeholder="Email" />
-          </label>
-          <label>
-            <Control type="password" model=".password" placeholder="Password" />
-          </label>
-        </fieldset>
+      <div>
+        <LocalForm
+          onUpdate={form => this.handleUpdate(form)}
+          onChange={values => this.handleChange(values)}
+          onSubmit={values => this.handleSubmit(values)}
+        >
+          <fieldset className="width-50">
+            <legend>Resident Login</legend>
+            <label className="width-75">
+              <Control.text model=".email" placeholder="Email" />
+            </label>
+            <br />
+            <label className="width-75">
+              <Control
+                type="password"
+                model=".password"
+                placeholder="Password"
+              />
+            </label>
+          </fieldset>
 
-        <button type="submit">Submit</button>
-      </LocalForm>
+          <button type="submit">Submit</button>
+        </LocalForm>
+        <br />
+        <a href="/residents/password-reset">Forgot you password?</a>
+      </div>
     );
   }
 }

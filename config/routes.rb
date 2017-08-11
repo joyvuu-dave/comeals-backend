@@ -15,7 +15,8 @@ Rails.application.routes.draw do
     get '/communities/new', to: 'communities#new'
     get '/communities/:id', to: 'communities#show'
     get '/managers/password-reset/:id', to: 'managers#password_reset'
-    get '/residents/password-reset/:id', to: 'residents#password_reset'
+    get '/residents/password-reset', to: 'residents#password_reset'
+    get '/residents/password-reset/:token', to: 'residents#password_new'
   end
 
   # API
@@ -27,6 +28,8 @@ Rails.application.routes.draw do
         post '/managers/token', to: 'managers#token'
         post '/residents/token', to: 'residents#token'
         get '/residents/:id', to: 'residents#show'
+        post '/residents/password-reset', to: 'residents#password_reset'
+        post '/residents/password-reset/:token', to: 'residents#password_new'
         post '/communities', to: 'communities#create'
         get '/communities/:id', to: 'communities#show'
         get '/meals', to: 'meals#index'

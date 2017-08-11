@@ -22,16 +22,15 @@ class Community < ApplicationRecord
   validates :name, uniqueness: { case_sensitive: false }
 
   has_many :bills, dependent: :destroy
-  has_many :community_managers, dependent: :destroy
-  has_many :managers, through: :community_managers, dependent: :destroy
   has_many :meals, dependent: :destroy
   has_many :meal_residents, dependent: :destroy
   has_many :reconciliations, dependent: :destroy
   has_many :residents, dependent: :destroy
   has_many :guests, through: :residents, dependent: :destroy
   has_many :units, dependent: :destroy
-  has_many :community_admin_users, dependent: :destroy
-  has_many :admin_users, through: :community_admin_users
+  has_many :admin_users, dependent: :destroy
+
+  accepts_nested_attributes_for :admin_users
 
   def cap
     read_attribute(:cap) || Float::INFINITY

@@ -43,9 +43,9 @@ ActiveAdmin.register Bill do
   # FORM
   form do |f|
     f.inputs do
-      f.input :meal, label: 'Common Meal Date', collection: Meal.order('date DESC').map { |i| [i.date, i.id] }
-      f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
-      f.input :resident_id, as: :select, include_blank: false, label: 'Cook', collection: Resident.includes(:unit).adult.order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
+      f.input :meal, label: 'Common Meal Date', collection: Meal.where(community_id: current_admin_user.community_id).order('date DESC').map { |i| [i.date, i.id] }
+      f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
+      f.input :resident_id, as: :select, include_blank: false, label: 'Cook', collection: Resident.where(community_id: current_admin_user.community_id).includes(:unit).adult.order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
       f.input :amount, label: '$'
     end
 

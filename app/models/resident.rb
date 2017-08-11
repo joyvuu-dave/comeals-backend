@@ -2,24 +2,26 @@
 #
 # Table name: residents
 #
-#  id              :integer          not null, primary key
-#  name            :string           not null
-#  email           :string           not null
-#  community_id    :integer          not null
-#  unit_id         :integer          not null
-#  vegetarian      :boolean          default(FALSE), not null
-#  bill_costs      :integer          default(0), not null
-#  bills_count     :integer          default(0), not null
-#  multiplier      :integer          default(2), not null
-#  password_digest :string           not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id                   :integer          not null, primary key
+#  name                 :string           not null
+#  email                :string           not null
+#  community_id         :integer          not null
+#  unit_id              :integer          not null
+#  vegetarian           :boolean          default(FALSE), not null
+#  bill_costs           :integer          default(0), not null
+#  bills_count          :integer          default(0), not null
+#  multiplier           :integer          default(2), not null
+#  password_digest      :string           not null
+#  reset_password_token :string
+#  created_at           :datetime         not null
+#  updated_at           :datetime         not null
 #
 # Indexes
 #
 #  index_residents_on_community_id           (community_id)
 #  index_residents_on_email                  (email) UNIQUE
 #  index_residents_on_name_and_community_id  (name,community_id) UNIQUE
+#  index_residents_on_reset_password_token   (reset_password_token) UNIQUE
 #  index_residents_on_unit_id                (unit_id)
 #
 # Foreign Keys
@@ -79,27 +81,27 @@ class Resident < ApplicationRecord
 
   # DERIVED DATA
   def bill_reimbursements
-    return 0 if Meal.unreconciled.count == 0
+    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
     bills.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).reduce(0) { |sum, bill| sum + bill.reimburseable_amount }
   end
 
   def meal_resident_costs
-    return 0 if Meal.unreconciled.count == 0
+    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
     meal_residents.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).reduce(0) { |sum, meal_resident| sum + meal_resident.cost }
   end
 
   def guest_costs
-    return 0 if Meal.unreconciled.count == 0
+    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
     guests.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).reduce(0) { |sum, guest| sum + guest.cost }
   end
 
   def balance
-    return 0 if Meal.unreconciled.count == 0
+    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
     bill_reimbursements - meal_resident_costs - guest_costs
   end
 
   def meals_attended
-    return 0 if Meal.unreconciled.count == 0
+    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
     meal_residents.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).count
   end
 end

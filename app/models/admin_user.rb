@@ -13,13 +13,19 @@
 #  last_sign_in_at        :datetime
 #  current_sign_in_ip     :inet
 #  last_sign_in_ip        :inet
+#  community_id           :integer          not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #
 # Indexes
 #
+#  index_admin_users_on_community_id          (community_id)
 #  index_admin_users_on_email                 (email) UNIQUE
 #  index_admin_users_on_reset_password_token  (reset_password_token) UNIQUE
+#
+# Foreign Keys
+#
+#  fk_rails_...  (community_id => communities.id)
 #
 
 class AdminUser < ApplicationRecord
@@ -28,8 +34,7 @@ class AdminUser < ApplicationRecord
   devise :database_authenticatable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_one :community_admin_user
-  has_one :community, through: :community_admin_user
+  belongs_to :community
 
   has_many :bills, through: :community
   has_many :units, through: :community
@@ -39,10 +44,10 @@ class AdminUser < ApplicationRecord
   has_many :units, through: :community
 
   def admin_users
-    AdminUser.where(id: id)
+    AdminUser.where(community_id: community_id)
   end
 
   def communities
-    Community.where(id: community.id)
+    Community.where(id: community_id)
   end
 end

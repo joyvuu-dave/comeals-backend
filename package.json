@@ -41,7 +41,7 @@
         "rails-erb-loader": "^5.0.1",
         "react": "^15.6.1",
         "react-dom": "^15.6.1",
-        "react-redux": "^5.0.5",
+        "react-redux": "^5.0.6",
         "react-redux-form": "^1.12.1",
         "redux": "^3.7.0",
         "resolve-url-loader": "^2.0.2",

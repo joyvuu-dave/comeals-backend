@@ -6,14 +6,6 @@ class ApplicationController < ActionController::Base
     @current_identity ||= Key.find_by(token: cookies[:token])&.identity
   end
 
-  def current_manager
-    @current_manager ||= current_identity if current_identity.class.equal?(Manager)
-  end
-
-  def signed_in_manager?
-    current_manager.present?
-  end
-
   def current_resident
     @current_resident ||= current_identity if current_identity.class.equal?(Resident)
   end
@@ -23,7 +15,7 @@ class ApplicationController < ActionController::Base
   end
 
   def signed_out?
-    !signed_in_manager? && !signed_in_resident?
+    !signed_in_resident?
   end
 
   def subdomain

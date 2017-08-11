@@ -43,7 +43,7 @@ ActiveAdmin.register Unit do
   form do |f|
     f.inputs do
       f.input :name
-      f.input :community, include_blank: false
+      f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
     end
 
     f.actions

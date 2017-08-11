@@ -6,31 +6,15 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-# AdminUser
-admin_user = AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password')
-
-puts "#{AdminUser.count} AdminUser created"
-
-
 # Community
 community = Community.create!(name: "Swan's Way", cap: 250, rotation_length: 13)
 
 puts "#{Community.count} Community created"
 
-# CommunityAdminUser
-CommunityAdminUser.create!(community_id: community.id, admin_user_id: admin_user.id)
+# AdminUser
+admin_user = AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password', community_id: community.id)
 
-puts "#{CommunityAdminUser.count} CommunityAdminUser created"
-
-# Managers
-manager = Manager.create!(email: 'manager@example.com', password: 'password')
-
-puts "#{Manager.count} Manager created"
-
-# CommunityManager
-CommunityManager.create!(community_id: community.id, manager_id: manager.id)
-
-puts "#{CommunityManager.count} CommunityManager created"
+puts "#{AdminUser.count} AdminUser created"
 
 # Units / Residents
 ('A'..'Z').to_a.each_with_index do |letter, index|

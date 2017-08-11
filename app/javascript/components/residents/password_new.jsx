@@ -2,20 +2,22 @@ import React from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
-class CommunitiesNew extends React.Component {
+class ResidentsPasswordNew extends React.Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {
     axios
-      .post(`${window.host}api.comeals${window.topLevel}/api/v1/communities`, {
-        name: values.name,
-        email: values.email,
-        password: values.password
-      })
+      .post(
+        `${window.host}api.comeals${window.topLevel}/api/v1/residents/password-reset/${this
+          .props.token}`,
+        {
+          password: values.password
+        }
+      )
       .then(function(response) {
         if (response.status === 200) {
           window.alert(response.data.message);
-          window.location.href = `${window.host}admin.comeals${window.topLevel}`;
+          window.location.href = `${window.host}www.comeals${window.topLevel}`;
         }
       })
       .catch(function(error) {
@@ -42,33 +44,28 @@ class CommunitiesNew extends React.Component {
 
   render() {
     return (
-      <div>
-        <h2>Create a new Community</h2>
+      <LocalForm
+        onUpdate={form => this.handleUpdate(form)}
+        onChange={values => this.handleChange(values)}
+        onSubmit={values => this.handleSubmit(values)}
+      >
         <fieldset className="width-50">
-          <legend>Community</legend>
-          <LocalForm
-            onUpdate={form => this.handleUpdate(form)}
-            onChange={values => this.handleChange(values)}
-            onSubmit={values => this.handleSubmit(values)}
-          >
-            <label>Community Name</label>
-            <Control.text model=".name" className="width-75" />
-            <br />
-
-            <label>Manager Email Address</label>
-            <Control.text model=".email" className="width-75" />
-            <br />
-
-            <label>Manager Password</label>
-            <Control type="password" model=".password" className="width-75" />
-            <br />
-
-            <button type="submit">Submit</button>
-          </LocalForm>
+          <legend>
+            Reset Password for {this.props.email}
+          </legend>
+          <label className="width-75">
+            <Control
+              type="password"
+              model=".password"
+              placeholder="New Password"
+            />
+          </label>
         </fieldset>
-      </div>
+
+        <button type="submit">Submit</button>
+      </LocalForm>
     );
   }
 }
 
-export default CommunitiesNew;
+export default ResidentsPasswordNew;

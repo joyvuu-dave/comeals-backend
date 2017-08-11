@@ -23,7 +23,12 @@ class ResidentsController < ApplicationController
   end
 
   def password_reset
-    render plain: 'Password Reset (member)'
+  end
+
+  def password_new
+    resident = Resident.find_by(reset_password_token: params[:token])
+    @email = resident&.email
+    @token = resident&.reset_password_token
   end
 
 end

@@ -11,8 +11,8 @@ class StaticController < ApplicationController
       top_level = ".dev"
     end
 
-    if signed_in_manager?
-      redirect_to "#{host}www.comeals#{top_level}/manager/#{current_manager.id}" and return
+    if current_admin_user.present?
+      redirect_to "#{host}admin.comeals#{top_level}" and return
     elsif signed_in_resident?
       redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar" and return
     else

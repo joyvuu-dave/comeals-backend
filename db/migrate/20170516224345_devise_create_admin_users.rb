@@ -31,6 +31,7 @@ class DeviseCreateAdminUsers < ActiveRecord::Migration[5.1]
       # t.datetime :locked_at
 
 
+      t.references :community, foreign_key: true, null: false
       t.timestamps null: false
     end
 

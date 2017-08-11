@@ -10,11 +10,13 @@ class CreateResidents < ActiveRecord::Migration[5.1]
       t.integer :bills_count, null: false, default: 0
       t.integer :multiplier, null: false, default: 2
       t.string :password_digest, null: false
+      t.string :reset_password_token
 
       t.timestamps
     end
 
     add_index :residents, [:name, :community_id], unique: true
     add_index :residents, :email, unique: true
+    add_index :residents, :reset_password_token, unique: true
   end
 end

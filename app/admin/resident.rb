@@ -32,8 +32,6 @@ ActiveAdmin.register Resident do
         { :guests => :meal },
         { :guests => :resident },
         { :community => :bills },
-        { :community => :community_managers },
-        { :community => :managers },
         { :community => :meals },
         { :community => :meal_residents },
         { :community => :reconciliations },
@@ -124,9 +122,10 @@ ActiveAdmin.register Resident do
       end
       f.input :vegetarian
       f.input :multiplier, label: 'Price Category', as: :radio, collection: [['Adult', 2], ['Child', 1]]
-      f.input :unit, collection: Unit.order('name')
-      f.input :community, include_blank: false
+      f.input :unit, collection: Unit.where(community_id: current_admin_user.community_id).order('name')
+      f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
     end
+    f.label 'Note: passwords can be reset through the resident login page'
     f.actions
     f.semantic_errors
   end

@@ -1,6 +1,6 @@
 ActiveAdmin.register Meal do
   # STRONG PARAMS
-  permit_params :date, :subdomain, :community_id, guests_attributes: [:id, :name, :multiplier, :resident_id, :meal_id, :_destroy], resident_ids: []
+  permit_params :date, :subdomain, :closed, :max, :community_id, guests_attributes: [:id, :name, :multiplier, :resident_id, :meal_id, :_destroy], resident_ids: []
 
   # SCOPE
   scope_to :current_admin_user
@@ -21,6 +21,7 @@ ActiveAdmin.register Meal do
     column :date
     column :community
     column :attendees_count, sortable: false
+    column :closed
     column :max
     column :subsidized?
     column :max_cost do |meal|
@@ -45,6 +46,7 @@ ActiveAdmin.register Meal do
     attributes_table do
       row :date
       row :community
+      row :closed
       row :max
       row :subsidized?
       row :modified_cost do |meal|
@@ -75,16 +77,19 @@ ActiveAdmin.register Meal do
   form do |f|
     f.inputs do
       f.input :date, as: :datepicker
-      f.input :community_id, as: :select, include_blank: false, collection: Community.order('name')
-      f.input :max
-      f.input :attendees, as: :check_boxes, label: 'Attendees', collection: Resident.where(community_id: 1).includes(:unit).order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
+      f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
+      f.input :closed
+      if f.object.closed
+        f.input :max
+      end
+      f.input :attendees, as: :check_boxes, label: 'Attendees', collection: Resident.where(community_id: current_admin_user.community_id).includes(:unit).order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
     end
     f.inputs do
       f.has_many :guests, allow_destroy: true, heading: 'Guests', new_record: true do |g|
         g.input :_destroy, as: :hidden
         g.input :name
         g.input :multiplier, label: 'Price Category', as: :select, include_blank: false, collection: [['Adult', 2], ['Child', 1]]
-        g.input :resident, label: 'Host', collection: Resident.where(community_id: 1).order('name')
+        g.input :resident, label: 'Host', collection: Resident.where(community_id: current_admin_user.community_id).order('name')
         g.input :meal_id, as: :hidden, input_html: { value: meal.id }
       end
     end
