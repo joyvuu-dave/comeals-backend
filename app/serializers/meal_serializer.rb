@@ -38,11 +38,19 @@ class MealSerializer < ActiveModel::Serializer
              :description
 
   def title
-    Date.today > object.date ?
-      "#{object.attendees_count} attended dinner" :
-      object.max ?
-        "#{object.attendees_count} signed up, #{object.max - object.attendees_count} extra#{object.max - object.attendees_count != 1 ? 's' : ''}" :
-        "Meal"
+    if Date.today > object.date
+      return "#{object.attendees_count} attended dinner"
+    end
+
+    if Date.today <= object.date && object.max.present?
+      count = object.max - object.attendees_count
+
+      return "#{object.attendees_count} signed up, #{count} extra#{count == 1 ? '' : 's'}"
+    end
+
+    if Date.today <= object.date && object.max.nil?
+      return "#{object.attendees_count} signed up"
+    end
   end
 
   def start
