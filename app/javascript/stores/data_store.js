@@ -170,6 +170,21 @@ const Resident = types.model(
   },
   {
     toggleAttending() {
+      // Scenario #1: Meal is closed, you're not attending
+      //              there are no extras -- can't add yourself
+      if (
+        this.form.form.meal.closed &&
+        !this.attending &&
+        this.form.form.meal.extras < 1
+      ) {
+        return;
+      }
+
+      // Scenario #2: Meal is closed, you are attending -- can't remove yourself
+      if (this.form.form.meal.closed && this.attending) {
+        return;
+      }
+
       const val = !this.attending;
       this.attending = val;
 
