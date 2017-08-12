@@ -20,6 +20,7 @@ class Community < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
   validates :name, uniqueness: { case_sensitive: false }
+  validates_length_of :slug, within: 3..40
 
   has_many :bills, dependent: :destroy
   has_many :meals, dependent: :destroy
