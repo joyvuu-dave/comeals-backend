@@ -6,7 +6,9 @@ ActiveAdmin.register Bill do
   scope_to :current_admin_user
 
   # CONFIG
-  config.per_page = 100
+  filter :meal_reconciliation_id_null, as: :select, collection: [['Yes', false], ['No', true]], include_blank: false, default: false, label: 'Reconciled?'
+  config.current_filters = false
+  config.per_page = 10
   config.sort_order = 'date'
 
   controller do

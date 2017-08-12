@@ -77,7 +77,7 @@ class Bill < ApplicationRecord
     return amount_cents unless persisted?
 
     return amount_cents if meal.cost == 0
-    (amount_cents / meal.cost).to_f.round(2) * amount_cents
+    ((amount_cents.to_f / meal.cost) * amount_cents).round
   end
 
   def reconciled?

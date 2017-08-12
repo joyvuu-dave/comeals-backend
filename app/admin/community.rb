@@ -1,16 +1,13 @@
 ActiveAdmin.register Community do
-# See permitted parameters documentation:
-# https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-#
-permit_params :name, :cap, :rotation_length, :slug
-#
-# or
-#
-# permit_params do
-#   permitted = [:permitted, :attributes]
-#   permitted << :other if params[:action] == 'create' && current_user.admin?
-#   permitted
-# end
+  # STRONG PARAMS
+  permit_params :name, :cap, :rotation_length, :slug
+
+  # CONFIG
+  config.filters = false
+
+  # ACTIONS
+  actions :all, except: [:destroy, :new]
+
   controller do
     def find_resource
       scoped_collection.friendly.find(params[:id])

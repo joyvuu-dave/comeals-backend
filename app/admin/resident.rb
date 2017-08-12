@@ -70,7 +70,6 @@ ActiveAdmin.register Resident do
       row :name
       row :unit
       row :email
-      row :community
       row :vegetarian
       table_for resident.meals.order('date') do
         column 'Meals Attended' do |meal|

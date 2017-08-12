@@ -6,8 +6,8 @@ ActiveAdmin.register Meal do
   scope_to :current_admin_user
 
   # CONFIG
-  config.filters = false
-  config.per_page = 100
+  filter :reconciliation_id_null, as: :select, collection: [['Yes', false], ['No', true]], include_blank: false, default: false, label: 'Reconciled?'
+  config.per_page = 10
   config.sort_order = 'date_desc'
 
   controller do
@@ -19,7 +19,6 @@ ActiveAdmin.register Meal do
   # INDEX
   index do
     column :date
-    column :community
     column :attendees_count, sortable: false
     column :closed
     column :max
@@ -27,8 +26,6 @@ ActiveAdmin.register Meal do
     column :max_cost do |meal|
       number_to_currency(meal.max_cost.to_f / 100)
     end
-    column :balanced?
-    column :whats_wrong
     column :modified_cost do |meal|
       number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
     end

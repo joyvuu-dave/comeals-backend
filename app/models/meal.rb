@@ -110,29 +110,6 @@ class Meal < ApplicationRecord
     cap * multiplier
   end
 
-  # TEST
-  def balanced?
-    bills.map(&:reimburseable_amount).inject(0, :+) == modified_cost
-  end
-
-  def whats_wrong
-    return nil if diff == 0
-
-    message = diff > 0 ?
-      "more collected than given to cooks." :
-      "more given to cooks than collected."
-
-    "#{diff} #{message}"
-  end
-
-  def diff
-    collected - modified_cost
-  end
-
-  def naive_unit_cost
-    (cost / multiplier.to_f).ceil
-  end
-
   def self.create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
     # Are we finished?
     return num_meals_created if start_date >= end_date
