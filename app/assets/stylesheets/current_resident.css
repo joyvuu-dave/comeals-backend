@@ -21,6 +21,7 @@
   --hasana-yellow: #e9c46a;
   --livid: #6699cc;
   --almost-white: hsl(0, 0%, 98%);
+  --almost-black: #444;
 }
 
 body {

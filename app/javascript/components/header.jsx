@@ -8,13 +8,20 @@ const styles = {
     justifyContent: "flex-end",
     height: "var(--input-height)",
     backgroundColor: "var(--hasana-yellow)"
+  },
+  black: {
+    color: "var(--almost-black)"
   }
 };
 
 const Header = inject("store")(
   observer(({ store }) =>
     <header style={styles.header} id="header">
-      <a className="button button-link" onClick={store.logout}>
+      <a
+        style={styles.black}
+        className="button button-link"
+        onClick={store.logout}
+      >
         logout
       </a>
     </header>
