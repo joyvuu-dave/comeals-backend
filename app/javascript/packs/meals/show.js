@@ -107,6 +107,6 @@ const styles = {
     minHeight: "var(--section-height)"
   },
   footer: {
-    margin: "3rem 3rem 3rem 3rem"
+    margin: "1.5rem"
   }
 };
