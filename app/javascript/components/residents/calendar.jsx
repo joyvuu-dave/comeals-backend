@@ -11,11 +11,11 @@ class ResidentsCalendar extends React.Component {
       eventSources: [
         {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/meals`,
-          color: "#729f98"
+          color: "var(--livid)"
         },
         {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/bills`,
-          color: "#aa863a"
+          color: "var(--almost-black)"
         }
       ]
     });
@@ -28,7 +28,7 @@ class ResidentsCalendar extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="offwhite">
         <button onClick={this.logout}>Logout</button>
         <br />
         <div ref="calendar" />

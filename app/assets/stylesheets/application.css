@@ -12,10 +12,27 @@
  *
  *= require_self
  */
+
+:root {
+  /* Heights */
+  --section-height: 700px;
+  /* Colors */
+  --mango-tango: #ff8c42;
+  --hasana-yellow: #e9c46a;
+  --livid: #6699cc;
+  --almost-white: hsl(0, 0%, 98%);
+  --almost-black: #444;
+  --offwhite: #ebebe4;
+}
+
 .container {
   margin-right: auto;
   margin-left: auto;
   padding-right: 15px;
   padding-left: 15px;
-  width: 8100%;
+  width: 100%;
+}
+
+.offwhite {
+  background-color: var(--offwhite);
 }

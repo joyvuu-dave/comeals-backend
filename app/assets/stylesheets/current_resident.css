@@ -22,6 +22,7 @@
   --livid: #6699cc;
   --almost-white: hsl(0, 0%, 98%);
   --almost-black: #444;
+  --offwhite: #ebebe4;
 }
 
 body {
@@ -66,7 +67,7 @@ button:focus {
 }
 
 .offwhite {
-  background-color: #ebebe4;
+  background-color: var(--offwhite);
 }
 
 i:hover {
