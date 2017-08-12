@@ -37,4 +37,7 @@ $( ->
   if $('#bill_amount_decimal').val() == '0.0'
     $('#bill_amount_decimal')
       .val('')
+
+  # Make the damn remember me checkbox default checked
+  $('#admin_user_remember_me').prop('checked', true)
 )
