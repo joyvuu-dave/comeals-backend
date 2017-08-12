@@ -165,7 +165,7 @@ Meal.update_all(description: 'Tofu tacos, Sloppy Joe, Beet Salad, Sourdough Roll
 # Set Max
 Meal.all.each_with_index do |meal, index|
   next if meal.bills_count == 0
-  if meal.date < Date.today + 1 && index % 2 == 0
+  if (meal.date < Date.today && index % 2 == 0) || (meal.date > Date.today && Date.today + 2 >= meal.date)
     meal.update_attribute(:closed, true)
     meal.update_attribute(:max, meal.attendees_count + rand(0..3))
   end

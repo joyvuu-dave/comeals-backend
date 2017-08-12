@@ -39,10 +39,10 @@ class MealSerializer < ActiveModel::Serializer
 
   def title
     Date.today > object.date ?
-      "Dinner: #{object.attendees_count} present" :
+      "#{object.attendees_count} attended dinner" :
       object.max ?
-        "Dinner: #{object.max} max (#{object.max - object.attendees_count} left)" :
-        "Dinner: no max"
+        "#{object.attendees_count} signed up, #{object.max - object.attendees_count} extra#{object.max - object.attendees_count != 1 ? 's' : ''}" :
+        "Meal"
   end
 
   def start

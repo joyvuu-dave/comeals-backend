@@ -35,8 +35,8 @@ class BillSerializer < ActiveModel::Serializer
              :description
 
   def title
-    object.amount_cents > 0 ?
-      "#{resident_name_helper(object.resident.name)} - $#{sprintf('%0.02f', (object.amount_cents / 100.to_f))}" :
+    object.amount_cents == 0 && object.meal.date < Date.today ?
+      "#{resident_name_helper(object.resident.name)}*" :
       "#{resident_name_helper(object.resident.name)}"
 
   end
