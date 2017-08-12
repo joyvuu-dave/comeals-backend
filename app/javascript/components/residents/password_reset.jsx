@@ -51,7 +51,11 @@ class ResidentsPasswordReset extends React.Component {
         <fieldset className="width-50">
           <legend>Password Reset</legend>
           <label className="width-75">
-            <Control.text model=".email" placeholder="Email" />
+            <Control.text
+              model=".email"
+              placeholder="Email"
+              autoCapitalize="none"
+            />
           </label>
         </fieldset>
 

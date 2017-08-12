@@ -59,7 +59,11 @@ class ResidentsLogin extends React.Component {
           <fieldset className="width-50">
             <legend>Resident Login</legend>
             <label className="width-75">
-              <Control.text model=".email" placeholder="Email" />
+              <Control.text
+                model=".email"
+                placeholder="Email"
+                autoCapitalize="none"
+              />
             </label>
             <br />
             <label className="width-75">
