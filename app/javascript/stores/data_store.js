@@ -155,7 +155,7 @@ export const DataStore = types.model(
     },
     logout() {
       Cookie.remove("token", { domain: ".comeals.dev" });
-      window.location.href = `${window.host}comeals${window.topLevel}`;
+      window.location.assign(`${window.host}comeals${window.topLevel}/`);
     },
     calendar() {
       window.location.href = "/calendar";
