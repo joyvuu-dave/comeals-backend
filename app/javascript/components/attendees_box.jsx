@@ -49,6 +49,9 @@ const AttendeeComponent = inject("store")(
             key={`late_switch_${resident.id}`}
             defaultChecked={resident.late}
             onClick={e => resident.toggleLate()}
+            disabled={
+              store.meal.closed && !resident.attending && store.meal.extras < 1
+            }
           />
           <label htmlFor={`late_switch_${resident.id}`} />
         </span>
@@ -62,7 +65,10 @@ const AttendeeComponent = inject("store")(
             key={`veg_switch_${resident.id}`}
             defaultChecked={resident.vegetarian}
             onClick={e => resident.toggleVeg()}
-            disabled={store.meal.closed}
+            disabled={
+              (store.meal.closed && resident.attending) ||
+              (store.meal.closed && store.meal.extras < 1)
+            }
           />
           <label htmlFor={`veg_switch_${resident.id}`} />
         </span>

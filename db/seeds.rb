@@ -8,6 +8,7 @@
 
 # Community
 community = Community.create!(name: "Swan's Way", cap: 250, rotation_length: 13)
+community.update_attribute(:slug, 'swans')
 
 puts "#{Community.count} Community created"
 
