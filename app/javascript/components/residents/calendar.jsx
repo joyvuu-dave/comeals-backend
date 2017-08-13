@@ -19,11 +19,17 @@ class ResidentsCalendar extends React.Component {
         }
       ]
     });
+
+    setInterval(() => this.refetch(calendar), 60000);
   }
 
   logout() {
     Cookie.remove("token", { domain: `.comeals${window.topLevel}` });
     window.location.href = "/";
+  }
+
+  refetch(calendar) {
+    $(calendar).fullCalendar("refetchEvents");
   }
 
   render() {
