@@ -1,11 +1,12 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import moment from "moment";
+import ButtonBar from "./button_bar";
 
 const styles = {
   header: {
     display: "flex",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     height: "var(--input-height)",
     backgroundColor: "var(--hasana-yellow)"
   },
@@ -17,13 +18,23 @@ const styles = {
 const Header = inject("store")(
   observer(({ store }) =>
     <header style={styles.header} id="header">
-      <a
+      <button
+        className="button-link"
         style={styles.black}
-        className="button button-link"
-        onClick={store.logout}
+        onClick={store.calendar}
       >
-        logout
-      </a>
+        Calendar
+      </button>
+      <div className="flex">
+        <ButtonBar />
+        <a
+          style={styles.black}
+          className="button button-link"
+          onClick={store.logout}
+        >
+          logout
+        </a>
+      </div>
     </header>
   )
 );

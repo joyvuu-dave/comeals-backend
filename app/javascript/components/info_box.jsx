@@ -1,6 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import Extras from "./extras";
+import CloseButton from "./close_button";
 
 const styles = {
   main: {
@@ -14,8 +15,8 @@ const styles = {
   circle: {
     borderRadius: "50%",
     border: "1px solid var(--color-primary)",
-    height: "75px",
-    width: "75px",
+    height: "4.5rem",
+    width: "4.5rem",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -27,10 +28,11 @@ const styles = {
 const InfoBox = inject("store")(
   observer(({ store }) =>
     <div className="offwhite" style={styles.main}>
-      <div className="title">
-        <h2>Attendees</h2>
+      <div className="title flex space-between">
+        <h2>Signed Up</h2>
+        <CloseButton />
       </div>
-      <div className="flex">
+      <div className="flex space-between">
         <h4 style={styles.circle}>
           <div>Total</div>
           <div>
@@ -49,8 +51,8 @@ const InfoBox = inject("store")(
             {store.lateCount}
           </div>
         </h4>
+        <Extras />
       </div>
-      {store.meal.closed && <Extras />}
     </div>
   )
 );

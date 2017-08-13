@@ -73,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <div className="container">
           <section style={styles.section}>
             <div className="wrapper">
-              <ButtonBar />
               <DateBox />
               <MenuBox />
               <CooksBox />
@@ -103,8 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 /* Flex container, centered content*/
 const styles = {
   section: {
-    margin: "1em 0 1em 0",
-    minHeight: "var(--section-height)"
+    margin: "1em 0 1em 0"
   },
   footer: {
     margin: "1.5rem"

@@ -14,8 +14,6 @@
  */
 
 :root {
-  /* Heights */
-  --section-height: 700px;
   /* Colors */
   --mango-tango: #ff8c42;
   --hasana-yellow: #e9c46a;
@@ -40,8 +38,7 @@ body {
 .wrapper {
   display: grid;
   grid-gap: 1rem;
-  grid-template-areas: "a1 a1 a1" "a2 a2 a2" "a3 a3 a3" "a4 a4 a4" "a5 a5 a5"
-    "a6 a6 a6";
+  grid-template-areas: "a2 a2 a2" "a5 a5 a5" "a3 a3 a3" "a4 a4 a4" "a6 a6 a6";
   margin-right: auto;
   margin-left: auto;
   padding-right: 0;
@@ -53,7 +50,9 @@ body {
   .wrapper {
     display: grid;
     grid-gap: 1rem;
-    grid-template-areas: "a1 a1 a1" "a2 a3 a3" "a4 a4 a5" "a6 a6 a6";
+    grid-template-areas: "a2 a2 a2 a2 a2 a2 a5 a5 a5 a5 a5 a5"
+      "a3 a3 a3 a3 a3 a3 a4 a4 a4 a4 a4 a4"
+      "a6 a6 a6 a6 a6 a6 a6 a6 a6 a6 a6 a6";
     margin-right: auto;
     margin-left: auto;
     padding-right: 15px;

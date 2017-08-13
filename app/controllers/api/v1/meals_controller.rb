@@ -23,8 +23,8 @@ module Api
         render json: @meal.community.residents, each_serializer: AttendeeSerializer, scope: @meal
       end
 
-      def create_resident
-        meal_resident = @meal.meal_residents.find_or_create_by(resident_id: params[:resident_id])
+      def create_meal_resident
+        meal_resident = @meal.meal_residents.find_or_create_by(resident_id: params[:resident_id], late: params[:late], vegetarian: params[:vegetarian])
         if meal_resident.save
           render json: meal_resident
         else
@@ -32,7 +32,7 @@ module Api
         end
       end
 
-      def destroy_resident
+      def destroy_meal_resident
         if @meal_resident&.destroy
           render json: { message: 'MealResident destroyed.' } and return
         else
@@ -40,7 +40,7 @@ module Api
         end
       end
 
-      def update_resident
+      def update_meal_resident
         if @meal_resident.update(meal_resident_params)
           render json: { message: 'MealResident updated.' } and return
         else

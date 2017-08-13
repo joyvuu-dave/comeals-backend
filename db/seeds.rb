@@ -21,11 +21,11 @@ puts "#{AdminUser.count} AdminUser created"
   unless letter == 'O' || letter == 'I'
     unit = Unit.create!(name: letter, community_id: community.id)
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
-                    multiplier: 1, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: '')
+                    multiplier: 1, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: '') if index % 5 == 0
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
                     multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password')
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
-                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password', vegetarian: true)
+                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password', vegetarian: true) if index % 2 == 0
   end
 end
 
@@ -48,6 +48,7 @@ puts "#{Meal.count} Meals created"
 
 # MealResidents & Guests
 Meal.all.each do |meal|
+  next if meal.date > Date.today + 7
   Resident.all.shuffle[0..(Random.rand(8..21))].each_with_index do |resident, index|
     if index % 10 === 0
       Guest.create!(name: "Guest #{resident.id}",
@@ -76,6 +77,7 @@ puts "#{MealResident.count} MealResidents created"
 
 # Bills
 Meal.all.each_with_index do |meal, index|
+  next if meal.date > Date.today + 14
   ids = Resident.pluck(:id).shuffle[0..1]
   if index % 2 == 0 && index % 3 == 0
     Bill.create(meal_id: meal.id, resident_id: ids[0],
@@ -103,10 +105,11 @@ puts "#{Reconciliation.count} Reconciliation created"
 
 
 # Meals (will not be reconciled)
-Meal.create_templates(community.id, 7.weeks.ago.to_date, 13.weeks.from_now.to_date, 0, 0)
+Meal.create_templates(community.id, 7.weeks.ago.to_date, 26.weeks.from_now.to_date, 0, 0)
 
 # MealResidents & Guests
 Meal.all.each do |meal|
+  next if meal.date > Date.today + 7
   Resident.all.shuffle[0..(Random.rand(8..21))].each_with_index do |resident, index|
     if index % 10 === 0
       Guest.create(name: "Guest #{resident.id}",
@@ -135,6 +138,7 @@ puts "#{MealResident.count} MealResidents created"
 
 # Bills
 Meal.all.each_with_index do |meal, index|
+  next if meal.date > Date.today + 14
   ids = Resident.pluck(:id).shuffle[0..1]
   if index % 3 == 0 && index % 4 == 0
     Bill.create(meal_id: meal.id, resident_id: ids[0],
@@ -157,14 +161,17 @@ end
 puts "#{Bill.count} Bills created"
 
 # Set description
-Meal.update_all(description: 'Tofu tacos, Sloppy Joe, Beet Salad, Sourdough Rolls, Chocolate Cake, Strawberries')
+Meal.all.each do |meal|
+  next if meal.date > Date.today + 14
+  meal.update_attribute(:description, "#{Faker::Food.dish}, #{Faker::Food.ingredient}, and #{Faker::Dessert.flavor} #{Faker::Dessert.variety}")
+end
 
 
 
 
 # Set Max
 Meal.all.each_with_index do |meal, index|
-  if (meal.date < Date.today && index % 2 == 0) || (meal.date > Date.today && Date.today + 3 >= meal.date)
+  if (meal.date < Date.today && index % 2 == 0) || (meal.date >= Date.today && meal.date <= Date.today + 3)
     meal.update_attribute(:closed, true)
     meal.update_attribute(:max, meal.attendees_count + rand(1..4))
   end

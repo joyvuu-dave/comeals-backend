@@ -5,7 +5,6 @@ import { inject, observer } from "mobx-react";
 const styles = {
   main: {
     margin: "1em 0 1em 0",
-    minHeight: "var(--section-height)",
     gridArea: "a6"
   },
   table: {
@@ -25,9 +24,6 @@ const styles = {
   },
   no: {
     cursor: "pointer"
-  },
-  button: {
-    marginBottom: "1px"
   }
 };
 
@@ -53,7 +49,6 @@ const AttendeeComponent = inject("store")(
             key={`late_switch_${resident.id}`}
             defaultChecked={resident.late}
             onClick={e => resident.toggleLate()}
-            disabled={!resident.attending}
           />
           <label htmlFor={`late_switch_${resident.id}`} />
         </span>
@@ -67,7 +62,7 @@ const AttendeeComponent = inject("store")(
             key={`veg_switch_${resident.id}`}
             defaultChecked={resident.vegetarian}
             onClick={e => resident.toggleVeg()}
-            disabled={store.meal.closed || !resident.attending}
+            disabled={store.meal.closed}
           />
           <label htmlFor={`veg_switch_${resident.id}`} />
         </span>
@@ -95,14 +90,6 @@ const AttendeeComponent = inject("store")(
 const AttendeeForm = inject("store")(
   observer(({ store }) =>
     <div style={styles.main}>
-      <button
-        onClick={store.toggleClosed}
-        style={styles.button}
-        className="button-big"
-      >
-        {store.meal.closed ? "Re-Open Meal" : "Close Meal"}
-      </button>
-      <br />
       <table className="table-striped" style={styles.table}>
         <thead>
           <tr>

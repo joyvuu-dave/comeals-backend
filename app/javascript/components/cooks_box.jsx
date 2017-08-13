@@ -6,8 +6,7 @@ const styles = {
   main: {
     gridArea: "a4",
     border: "0.5px solid",
-    borderRadius: "var(--button-border-radius)",
-    minHeight: "calc(var(--section-height) * (1/2))"
+    borderRadius: "var(--button-border-radius)"
   },
   grid: {
     display: "flex",
@@ -17,9 +16,8 @@ const styles = {
 
 const BillEdit = inject("store")(
   observer(({ store, bill }) =>
-    <div>
+    <div className="input-group">
       <select
-        className="width-75"
         key={bill.id}
         value={bill.resident_id}
         onChange={e => bill.setResident(e.target.value)}
@@ -31,7 +29,7 @@ const BillEdit = inject("store")(
           </option>
         )}
       </select>
-      <div className="input-group width-75">
+      <div className="input-group">
         <span className="input-addon">$</span>
         <input
           type="number"
@@ -40,9 +38,8 @@ const BillEdit = inject("store")(
           step="0.01"
           value={bill.amount}
           onChange={e => bill.setAmount(e.target.value)}
+          className={bill.amountIsValid ? "" : "input-invalid"}
         />
-        {!bill.amountIsValid && <span>Error</span>}
-        <br />
       </div>
     </div>
   )
@@ -93,7 +90,6 @@ const CooksBox = inject("store")(
           {store.editBillsMode ? "Save" : "Edit"}
         </button>{" "}
       </div>
-      <br />
       {store.editBillsMode ? <Edit /> : <Display />}
     </div>
   )

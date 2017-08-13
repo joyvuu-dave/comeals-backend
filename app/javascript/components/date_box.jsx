@@ -14,7 +14,10 @@ const styles = {
     backgroundColor: "var(--hasana-yellow)"
   },
   closed: {
-    color: "var(--button-bg-color-primary)"
+    color: "var(--color-primary)"
+  },
+  open: {
+    color: "var(--color-green)"
   }
 };
 
@@ -34,11 +37,10 @@ const DateBox = inject("store")(
           onClick={store.nextMeal}
         />
       </div>
-      <button className="button-success" onClick={store.calendar}>
-        Calendar
-      </button>
       <br />
-      {store.meal.closed && <h1 style={styles.closed}>CLOSED</h1>}
+      <h1 style={store.meal.closed ? styles.closed : styles.open}>
+        {store.meal.closed ? "CLOSED" : "OPEN"}
+      </h1>
     </div>
   )
 );
