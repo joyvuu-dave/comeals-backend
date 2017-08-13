@@ -93,7 +93,12 @@ const AttendeeForm = inject("store")(
       <table className="table-striped" style={styles.table}>
         <thead>
           <tr>
-            <th>Name</th>
+            <th>
+              Name{" "}
+              <span className="text-small text-italic text-muted">
+                (click to add)
+              </span>
+            </th>
             <th>Late</th>
             <th>Veg</th>
             <th />
