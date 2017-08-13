@@ -18,6 +18,14 @@ const styles = {
   },
   open: {
     color: "var(--color-green)"
+  },
+  arrow: {
+    height: "5rem",
+    width: "4rem",
+    display: "flex",
+    flexFlow: "column",
+    justifyContent: "center",
+    alignItems: "center"
   }
 };
 
@@ -25,17 +33,19 @@ const DateBox = inject("store")(
   observer(({ store }) =>
     <div style={styles.main}>
       <div className="flex middle space-between">
-        <i
-          className="fa fa-chevron-left fa-lg padding-right-medium"
+        <div
+          className="arrow"
+          style={styles.arrow}
           onClick={store.previousMeal}
-        />
+        >
+          <i className="fa fa-chevron-left fa-3x padding-right-medium" />
+        </div>
         <h2>
           {moment(store.meal.date).format("ddd, MMM Do")}
         </h2>
-        <i
-          className="fa fa-chevron-right fa-lg padding-left-medium"
-          onClick={store.nextMeal}
-        />
+        <div className="arrow" style={styles.arrow} onClick={store.nextMeal}>
+          <i className="fa fa-chevron-right fa-3x padding-left-medium" />
+        </div>
       </div>
       <br />
       <h1 style={store.meal.closed ? styles.closed : styles.open}>

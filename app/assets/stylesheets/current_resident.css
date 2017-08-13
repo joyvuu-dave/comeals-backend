@@ -69,9 +69,10 @@ button:focus {
   background-color: var(--offwhite);
 }
 
-i:hover {
+.arrow:hover {
   color: var(--almost-white);
   cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .title {
