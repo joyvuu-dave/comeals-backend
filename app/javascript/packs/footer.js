@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import ManagersLogin from "../../components/managers/login";
+import Footer from "../components/footer";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const node = document.getElementById("meal-id");
+  const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
   const production = data.production;
   if (production) {
@@ -15,5 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".dev";
   }
 
-  ReactDOM.render(<ManagersLogin />, document.getElementById("root"));
+  ReactDOM.render(<Footer />, document.getElementById("footer"));
 });

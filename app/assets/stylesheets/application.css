@@ -23,7 +23,34 @@
   --offwhite: #ebebe4;
 }
 
+body {
+  background-color: var(--livid);
+}
+
+/*
+Override Shoelace styling so it
+doesn't interfere with FullCalendar
+*/
+table {
+  margin-bottom: initial !important;
+}
+
+#site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+  width: 100%;
+}
+
+.box {
   margin-right: auto;
   margin-left: auto;
   padding-right: 15px;
@@ -31,6 +58,150 @@
   width: 100%;
 }
 
+.wrapper {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-areas: "a2 a2 a2" "a5 a5 a5" "a3 a3 a3" "a4 a4 a4" "a6 a6 a6";
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+  width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+  .wrapper {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-areas: "a2 a2 a2 a2 a2 a2 a5 a5 a5 a5 a5 a5"
+      "a3 a3 a3 a3 a3 a3 a4 a4 a4 a4 a4 a4"
+      "a6 a6 a6 a6 a6 a6 a6 a6 a6 a6 a6 a6";
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+    width: 100%;
+  }
+}
+
+.login-box {
+  width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+  .login-box {
+    width: 50%;
+  }
+}
+
+button:focus {
+  outline: none;
+}
+
+.header {
+  background-color: var(--hasana-yellow);
+  height: 2rem;
+}
+
 .offwhite {
   background-color: var(--offwhite);
+}
+
+.arrow:hover {
+  color: var(--almost-white);
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  border-bottom: 0.5px solid;
+  padding: 1rem 1rem 0 1rem;
+  background-color: var(--hasana-yellow);
+  margin-bottom: 0;
+}
+
+.is-hidden {
+  visibility: hidden;
+}
+
+/* GRID SYSTEM */
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+.flex.top {
+  align-items: flex-start;
+}
+.flex.middle {
+  align-items: center;
+}
+.flex.bottom {
+  align-items: flex-end;
+}
+.flex.stretch {
+  align-items: stretch;
+}
+.flex.baseline {
+  align-items: baseline;
+}
+.flex.left {
+  justify-content: flex-start;
+}
+.flex.center {
+  justify-content: center;
+}
+.flex.right {
+  justify-content: flex-end;
+}
+.flex.space-between {
+  justify-content: space-between;
+}
+.flex.space-around {
+  justify-content: space-around;
+}
+
+.cell {
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.cell.fill {
+  width: 0;
+  min-width: 0;
+  flex-grow: 1;
+}
+.cell.one {
+  width: calc(100% * 1 / 12);
+}
+.cell.two {
+  width: calc(100% * 2 / 12);
+}
+.cell.three {
+  width: calc(100% * 3 / 12);
+}
+.cell.four {
+  width: calc(100% * 4 / 12);
+}
+.cell.five {
+  width: calc(100% * 5 / 12);
+}
+.cell.six {
+  width: calc(100% * 6 / 12);
+}
+.cell.seven {
+  width: calc(100% * 7 / 12);
+}
+.cell.eight {
+  width: calc(100% * 8 / 12);
+}
+.cell.nine {
+  width: calc(100% * 9 / 12);
+}
+.cell.ten {
+  width: calc(100% * 10 / 12);
+}
+.cell.eleven {
+  width: calc(100% * 11 / 12);
+}
+.cell.twelve {
+  width: 100%;
 }

@@ -1,26 +1,19 @@
 
-<%= content_tag :div,
-  id: "meal-id",
-  data: {
-    production: Rails.env.production?
-}.to_json do %>
-<% end %>
+<header class="flex space-between header">
+  <h2 class="padding-left-small">Comeals</h2>
+  <a href="<%= Rails.env.production? ? 'https://' : 'http://' %>admin.comeals<%= Rails.env.production? ? '.com/' : '.dev/' %>" class="padding-right-small">admin</a>
+</header>
+<div class="box">
+  <br />
+  <div id="resident_login"></div>
+  <br />
+  <p>
+    <div class="width-50">
+      <h3>Create an Account</h3>
+      <p>Add your community and start managing your common meals today!</p>
+      <a href="/communities/new" class="button">Sign Up</a>
+    </div>
+  </p>
+  </div>
 
-<div class="container">
-  <h1>Welcome to Comeals</h1>
-  <br>
-  <p>
-    <h2>Community</h2>
-    <a href="/communities/new">Create</a>
-  </p>
-  <br>
-  <p>
-    <h2>Manager</h2>
-    <a href="<%= Rails.env.production? ? 'https://' : 'http://' %>admin.comeals<%= Rails.env.production? ? '.com/' : '.dev/' %>">Login</a>
-  </p>
-  <br>
-  <p>
-    <h2>Resident</h2>
-    <a href="/residents/login">Login</a>
-  </p>
-</div>
+<%= javascript_pack_tag 'residents/login' %>

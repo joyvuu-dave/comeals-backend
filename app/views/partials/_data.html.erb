@@ -1,0 +1,10 @@
+<%= content_tag :div,
+  id: "site-data",
+  data: {
+    production: Rails.env.production?,
+    id: @meal&.id,
+    date: @meal&.date,
+    email: @email,
+    token: @token
+}.to_json do %>
+<% end %>

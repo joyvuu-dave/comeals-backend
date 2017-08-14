@@ -14,7 +14,13 @@ import InfoBox from "../../components/info_box";
 import AttendeesBox from "../../components/attendees_box";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const node = document.getElementById("meal-id");
+  const styles = {
+    section: {
+      margin: "1em 0 1em 0"
+    }
+  };
+
+  const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
   const id = Number.parseInt(data.id);
 
@@ -80,31 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
               <AttendeesBox />
             </div>
           </section>
-          <footer style={styles.footer}>
-            <h2 className="text-center text-muted">
-              Made by{" "}
-              <a
-                href="https://github.com/joyvuu-dave/comeals-rewrite"
-                target="_blank"
-                className="text-muted"
-              >
-                David
-              </a>
-            </h2>
-          </footer>
         </div>
       </div>
     </Provider>,
-    document.getElementById("root")
+    document.getElementById("main")
   );
 });
-
-/* Flex container, centered content*/
-const styles = {
-  section: {
-    margin: "1em 0 1em 0"
-  },
-  footer: {
-    margin: "1.5rem"
-  }
-};

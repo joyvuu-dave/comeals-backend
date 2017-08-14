@@ -17,7 +17,7 @@ const styles = {
 
 const Header = inject("store")(
   observer(({ store }) =>
-    <header style={styles.header} id="header">
+    <header style={styles.header} className="header">
       <button
         className="button-link"
         style={styles.black}

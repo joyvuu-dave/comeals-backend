@@ -4,6 +4,16 @@ import "fullcalendar";
 import "fullcalendar/dist/fullcalendar.css";
 import Cookie from "js-cookie";
 
+const styles = {
+  main: {
+    width: "95vw",
+    marginLeft: "auto",
+    marginRight: "auto",
+    marginTop: "1rem",
+    marginBottom: "1rem"
+  }
+};
+
 class ResidentsCalendar extends React.Component {
   componentDidMount() {
     const { calendar } = this.refs;
@@ -17,7 +27,8 @@ class ResidentsCalendar extends React.Component {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/bills`,
           color: "var(--almost-black)"
         }
-      ]
+      ],
+      contentHeight: 600
     });
 
     setInterval(() => this.refetch(calendar), 60000);
@@ -35,9 +46,12 @@ class ResidentsCalendar extends React.Component {
   render() {
     return (
       <div className="offwhite">
-        <button onClick={this.logout}>Logout</button>
-        <br />
-        <div ref="calendar" />
+        <header className="header flex right">
+          <button onClick={this.logout} className="button-link">
+            Logout
+          </button>
+        </header>
+        <div ref="calendar" style={styles.main} />
       </div>
     );
   }

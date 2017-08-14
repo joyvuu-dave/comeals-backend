@@ -1,10 +1,11 @@
 class MealsController < ApplicationController
   before_action :set_meal
 
+  # GET /meals/:id/edit (subdomains)
   def show
-    render layout: 'current_resident'
   end
 
+  # GET /meals/:id/previous (subdomains)
   def previous
     meals = Meal.where(community_id: @meal.community_id).order(:date)
     meal_index = meals.find_index { |meal| meal.id == @meal.id }
@@ -19,6 +20,7 @@ class MealsController < ApplicationController
     redirect_to @meal
   end
 
+  # GET /meals/:id/next (subdomains)
   def next
     meals = Meal.where(community_id: @meal.community_id).order(:date)
     meal_index = meals.find_index { |meal| meal.id == @meal.id }
@@ -33,8 +35,8 @@ class MealsController < ApplicationController
     redirect_to @meal
   end
 
+  # GET /meals/:id/log (subdomains)
   def log
-    @meal = Meal.find(params[:id])
   end
 
   private

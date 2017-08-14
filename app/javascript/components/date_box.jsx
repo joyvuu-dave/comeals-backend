@@ -14,7 +14,7 @@ const styles = {
     backgroundColor: "var(--hasana-yellow)"
   },
   closed: {
-    color: "var(--color-primary)"
+    color: "var(--state-primary)"
   },
   open: {
     color: "var(--color-green)"

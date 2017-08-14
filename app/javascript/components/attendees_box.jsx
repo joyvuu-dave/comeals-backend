@@ -101,7 +101,7 @@ const AttendeeForm = inject("store")(
           <tr>
             <th>
               Name{" "}
-              <span className="text-small text-italic text-muted">
+              <span className="text-small text-italic text-secondary">
                 (click to add)
               </span>
             </th>

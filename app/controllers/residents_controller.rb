@@ -1,30 +1,17 @@
 class ResidentsController < ApplicationController
+  # GET /residents/login (www)
   def login
-    render layout: 'current_resident'
   end
 
+  # GET /residents/calendar (subdomains)
   def calendar
   end
 
-  def bill
-    render plain: 'Bill'
-  end
-
-  def resident
-    render plain: 'Resident'
-  end
-
-  def unit
-    render plain: 'Unit'
-  end
-
-  def report
-    render plain: 'Report'
-  end
-
+  # GET /residents/password-reset
   def password_reset
   end
 
+  # GET /residents/password-reset/:token
   def password_new
     resident = Resident.find_by(reset_password_token: params[:token])
     @email = resident&.email

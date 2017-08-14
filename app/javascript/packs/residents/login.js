@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import ResidentsLogin from "../../components/residents/login";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const node = document.getElementById("meal-id");
+  const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
   const production = data.production;
   if (production) {
@@ -15,5 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".dev";
   }
 
-  ReactDOM.render(<ResidentsLogin />, document.getElementById("root"));
+  ReactDOM.render(
+    <ResidentsLogin />,
+    document.getElementById("resident_login")
+  );
 });

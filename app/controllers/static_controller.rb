@@ -1,7 +1,9 @@
 class StaticController < ApplicationController
+  # GET / (www)
   def main
   end
 
+  # GET / (root, subdomains)
   def root
     if Rails.env.production?
       host = "https://"

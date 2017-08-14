@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import CommunitiesNew from "../../components/communities/new";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const node = document.getElementById("meal-id");
+  const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
   const production = data.production;
   if (production) {
@@ -15,5 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".dev";
   }
 
-  ReactDOM.render(<CommunitiesNew />, document.getElementById("root"));
+  ReactDOM.render(<CommunitiesNew />, document.getElementById("main"));
 });

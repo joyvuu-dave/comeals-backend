@@ -4,14 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Comeals</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shoelace-css/1.0.0-beta11/shoelace.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shoelace-css/1.0.0-beta15/shoelace.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretty-checkbox/2.2.1/pretty.min.css">
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
   </head>
 
   <body>
-    <div id="root"></div>
-    <%= yield %>
+    <div id="site">
+      <div id="main">
+        <%= yield %>
+      </div>
+      <div id="calendar"></div>
+      <div id="footer"></div>
+    </div>
+    <%= render 'partials/data' %>
+    <%= javascript_pack_tag 'footer' %>
   </body>
 </html>

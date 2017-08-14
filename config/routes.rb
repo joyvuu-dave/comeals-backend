@@ -8,13 +8,8 @@ Rails.application.routes.draw do
   # Manager Pages
   constraints subdomain: 'www' do
     root to: 'static#main'
-    get '/managers/sign-up', to: 'managers#sign_up'
-    get '/managers/login', to: 'managers#login'
     get '/residents/login', to: 'residents#login'
-    get '/manager/:id', to: 'managers#show'
     get '/communities/new', to: 'communities#new'
-    get '/communities/:id', to: 'communities#show'
-    get '/managers/password-reset/:id', to: 'managers#password_reset'
     get '/residents/password-reset', to: 'residents#password_reset'
     get '/residents/password-reset/:token', to: 'residents#password_new'
   end
@@ -23,9 +18,6 @@ Rails.application.routes.draw do
   constraints subdomain: 'api' do
     namespace :api do
       namespace :v1 do
-        post '/managers', to: 'managers#create'
-        get '/managers/communities', to: 'managers#communities'
-        post '/managers/token', to: 'managers#token'
         post '/residents/token', to: 'residents#token'
         get '/residents/:id', to: 'residents#show'
         post '/residents/password-reset', to: 'residents#password_reset'
@@ -45,7 +37,6 @@ Rails.application.routes.draw do
         patch '/meals/:meal_id/max', to: 'meals#update_max'
         patch '/meals/:meal_id/bills', to: 'meals#update_bills'
         patch '/meals/:meal_id/closed', to: 'meals#update_closed'
-        patch '/meals/:meal_id/max', to: 'meals#update_max'
         get '/bills', to: 'bills#index'
         get '/bills/:id', to: 'bills#show'
       end
@@ -64,10 +55,6 @@ Rails.application.routes.draw do
   get '/meals/:id/previous', to: 'meals#previous'
   get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
-  get '/bills/:id', to: 'residents#bill'
-  get '/residents/:id', to: 'residents#resident'
-  get '/units/:id', to: 'residents#unit'
-  get '/report', to: 'residents#report'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

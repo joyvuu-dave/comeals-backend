@@ -47,7 +47,7 @@ const BillEdit = inject("store")(
 
 const BillShow = inject("store")(
   observer(({ store, bill }) =>
-    <tr className={!bill.resident && "is-hidden"}>
+    <tr hidden={!bill.resident}>
       <td key={v4()}>
         {bill.resident && bill.resident.name}
       </td>

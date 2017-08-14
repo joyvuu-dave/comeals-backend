@@ -14,7 +14,7 @@ const styles = {
   },
   circle: {
     borderRadius: "50%",
-    border: "1px solid var(--color-primary)",
+    border: "1px solid var(--state-primary)",
     height: "4.5rem",
     width: "4.5rem",
     display: "flex",
