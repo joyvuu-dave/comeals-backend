@@ -124,6 +124,7 @@ button:focus {
 .header {
   height: 2rem;
   background-color: var(--hasana-yellow);
+  min-width: 30rem;
 }
 
 .offwhite {
