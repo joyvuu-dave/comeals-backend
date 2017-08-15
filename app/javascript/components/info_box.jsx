@@ -15,8 +15,8 @@ const styles = {
   circle: {
     borderRadius: "50%",
     border: "1px solid var(--state-primary)",
-    height: "4.5rem",
-    width: "4.5rem",
+    height: "6.5rem",
+    width: "6.5rem",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -32,7 +32,7 @@ const InfoBox = inject("store")(
         <h2>Signed Up</h2>
         <CloseButton />
       </div>
-      <div className="flex space-between">
+      <div className="flex nowrap space-between">
         <h4 style={styles.circle}>
           <div>Total</div>
           <div>

@@ -32,7 +32,7 @@ const styles = {
 const DateBox = inject("store")(
   observer(({ store }) =>
     <div style={styles.main}>
-      <div className="flex middle space-between">
+      <div className="flex nowrap middle space-between">
         <div
           className="arrow"
           style={styles.arrow}

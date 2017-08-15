@@ -35,6 +35,29 @@ table {
   margin-bottom: initial !important;
 }
 
+.fc-content {
+  color: hsl(0, 0%, 92%);
+}
+
+.calendar {
+  width: 95vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  transition: width 0.5s;
+}
+
+@media only screen and (min-width: 768px) {
+  .calendar {
+    width: 85vw;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
 #site {
   display: flex;
   min-height: 100vh;
@@ -78,8 +101,8 @@ table {
       "a6 a6 a6 a6 a6 a6 a6 a6 a6 a6 a6 a6";
     margin-right: auto;
     margin-left: auto;
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 2rem;
+    padding-left: 2rem;
     width: 100%;
   }
 }
@@ -99,8 +122,8 @@ button:focus {
 }
 
 .header {
-  background-color: var(--hasana-yellow);
   height: 2rem;
+  background-color: var(--hasana-yellow);
 }
 
 .offwhite {
@@ -129,6 +152,11 @@ button:focus {
   display: flex;
   flex-wrap: wrap;
 }
+
+.flex.nowrap {
+  flex-wrap: nowrap;
+}
+
 .flex.top {
   align-items: flex-start;
 }

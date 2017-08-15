@@ -3,16 +3,7 @@ import $ from "jquery";
 import "fullcalendar";
 import "fullcalendar/dist/fullcalendar.css";
 import Cookie from "js-cookie";
-
-const styles = {
-  main: {
-    width: "95vw",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: "1rem",
-    marginBottom: "1rem"
-  }
-};
+import moment from "moment";
 
 class ResidentsCalendar extends React.Component {
   componentDidMount() {
@@ -28,7 +19,15 @@ class ResidentsCalendar extends React.Component {
           color: "var(--almost-black)"
         }
       ],
-      contentHeight: 600
+      contentHeight: "auto",
+      eventRender: function(event, eventElement) {
+        const startString = moment(event.start).format();
+        const todayString = moment().format("YYYY-MM-DD");
+
+        if (moment(startString).isBefore(todayString, "day")) {
+          eventElement.css("opacity", "0.5");
+        }
+      }
     });
 
     setInterval(() => this.refetch(calendar), 60000);
@@ -51,7 +50,7 @@ class ResidentsCalendar extends React.Component {
             Logout
           </button>
         </header>
-        <div ref="calendar" style={styles.main} />
+        <div ref="calendar" className="calendar" />
       </div>
     );
   }

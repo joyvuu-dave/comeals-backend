@@ -10,6 +10,9 @@
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
     <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <%= javascript_pack_tag 'manifest' %>
+    <%= javascript_pack_tag 'vendor' %>
+    <%= stylesheet_pack_tag 'vendor' %>
   </head>
 
   <body>
