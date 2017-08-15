@@ -7,7 +7,6 @@ ActiveAdmin.register Unit do
 
   # CONFIG
   config.filters = false
-  config.per_page = 10
   config.sort_order = 'name_asc'
 
   # ACTIONS

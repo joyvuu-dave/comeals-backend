@@ -26,7 +26,7 @@
 #
 
 class Bill < ApplicationRecord
-  belongs_to :meal
+  belongs_to :meal, inverse_of: :bills, touch: true
   belongs_to :resident
   belongs_to :community
 

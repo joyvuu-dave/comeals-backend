@@ -22,7 +22,7 @@ const MenuBox = inject("store")(
         <h2 className="width-15">Menu</h2>
         <button
           className={
-            store.editDescriptionMode ? "button-inverse" : "button-danger"
+            store.editDescriptionMode ? "button-dark" : "button-danger"
           }
           onClick={store.toggleEditDescriptionMode}
         >

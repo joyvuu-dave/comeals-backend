@@ -15,6 +15,7 @@
 #  reset_password_token :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  balance_is_dirty     :boolean          default(TRUE), not null
 #
 # Indexes
 #

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724165619) do
+ActiveRecord::Schema.define(version: 20170815151758) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -159,6 +159,14 @@ ActiveRecord::Schema.define(version: 20170724165619) do
     t.index ["community_id"], name: "index_reconciliations_on_community_id"
   end
 
+  create_table "resident_balances", force: :cascade do |t|
+    t.bigint "resident_id", null: false
+    t.integer "amount", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resident_id"], name: "index_resident_balances_on_resident_id"
+  end
+
   create_table "residents", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
@@ -172,6 +180,7 @@ ActiveRecord::Schema.define(version: 20170724165619) do
     t.string "reset_password_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "balance_is_dirty", default: true, null: false
     t.index ["community_id"], name: "index_residents_on_community_id"
     t.index ["email"], name: "index_residents_on_email", unique: true
     t.index ["name", "community_id"], name: "index_residents_on_name_and_community_id", unique: true
@@ -201,6 +210,7 @@ ActiveRecord::Schema.define(version: 20170724165619) do
   add_foreign_key "meals", "communities"
   add_foreign_key "meals", "reconciliations"
   add_foreign_key "reconciliations", "communities"
+  add_foreign_key "resident_balances", "residents"
   add_foreign_key "residents", "communities"
   add_foreign_key "residents", "units"
   add_foreign_key "units", "communities"

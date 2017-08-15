@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 
 const CloseButton = inject("store")(
   observer(({ store }) =>
-    <button onClick={store.toggleClosed} className="button-inverse">
+    <button onClick={store.toggleClosed} className="button-dark">
       Open / Close Meal
     </button>
   )

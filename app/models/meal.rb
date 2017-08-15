@@ -45,6 +45,7 @@ class Meal < ApplicationRecord
   has_many :cooks, through: :bills, source: :resident
   has_many :meal_residents, inverse_of: :meal, dependent: :destroy
   has_many :guests, inverse_of: :meal, dependent: :destroy
+  has_many :hosts, through: :guests, source: :resident
   has_many :attendees, through: :meal_residents, source: :resident
   has_many :residents, through: :community
 
@@ -53,6 +54,7 @@ class Meal < ApplicationRecord
   validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
 
   before_save :conditionally_set_max
+  after_touch :mark_related_residents_dirty
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
@@ -63,6 +65,12 @@ class Meal < ApplicationRecord
 
   def conditionally_set_max
     self.max = nil if closed == false
+  end
+
+  def mark_related_residents_dirty
+    cooks.update_all(balance_is_dirty: true)
+    attendees.update_all(balance_is_dirty: true)
+    hosts.update_all(balance_is_dirty: true)
   end
 
   def trigger_pusher

@@ -15,6 +15,7 @@
 #  reset_password_token :string
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
+#  balance_is_dirty     :boolean          default(TRUE), not null
 #
 # Indexes
 #
@@ -39,6 +40,7 @@ class Resident < ApplicationRecord
   belongs_to :unit
 
   has_one :key, as: :identity
+  has_one :resident_balance
   has_many :bills, dependent: :destroy
   has_many :meal_residents, dependent: :destroy
   has_many :meals, through: :meal_residents
@@ -95,9 +97,18 @@ class Resident < ApplicationRecord
     guests.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).reduce(0) { |sum, guest| sum + guest.cost }
   end
 
-  def balance
+  def calc_balance
     return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
     bill_reimbursements - meal_resident_costs - guest_costs
+  end
+
+  def balance
+    return resident_balance.amount if resident_balance.present? && !balance_is_dirty
+    record = ResidentBalance.find_or_initialize_by(resident_id: id)
+    record.amount = calc_balance
+    record.save!
+    self.update_attribute(:balance_is_dirty, false)
+    record.amount
   end
 
   def meals_attended

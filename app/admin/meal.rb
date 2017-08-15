@@ -7,7 +7,6 @@ ActiveAdmin.register Meal do
 
   # CONFIG
   filter :reconciliation_id_null, as: :select, collection: [['Yes', false], ['No', true]], include_blank: false, default: false, label: 'Reconciled?'
-  config.per_page = 10
   config.sort_order = 'date_desc'
 
   controller do

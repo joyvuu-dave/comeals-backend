@@ -2,8 +2,8 @@ import React from "react";
 
 const Footer = () =>
   <footer>
-    <h2 className="text-center text-secondary">
-      Made by{" "}
+    <h4 className="text-center text-secondary">
+      Created by{" "}
       <a
         href="https://github.com/joyvuu-dave/comeals-rewrite"
         target="_blank"
@@ -11,7 +11,7 @@ const Footer = () =>
       >
         David
       </a>
-    </h2>
+    </h4>
   </footer>;
 
 export default Footer;

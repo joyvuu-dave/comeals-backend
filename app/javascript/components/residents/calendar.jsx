@@ -47,7 +47,7 @@ class ResidentsCalendar extends React.Component {
       <div className="offwhite">
         <header className="header flex right">
           <button onClick={this.logout} className="button-link">
-            Logout
+            logout
           </button>
         </header>
         <div ref="calendar" className="calendar" />
