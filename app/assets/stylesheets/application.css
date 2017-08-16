@@ -25,6 +25,7 @@
 
 body {
   background-color: var(--livid);
+  min-width: 30rem;
 }
 
 /*
@@ -45,6 +46,7 @@ table {
   margin-right: auto;
   margin-top: 1rem;
   margin-bottom: 1rem;
+  padding-bottom: 2rem;
   transition: width 0.5s;
 }
 
@@ -124,7 +126,6 @@ button:focus {
 .header {
   height: 2rem;
   background-color: var(--hasana-yellow);
-  min-width: 30rem;
 }
 
 .offwhite {
