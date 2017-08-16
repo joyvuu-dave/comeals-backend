@@ -158,7 +158,7 @@ export const DataStore = types.model(
       setTimeout(
         () =>
           (window.location.href = `${window.host}comeals${window.topLevel}/`),
-        100
+        300
       );
     },
     calendar() {
