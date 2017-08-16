@@ -3,7 +3,7 @@ module Api
     class MealsController < ApplicationController
       before_action :set_meal, except: [:index]
       before_action :set_meal_resident, only: [:destroy_resident, :update_resident]
-      after_action :trigger_pusher, except: [:index, :show, :show_attendees, :show_cooks]
+      after_action :trigger_pusher, except: [:index, :show, :show_cooks]
 
       def index
         if params[:start].present? && params[:end].present?
@@ -17,10 +17,6 @@ module Api
 
       def show
         render json: @meal
-      end
-
-      def show_attendees
-        render json: @meal.community.residents, each_serializer: AttendeeSerializer, scope: @meal
       end
 
       def create_meal_resident

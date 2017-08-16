@@ -344,8 +344,16 @@ export const DataStore = types.model(
         this.meal.extras = data.max - (residents_count + guests_count);
       }
 
+      let residents = data.residents.sort(function(a, b) {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+      });
+
+      console.log(residents);
+
       // Assign Residents
-      data.residents.forEach(resident => {
+      residents.forEach(resident => {
         this.residentStore.residents.put(resident);
       });
 

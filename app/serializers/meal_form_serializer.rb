@@ -30,6 +30,10 @@ class MealFormSerializer < ActiveModel::Serializer
       meal_resident.present?
     end
 
+    def name
+      "#{object.unit.name} - #{object.name}"
+    end
+
     def late
       meal_resident.present? ? meal_resident.late : false
     end

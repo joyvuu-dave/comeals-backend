@@ -26,7 +26,6 @@ Rails.application.routes.draw do
         get '/communities/:id', to: 'communities#show'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
-        get '/meals/:meal_id/attendees', to: 'meals#show_attendees'
         post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_meal_resident'
         delete '/meals/:meal_id/residents/:resident_id', to: 'meals#destroy_meal_resident'
         patch '/meals/:meal_id/residents/:resident_id', to: 'meals#update_meal_resident'
