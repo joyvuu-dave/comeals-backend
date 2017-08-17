@@ -11,7 +11,8 @@ const styles = {
   },
   text: {
     height: "100%",
-    resize: "none"
+    resize: "none",
+    WebkitTextFillColor: "#880000"
   }
 };
 

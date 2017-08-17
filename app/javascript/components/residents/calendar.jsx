@@ -31,6 +31,9 @@ class ResidentsCalendar extends React.Component {
     });
 
     setInterval(() => this.refetch(calendar), 60000);
+
+    // Fix for mobile flex bug
+    document.getElementById("main").remove();
   }
 
   logout() {

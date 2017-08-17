@@ -350,8 +350,6 @@ export const DataStore = types.model(
         return 0;
       });
 
-      console.log(residents);
-
       // Assign Residents
       residents.forEach(resident => {
         this.residentStore.residents.put(resident);
