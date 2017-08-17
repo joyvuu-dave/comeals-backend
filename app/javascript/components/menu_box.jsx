@@ -12,8 +12,8 @@ const styles = {
   text: {
     height: "100%",
     resize: "none",
-    WebkitTextFillColor: "#880000 !important",
-    opacity: "1 !important"
+    opacity: "1",
+    visibility: "visible"
   }
 };
 
