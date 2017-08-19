@@ -3,10 +3,12 @@ class MealFormSerializer < ActiveModel::Serializer
              :description,
              :max,
              :closed,
+             :closed_at,
              :date
 
   has_many :bills
   has_many :residents
+  has_many :guests
 
   class BillSerializer < ActiveModel::Serializer
     attributes :resident_id,
@@ -18,9 +20,9 @@ class MealFormSerializer < ActiveModel::Serializer
                :meal_id,
                :name,
                :attending,
+               :attending_at,
                :late,
-               :vegetarian,
-               :guests
+               :vegetarian
 
     def meal_id
       scope.id
@@ -28,6 +30,10 @@ class MealFormSerializer < ActiveModel::Serializer
 
     def attending
       meal_resident.present?
+    end
+
+    def attending_at
+      meal_resident.present? ? meal_resident.created_at : nil
     end
 
     def name
@@ -42,13 +48,19 @@ class MealFormSerializer < ActiveModel::Serializer
       meal_resident.present? ? meal_resident.vegetarian : object.vegetarian
     end
 
-    def guests
-      Guest.where(meal_id: scope.id, resident_id: object.id).count
-    end
-
     private
     def meal_resident
       @meal_resident = MealResident.find_by(meal_id: scope.id, resident_id: object.id)
     end
   end
+
+  class GuestSerializer < ActiveModel::Serializer
+    attributes :id,
+               :meal_id,
+               :resident_id,
+               :name,
+               :vegetarian,
+               :created_at
+  end
+
 end

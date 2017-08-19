@@ -5,6 +5,7 @@ import Cookie from "js-cookie";
 import Meal from "./meal";
 import ResidentStore from "./resident_store";
 import BillStore from "./bill_store";
+import GuestStore from "./guest_store";
 
 export const DataStore = types.model(
   "DataStore",
@@ -20,6 +21,9 @@ export const DataStore = types.model(
     billStore: types.optional(BillStore, {
       bills: {}
     }),
+    guestStore: types.optional(GuestStore, {
+      guests: {}
+    }),
     get id() {
       return this.meal.id;
     },
@@ -32,13 +36,11 @@ export const DataStore = types.model(
     get bills() {
       return this.billStore.bills;
     },
+    get guests() {
+      return this.guestStore.guests;
+    },
     get guestsCount() {
-      return this.residents
-        .values()
-        .map(resident => resident.guests)
-        .reduce(function(sum, value) {
-          return sum + value;
-        }, 0);
+      return this.guestStore.guests.size;
     },
     get mealResidentsCount() {
       return this.residents.values().filter(resident => resident.attending)
@@ -48,12 +50,14 @@ export const DataStore = types.model(
       return this.guestsCount + this.mealResidentsCount;
     },
     get vegetarianCount() {
-      return this.residents
+      const vegResidents = this.residents
         .values()
         .filter(resident => resident.attending && resident.vegetarian).length;
-    },
-    get omnivoreCount() {
-      return this.attendeesCount - this.vegetarianCount;
+
+      const vegGuests = this.guests.values().map(guest => guest.vegetarian)
+        .length;
+
+      return vegResidents + vegGuests;
     },
     get lateCount() {
       return this.residents.values().filter(resident => resident.late).length;
@@ -154,11 +158,10 @@ export const DataStore = types.model(
         });
     },
     logout() {
-      Cookie.remove("token", { domain: ".comeals.dev" });
+      Cookie.remove("token", { domain: `.comeals${window.topLevel}` });
       setTimeout(
         () =>
-          (window.location.href = `${window.host}comeals${window.topLevel}/`),
-        300
+          (window.location.href = `${window.host}comeals${window.topLevel}/`)
       );
     },
     calendar() {
@@ -330,18 +333,16 @@ export const DataStore = types.model(
       // Assign Meal Data
       this.meal.description = data.description;
       this.meal.closed = data.closed;
+
       if (data.max === null) {
         this.meal.extras = null;
       } else {
-        const residents_count = data.residents.filter(
+        const residentsCount = data.residents.filter(
           resident => resident.attending
         ).length;
-        const guests_count = data.residents
-          .map(resident => resident.guests)
-          .reduce(function(sum, value) {
-            return sum + value;
-          }, 0);
-        this.meal.extras = data.max - (residents_count + guests_count);
+
+        const guestsCount = data.guests.length;
+        this.meal.extras = data.max - (residentsCount + guestsCount);
       }
 
       let residents = data.residents.sort(function(a, b) {
@@ -352,7 +353,15 @@ export const DataStore = types.model(
 
       // Assign Residents
       residents.forEach(resident => {
+        if (resident.attending_at !== null)
+          resident.attending_at = new Date(resident.attending_at);
         this.residentStore.residents.put(resident);
+      });
+
+      // Assign Guests
+      data.guests.forEach(guest => {
+        guest.created_at = new Date(guest.created_at);
+        this.guestStore.guests.put(guest);
       });
 
       // Assign Bills
@@ -403,6 +412,9 @@ export const DataStore = types.model(
     },
     clearBills() {
       this.billStore.bills.clear();
+    },
+    appendGuest(obj) {
+      this.guestStore.guests.put(obj);
     }
   }
 );

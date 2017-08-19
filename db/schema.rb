@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(version: 20170815151758) do
     t.boolean "closed", default: false, null: false
     t.bigint "community_id", null: false
     t.bigint "reconciliation_id"
+    t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["community_id"], name: "index_meals_on_community_id"

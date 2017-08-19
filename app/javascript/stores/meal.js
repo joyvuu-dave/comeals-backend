@@ -10,6 +10,7 @@ const Meal = types.model(
     description: "",
     extras: types.maybe(types.number),
     closed: false,
+    closed_at: types.maybe(types.Date),
     date: types.Date,
     get max() {
       if (this.extras === null) {

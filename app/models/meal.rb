@@ -16,6 +16,7 @@
 #  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null
 #  reconciliation_id         :integer
+#  closed_at                 :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #
@@ -54,6 +55,7 @@ class Meal < ApplicationRecord
   validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
 
   before_save :conditionally_set_max
+  before_save :conditionally_set_closed_at
   after_touch :mark_related_residents_dirty
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
@@ -65,6 +67,11 @@ class Meal < ApplicationRecord
 
   def conditionally_set_max
     self.max = nil if closed == false
+  end
+
+  def conditionally_set_closed_at
+    self.closed_at = DateTime.now if closed == true && closed_was == false
+    self.closed_at = nil if closed == false && closed_was == true
   end
 
   def mark_related_residents_dirty

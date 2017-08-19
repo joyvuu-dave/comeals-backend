@@ -10,9 +10,9 @@ const Resident = types.model(
     meal_id: types.number,
     name: types.string,
     attending: false,
+    attending_at: types.maybe(types.Date),
     late: false,
     vegetarian: false,
-    guests: 0,
     get form() {
       return getParent(this, 2);
     }
@@ -236,7 +236,7 @@ const Resident = types.model(
           const config = error.config;
         });
     },
-    addGuest() {
+    addGuest(options = { vegetarian: false }) {
       this.guests = this.guests + 1;
       this.form.form.meal.decrementExtras();
 
@@ -246,18 +246,24 @@ const Resident = types.model(
         url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
           .meal_id}/residents/${this.id}/guests`,
         data: {
-          socket_id: window.socketId
+          socket_id: window.socketId,
+          vegetarian: options.vegetarian
         },
         withCredentials: true
       })
         .then(function(response) {
           if (response.status === 200) {
             console.log("Guests Post - Success!", response.data);
+            const guest = response.data;
+            guest.name = null;
+            guest.created_at = new Date(guest.created_at);
+            window.guest = guest;
+            window.resident = self;
+            self.form.form.appendGuest(guest);
           }
         })
         .catch(function(error) {
           console.log("Guests Post - Fail!");
-          self.guests = self.guests - 1;
           self.form.form.meal.incrementExtras();
 
           if (error.response) {
@@ -281,7 +287,12 @@ const Resident = types.model(
         });
     },
     removeGuest() {
-      this.guests = this.guests - 1;
+      if (this.veg_guests > 0) {
+        this.veg_guests = this.veg_guests - 1;
+      } else {
+        this.meat_guests = this.meat_guests - 1;
+      }
+
       this.form.form.meal.incrementExtras();
 
       const self = this;
@@ -301,7 +312,7 @@ const Resident = types.model(
         })
         .catch(function(error) {
           console.log("Guests Delete - Fail!");
-          self.guests = self.guests - 1;
+          self.meat_guest = self.meat_guests + 1;
           self.form.form.meal.decrementExtras();
 
           if (error.response) {

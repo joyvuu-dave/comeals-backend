@@ -21,6 +21,10 @@
   --almost-white: hsl(0, 0%, 98%);
   --almost-black: #444;
   --offwhite: #ebebe4;
+
+  /* Sizes */
+  --dropdown-min-width: 5rem;
+  --dropdown-max-width: 10rem;
 }
 
 body {

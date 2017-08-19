@@ -45,7 +45,7 @@ module Api
       end
 
       def create_guest
-        guest = Guest.new(meal_id: @meal.id, resident_id: params[:resident_id])
+        guest = Guest.new(meal_id: @meal.id, resident_id: params[:resident_id], vegetarian: params[:vegetarian])
 
         if guest.save
           render json: guest and return

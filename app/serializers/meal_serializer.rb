@@ -16,6 +16,7 @@
 #  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null
 #  reconciliation_id         :integer
+#  closed_at                 :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #

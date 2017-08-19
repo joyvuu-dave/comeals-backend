@@ -52,10 +52,20 @@ Meal.all.each do |meal|
   next if meal.date > Date.today + 7
   Resident.all.shuffle[0..(Random.rand(8..21))].each_with_index do |resident, index|
     if index % 10 === 0
-      Guest.create!(name: "Guest #{resident.id}",
-                   multiplier: 2,
-                   resident_id: resident.id,
-                   meal_id: meal.id)
+      num = Random.rand(1..3)
+      if num == 1
+        Guest.create!(name: "Guest #{resident.id}",
+                     multiplier: 2,
+                     vegetarian: true,
+                     resident_id: resident.id,
+                     meal_id: meal.id)
+      else
+        Guest.create!(name: "Guest #{resident.id}",
+                     multiplier: 2,
+                     vegetarian: false,
+                     resident_id: resident.id,
+                     meal_id: meal.id)
+      end
     else
       if index % 13 == 0
         MealResident.create!(resident_id: resident.id,
@@ -113,10 +123,20 @@ Meal.all.each do |meal|
   next if meal.date > Date.today + 7
   Resident.all.shuffle[0..(Random.rand(8..21))].each_with_index do |resident, index|
     if index % 10 === 0
-      Guest.create(name: "Guest #{resident.id}",
-                   multiplier: 2,
-                   resident_id: resident.id,
-                   meal_id: meal.id)
+      num = Random.rand(1..3)
+      if num == 1
+        Guest.create!(name: "Guest #{resident.id}",
+                     multiplier: 2,
+                     vegetarian: true,
+                     resident_id: resident.id,
+                     meal_id: meal.id)
+      else
+        Guest.create!(name: "Guest #{resident.id}",
+                     multiplier: 2,
+                     vegetarian: false,
+                     resident_id: resident.id,
+                     meal_id: meal.id)
+      end
     else
       if index % 13 == 0
         MealResident.create(resident_id: resident.id,
