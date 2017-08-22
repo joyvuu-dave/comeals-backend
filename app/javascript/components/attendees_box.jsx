@@ -37,7 +37,11 @@ const styles = {
     position: "sticky",
     top: 0,
     backgroundColor: "var(--almost-white)",
-    zIndex: "99999"
+    zIndex: "9999"
+  },
+  disabled: {
+    cursor: "not-allowed",
+    opacity: "0.5"
   }
 };
 
@@ -46,10 +50,7 @@ const AttendeeComponent = inject("store")(
     class AttendeeComponent extends React.Component {
       render() {
         const resident = this.props.resident;
-        const store = this.props.store;
-        const guests = store.guestStore.guests
-          .values()
-          .filter(guest => guest.resident_id === resident.id);
+        const guests = resident.guests;
         const vegGuestsCount = guests.filter(guest => guest.vegetarian === true)
           .length;
         const meatGuestsCount = guests.filter(
@@ -60,7 +61,12 @@ const AttendeeComponent = inject("store")(
           <tr>
             <td
               onClick={e => resident.toggleAttending()}
-              style={resident.attending ? styles.yes : styles.no}
+              style={Object.assign(
+                {},
+                resident.attending && styles.yes,
+                !resident.attending && styles.no,
+                resident.attending && !resident.canRemove && styles.disabled
+              )}
             >
               {resident.name}
             </td>
@@ -136,7 +142,7 @@ const AttendeeComponent = inject("store")(
               <button
                 style={styles.lowerButton}
                 onClick={e => resident.removeGuest()}
-                disabled={store.meal.closed || resident.guests === 0}
+                disabled={!resident.canRemoveGuest}
               >
                 - Guest
               </button>

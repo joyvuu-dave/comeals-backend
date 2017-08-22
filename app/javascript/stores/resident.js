@@ -13,6 +13,76 @@ const Resident = types.model(
     attending_at: types.maybe(types.Date),
     late: false,
     vegetarian: false,
+    get guests() {
+      return this.form.form.guestStore.guests
+        .values()
+        .filter(guest => guest.resident_id === this.id);
+    },
+    get guestsCount() {
+      return this.guests.length;
+    },
+    get canRemoveGuest() {
+      // Scenario #1: no guests
+      if (this.guestsCount === 0) {
+        return false;
+      }
+
+      // Scenario #2: guests, meal open
+      if (this.guestsCount > 0 && !this.form.form.meal.closed) {
+        return true;
+      }
+
+      // Scenario #3: guests, meal closed, guests added after meal closed
+      if (
+        this.guestsCount > 0 &&
+        this.form.form.meal.closed &&
+        this.guests.filter(
+          guest => guest.created_at > this.form.form.meal.closed_at
+        ).length > 0
+      ) {
+        return true;
+      }
+
+      // Scenario #4: guests, meal closed, guests added before meal closed
+      if (
+        this.guestsCount > 0 &&
+        this.form.form.meal.closed &&
+        this.guests.filter(
+          guest => guest.created_at > this.form.form.meal.closed_at
+        ).length > 0
+      ) {
+        return false;
+      }
+    },
+    get canRemove() {
+      // Scenario #1: not attending
+      if (this.attending === false) {
+        return false;
+      }
+
+      // Scenario #2: attending, meal open
+      if (this.attending && !this.form.form.meal.closed) {
+        return true;
+      }
+
+      // Scenario #3: attending, meal closed, guests added after meal closed
+      if (
+        this.attending &&
+        this.form.form.meal.closed &&
+        this.attending_at >= this.form.form.meal.closed_at
+      ) {
+        return true;
+      }
+
+      // Scenario #4: guests, meal closed, guests added before meal closed
+      if (
+        this.guestsCount > 0 &&
+        this.form.form.meal.closed &&
+        this.attending_at < this.form.form.meal.closed_at
+      ) {
+        return false;
+      }
+    },
     get form() {
       return getParent(this, 2);
     }
@@ -30,7 +100,7 @@ const Resident = types.model(
       }
 
       // Scenario #2: Meal is closed, you are attending -- can't remove yourself
-      if (this.form.form.meal.closed && this.attending) {
+      if (this.form.form.meal.closed && this.attending && !this.canRemove) {
         return;
       }
 
@@ -237,7 +307,6 @@ const Resident = types.model(
         });
     },
     addGuest(options = { vegetarian: false }) {
-      this.guests = this.guests + 1;
       this.form.form.meal.decrementExtras();
 
       const self = this;
@@ -257,8 +326,6 @@ const Resident = types.model(
             const guest = response.data;
             guest.name = null;
             guest.created_at = new Date(guest.created_at);
-            window.guest = guest;
-            window.resident = self;
             self.form.form.appendGuest(guest);
           }
         })
@@ -287,19 +354,27 @@ const Resident = types.model(
         });
     },
     removeGuest() {
-      if (this.veg_guests > 0) {
-        this.veg_guests = this.veg_guests - 1;
-      } else {
-        this.meat_guests = this.meat_guests - 1;
+      console.log("This Resident Can Remove Guests: ", this.canRemoveGuest);
+
+      if (!this.canRemoveGuest) {
+        return false;
       }
 
-      this.form.form.meal.incrementExtras();
+      // Sort Guests
+      const sortedGuests = this.guests.sort((a, b) => {
+        if (a.created_at > b.created_at) return -1;
+        if (a.created_at < b.created_at) return 1;
+        return 0;
+      });
+
+      // Grab Id of newest guest
+      const guestId = sortedGuests[0].id;
 
       const self = this;
       axios({
         method: "delete",
         url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-          .meal_id}/residents/${this.id}/guests`,
+          .meal_id}/residents/${this.id}/guests/${guestId}`,
         data: {
           socket_id: window.socketId
         },
@@ -307,13 +382,13 @@ const Resident = types.model(
       })
         .then(function(response) {
           if (response.status === 200) {
+            self.form.form.guestStore.removeGuest(guestId);
+            self.form.form.meal.incrementExtras();
             console.log("Guests Delete - Success!", response.data);
           }
         })
         .catch(function(error) {
           console.log("Guests Delete - Fail!");
-          self.meat_guest = self.meat_guests + 1;
-          self.form.form.meal.decrementExtras();
 
           if (error.response) {
             // The request was made and the server responded with a status code

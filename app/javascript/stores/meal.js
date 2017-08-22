@@ -29,6 +29,17 @@ const Meal = types.model(
       console.log("Extras reset to null.");
       return null;
     },
+    resetClosedAt() {
+      this.closed_at = null;
+      console.log("Closed At reset to null.");
+      return null;
+    },
+    setClosedAt() {
+      const time = new Date();
+      this.closed_at = time;
+      console.log("Closed At updated to current time.");
+      return time;
+    },
     setExtras(val) {
       const previousExtras = this.extras;
       const self = this;
