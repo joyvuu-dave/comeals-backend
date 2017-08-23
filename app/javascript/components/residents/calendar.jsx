@@ -27,6 +27,8 @@ class ResidentsCalendar extends React.Component {
         if (moment(startString).isBefore(todayString, "day")) {
           eventElement.css("opacity", "0.5");
         }
+
+        eventElement.attr("title", event.description);
       }
     });
 

@@ -54,10 +54,6 @@ class MealSerializer < ActiveModel::Serializer
     end
   end
 
-  def foo
-    'bar'
-  end
-
   def start
     object.date
   end
