@@ -19,6 +19,9 @@ const styles = {
   open: {
     color: "var(--color-green)"
   },
+  reconciled: {
+    color: "var(--almost-black)"
+  },
   arrow: {
     height: "5rem",
     width: "4rem",
@@ -48,9 +51,11 @@ const DateBox = inject("store")(
         </div>
       </div>
       <br />
-      <h1 style={store.meal.closed ? styles.closed : styles.open}>
-        {store.meal.closed ? "CLOSED" : "OPEN"}
-      </h1>
+      {store.meal.reconciled
+        ? <h1 style={styles.reconciled}>RECONCILED</h1>
+        : <h1 style={store.meal.closed ? styles.closed : styles.open}>
+            {store.meal.closed ? "CLOSED" : "OPEN"}
+          </h1>}
     </div>
   )
 );

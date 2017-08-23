@@ -337,6 +337,7 @@ export const DataStore = types.model(
       this.meal.description = data.description;
       this.meal.closed = data.closed;
       this.meal.closed_at = new Date(data.closed_at);
+      this.meal.reconciled = data.reconciled;
 
       if (data.max === null) {
         this.meal.extras = null;

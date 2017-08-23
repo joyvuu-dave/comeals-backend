@@ -4,7 +4,12 @@ class MealFormSerializer < ActiveModel::Serializer
              :max,
              :closed,
              :closed_at,
-             :date
+             :date,
+             :reconciled
+
+  def reconciled
+    scope.reconciled?
+  end
 
   has_many :bills
   has_many :residents

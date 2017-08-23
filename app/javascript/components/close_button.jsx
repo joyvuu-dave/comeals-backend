@@ -6,6 +6,7 @@ const CloseButton = inject("store")(
     <button
       onClick={store.toggleClosed}
       className={store.meal.closed ? "button-danger" : "button-success"}
+      disabled={store.meal.reconciled}
     >
       Open / Close Meal
     </button>

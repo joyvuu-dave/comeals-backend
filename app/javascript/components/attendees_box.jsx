@@ -65,7 +65,8 @@ const AttendeeComponent = inject("store")(
                 {},
                 resident.attending && styles.yes,
                 !resident.attending && styles.no,
-                resident.attending && !resident.canRemove && styles.disabled
+                resident.attending && !resident.canRemove && styles.disabled,
+                store.meal.reconciled && styles.disabled
               )}
             >
               {resident.name}
@@ -92,9 +93,10 @@ const AttendeeComponent = inject("store")(
                   checked={resident.late}
                   onChange={e => resident.toggleLate()}
                   disabled={
-                    store.meal.closed &&
-                    !resident.attending &&
-                    store.meal.extras < 1
+                    store.meal.reconciled ||
+                    (store.meal.closed &&
+                      !resident.attending &&
+                      store.meal.extras < 1)
                   }
                 />
                 <label htmlFor={`late_switch_${resident.id}`} />
@@ -110,6 +112,7 @@ const AttendeeComponent = inject("store")(
                   defaultChecked={resident.vegetarian}
                   onClick={e => resident.toggleVeg()}
                   disabled={
+                    store.meal.reconciled ||
                     (store.meal.closed && resident.attending) ||
                     (store.meal.closed && store.meal.extras < 1)
                   }
@@ -122,7 +125,7 @@ const AttendeeComponent = inject("store")(
                 <button
                   className="dropdown-trigger margin-right-small"
                   style={styles.topButton}
-                  disabled={!store.canAdd}
+                  disabled={store.meal.reconciled || !store.canAdd}
                 >
                   + Guest
                 </button>
@@ -142,7 +145,7 @@ const AttendeeComponent = inject("store")(
               <button
                 style={styles.lowerButton}
                 onClick={e => resident.removeGuest()}
-                disabled={!resident.canRemoveGuest}
+                disabled={store.meal.reconciled || !resident.canRemoveGuest}
               >
                 - Guest
               </button>

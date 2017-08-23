@@ -86,6 +86,7 @@ const CooksBox = inject("store")(
         <button
           className={store.editBillsMode ? "button-dark" : "button-danger"}
           onClick={store.toggleEditBillsMode}
+          disabled={store.meal.reconciled}
         >
           {store.editBillsMode ? "Save" : "Edit"}
         </button>{" "}

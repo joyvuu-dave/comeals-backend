@@ -29,6 +29,7 @@ const Extras = inject("store")(
                 value={val}
                 checked={store.meal.extras === val}
                 onChange={e => store.meal.setExtras(e.target.value)}
+                disabled={store.meal.reconciled}
               />
               <label>
                 <i className="fa fa-check" />

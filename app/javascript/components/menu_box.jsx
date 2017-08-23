@@ -27,6 +27,7 @@ const MenuBox = inject("store")(
             store.editDescriptionMode ? "button-dark" : "button-danger"
           }
           onClick={store.toggleEditDescriptionMode}
+          disabled={store.meal.reconciled}
         >
           {store.editDescriptionMode ? "Save" : "Edit"}
         </button>
