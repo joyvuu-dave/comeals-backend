@@ -2,7 +2,7 @@ module Api
   module V1
     class MealsController < ApplicationController
       before_action :set_meal, except: [:index]
-      before_action :set_meal_resident, only: [:destroy_resident, :update_resident]
+      before_action :set_meal_resident, only: [:destroy_meal_resident, :update_meal_resident]
       after_action :trigger_pusher, except: [:index, :show, :show_cooks]
 
       def index
@@ -55,7 +55,7 @@ module Api
       end
 
       def destroy_guest
-        if @meal.guests.find_by(resident_id: params[:resident_id])&.destroy
+        if @meal.guests.find_by(id: params[:guest_id])&.destroy
           render json: { message: 'Guest was destroyed.' } and return
         else
           render json: { message: 'Guest could not be destroyed.' }, status: :bad_request and return

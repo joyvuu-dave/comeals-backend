@@ -30,7 +30,7 @@ Rails.application.routes.draw do
         delete '/meals/:meal_id/residents/:resident_id', to: 'meals#destroy_meal_resident'
         patch '/meals/:meal_id/residents/:resident_id', to: 'meals#update_meal_resident'
         post '/meals/:meal_id/residents/:resident_id/guests', to: 'meals#create_guest'
-        delete '/meals/:meal_id/residents/:resident_id/guests', to: 'meals#destroy_guest'
+        delete '/meals/:meal_id/residents/:resident_id/guests/:guest_id', to: 'meals#destroy_guest'
         get '/meals/:meal_id/cooks', to: 'meals#show_cooks'
         patch '/meals/:meal_id/description', to: 'meals#update_description'
         patch '/meals/:meal_id/max', to: 'meals#update_max'

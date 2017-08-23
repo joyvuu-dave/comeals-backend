@@ -128,6 +128,9 @@ export const DataStore = types.model(
             // If meal has been opened, re-set extras value
             if (val === false) {
               self.meal.resetExtras();
+              self.meal.resetClosedAt();
+            } else {
+              self.meal.setClosedAt();
             }
           }
         })
@@ -333,6 +336,7 @@ export const DataStore = types.model(
       // Assign Meal Data
       this.meal.description = data.description;
       this.meal.closed = data.closed;
+      this.meal.closed_at = new Date(data.closed_at);
 
       if (data.max === null) {
         this.meal.extras = null;
@@ -345,7 +349,7 @@ export const DataStore = types.model(
         this.meal.extras = data.max - (residentsCount + guestsCount);
       }
 
-      let residents = data.residents.sort(function(a, b) {
+      let residents = data.residents.sort((a, b) => {
         if (a.name < b.name) return -1;
         if (a.name > b.name) return 1;
         return 0;
