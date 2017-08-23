@@ -48,7 +48,7 @@ const Resident = types.model(
         this.guestsCount > 0 &&
         this.form.form.meal.closed &&
         this.guests.filter(
-          guest => guest.created_at > this.form.form.meal.closed_at
+          guest => guest.created_at <= this.form.form.meal.closed_at
         ).length > 0
       ) {
         return false;
@@ -65,20 +65,20 @@ const Resident = types.model(
         return true;
       }
 
-      // Scenario #3: attending, meal closed, guests added after meal closed
+      // Scenario #3: attending, meal closed, added after meal closed
       if (
         this.attending &&
         this.form.form.meal.closed &&
-        this.attending_at >= this.form.form.meal.closed_at
+        this.attending_at > this.form.form.meal.closed_at
       ) {
         return true;
       }
 
-      // Scenario #4: guests, meal closed, guests added before meal closed
+      // Scenario #4: guests, meal closed, added before meal closed
       if (
         this.guestsCount > 0 &&
         this.form.form.meal.closed &&
-        this.attending_at < this.form.form.meal.closed_at
+        this.attending_at <= this.form.form.meal.closed_at
       ) {
         return false;
       }
@@ -88,6 +88,18 @@ const Resident = types.model(
     }
   },
   {
+    setAttending(val) {
+      this.attending = val;
+      return val;
+    },
+    setAttendingAt(val) {
+      this.attending_at = val;
+      return val;
+    },
+    setLate(val) {
+      this.late = val;
+      return val;
+    },
     toggleAttending(options = { late: false, toggleVeg: false }) {
       // Scenario #1: Meal is closed, you're not attending
       //              there are no extras -- can't add yourself
@@ -138,11 +150,13 @@ const Resident = types.model(
           .then(function(response) {
             if (response.status === 200) {
               console.log("Post - Success!", response.data);
+              self.setAttendingAt(new Date());
             }
           })
           .catch(function(error) {
             console.log("Post - Fail!");
-            self.attending = false;
+            self.setAttending(false);
+            self.setAttendingAt(null);
             self.form.form.meal.incrementExtras();
 
             if (error.response) {
@@ -178,11 +192,13 @@ const Resident = types.model(
           .then(function(response) {
             if (response.status === 200) {
               console.log("Delete - Success!", response.data);
+              self.setLate(false);
+              self.setAttendingAt(null);
             }
           })
           .catch(function(error) {
             console.log("Delete - Fail!");
-            self.attending = true;
+            self.setAttending(true);
             self.form.form.meal.decrementExtras();
 
             if (error.response) {
