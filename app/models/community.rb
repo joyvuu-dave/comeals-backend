@@ -2,13 +2,12 @@
 #
 # Table name: communities
 #
-#  id              :integer          not null, primary key
-#  name            :string           not null
-#  cap             :integer
-#  rotation_length :integer
-#  slug            :string           not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id         :integer          not null, primary key
+#  name       :string           not null
+#  cap        :integer
+#  slug       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
 #
 # Indexes
 #
@@ -30,6 +29,7 @@ class Community < ApplicationRecord
   has_many :guests, through: :residents, dependent: :destroy
   has_many :units, dependent: :destroy
   has_many :admin_users, dependent: :destroy
+  has_many :rotations, dependent: :destroy
 
   accepts_nested_attributes_for :admin_users
 
@@ -48,4 +48,18 @@ class Community < ApplicationRecord
     val.nan? ? '--' : val
   end
 
+  def rotation_length
+    residents.where("multiplier >= 2").where(can_cook: true).size / 2
+  end
+
+  def auto_create_rotations
+    meals = Meal.where(community_id: id, rotation_id: nil).order(:date)
+    rotation = nil
+    meals.find_each do |meal|
+      rotation = Rotation.create!(community_id: id, description: "#{meal.date.to_s} to #{meal.date.to_s}") if rotation.nil?
+      meal.update!(rotation_id: rotation.id)
+      rotation.update!(description: "#{rotation.meals.order(:date).first.date.to_s} to #{rotation.meals.order(:date).last.date.to_s}")
+      rotation = nil if rotation.meals.count == rotation_length
+    end
+  end
 end

@@ -17,6 +17,9 @@ class ResidentsCalendar extends React.Component {
         {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/bills`,
           color: "var(--almost-black)"
+        },
+        {
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/rotations`
         }
       ],
       contentHeight: "auto",
@@ -24,7 +27,7 @@ class ResidentsCalendar extends React.Component {
         const startString = moment(event.start).format();
         const todayString = moment().format("YYYY-MM-DD");
 
-        if (moment(startString).isBefore(todayString, "day")) {
+        if (moment(startString).isBefore(todayString, "day") && typeof event.url !== "undefined") {
           eventElement.css("opacity", "0.5");
         }
 

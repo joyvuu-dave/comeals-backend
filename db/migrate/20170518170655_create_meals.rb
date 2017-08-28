@@ -14,6 +14,7 @@ class CreateMeals < ActiveRecord::Migration[5.1]
       t.boolean :closed, null: false, default: false
       t.references :community, foreign_key: true, null: false
       t.references :reconciliation, foreign_key: true
+      t.references :rotation, foreign_key: true
       t.datetime :closed_at
 
       t.timestamps

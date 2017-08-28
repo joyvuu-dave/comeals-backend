@@ -3,7 +3,6 @@ class CreateCommunities < ActiveRecord::Migration[5.1]
     create_table :communities do |t|
       t.string :name, null: false
       t.integer :cap
-      t.integer :rotation_length
       t.string :slug, null: false
 
       t.timestamps

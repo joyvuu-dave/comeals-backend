@@ -55,6 +55,7 @@ ActiveAdmin.register Resident do
       end
     end
     column :unit
+    column :can_cook
     column 'Balance', :balance do |resident|
       number_to_currency(resident.balance.to_f / 100) unless resident.balance == 0
     end
@@ -68,6 +69,7 @@ ActiveAdmin.register Resident do
       row :id
       row :name
       row :unit
+      row :can_cook
       row :email
       row :vegetarian
       table_for resident.meals.order('date') do
@@ -121,6 +123,7 @@ ActiveAdmin.register Resident do
       f.input :vegetarian
       f.input :multiplier, label: 'Price Category', as: :radio, collection: [['Adult', 2], ['Child', 1]]
       f.input :unit, collection: Unit.where(community_id: current_admin_user.community_id).order('name')
+      f.input :can_cook
       f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
     end
     f.label 'Note: passwords can be reset through the resident login page'

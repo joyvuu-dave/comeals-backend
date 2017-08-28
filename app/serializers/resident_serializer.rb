@@ -13,9 +13,10 @@
 #  multiplier           :integer          default(2), not null
 #  password_digest      :string           not null
 #  reset_password_token :string
+#  balance_is_dirty     :boolean          default(TRUE), not null
+#  can_cook             :boolean          default(TRUE), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  balance_is_dirty     :boolean          default(TRUE), not null
 #
 # Indexes
 #

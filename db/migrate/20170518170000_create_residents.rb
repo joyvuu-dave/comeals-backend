@@ -11,6 +11,8 @@ class CreateResidents < ActiveRecord::Migration[5.1]
       t.integer :multiplier, null: false, default: 2
       t.string :password_digest, null: false
       t.string :reset_password_token
+      t.boolean :balance_is_dirty, null: false, default: true
+      t.boolean :can_cook, null: false, default: true
 
       t.timestamps
     end

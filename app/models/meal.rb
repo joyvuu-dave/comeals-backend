@@ -16,6 +16,7 @@
 #  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null
 #  reconciliation_id         :integer
+#  rotation_id               :integer
 #  closed_at                 :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
@@ -24,11 +25,13 @@
 #
 #  index_meals_on_community_id       (community_id)
 #  index_meals_on_reconciliation_id  (reconciliation_id)
+#  index_meals_on_rotation_id        (rotation_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (community_id => communities.id)
 #  fk_rails_...  (reconciliation_id => reconciliations.id)
+#  fk_rails_...  (rotation_id => rotations.id)
 #
 
 class Meal < ApplicationRecord
@@ -41,6 +44,7 @@ class Meal < ApplicationRecord
 
   belongs_to :community
   belongs_to :reconciliation, optional: true
+  belongs_to :rotation, optional: true
 
   has_many :bills, dependent: :destroy
   has_many :cooks, through: :bills, source: :resident
@@ -129,6 +133,9 @@ class Meal < ApplicationRecord
     # Are we finished?
     return num_meals_created if start_date >= end_date
 
+    # Is it a holiday?
+    start_date += 24.hour if Meal.is_holiday(start_date)
+
     # Is it a common dinner day?
     if [alternating_dinner_day, 2, 4].any? { |num| num == start_date.wday }
       # Flip if alternating dinner day
@@ -155,4 +162,28 @@ class Meal < ApplicationRecord
     start_date += 24.hour
     return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
   end
+
+  def self.is_holiday(date)
+    return true if Meal.is_thanksgiving(date) || Meal.is_christmas(date) || Meal.is_newyears(date)
+    false
+  end
+
+  def self.is_thanksgiving(date)
+    return false unless date.class == Date
+    return false unless date.month == 11
+    return false unless date.thursday?
+    return false unless date.day >= 22 && date.day <= 28
+    true
+  end
+
+  def self.is_christmas(date)
+    return true if date.month == 12 && date.day == 25
+    false
+  end
+
+  def self.is_newyears(date)
+    return true if date.month == 1 && date.day == 1
+    true
+  end
+
 end

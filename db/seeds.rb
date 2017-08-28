@@ -7,7 +7,7 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 # Community
-community = Community.create!(name: "Swan's Way", cap: 250, rotation_length: 13)
+community = Community.create!(name: "Swan's Way", cap: 250)
 community.update_attribute(:slug, 'swans')
 
 puts "#{Community.count} Community created"
@@ -199,3 +199,9 @@ Meal.all.each_with_index do |meal, index|
 end
 
 puts "#{Meal.count} Meals created (#{Meal.unreconciled.count} unreconciled)"
+
+
+# Create Rotations
+community.auto_create_rotations
+
+puts "#{Rotation.count} Rotations created"

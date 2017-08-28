@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170815151758) do
+ActiveRecord::Schema.define(version: 20170815141458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,7 +73,6 @@ ActiveRecord::Schema.define(version: 20170815151758) do
   create_table "communities", force: :cascade do |t|
     t.string "name", null: false
     t.integer "cap"
-    t.integer "rotation_length"
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -145,11 +144,13 @@ ActiveRecord::Schema.define(version: 20170815151758) do
     t.boolean "closed", default: false, null: false
     t.bigint "community_id", null: false
     t.bigint "reconciliation_id"
+    t.bigint "rotation_id"
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["community_id"], name: "index_meals_on_community_id"
     t.index ["reconciliation_id"], name: "index_meals_on_reconciliation_id"
+    t.index ["rotation_id"], name: "index_meals_on_rotation_id"
   end
 
   create_table "reconciliations", force: :cascade do |t|
@@ -179,14 +180,24 @@ ActiveRecord::Schema.define(version: 20170815151758) do
     t.integer "multiplier", default: 2, null: false
     t.string "password_digest", null: false
     t.string "reset_password_token"
+    t.boolean "balance_is_dirty", default: true, null: false
+    t.boolean "can_cook", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "balance_is_dirty", default: true, null: false
     t.index ["community_id"], name: "index_residents_on_community_id"
     t.index ["email"], name: "index_residents_on_email", unique: true
     t.index ["name", "community_id"], name: "index_residents_on_name_and_community_id", unique: true
     t.index ["reset_password_token"], name: "index_residents_on_reset_password_token", unique: true
     t.index ["unit_id"], name: "index_residents_on_unit_id"
+  end
+
+  create_table "rotations", force: :cascade do |t|
+    t.bigint "community_id", null: false
+    t.string "description", null: false
+    t.string "color", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_rotations_on_community_id"
   end
 
   create_table "units", force: :cascade do |t|
@@ -210,9 +221,11 @@ ActiveRecord::Schema.define(version: 20170815151758) do
   add_foreign_key "meal_residents", "residents"
   add_foreign_key "meals", "communities"
   add_foreign_key "meals", "reconciliations"
+  add_foreign_key "meals", "rotations"
   add_foreign_key "reconciliations", "communities"
   add_foreign_key "resident_balances", "residents"
   add_foreign_key "residents", "communities"
   add_foreign_key "residents", "units"
+  add_foreign_key "rotations", "communities"
   add_foreign_key "units", "communities"
 end

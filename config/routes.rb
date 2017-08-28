@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         patch '/meals/:meal_id/closed', to: 'meals#update_closed'
         get '/bills', to: 'bills#index'
         get '/bills/:id', to: 'bills#show'
+        get '/rotations', to: 'rotations#index'
       end
     end
   end
@@ -54,6 +55,7 @@ Rails.application.routes.draw do
   get '/meals/:id/previous', to: 'meals#previous'
   get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
+  get '/rotations/:id', to: 'rotations#show'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

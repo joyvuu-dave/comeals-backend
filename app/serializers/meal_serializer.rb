@@ -16,6 +16,7 @@
 #  closed                    :boolean          default(FALSE), not null
 #  community_id              :integer          not null
 #  reconciliation_id         :integer
+#  rotation_id               :integer
 #  closed_at                 :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
@@ -24,11 +25,13 @@
 #
 #  index_meals_on_community_id       (community_id)
 #  index_meals_on_reconciliation_id  (reconciliation_id)
+#  index_meals_on_rotation_id        (rotation_id)
 #
 # Foreign Keys
 #
 #  fk_rails_...  (community_id => communities.id)
 #  fk_rails_...  (reconciliation_id => reconciliations.id)
+#  fk_rails_...  (rotation_id => rotations.id)
 #
 
 class MealSerializer < ActiveModel::Serializer

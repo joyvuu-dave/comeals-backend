@@ -1,0 +1,25 @@
+
+<h1><%= "#{@rotation.id}: #{@rotation.description}" %></h1>
+
+<style>
+body {
+  background-color: initial !important;
+}
+</style>
+
+<table class="table-striped">
+  <thead>
+    <tr>
+      <th>Resident</th>
+      <th>Signed Up</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @rotation.community.residents.each do |resident| %>
+    <tr>
+      <td><%= resident.name %></td>
+      <td><%= Bill.includes(:meal).joins(:meal).where("meals.date >= ?", @rotation.meals.first.date).where("meals.date <= ?", @rotation.meals.last.date).where(resident_id: resident.id).present? %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

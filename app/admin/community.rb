@@ -1,6 +1,6 @@
 ActiveAdmin.register Community do
   # STRONG PARAMS
-  permit_params :name, :cap, :rotation_length, :slug
+  permit_params :name, :cap, :slug
 
   # CONFIG
   config.filters = false
@@ -23,7 +23,6 @@ ActiveAdmin.register Community do
     column :cap do |community|
       number_to_currency(community.cap.to_f / 100) unless community.cap == Float::INFINITY
     end
-    column :rotation_length
     column :slug
 
     actions
@@ -37,7 +36,6 @@ ActiveAdmin.register Community do
       row :cap do |community|
         number_to_currency(community.cap.to_f / 100) unless community.cap == Float::INFINITY
       end
-      row :rotation_length
       row :slug
     end
   end
@@ -47,7 +45,6 @@ ActiveAdmin.register Community do
     f.inputs do
       f.input :name
       f.input :cap, label: 'Cap (cents)'
-      f.input :rotation_length
       if f.object.persisted?
         f.input :slug
       end
