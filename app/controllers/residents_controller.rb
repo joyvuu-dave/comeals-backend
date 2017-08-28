@@ -5,6 +5,7 @@ class ResidentsController < ApplicationController
 
   # GET /residents/calendar (subdomains)
   def calendar
+    @community = Community.find_by(slug: subdomain)
   end
 
   # GET /residents/password-reset

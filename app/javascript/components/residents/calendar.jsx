@@ -11,15 +11,15 @@ class ResidentsCalendar extends React.Component {
     $(calendar).fullCalendar({
       eventSources: [
         {
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals?community_id=${window.community_id}`,
           color: "var(--livid)"
         },
         {
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/bills`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/bills?community_id=${window.community_id}`,
           color: "var(--almost-black)"
         },
         {
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/rotations`
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/rotations?community_id=${window.community_id}`
         }
       ],
       contentHeight: "auto",

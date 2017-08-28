@@ -7,9 +7,9 @@ module Api
 
       def index
         if params[:start].present? && params[:end].present?
-          meals = Meal.where("date >= ?", params[:start]).where("date <= ?", params[:end])
+          meals = Meal.where(community_id: params[:community_id]).where("date >= ?", params[:start]).where("date <= ?", params[:end])
         else
-          meals = Meal.all
+          meals = Meal.where(community_id: params[:community_id]).all
         end
 
         render json: meals

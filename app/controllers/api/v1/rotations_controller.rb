@@ -3,10 +3,10 @@ module Api
     class RotationsController < ApplicationController
       def index
         if params[:start].present? && params[:end].present?
-          #rotations = Meal.includes(:rotation).where.not(rotation_id: nil).where("date >= ?", params[:start]).where("date <= ?", params[:end]).rotations
-          rotations = Rotation.all
+          rotation_ids = Meal.where(community_id: params[:community_id]).where("date >= ?", params[:start]).where("date <= ?", params[:end]).pluck(:rotation_id).uniq
+          rotations = Rotation.find(rotation_ids)
         else
-          rotations = Rotation.all
+          rotations = Rotation.where(community_id: params[:community_id]).all
         end
 
         render json: rotations
