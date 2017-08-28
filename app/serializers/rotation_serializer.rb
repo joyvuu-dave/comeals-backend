@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: rotations
+#
+#  id           :integer          not null, primary key
+#  community_id :integer          not null
+#  description  :string           not null
+#  color        :string           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#
+# Indexes
+#
+#  index_rotations_on_community_id  (community_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (community_id => communities.id)
+#
+
 class RotationSerializer < ActiveModel::Serializer
   cache key: 'rotation'
   attributes :start,

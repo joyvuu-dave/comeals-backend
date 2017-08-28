@@ -7,13 +7,13 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 # Community
-community = Community.create!(name: "Swan's Way", cap: 250)
-community.update_attribute(:slug, 'swans')
+community = Community.create!(name: "Patches Way", cap: 250)
+community.update_attribute(:slug, 'patches')
 
 puts "#{Community.count} Community created"
 
 # AdminUser
-admin_user = AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password', community_id: community.id)
+admin_user = AdminUser.create!(email: 'joslyn@email.com', password: 'password', password_confirmation: 'password', community_id: community.id)
 
 puts "#{AdminUser.count} AdminUser created"
 
@@ -37,7 +37,7 @@ Resident.where(id: Resident.where(multiplier: 2).pluck(:id).shuffle.take(3)).eac
 end
 
 # Make 1 (adult) Resident have a simple email address
-Resident.where(multiplier: 2).first.update_attributes(email: 'resident@example.com')
+Resident.where(multiplier: 2).first.update_attributes(email: 'bowen@email.com')
 
 puts "#{Unit.count} Units created"
 puts "#{Resident.count} Residents created"
