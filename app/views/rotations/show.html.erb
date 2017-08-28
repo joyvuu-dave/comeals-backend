@@ -1,5 +1,6 @@
 
-<h1><%= "#{@rotation.id}: #{@rotation.description}" %></h1>
+<h1><%= "Rotation #{@rotation.id}" %></h1>
+<h2><%= @rotation.description %></h2>
 
 <style>
 body {
@@ -7,19 +8,16 @@ body {
 }
 </style>
 
-<table class="table-striped">
-  <thead>
-    <tr>
-      <th>Resident</th>
-      <th>Signed Up</th>
-    </tr>
-  </thead>
-  <tbody>
-  <% @rotation.community.residents.each do |resident| %>
-    <tr>
-      <td><%= resident.name %></td>
-      <td><%= Bill.includes(:meal).joins(:meal).where("meals.date >= ?", @rotation.meals.first.date).where("meals.date <= ?", @rotation.meals.last.date).where(resident_id: resident.id).present? %></td>
-    </tr>
-  <% end %>
-  </tbody>
-</table>
+<h3>Not Signed Up</h3>
+<ul>
+<% @un_signed_up_residents.each do |resident| %>
+  <li><%= "#{resident.unit.name} - #{resident.name}" %></li>
+<% end %>
+</ul>
+
+<h3>Signed Up</h3>
+<ul>
+<% @signed_up_residents.each do |resident| %>
+  <li><%= "#{resident.unit.name} - #{resident.name}" %></li>
+<% end %>
+</ul>
