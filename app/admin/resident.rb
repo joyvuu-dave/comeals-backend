@@ -1,6 +1,6 @@
 ActiveAdmin.register Resident do
   # STRONG PARAMS
-  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian
+  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian, :can_cook
 
   # SCOPE
   scope_to :current_admin_user
