@@ -4,7 +4,7 @@
 #
 #  id                   :integer          not null, primary key
 #  name                 :string           not null
-#  email                :string           not null
+#  email                :string
 #  community_id         :integer          not null
 #  unit_id              :integer          not null
 #  vegetarian           :boolean          default(FALSE), not null
@@ -41,7 +41,7 @@ class Resident < ApplicationRecord
   belongs_to :unit
 
   has_one :key, as: :identity
-  has_one :resident_balance
+  has_one :resident_balance, dependent: :destroy
   has_many :bills, dependent: :destroy
   has_many :meal_residents, dependent: :destroy
   has_many :meals, through: :meal_residents
@@ -55,9 +55,11 @@ class Resident < ApplicationRecord
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
-                    uniqueness: { case_sensitive: false }
+                    uniqueness: { case_sensitive: false }, allow_nil: true
+  validate :email_presence
 
-  before_save { self.email = email.downcase }
+  before_validation :set_email
+  before_save { self.email = email.downcase unless email.nil? }
   before_save :update_token
 
 
@@ -79,6 +81,16 @@ class Resident < ApplicationRecord
         self.build_key
       end
     end
+  end
+
+
+  # HELPERS
+  def email_presence
+    errors.add(:email,'Email cannot be blank.') if self.multiplier >= 2
+  end
+
+  def set_email
+    self.email = nil if email == ""
   end
 
 

@@ -171,7 +171,7 @@ ActiveRecord::Schema.define(version: 20170815141458) do
 
   create_table "residents", force: :cascade do |t|
     t.string "name", null: false
-    t.string "email", null: false
+    t.string "email"
     t.bigint "community_id", null: false
     t.bigint "unit_id", null: false
     t.boolean "vegetarian", default: false, null: false

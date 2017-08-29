@@ -68,6 +68,7 @@ ActiveAdmin.register Resident do
     attributes_table do
       row :id
       row :name
+      row('Category') { |r| r.multiplier < 2 ? "Child" : "Adult" }
       row :unit
       row :can_cook
       row :email

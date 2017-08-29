@@ -4,7 +4,7 @@
 #
 #  id                   :integer          not null, primary key
 #  name                 :string           not null
-#  email                :string           not null
+#  email                :string
 #  community_id         :integer          not null
 #  unit_id              :integer          not null
 #  vegetarian           :boolean          default(FALSE), not null
