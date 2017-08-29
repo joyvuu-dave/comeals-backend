@@ -44,4 +44,7 @@ $( ->
   # Change Communities to Community
   if $("#page_title").html() is "Communities"
     $("#page_title").html("Community")
+
+  # Make Date columns a little wider
+  $('.col-date').css('min-width', '150px')
 )
