@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   constraints subdomain: 'admin' do
     devise_for :admin_users, ActiveAdmin::Devise.config.merge(:path => '')
     ActiveAdmin.routes(self)
+    get '/admin-logout', to: 'static#admin_logout', as: :admin_logout
   end
 
   # Manager Pages

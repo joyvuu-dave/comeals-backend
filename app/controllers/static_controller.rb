@@ -3,6 +3,21 @@ class StaticController < ApplicationController
   def main
   end
 
+  # GET /admin-logout (admin)
+  def admin_logout
+    if Rails.env.production?
+      host = "https://"
+      top_level = ".com"
+    else
+      host = "http://"
+      top_level = ".dev"
+    end
+
+    cookies.delete(:remember_admin_user_token)
+    reset_session
+    redirect_to "#{host}comeals#{top_level}"
+  end
+
   # GET / (root, subdomains)
   def root
     if Rails.env.production?
