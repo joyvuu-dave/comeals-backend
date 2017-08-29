@@ -1,4 +1,7 @@
 ActiveAdmin.register AdminUser do
+  # MENU
+  menu label: "Admins"
+
   permit_params :email, :password, :password_confirmation
 
   scope_to :current_admin_user

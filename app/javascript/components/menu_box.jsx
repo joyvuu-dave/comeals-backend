@@ -1,5 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
+import DebounceInput from 'react-debounce-input';
 
 const styles = {
   main: {
@@ -22,18 +23,12 @@ const MenuBox = inject("store")(
     <div style={styles.main}>
       <div className="flex space-between title">
         <h2 className="width-15">Menu</h2>
-        <button
-          className={
-            store.editDescriptionMode ? "button-dark" : "button-danger"
-          }
-          onClick={store.toggleEditDescriptionMode}
-          disabled={store.meal.reconciled}
-        >
-          {store.editDescriptionMode ? "Save" : "Edit"}
-        </button>
       </div>
       <div>
-        <textarea
+        <DebounceInput
+          element="textarea"
+          minLength={2}
+          debounceTimeout={700}
           className={store.editDescriptionMode ? "" : "offwhite"}
           style={styles.text}
           value={store.meal.description}

@@ -18,20 +18,29 @@ const Bill = types.model(
     },
     get amountIsValid() {
       return Number.isInteger(this.amountCents) && this.amountCents >= 0;
+    },
+    get form() {
+      return getParent(this, 2);
     }
   },
   {
     setResident(val) {
       if (val === "") {
         this.resident = null;
+        this.form.form.toggleEditBillsMode();
+        this.form.form.toggleEditBillsMode();
         return null;
       } else {
         this.resident = val;
+        this.form.form.toggleEditBillsMode();
+        this.form.form.toggleEditBillsMode();
         return this.resident;
       }
     },
     setAmount(val) {
       this.amount = val;
+      this.form.form.toggleEditBillsMode();
+      this.form.form.toggleEditBillsMode();
       return val;
     }
   }

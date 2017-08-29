@@ -83,13 +83,6 @@ const CooksBox = inject("store")(
     <div className="offwhite" style={styles.main}>
       <div className="flex space-between title">
         <h2>Cooks</h2>
-        <button
-          className={store.editBillsMode ? "button-dark" : "button-danger"}
-          onClick={store.toggleEditBillsMode}
-          disabled={store.meal.reconciled}
-        >
-          {store.editBillsMode ? "Save" : "Edit"}
-        </button>{" "}
       </div>
       {store.editBillsMode ? <Edit /> : <Display />}
     </div>

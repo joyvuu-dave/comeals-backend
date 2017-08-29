@@ -40,6 +40,7 @@
         "radium": "^0.19.4",
         "rails-erb-loader": "^5.0.1",
         "react": "^15.6.1",
+        "react-debounce-input": "^3.0.1",
         "react-dom": "^15.6.1",
         "react-redux": "^5.0.6",
         "react-redux-form": "^1.12.1",

@@ -14,7 +14,6 @@ class CommunitiesNew extends React.Component {
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.alert(response.data.message);
           window.location.href = `${window.host}admin.comeals${window.topLevel}`;
         }
       })
@@ -55,11 +54,11 @@ class CommunitiesNew extends React.Component {
             <Control.text model=".name" className="width-75" />
             <br />
 
-            <label>Manager Email Address</label>
+            <label>Admin Email Address</label>
             <Control.text model=".email" className="width-75" />
             <br />
 
-            <label>Manager Password</label>
+            <label>Admin Password</label>
             <Control type="password" model=".password" className="width-75" />
             <br />
 

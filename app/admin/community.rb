@@ -1,4 +1,7 @@
 ActiveAdmin.register Community do
+  # MENU
+  menu label: "Community"
+
   # STRONG PARAMS
   permit_params :name, :cap, :slug
 

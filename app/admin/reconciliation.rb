@@ -1,4 +1,6 @@
 ActiveAdmin.register Reconciliation do
+  menu label: "Recon."
+
   # SCOPE
   scope_to :current_admin_user
 

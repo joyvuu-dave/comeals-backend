@@ -11,8 +11,8 @@ export const DataStore = types.model(
   "DataStore",
   {
     isLoading: true,
-    editDescriptionMode: false,
-    editBillsMode: false,
+    editDescriptionMode: true,
+    editBillsMode: true,
     meal: types.maybe(types.reference(Meal)),
     meals: types.array(Meal),
     residentStore: types.optional(ResidentStore, {
@@ -103,6 +103,8 @@ export const DataStore = types.model(
     },
     setDescription(val) {
       this.meal.description = val;
+      this.toggleEditDescriptionMode();
+      this.toggleEditDescriptionMode();
       return this.meal.description;
     },
     toggleClosed() {
@@ -227,7 +229,6 @@ export const DataStore = types.model(
     submitBills() {
       // Check for errors with bills
       if (this.bills.values().some(bill => bill.amountIsValid === false)) {
-        window.alert("Fix bills before submitting.");
         this.editBillsMode = true;
         return;
       }

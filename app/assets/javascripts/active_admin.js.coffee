@@ -40,4 +40,8 @@ $( ->
 
   # Make the damn remember me checkbox default checked
   $('#admin_user_remember_me').prop('checked', true)
+
+  # Change Communities to Community
+  if $("#page_title").html() is "Communities"
+    $("#page_title").html("Community")
 )
