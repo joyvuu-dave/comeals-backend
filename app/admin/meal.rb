@@ -23,7 +23,7 @@ ActiveAdmin.register Meal do
     column :max
     column :subsidized?
     column :max_cost do |meal|
-      number_to_currency(meal.max_cost.to_f / 100)
+      number_to_currency(meal.max_cost.to_f / 100) unless meal.max_cost.nan?
     end
     column :modified_cost do |meal|
       number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
