@@ -22,7 +22,7 @@ puts "#{AdminUser.count} AdminUser created"
   unless letter == 'O' || letter == 'I'
     unit = Unit.create!(name: letter, community_id: community.id)
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
-                    multiplier: 1, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: '') if index % 5 == 0
+                    multiplier: 1, unit_id: unit.id, community_id: community.id, password: '') if index % 5 == 0
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
                     multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password')
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",

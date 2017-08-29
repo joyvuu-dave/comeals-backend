@@ -7,6 +7,12 @@ module Api
       end
 
       def token
+        # Kids aren't required to have email addresses;
+        # this prevents those accounts from signing in
+        if params[:email].blank?
+          render json: { message: "Email required." }, status: :bad_request and return
+        end
+
         resident = Resident.find_by(email: params[:email])
         if resident.blank?
           render json: { message: "No resident with email #{params[:email]}" }, status: :bad_request and return
