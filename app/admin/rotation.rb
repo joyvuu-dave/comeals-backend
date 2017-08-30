@@ -1,6 +1,6 @@
 ActiveAdmin.register Rotation do
   # STRONG PARAMS
-  permit_params :meal_ids
+  permit_params :description, :community_id, meal_ids: []
 
   # SCOPE
   scope_to :current_admin_user
@@ -38,6 +38,7 @@ ActiveAdmin.register Rotation do
   form do |f|
     f.inputs do
       f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
+      f.input :description, input_html: { value: "" }, as: :hidden
       f.input :meals, as: :check_boxes, collection: Meal.where(community_id: current_admin_user.community_id).order(:date).map { |m| [m.date.to_s, m.id] }
     end
 

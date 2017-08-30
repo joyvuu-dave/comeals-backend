@@ -23,6 +23,7 @@ class Rotation < ApplicationRecord
   has_many :meals, dependent: :nullify
 
   before_validation :set_color, on: :create
+  after_commit :set_description
   validates_presence_of :color
 
   COLORS = ["#3DC656", "#009EDC", "#D9443F", "#FFC857", "#E9724C"]
@@ -30,6 +31,10 @@ class Rotation < ApplicationRecord
     colors = Rotation.pluck(:color).reverse
     prev_colors = [colors[0], colors[1], colors[2], colors[3]]
     self.color = (COLORS - prev_colors)[0]
+  end
+
+  def set_description
+    self.update_columns(description: "#{self.meals&.order(:date)&.first&.date&.to_s} to #{self.meals&.order(:date)&.last&.date&.to_s}")
   end
 
   def meals_count
