@@ -28,12 +28,12 @@ class Rotation < ApplicationRecord
 
   COLORS = ["#3DC656", "#009EDC", "#D9443F", "#FFC857", "#E9724C"]
   def set_color
-    colors = Rotation.where(community_id: community_id).pluck(:color).reverse
+    used_colors = Rotation.where(community_id: community_id).pluck(:color).reverse
     prev_colors = []
-    prev_colors.push([colors[0]) unless colors[0].nil?
-    prev_colors.push([colors[1]) unless colors[1].nil?
-    prev_colors.push([colors[2]) unless colors[2].nil?
-    prev_colors.push([colors[3]) unless colors[3].nil?
+    prev_colors.push(used_colors[0]) unless used_colors[0].nil?
+    prev_colors.push(used_colors[1]) unless used_colors[1].nil?
+    prev_colors.push(used_colors[2]) unless used_colors[2].nil?
+    prev_colors.push(used_colors[3]) unless used_colors[3].nil?
 
     self.color = (COLORS - prev_colors)[0]
   end
