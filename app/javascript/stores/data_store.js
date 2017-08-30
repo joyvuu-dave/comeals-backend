@@ -54,7 +54,7 @@ export const DataStore = types.model(
         .values()
         .filter(resident => resident.attending && resident.vegetarian).length;
 
-      const vegGuests = this.guests.values().map(guest => guest.vegetarian)
+      const vegGuests = this.guests.values().filter(guest => guest.vegetarian)
         .length;
 
       return vegResidents + vegGuests;
