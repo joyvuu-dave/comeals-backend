@@ -27,11 +27,11 @@ class RotationSerializer < ActiveModel::Serializer
              :url
 
   def start
-    object.meals.first.date
+    object.meals.order(:date).first.date
   end
 
   def end
-    object.meals.last.date + 1.day # b/c FullCalendar date ranges are exclusive
+    object.meals.order(:date).last.date + 1.day # b/c FullCalendar date ranges are exclusive
   end
 
   def title
