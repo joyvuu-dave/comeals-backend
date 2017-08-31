@@ -27,7 +27,10 @@ class ResidentsCalendar extends React.Component {
         const startString = moment(event.start).format();
         const todayString = moment().format("YYYY-MM-DD");
 
-        if (moment(startString).isBefore(todayString, "day") && typeof event.url !== "undefined") {
+        if (
+          moment(startString).isBefore(todayString, "day") &&
+          typeof event.url !== "undefined"
+        ) {
           eventElement.css("opacity", "0.5");
         }
 

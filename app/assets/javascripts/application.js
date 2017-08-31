@@ -11,3 +11,5 @@
 // about supported directives.
 //
 //= require rails-ujs
+//= require jquery/dist/jquery
+//= require shoelace-css/source/js/dropdowns
