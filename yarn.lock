@@ -1076,12 +1076,12 @@ caniuse-api@^2.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000722"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000722.tgz#e0bc209d91a578319103b50749f2aa7e4a672a79"
+  version "1.0.30000723"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000723.tgz#fce6e6c1d13eeb6fe957fe80acf27bd24694d741"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000718:
-  version "1.0.30000722"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000722.tgz#8cbfe07440478e3a16ab0d3b182feef1901eab55"
+  version "1.0.30000723"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000723.tgz#f9db1e2868caf097b00265ac2e71ba44b608fb1e"
 
 caseless@~0.12.0:
   version "0.12.0"
