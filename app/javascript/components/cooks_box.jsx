@@ -5,8 +5,7 @@ import { v4 } from "uuid";
 const styles = {
   main: {
     gridArea: "a4",
-    border: "0.5px solid",
-    borderRadius: "var(--button-border-radius)"
+    border: "0.5px solid"
   },
   grid: {
     display: "flex",
@@ -15,7 +14,7 @@ const styles = {
 };
 
 const BillEdit = inject("store")(
-  observer(({ store, bill }) =>
+  observer(({ store, bill }) => (
     <div className="input-group">
       <select
         key={bill.id}
@@ -23,11 +22,11 @@ const BillEdit = inject("store")(
         onChange={e => bill.setResident(e.target.value)}
       >
         <option value={""} key={-1} />
-        {store.residents.values().map(resident =>
+        {store.residents.values().map(resident => (
           <option value={resident.id} key={resident.id}>
             {resident.name}
           </option>
-        )}
+        ))}
       </select>
       <div className="input-group">
         <span className="input-addon">$</span>
@@ -42,24 +41,20 @@ const BillEdit = inject("store")(
         />
       </div>
     </div>
-  )
+  ))
 );
 
 const BillShow = inject("store")(
-  observer(({ store, bill }) =>
+  observer(({ store, bill }) => (
     <tr hidden={!bill.resident}>
-      <td key={v4()}>
-        {bill.resident && bill.resident.name}
-      </td>
-      <td key={bill.id}>
-        ${bill.amount}
-      </td>
+      <td key={v4()}>{bill.resident && bill.resident.name}</td>
+      <td key={bill.id}>${bill.amount}</td>
     </tr>
-  )
+  ))
 );
 
 const Display = inject("store")(
-  observer(({ store }) =>
+  observer(({ store }) => (
     <table>
       <tbody>
         {store.bills
@@ -67,26 +62,26 @@ const Display = inject("store")(
           .map(bill => <BillShow key={bill.id} bill={bill} />)}
       </tbody>
     </table>
-  )
+  ))
 );
 
 const Edit = inject("store")(
-  observer(({ store }) =>
+  observer(({ store }) => (
     <div>
       {store.bills.values().map(bill => <BillEdit key={bill.id} bill={bill} />)}
     </div>
-  )
+  ))
 );
 
 const CooksBox = inject("store")(
-  observer(({ store }) =>
-    <div className="offwhite" style={styles.main}>
+  observer(({ store }) => (
+    <div className="offwhite button-border-radius" style={styles.main}>
       <div className="flex space-between title">
         <h2>Cooks</h2>
       </div>
       {store.editBillsMode ? <Edit /> : <Display />}
     </div>
-  )
+  ))
 );
 
 export default CooksBox;

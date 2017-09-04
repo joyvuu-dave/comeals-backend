@@ -24,7 +24,7 @@
         "react-redux": "^5.0.6",
         "react-redux-form": "^1.12.1",
         "redux": "^3.7.0",
-        "shoelace-css": "1.0.0-beta16",
+        "shoelace-css": "1.0.0-beta22",
         "uuid": "^3.1.0"
     },
     "devDependencies": {

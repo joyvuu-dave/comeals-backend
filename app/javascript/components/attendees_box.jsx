@@ -7,28 +7,10 @@ import Carrot from "../packs/images/carrot.png";
 const styles = {
   main: {
     margin: "1em 0 1em 0",
-    gridArea: "a6"
-  },
-  table: {
-    backgroundColor: "var(--almost-white)"
+    gridArea: "a5"
   },
   topButton: {
-    marginBottom: "1px",
-    fontFamily: "var(--font-monospace)"
-  },
-  lowerButton: {
-    fontFamily: "var(--font-monospace)"
-  },
-  yes: {
-    backgroundColor: "var(--color-green)",
-    cursor: "pointer",
-    color: "var(--almost-white)"
-  },
-  no: {
-    cursor: "pointer"
-  },
-  pointer: {
-    cursor: "pointer"
+    marginBottom: "1px"
   },
   icon: {
     maxHeight: "1rem"
@@ -36,7 +18,6 @@ const styles = {
   sticky: {
     position: "sticky",
     top: 0,
-    backgroundColor: "var(--almost-white)",
     zIndex: "9999"
   },
   disabled: {
@@ -61,10 +42,15 @@ const AttendeeComponent = inject("store")(
           <tr>
             <td
               onClick={e => resident.toggleAttending()}
+              className={
+                resident.attending ? (
+                  "background-green text-white pointer"
+                ) : (
+                  "pointer"
+                )
+              }
               style={Object.assign(
                 {},
-                resident.attending && styles.yes,
-                !resident.attending && styles.no,
                 resident.attending && !resident.canRemove && styles.disabled,
                 store.meal.reconciled && styles.disabled
               )}
@@ -72,16 +58,18 @@ const AttendeeComponent = inject("store")(
               {resident.name}
             </td>
             <td>
-              {vegGuestsCount > 0 &&
-                <span className="badge badge-info margin-right-small">
+              {vegGuestsCount > 0 && (
+                <span className="badge badge-info mar-r-sm">
                   {vegGuestsCount}
                   <img src={Carrot} style={styles.icon} alt="carrot-icon" />
-                </span>}
-              {meatGuestsCount > 0 &&
+                </span>
+              )}
+              {meatGuestsCount > 0 && (
                 <span className="badge badge-info">
                   {meatGuestsCount}
                   <img src={Cow} style={styles.icon} alt="cow-icon" />
-                </span>}
+                </span>
+              )}
             </td>
             <td>
               <span className="switch">
@@ -123,7 +111,7 @@ const AttendeeComponent = inject("store")(
             <td>
               <div className="dropdown">
                 <button
-                  className="dropdown-trigger margin-right-small"
+                  className="dropdown-trigger mar-r-sm"
                   style={styles.topButton}
                   disabled={store.meal.reconciled || !store.canAdd}
                 >
@@ -131,19 +119,15 @@ const AttendeeComponent = inject("store")(
                 </button>
                 <div className="dropdown-menu">
                   <a onClick={e => resident.addGuest({ vegetarian: false })}>
-                    <img src={Cow} style={styles.pointer} alt="cow-icon" />
+                    <img src={Cow} className="pointer" alt="cow-icon" />
                   </a>
                   <a onClick={e => resident.addGuest({ vegetarian: true })}>
-                    <img
-                      src={Carrot}
-                      style={styles.pointer}
-                      alt="carrot-icon"
-                    />
+                    <img src={Carrot} className="pointer" alt="carrot-icon" />
                   </a>
                 </div>
               </div>
               <button
-                style={styles.lowerButton}
+                className="monospace"
                 onClick={e => resident.removeGuest()}
                 disabled={store.meal.reconciled || !resident.canRemoveGuest}
               >
@@ -163,27 +147,33 @@ const AttendeeForm = inject("store")(
       render() {
         return (
           <div style={styles.main}>
-            <table style={styles.table}>
+            <table className="background-white">
               <thead>
                 <tr>
-                  <th style={styles.sticky}>
+                  <th style={styles.sticky} className="background-white">
                     Name{" "}
                     <span className="text-small text-italic text-secondary text-nowrap">
                       (click to add)
                     </span>
                   </th>
-                  <th style={styles.sticky}>Guests</th>
-                  <th style={styles.sticky}>Late</th>
-                  <th style={styles.sticky}>Veg</th>
+                  <th style={styles.sticky} className="background-white">
+                    Guests
+                  </th>
+                  <th style={styles.sticky} className="background-white">
+                    Late
+                  </th>
+                  <th style={styles.sticky} className="background-white">
+                    Veg
+                  </th>
                   <th style={styles.sticky} />
                 </tr>
               </thead>
               <tbody>
                 {store.residents
                   .values()
-                  .map(resident =>
+                  .map(resident => (
                     <AttendeeComponent key={resident.id} resident={resident} />
-                  )}
+                  ))}
               </tbody>
             </table>
           </div>

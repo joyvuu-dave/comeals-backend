@@ -43,7 +43,7 @@ class CommunitiesNew extends React.Component {
     return (
       <div>
         <h2>Create a new Community</h2>
-        <fieldset className="width-50">
+        <fieldset className="w-50">
           <legend>Community</legend>
           <LocalForm
             onUpdate={form => this.handleUpdate(form)}
@@ -51,15 +51,15 @@ class CommunitiesNew extends React.Component {
             onSubmit={values => this.handleSubmit(values)}
           >
             <label>Community Name</label>
-            <Control.text model=".name" className="width-75" />
+            <Control.text model=".name" className="w-75" />
             <br />
 
             <label>Admin Email Address</label>
-            <Control.text model=".email" className="width-75" />
+            <Control.text model=".email" className="w-75" />
             <br />
 
             <label>Admin Password</label>
-            <Control type="password" model=".password" className="width-75" />
+            <Control type="password" model=".password" className="w-75" />
             <br />
 
             <button type="submit">Submit</button>

@@ -6,55 +6,34 @@ import CloseButton from "./close_button";
 const styles = {
   main: {
     border: "0.5px solid",
-    gridArea: "a5",
-    borderRadius: "var(--button-border-radius)"
-  },
-  info: {
-    marginTop: "1rem"
-  },
-  circle: {
-    borderRadius: "50%",
-    border: "1px solid var(--state-primary)",
-    height: "6.5rem",
-    width: "6.5rem",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    margin: "1rem 1rem 1rem 1rem"
+    gridArea: "a2"
   }
 };
 
 const InfoBox = inject("store")(
-  observer(({ store }) =>
-    <div className="offwhite" style={styles.main}>
+  observer(({ store }) => (
+    <div className="offwhite button-border-radius" style={styles.main}>
       <div className="title flex space-between">
         <h2>Signed Up</h2>
         <CloseButton />
       </div>
       <div className="flex nowrap space-between">
-        <h4 style={styles.circle}>
+        <h4 className="info-circle">
           <div>Total</div>
-          <div>
-            {store.attendeesCount}
-          </div>
+          <div>{store.attendeesCount}</div>
         </h4>
-        <h4 style={styles.circle}>
+        <h4 className="info-circle">
           <div>Veg</div>
-          <div>
-            {store.vegetarianCount}
-          </div>
+          <div>{store.vegetarianCount}</div>
         </h4>
-        <h4 style={styles.circle}>
+        <h4 className="info-circle">
           <div>Late</div>
-          <div>
-            {store.lateCount}
-          </div>
+          <div>{store.lateCount}</div>
         </h4>
         <Extras />
       </div>
     </div>
-  )
+  ))
 );
 
 export default InfoBox;

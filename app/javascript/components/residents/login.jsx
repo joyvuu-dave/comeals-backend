@@ -58,7 +58,7 @@ class ResidentsLogin extends React.Component {
         >
           <fieldset className="login-box">
             <legend>Resident Login</legend>
-            <label className="width-80">
+            <label className="w-80">
               <Control.text
                 model=".email"
                 placeholder="Email"
@@ -66,7 +66,7 @@ class ResidentsLogin extends React.Component {
               />
             </label>
             <br />
-            <label className="width-80">
+            <label className="w-80">
               <Control
                 type="password"
                 model=".password"
