@@ -1,0 +1,285 @@
+@import "shoelace-css/source/css/shoelace.css";
+
+:root {
+  /* Colors */
+  --mango-tango: #ff8c42;
+  --hasana-yellow: #e9c46a;
+  --livid: #6699cc;
+  --almost-white: hsl(0, 0%, 98%);
+  --almost-black: #444;
+  --offwhite: #ebebe4;
+  --state-primary: tomato;
+
+  /* Sizes */
+  --dropdown-min-width: 5rem;
+  --dropdown-max-width: 10rem;
+}
+
+body {
+  background-color: var(--livid);
+  min-width: 30rem;
+}
+
+.monospace {
+  font-family: var(--font-monospace);
+}
+
+.background-white {
+  background-color: var(--almost-white);
+}
+
+.background-green {
+  background-color: var(--color-green);
+}
+
+.background-yellow {
+  background-color: var(--hasana-yellow);
+}
+
+.text-white {
+  color: var(--almost-white);
+}
+
+.text-black {
+  color: var(--almost-black);
+}
+
+.text-green {
+  color: var(--color-green);
+}
+
+.text-primary {
+  color: var(--state-primary);
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.button-border-radius {
+  border-radius: var(--button-border-radius);
+}
+
+.input-height {
+  height: var(--input-height);
+}
+
+.info-circle {
+  border-radius: 50%;
+  border: 1px solid var(--state-primary);
+  height: 6.5rem;
+  width: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 1rem 1rem 1rem;
+}
+
+/*
+Override Shoelace styling so it
+doesn't interfere with FullCalendar
+*/
+table {
+  margin-bottom: initial !important;
+}
+
+.fc-content {
+  color: hsl(0, 0%, 92%);
+}
+
+.calendar {
+  width: 95vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 2rem;
+  transition: width 0.5s;
+}
+
+@media only screen and (min-width: 768px) {
+  .calendar {
+    width: 85vw;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+#site {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.comeals-container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+  width: 100%;
+}
+
+.box {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  width: 100%;
+}
+
+.wrapper {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-areas: "a1 a1 a1" "a2 a2 a2" "a3 a3 a3" "a4 a4 a4" "a5 a5 a5";
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+  width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+  .wrapper {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-areas: "a1 a1 a1 a1 a1 a1 a2 a2 a2 a2 a2 a2"
+      "a3 a3 a3 a3 a3 a3 a4 a4 a4 a4 a4 a4"
+      "a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5";
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 2rem;
+    padding-left: 2rem;
+    width: 100%;
+  }
+}
+
+.login-box {
+  width: 100%;
+}
+
+@media only screen and (min-width: 768px) {
+  .login-box {
+    width: 50%;
+  }
+}
+
+button:focus {
+  outline: none;
+}
+
+.header {
+  height: 2rem;
+  background-color: var(--hasana-yellow);
+}
+
+.offwhite {
+  background-color: var(--offwhite);
+}
+
+.arrow:hover {
+  color: var(--almost-white);
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  border-bottom: 0.5px solid;
+  padding: 1rem 1rem 0 1rem;
+  background-color: var(--hasana-yellow);
+  margin-bottom: 0;
+}
+
+.is-hidden {
+  visibility: hidden;
+}
+
+/* GRID SYSTEM */
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flex.nowrap {
+  flex-wrap: nowrap;
+}
+
+.flex.top {
+  align-items: flex-start;
+}
+.flex.middle {
+  align-items: center;
+}
+.flex.bottom {
+  align-items: flex-end;
+}
+.flex.stretch {
+  align-items: stretch;
+}
+.flex.baseline {
+  align-items: baseline;
+}
+.flex.left {
+  justify-content: flex-start;
+}
+.flex.center {
+  justify-content: center;
+}
+.flex.right {
+  justify-content: flex-end;
+}
+.flex.space-between {
+  justify-content: space-between;
+}
+.flex.space-around {
+  justify-content: space-around;
+}
+
+.cell {
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+.cell.fill {
+  width: 0;
+  min-width: 0;
+  flex-grow: 1;
+}
+.cell.one {
+  width: calc(100% * 1 / 12);
+}
+.cell.two {
+  width: calc(100% * 2 / 12);
+}
+.cell.three {
+  width: calc(100% * 3 / 12);
+}
+.cell.four {
+  width: calc(100% * 4 / 12);
+}
+.cell.five {
+  width: calc(100% * 5 / 12);
+}
+.cell.six {
+  width: calc(100% * 6 / 12);
+}
+.cell.seven {
+  width: calc(100% * 7 / 12);
+}
+.cell.eight {
+  width: calc(100% * 8 / 12);
+}
+.cell.nine {
+  width: calc(100% * 9 / 12);
+}
+.cell.ten {
+  width: calc(100% * 10 / 12);
+}
+.cell.eleven {
+  width: calc(100% * 11 / 12);
+}
+.cell.twelve {
+  width: 100%;
+}

@@ -12,11 +12,11 @@ class ResidentsCalendar extends React.Component {
       eventSources: [
         {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/meals?community_id=${window.community_id}`,
-          color: "var(--livid)"
+          color: "#6699cc" // livid
         },
         {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/bills?community_id=${window.community_id}`,
-          color: "var(--almost-black)"
+          color: "#444" // almost-black
         },
         {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/rotations?community_id=${window.community_id}`
@@ -27,7 +27,10 @@ class ResidentsCalendar extends React.Component {
         const startString = moment(event.start).format();
         const todayString = moment().format("YYYY-MM-DD");
 
-        if (moment(startString).isBefore(todayString, "day") && typeof event.url !== "undefined") {
+        if (
+          moment(startString).isBefore(todayString, "day") &&
+          typeof event.url !== "undefined"
+        ) {
           eventElement.css("opacity", "0.5");
         }
 

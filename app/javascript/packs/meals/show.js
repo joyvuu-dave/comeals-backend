@@ -74,9 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   ReactDOM.render(
     <Provider store={store}>
-      <div className="container">
+      <div className="comeals-container">
         <Header />
-        <div className="container">
+        <div className="comeals-container">
           <section style={styles.section}>
             <div className="wrapper">
               <DateBox />

@@ -6,37 +6,27 @@ import ButtonBar from "./button_bar";
 const styles = {
   header: {
     display: "flex",
-    justifyContent: "space-between",
-    height: "var(--input-height)",
-    backgroundColor: "var(--hasana-yellow)"
-  },
-  black: {
-    color: "var(--almost-black)"
+    justifyContent: "space-between"
   }
 };
 
 const Header = inject("store")(
-  observer(({ store }) =>
-    <header style={styles.header} className="header">
-      <button
-        className="button-link"
-        style={styles.black}
-        onClick={store.calendar}
-      >
+  observer(({ store }) => (
+    <header
+      style={styles.header}
+      className="header background-yellow input-height"
+    >
+      <button className="button-link text-black" onClick={store.calendar}>
         Calendar
       </button>
       <div className="flex">
         <ButtonBar />
-        <a
-          style={styles.black}
-          className="button button-link"
-          onClick={store.logout}
-        >
+        <a className="button button-link text-black" onClick={store.logout}>
           logout
         </a>
       </div>
     </header>
-  )
+  ))
 );
 
 export default Header;

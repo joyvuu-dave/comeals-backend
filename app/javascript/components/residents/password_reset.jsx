@@ -48,9 +48,9 @@ class ResidentsPasswordReset extends React.Component {
         onChange={values => this.handleChange(values)}
         onSubmit={values => this.handleSubmit(values)}
       >
-        <fieldset className="width-50">
+        <fieldset className="w-50">
           <legend>Password Reset</legend>
-          <label className="width-75">
+          <label className="w-75">
             <Control.text
               model=".email"
               placeholder="Email"

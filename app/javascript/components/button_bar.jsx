@@ -5,26 +5,18 @@ const styles = {
   main: {
     gridArea: "a1",
     display: "flex",
-    justifyContent: "space-between",
-    borderRadius: "var(--button-border-radius)"
-  },
-  black: {
-    color: "var(--almost-black)"
+    justifyContent: "space-between"
   }
 };
 
 const ButtonBar = inject("store")(
-  observer(({ store }) =>
-    <div style={styles.main}>
-      <button
-        className="button-link"
-        style={styles.black}
-        onClick={store.history}
-      >
+  observer(({ store }) => (
+    <div style={styles.main} className="button-border-radius">
+      <button className="button-link text-black" onClick={store.history}>
         history
       </button>
     </div>
-  )
+  ))
 );
 
 export default ButtonBar;
