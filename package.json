@@ -1,11 +1,12 @@
 {
     "name": "comeals",
+    "version": "1.8.0",
+    "description": "An app for managing common meals.",
     "private": true,
     "license": "UNLICENSED",
     "engines": {
         "node": "8.4.0",
-        "yarn": "0.27.5",
-        "npm": "5.3.0"
+        "yarn": "0.27.5"
     },
     "dependencies": {
         "@rails/webpacker": "^3.0.1",
