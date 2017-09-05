@@ -98,16 +98,6 @@ table {
   transition: width 0.5s;
 }
 
-@media only screen and (min-width: 768px) {
-  .calendar {
-    width: 85vw;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
-}
-
 #site {
   display: flex;
   min-height: 100vh;
@@ -142,7 +132,19 @@ table {
   width: 100%;
 }
 
-@media only screen and (min-width: 768px) {
+.login-box {
+  width: 100%;
+}
+
+@media all and (min-width: 768px) {
+  .calendar {
+    width: 85vw;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
   .wrapper {
     display: grid;
     grid-gap: 1rem;
@@ -155,13 +157,7 @@ table {
     padding-left: 2rem;
     width: 100%;
   }
-}
 
-.login-box {
-  width: 100%;
-}
-
-@media only screen and (min-width: 768px) {
   .login-box {
     width: 50%;
   }
