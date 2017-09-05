@@ -1,37 +1,37 @@
 {
-    "name": "comeals",
-    "version": "1.9.0",
-    "description": "An app for managing common meals.",
-    "private": true,
-    "license": "UNLICENSED",
-    "engines": {
-        "node": "8.4.0",
-        "yarn": "0.27.5",
-        "npm": "5.3.0"
-    },
-    "dependencies": {
-        "@rails/webpacker": "^3.0.1",
-        "axios": "^0.16.2",
-        "babel-preset-react": "^6.24.1",
-        "fullcalendar": "3.5.0",
-        "jquery": "^3.2.1",
-        "js-cookie": "^2.1.4",
-        "mobx": "^3.2.2",
-        "mobx-react": "^4.2.2",
-        "mobx-state-tree": "^0.9.5",
-        "moment": "^2.18.1",
-        "prop-types": "^15.5.10",
-        "react": "^15.6.1",
-        "react-debounce-input": "^3.0.1",
-        "react-dom": "^15.6.1",
-        "react-redux": "^5.0.6",
-        "react-redux-form": "^1.12.1",
-        "redux": "^3.7.0",
-        "shoelace-css": "1.0.0-beta22",
-        "uuid": "^3.1.0"
-    },
-    "devDependencies": {
-        "prettier": "^1.6.1",
-        "webpack-dev-server": "^2.7.1"
-    }
+  "name": "comeals",
+  "version": "1.9.0",
+  "description": "An app for managing common meals.",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "8.4.0",
+    "yarn": "0.27.5",
+    "npm": "5.3.0"
+  },
+  "dependencies": {
+    "@rails/webpacker": "^3.0.1",
+    "axios": "^0.16.2",
+    "babel-preset-react": "^6.24.1",
+    "fullcalendar": "3.5.0",
+    "jquery": "^3.2.1",
+    "js-cookie": "^2.1.4",
+    "mobx": "^3.2.2",
+    "mobx-react": "^4.2.2",
+    "mobx-state-tree": "^0.11.0",
+    "moment": "^2.18.1",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-debounce-input": "^3.0.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.6",
+    "react-redux-form": "^1.12.1",
+    "redux": "^3.7.0",
+    "shoelace-css": "1.0.0-beta22",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "prettier": "^1.6.1",
+    "webpack-dev-server": "^2.7.1"
+  }
 }

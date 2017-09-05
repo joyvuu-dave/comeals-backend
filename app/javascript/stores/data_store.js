@@ -7,9 +7,8 @@ import ResidentStore from "./resident_store";
 import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
 
-export const DataStore = types.model(
-  "DataStore",
-  {
+export const DataStore = types
+  .model("DataStore", {
     isLoading: true,
     editDescriptionMode: true,
     editBillsMode: true,
@@ -23,95 +22,95 @@ export const DataStore = types.model(
     }),
     guestStore: types.optional(GuestStore, {
       guests: {}
-    }),
+    })
+  })
+  .views(self => ({
     get id() {
-      return this.meal.id;
+      return self.meal.id;
     },
     get description() {
-      return this.meal.description;
+      return self.meal.description;
     },
     get residents() {
-      return this.residentStore.residents;
+      return self.residentStore.residents;
     },
     get bills() {
-      return this.billStore.bills;
+      return self.billStore.bills;
     },
     get guests() {
-      return this.guestStore.guests;
+      return self.guestStore.guests;
     },
     get guestsCount() {
-      return this.guestStore.guests.size;
+      return self.guestStore.guests.size;
     },
     get mealResidentsCount() {
-      return this.residents.values().filter(resident => resident.attending)
+      return self.residents.values().filter(resident => resident.attending)
         .length;
     },
     get attendeesCount() {
-      return this.guestsCount + this.mealResidentsCount;
+      return self.guestsCount + self.mealResidentsCount;
     },
     get vegetarianCount() {
-      const vegResidents = this.residents
+      const vegResidents = self.residents
         .values()
         .filter(resident => resident.attending && resident.vegetarian).length;
 
-      const vegGuests = this.guests.values().filter(guest => guest.vegetarian)
+      const vegGuests = self.guests.values().filter(guest => guest.vegetarian)
         .length;
 
       return vegResidents + vegGuests;
     },
     get lateCount() {
-      return this.residents.values().filter(resident => resident.late).length;
+      return self.residents.values().filter(resident => resident.late).length;
     },
     get extras() {
       // Extras only show when the meal is closed
-      if (!this.meal.closed) {
+      if (!self.meal.closed) {
         return "n/a";
       }
 
-      if (this.meal.closed && typeof this.meal.max === "number") {
-        return this.meal.max - this.attendeesCount;
+      if (self.meal.closed && typeof self.meal.max === "number") {
+        return self.meal.max - self.attendeesCount;
       } else {
         return "";
       }
     },
     get canAdd() {
       return (
-        !this.meal.closed ||
-        (this.meal.closed && this.extas === "") ||
-        (this.meal.closed &&
-          typeof this.extras === "number" &&
-          this.extras >= 1)
+        !self.meal.closed ||
+        (self.meal.closed && self.extas === "") ||
+        (self.meal.closed &&
+          typeof self.extras === "number" &&
+          self.extras >= 1)
       );
     }
-  },
-  {
+  }))
+  .actions(self => ({
     toggleEditDescriptionMode() {
-      const isSaving = this.editDescriptionMode;
-      this.editDescriptionMode = !this.editDescriptionMode;
+      const isSaving = self.editDescriptionMode;
+      self.editDescriptionMode = !self.editDescriptionMode;
 
       if (isSaving) {
-        this.submitDescription();
+        self.submitDescription();
       }
     },
     toggleEditBillsMode() {
-      const isSaving = this.editBillsMode;
-      this.editBillsMode = !this.editBillsMode;
+      const isSaving = self.editBillsMode;
+      self.editBillsMode = !self.editBillsMode;
 
       if (isSaving) {
-        this.submitBills();
+        self.submitBills();
       }
     },
     setDescription(val) {
-      this.meal.description = val;
-      this.toggleEditDescriptionMode();
-      this.toggleEditDescriptionMode();
-      return this.meal.description;
+      self.meal.description = val;
+      self.toggleEditDescriptionMode();
+      self.toggleEditDescriptionMode();
+      return self.meal.description;
     },
     toggleClosed() {
-      const val = !this.meal.closed;
-      this.meal.closed = val;
-
-      const self = this;
+      const val = !self.meal.closed;
+      self.meal.closed = val;
 
       axios({
         url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
@@ -173,24 +172,23 @@ export const DataStore = types.model(
       window.location.href = "/calendar";
     },
     history() {
-      window.open(`/meals/${this.id}/log`, "_blank");
+      window.open(`/meals/${self.id}/log`, "_blank");
     },
     previousMeal() {
-      window.location.href = `/meals/${this.id}/previous`;
+      window.location.href = `/meals/${self.id}/previous`;
     },
     nextMeal() {
-      window.location.href = `/meals/${this.id}/next`;
+      window.location.href = `/meals/${self.id}/next`;
     },
     submitDescription() {
       let obj = {
-        id: this.meal.id,
-        description: this.meal.description,
+        id: self.meal.id,
+        description: self.meal.description,
         socket_id: window.socketId
       };
 
       console.log(obj);
 
-      const self = this;
       axios({
         method: "patch",
         url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
@@ -228,13 +226,13 @@ export const DataStore = types.model(
     },
     submitBills() {
       // Check for errors with bills
-      if (this.bills.values().some(bill => bill.amountIsValid === false)) {
-        this.editBillsMode = true;
+      if (self.bills.values().some(bill => bill.amountIsValid === false)) {
+        self.editBillsMode = true;
         return;
       }
 
       // Format Bills
-      let bills = this.bills
+      let bills = self.bills
         .values()
         .map(bill => bill.toJSON())
         .map(bill => {
@@ -256,14 +254,13 @@ export const DataStore = types.model(
         .filter(bill => bill.resident_id !== null);
 
       let obj = {
-        id: this.meal.id,
+        id: self.meal.id,
         bills: bills,
         socket_id: window.socketId
       };
 
       console.log(obj);
 
-      const self = this;
       axios({
         method: "patch",
         url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
@@ -300,7 +297,6 @@ export const DataStore = types.model(
         });
     },
     loadDataAsync() {
-      const self = this;
       axios
         .get(
           `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal
@@ -335,20 +331,20 @@ export const DataStore = types.model(
     },
     loadData(data) {
       // Assign Meal Data
-      this.meal.description = data.description;
-      this.meal.closed = data.closed;
-      this.meal.closed_at = new Date(data.closed_at);
-      this.meal.reconciled = data.reconciled;
+      self.meal.description = data.description;
+      self.meal.closed = data.closed;
+      self.meal.closed_at = new Date(data.closed_at);
+      self.meal.reconciled = data.reconciled;
 
       if (data.max === null) {
-        this.meal.extras = null;
+        self.meal.extras = null;
       } else {
         const residentsCount = data.residents.filter(
           resident => resident.attending
         ).length;
 
         const guestsCount = data.guests.length;
-        this.meal.extras = data.max - (residentsCount + guestsCount);
+        self.meal.extras = data.max - (residentsCount + guestsCount);
       }
 
       let residents = data.residents.sort((a, b) => {
@@ -361,13 +357,13 @@ export const DataStore = types.model(
       residents.forEach(resident => {
         if (resident.attending_at !== null)
           resident.attending_at = new Date(resident.attending_at);
-        this.residentStore.residents.put(resident);
+        self.residentStore.residents.put(resident);
       });
 
       // Assign Guests
       data.guests.forEach(guest => {
         guest.created_at = new Date(guest.created_at);
-        this.guestStore.guests.put(guest);
+        self.guestStore.guests.put(guest);
       });
 
       // Assign Bills
@@ -404,23 +400,22 @@ export const DataStore = types.model(
 
       // Put bills into BillStore
       bills.forEach(bill => {
-        this.billStore.bills.put(bill);
+        self.billStore.bills.put(bill);
       });
 
       // Change loading state
-      this.isLoading = false;
+      self.isLoading = false;
     },
     afterCreate() {
-      this.loadDataAsync();
+      self.loadDataAsync();
     },
     clearResidents() {
-      this.residentStore.residents.clear();
+      self.residentStore.residents.clear();
     },
     clearBills() {
-      this.billStore.bills.clear();
+      self.billStore.bills.clear();
     },
     appendGuest(obj) {
-      this.guestStore.guests.put(obj);
+      self.guestStore.guests.put(obj);
     }
-  }
-);
+  }));

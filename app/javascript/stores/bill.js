@@ -4,46 +4,46 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import Resident from "./resident";
 
-const Bill = types.model(
-  "Bill",
-  {
+const Bill = types
+  .model("Bill", {
     id: types.identifier(),
     resident: types.maybe(types.reference(Resident)),
-    amount: "",
+    amount: ""
+  })
+  .views(self => ({
     get resident_id() {
-      return this.resident && this.resident.id ? this.resident.id : "";
+      return self.resident && self.resident.id ? self.resident.id : "";
     },
     get amountCents() {
-      return parseInt(Number(this.amount) * 100);
+      return parseInt(Number(self.amount) * 100);
     },
     get amountIsValid() {
-      return Number.isInteger(this.amountCents) && this.amountCents >= 0;
+      return Number.isInteger(self.amountCents) && self.amountCents >= 0;
     },
     get form() {
       return getParent(this, 2);
     }
-  },
-  {
+  }))
+  .actions(self => ({
     setResident(val) {
       if (val === "") {
-        this.resident = null;
-        this.form.form.toggleEditBillsMode();
-        this.form.form.toggleEditBillsMode();
+        self.resident = null;
+        self.form.form.toggleEditBillsMode();
+        self.form.form.toggleEditBillsMode();
         return null;
       } else {
-        this.resident = val;
-        this.form.form.toggleEditBillsMode();
-        this.form.form.toggleEditBillsMode();
-        return this.resident;
+        self.resident = val;
+        self.form.form.toggleEditBillsMode();
+        self.form.form.toggleEditBillsMode();
+        return self.resident;
       }
     },
     setAmount(val) {
-      this.amount = val;
-      this.form.form.toggleEditBillsMode();
-      this.form.form.toggleEditBillsMode();
+      self.amount = val;
+      self.form.form.toggleEditBillsMode();
+      self.form.form.toggleEditBillsMode();
       return val;
     }
-  }
-);
+  }));
 
 export default Bill;

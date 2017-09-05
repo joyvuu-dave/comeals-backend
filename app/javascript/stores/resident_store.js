@@ -1,11 +1,12 @@
 import { types, getParent } from "mobx-state-tree";
 import Resident from "./resident";
 
-const ResidentStore = types.model("ResidentStore", {
-  residents: types.map(Resident),
-  get form() {
-    return getParent(this);
-  }
-});
+const ResidentStore = types
+  .model("ResidentStore", { residents: types.map(Resident) })
+  .views(self => ({
+    get form() {
+      return getParent(self);
+    }
+  }));
 
 export default ResidentStore;

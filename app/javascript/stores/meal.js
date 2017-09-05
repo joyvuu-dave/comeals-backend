@@ -3,55 +3,54 @@ import { v4 } from "uuid";
 import axios from "axios";
 import Cookie from "js-cookie";
 
-const Meal = types.model(
-  "Meal",
-  {
+const Meal = types
+  .model("Meal", {
     id: types.identifier(types.number),
     description: "",
     extras: types.maybe(types.number),
     closed: false,
     closed_at: types.maybe(types.Date),
     date: types.Date,
-    reconciled: false,
+    reconciled: false
+  })
+  .views(self => ({
     get max() {
-      if (this.extras === null) {
+      if (self.extras === null) {
         return null;
       } else {
-        return Number(this.extras) + this.form.attendeesCount;
+        return Number(self.extras) + self.form.attendeesCount;
       }
     },
     get form() {
-      return getParent(this, 2);
+      return getParent(self, 2);
     }
-  },
-  {
+  }))
+  .actions(self => ({
     resetExtras() {
-      this.extras = null;
+      self.extras = null;
       console.log("Extras reset to null.");
       return null;
     },
     resetClosedAt() {
-      this.closed_at = null;
+      self.closed_at = null;
       console.log("Closed At reset to null.");
       return null;
     },
     setClosedAt() {
       const time = new Date();
-      this.closed_at = time;
+      self.closed_at = time;
       console.log("Closed At updated to current time.");
       return time;
     },
     setExtras(val) {
-      const previousExtras = this.extras;
-      const self = this;
+      const previousExtras = self.extras;
 
       // Scenario #1: empty string
       if (val === null) {
-        this.extras = null;
+        self.extras = null;
 
         axios({
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-            .id}/max`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.id}/max`,
           method: "patch",
           data: {
             max: null,
@@ -96,12 +95,11 @@ const Meal = types.model(
       // Scenario #2: positive integer
       const num = parseInt(Number(val));
       if (Number.isInteger(num) && num >= 0) {
-        this.extras = num;
+        self.extras = num;
 
         axios({
           method: "patch",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-            .id}/max`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.id}/max`,
           data: {
             max: self.max,
             socket_id: window.socketId
@@ -143,28 +141,27 @@ const Meal = types.model(
       }
     },
     incrementExtras() {
-      if (this.extras === null) {
+      if (self.extras === null) {
         return;
       }
 
-      const num = parseInt(Number(this.extras));
+      const num = parseInt(Number(self.extras));
       if (Number.isInteger(num)) {
         const temp = num + 1;
-        this.extras = temp;
+        self.extras = temp;
       }
     },
     decrementExtras() {
-      if (this.extras === null) {
+      if (self.extras === null) {
         return;
       }
 
-      const num = parseInt(Number(this.extras));
+      const num = parseInt(Number(self.extras));
       if (Number.isInteger(num)) {
         const temp = num - 1;
-        this.extras = temp;
+        self.extras = temp;
       }
     }
-  }
-);
+  }));
 
 export default Meal;

@@ -175,7 +175,7 @@ GEM
       money (~> 6.9.0)
       railties (>= 3.0)
     msgpack (1.1.0)
-    multi_json (1.12.1)
+    multi_json (1.12.2)
     mustermann (1.0.1)
     newrelic_rpm (4.4.0.336)
     nio4r (2.1.0)

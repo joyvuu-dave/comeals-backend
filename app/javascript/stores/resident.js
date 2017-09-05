@@ -3,41 +3,42 @@ import { v4 } from "uuid";
 import axios from "axios";
 import Cookie from "js-cookie";
 
-const Resident = types.model(
-  "Resident",
-  {
+const Resident = types
+  .model("Resident", {
     id: types.identifier(types.number),
     meal_id: types.number,
     name: types.string,
     attending: false,
     attending_at: types.maybe(types.Date),
     late: false,
-    vegetarian: false,
+    vegetarian: false
+  })
+  .views(self => ({
     get guests() {
-      return this.form.form.guestStore.guests
+      return self.form.form.guestStore.guests
         .values()
-        .filter(guest => guest.resident_id === this.id);
+        .filter(guest => guest.resident_id === self.id);
     },
     get guestsCount() {
-      return this.guests.length;
+      return self.guests.length;
     },
     get canRemoveGuest() {
       // Scenario #1: no guests
-      if (this.guestsCount === 0) {
+      if (self.guestsCount === 0) {
         return false;
       }
 
       // Scenario #2: guests, meal open
-      if (this.guestsCount > 0 && !this.form.form.meal.closed) {
+      if (self.guestsCount > 0 && !self.form.form.meal.closed) {
         return true;
       }
 
       // Scenario #3: guests, meal closed, guests added after meal closed
       if (
-        this.guestsCount > 0 &&
-        this.form.form.meal.closed &&
-        this.guests.filter(
-          guest => guest.created_at > this.form.form.meal.closed_at
+        self.guestsCount > 0 &&
+        self.form.form.meal.closed &&
+        self.guests.filter(
+          guest => guest.created_at > self.form.form.meal.closed_at
         ).length > 0
       ) {
         return true;
@@ -45,10 +46,10 @@ const Resident = types.model(
 
       // Scenario #4: guests, meal closed, guests added before meal closed
       if (
-        this.guestsCount > 0 &&
-        this.form.form.meal.closed &&
-        this.guests.filter(
-          guest => guest.created_at <= this.form.form.meal.closed_at
+        self.guestsCount > 0 &&
+        self.form.form.meal.closed &&
+        self.guests.filter(
+          guest => guest.created_at <= self.form.form.meal.closed_at
         ).length > 0
       ) {
         return false;
@@ -56,90 +57,87 @@ const Resident = types.model(
     },
     get canRemove() {
       // Scenario #1: not attending
-      if (this.attending === false) {
+      if (self.attending === false) {
         return false;
       }
 
       // Scenario #2: attending, meal open
-      if (this.attending && !this.form.form.meal.closed) {
+      if (self.attending && !self.form.form.meal.closed) {
         return true;
       }
 
       // Scenario #3: attending, meal closed, added after meal closed
       if (
-        this.attending &&
-        this.form.form.meal.closed &&
-        this.attending_at > this.form.form.meal.closed_at
+        self.attending &&
+        self.form.form.meal.closed &&
+        self.attending_at > self.form.form.meal.closed_at
       ) {
         return true;
       }
 
       // Scenario #4: guests, meal closed, added before meal closed
       if (
-        this.guestsCount > 0 &&
-        this.form.form.meal.closed &&
-        this.attending_at <= this.form.form.meal.closed_at
+        self.guestsCount > 0 &&
+        self.form.form.meal.closed &&
+        self.attending_at <= self.form.form.meal.closed_at
       ) {
         return false;
       }
     },
     get form() {
-      return getParent(this, 2);
+      return getParent(self, 2);
     }
-  },
-  {
+  }))
+  .actions(self => ({
     setAttending(val) {
-      this.attending = val;
+      self.attending = val;
       return val;
     },
     setAttendingAt(val) {
-      this.attending_at = val;
+      self.attending_at = val;
       return val;
     },
     setLate(val) {
-      this.late = val;
+      self.late = val;
       return val;
     },
     toggleAttending(options = { late: false, toggleVeg: false }) {
       // Scenario #1: Meal is closed, you're not attending
       //              there are no extras -- can't add yourself
       if (
-        this.form.form.meal.closed &&
-        !this.attending &&
-        this.form.form.meal.extras < 1
+        self.form.form.meal.closed &&
+        !self.attending &&
+        self.form.form.meal.extras < 1
       ) {
         return;
       }
 
       // Scenario #2: Meal is closed, you are attending -- can't remove yourself
-      if (this.form.form.meal.closed && this.attending && !this.canRemove) {
+      if (self.form.form.meal.closed && self.attending && !self.canRemove) {
         return;
       }
 
-      const val = !this.attending;
-      this.attending = val;
-
-      const self = this;
+      const val = !self.attending;
+      self.attending = val;
 
       // Toggle Late if Necessary
       if (options.late) {
-        this.late = !this.late;
+        self.late = !self.late;
       }
 
       // Toggle Veg if Necessary
       if (options.toggleVeg) {
-        this.vegetarian = !this.vegetarian;
+        self.vegetarian = !self.vegetarian;
       }
 
-      const currentVeg = this.vegetarian;
-      const currentLate = this.late;
+      const currentVeg = self.vegetarian;
+      const currentLate = self.late;
 
       if (val) {
         self.form.form.meal.decrementExtras();
         axios({
           method: "post",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-            .meal_id}/residents/${this.id}`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}`,
           data: {
             socket_id: window.socketId,
             late: currentLate,
@@ -182,8 +180,7 @@ const Resident = types.model(
         self.form.form.meal.incrementExtras();
         axios({
           method: "delete",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-            .meal_id}/residents/${this.id}`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}`,
           data: {
             socket_id: window.socketId
           },
@@ -223,20 +220,17 @@ const Resident = types.model(
       }
     },
     toggleLate() {
-      if (this.attending == false) {
-        const self = this;
-        this.toggleAttending({ late: true });
+      if (self.attending === false) {
+        self.toggleAttending({ late: true });
         return;
       }
 
-      const val = !this.late;
-      this.late = val;
+      const val = !self.late;
+      self.late = val;
 
-      const self = this;
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-          .meal_id}/residents/${this.id}`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}`,
         data: {
           late: val,
           socket_id: window.socketId
@@ -273,20 +267,18 @@ const Resident = types.model(
         });
     },
     toggleVeg() {
-      if (this.attending == false) {
-        const self = this;
-        this.toggleAttending({ toggleVeg: true });
+      if (self.attending === false) {
+        self.toggleAttending({ toggleVeg: true });
         return;
       }
 
-      const val = !this.vegetarian;
-      this.vegetarian = val;
+      const val = !self.vegetarian;
+      self.vegetarian = val;
 
-      const self = this;
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-          .meal_id}/residents/${this.id}`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${this
+          .id}`,
         data: {
           vegetarian: val,
           socket_id: window.socketId
@@ -323,13 +315,11 @@ const Resident = types.model(
         });
     },
     addGuest(options = { vegetarian: false }) {
-      this.form.form.meal.decrementExtras();
+      self.form.form.meal.decrementExtras();
 
-      const self = this;
       axios({
         method: "post",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-          .meal_id}/residents/${this.id}/guests`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}/guests`,
         data: {
           socket_id: window.socketId,
           vegetarian: options.vegetarian
@@ -370,14 +360,14 @@ const Resident = types.model(
         });
     },
     removeGuest() {
-      console.log("This Resident Can Remove Guests: ", this.canRemoveGuest);
+      console.log("This Resident Can Remove Guests: ", self.canRemoveGuest);
 
-      if (!this.canRemoveGuest) {
+      if (!self.canRemoveGuest) {
         return false;
       }
 
       // Sort Guests
-      const sortedGuests = this.guests.sort((a, b) => {
+      const sortedGuests = self.guests.sort((a, b) => {
         if (a.created_at > b.created_at) return -1;
         if (a.created_at < b.created_at) return 1;
         return 0;
@@ -386,11 +376,9 @@ const Resident = types.model(
       // Grab Id of newest guest
       const guestId = sortedGuests[0].id;
 
-      const self = this;
       axios({
         method: "delete",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${this
-          .meal_id}/residents/${this.id}/guests/${guestId}`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}/guests/${guestId}`,
         data: {
           socket_id: window.socketId
         },
@@ -426,7 +414,6 @@ const Resident = types.model(
           const config = error.config;
         });
     }
-  }
-);
+  }));
 
 export default Resident;

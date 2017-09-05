@@ -1076,12 +1076,12 @@ caniuse-api@^2.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000723"
-  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000723.tgz#fce6e6c1d13eeb6fe957fe80acf27bd24694d741"
+  version "1.0.30000724"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000724.tgz#0b5b00096bf698d9baa0fd1cf8c33c2bb726b050"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000718:
-  version "1.0.30000723"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000723.tgz#f9db1e2868caf097b00265ac2e71ba44b608fb1e"
+  version "1.0.30000724"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000724.tgz#b9711be59257bdbce6a872ade51a11e864c21ec1"
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -3121,9 +3121,9 @@ mobx-react@^4.2.2:
   dependencies:
     hoist-non-react-statics "^1.2.0"
 
-mobx-state-tree@^0.9.5:
-  version "0.9.5"
-  resolved "https://registry.yarnpkg.com/mobx-state-tree/-/mobx-state-tree-0.9.5.tgz#31b26fda789e6856d588236fac20fbaa86fb0dc4"
+mobx-state-tree@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/mobx-state-tree/-/mobx-state-tree-0.11.0.tgz#456ce0520a680caf6c9a7fdd10bd3277d75b4ac7"
 
 mobx@^3.2.2:
   version "3.2.2"
