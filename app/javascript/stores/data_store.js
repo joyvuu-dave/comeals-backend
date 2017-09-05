@@ -248,7 +248,7 @@ export const DataStore = types.model(
           delete obj["resident"];
 
           // amount --> amount_cents
-          obj["amount_cents"] = Number.parseInt(Number(obj["amount"]) * 100);
+          obj["amount_cents"] = parseInt(Number(obj["amount"]) * 100);
           delete obj["amount"];
 
           return obj;

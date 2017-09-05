@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
-  const id = Number.parseInt(data.id);
+  const id = parseInt(data.id);
 
   // Gotta format our date obj because JavaScript
   const dateArray = data.date.split("-");

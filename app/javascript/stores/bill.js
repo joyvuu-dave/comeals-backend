@@ -14,7 +14,7 @@ const Bill = types.model(
       return this.resident && this.resident.id ? this.resident.id : "";
     },
     get amountCents() {
-      return Number.parseInt(Number(this.amount) * 100);
+      return parseInt(Number(this.amount) * 100);
     },
     get amountIsValid() {
       return Number.isInteger(this.amountCents) && this.amountCents >= 0;

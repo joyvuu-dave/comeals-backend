@@ -94,7 +94,7 @@ const Meal = types.model(
       }
 
       // Scenario #2: positive integer
-      const num = Number.parseInt(Number(val));
+      const num = parseInt(Number(val));
       if (Number.isInteger(num) && num >= 0) {
         this.extras = num;
 
@@ -147,7 +147,7 @@ const Meal = types.model(
         return;
       }
 
-      const num = Number.parseInt(Number(this.extras));
+      const num = parseInt(Number(this.extras));
       if (Number.isInteger(num)) {
         const temp = num + 1;
         this.extras = temp;
@@ -158,7 +158,7 @@ const Meal = types.model(
         return;
       }
 
-      const num = Number.parseInt(Number(this.extras));
+      const num = parseInt(Number(this.extras));
       if (Number.isInteger(num)) {
         const temp = num - 1;
         this.extras = temp;
