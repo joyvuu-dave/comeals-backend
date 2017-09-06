@@ -38,5 +38,6 @@
     </div>
     <%= render 'partials/data' %>
     <%= javascript_pack_tag 'footer' %>
+    <%= link_to 'Subscribe', ical_url(protocol: :webcal, format: :ics, id: @id) if @id %>
   </body>
 </html>

@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
+  get '/ical/:id', to: 'residents#ical', as: :ical
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all
