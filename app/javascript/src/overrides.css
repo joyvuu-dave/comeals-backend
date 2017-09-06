@@ -88,16 +88,6 @@ table {
   color: hsl(0, 0%, 92%);
 }
 
-.calendar {
-  width: 95vw;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  padding-bottom: 2rem;
-  transition: width 0.5s;
-}
-
 #site {
   display: flex;
   min-height: 100vh;
@@ -121,28 +111,43 @@ table {
   width: 100%;
 }
 
-.wrapper {
-  display: grid;
-  grid-gap: 1rem;
-  grid-template-areas: "a1 a1 a1" "a2 a2 a2" "a3 a3 a3" "a4 a4 a4" "a5 a5 a5";
-  margin-right: auto;
-  margin-left: auto;
-  padding-right: 0;
-  padding-left: 0;
-  width: 100%;
+@media all and (max-width: 746px) {
+  .calendar {
+    width: 95vw;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 2rem;
+    transition: width 0.5s;
+  }
+
+  .wrapper {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-areas: "a1 a1 a1" "a2 a2 a2" "a3 a3 a3" "a4 a4 a4" "a5 a5 a5";
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 0;
+    padding-left: 0;
+    width: 100%;
+    transition: padding-left 1s;
+  }
+
+  .login-box {
+    width: 100%;
+    transition: width 0.5s;
+  }
 }
 
-.login-box {
-  width: 100%;
-}
-
-@media all and (min-width: 768px) {
+@media all and (min-width: 746px) {
   .calendar {
     width: 85vw;
     margin-left: auto;
     margin-right: auto;
     margin-top: 1rem;
     margin-bottom: 1rem;
+    transition: width 0.5s;
   }
 
   .wrapper {
@@ -153,13 +158,15 @@ table {
       "a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5";
     margin-right: auto;
     margin-left: auto;
-    padding-right: 2rem;
-    padding-left: 2rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
     width: 100%;
+    transition: padding-left 1s;
   }
 
   .login-box {
     width: 50%;
+    transition: width 0.5s;
   }
 }
 
