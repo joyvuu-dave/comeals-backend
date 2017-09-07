@@ -13,7 +13,8 @@ const styles = {
     height: "100%",
     resize: "none",
     opacity: "1",
-    visibility: "visible"
+    visibility: "visible",
+    fontSize: "1.25rem"
   }
 };
 

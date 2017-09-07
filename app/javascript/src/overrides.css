@@ -65,10 +65,12 @@ body {
 }
 
 .info-circle {
-  border-radius: 50%;
-  border: 1px solid var(--state-primary);
+  min-height: 6.5rem;
   height: 6.5rem;
+  min-width: 6.5rem;
   width: 6.5rem;
+  border: 1px solid var(--state-primary);
+  border-radius: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
