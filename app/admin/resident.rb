@@ -86,7 +86,7 @@ ActiveAdmin.register Resident do
           link_to bill.meal.date, admin_bill_path(bill)
         end
         column 'Amount' do |bill|
-          number_to_currency(bill.amount.to_f / 100) unless bill.amount == 0
+          number_to_currency(bill.amount_cents.to_f / 100) unless bill.amount == 0
         end
       end
       table_for resident.guests.all do
