@@ -3,7 +3,7 @@
   "version": "1.9.0",
   "description": "An app for managing common meals.",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": "8.4.0",
     "yarn": "0.27.5",
