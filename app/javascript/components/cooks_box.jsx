@@ -10,6 +10,9 @@ const styles = {
   grid: {
     display: "flex",
     flexWrap: "no-wrap"
+  },
+  select: {
+    marginLeft: "1px"
   }
 };
 
@@ -20,6 +23,7 @@ const BillEdit = inject("store")(
         key={bill.id}
         value={bill.resident_id}
         onChange={e => bill.setResident(e.target.value)}
+        style={styles.select}
       >
         <option value={""} key={-1} />
         {store.residents.values().map(resident => (
