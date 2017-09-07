@@ -24,7 +24,6 @@ Rails.application.routes.draw do
         post '/residents/password-reset', to: 'residents#password_reset'
         post '/residents/password-reset/:token', to: 'residents#password_new'
         post '/communities', to: 'communities#create'
-        get '/communities/:id', to: 'communities#show'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
         post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_meal_resident'
@@ -40,6 +39,8 @@ Rails.application.routes.draw do
         get '/bills', to: 'bills#index'
         get '/bills/:id', to: 'bills#show'
         get '/rotations', to: 'rotations#index'
+        get '/residents/:id/ical', to: 'residents#ical', as: :resident_ical
+        get '/communities/:id/ical', to: 'communities#ical', as: :community_ical
       end
     end
   end
@@ -57,7 +58,6 @@ Rails.application.routes.draw do
   get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
-  get '/ical/:id', to: 'residents#ical', as: :ical
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all
