@@ -78,7 +78,7 @@ class Bill < ApplicationRecord
     return amount_cents if meal.cost == 0
     return amount_cents if meal.cap == Float::INFINITY
 
-    ((amount_cents.to_f / meal.max_cost) * amount_cents).round
+    ((amount_cents.to_f / meal.cost) * meal.max_cost).round
   end
 
   def reconciled?

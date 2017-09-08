@@ -58,6 +58,7 @@ class Meal < ApplicationRecord
   validates :community, presence: true
   validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
 
+  before_create :set_cap
   before_save :conditionally_set_max
   before_save :conditionally_set_closed_at
   after_touch :mark_related_residents_dirty
@@ -67,6 +68,10 @@ class Meal < ApplicationRecord
 
   def cap
     read_attribute(:cap) || Float::INFINITY
+  end
+
+  def set_cap
+    self.cap = community.cap
   end
 
   def conditionally_set_max
