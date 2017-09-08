@@ -82,7 +82,7 @@ module Api
             cal = Icalendar::Calendar.new
             cal.add_timezone timezone
 
-            cal.x_wr_calname = "#My {resident.community.name}"
+            cal.x_wr_calname = "My #{resident.community.name}"
 
             Bill.where(resident_id: resident.id).each do |bill|
               event = Icalendar::Event.new
@@ -108,7 +108,7 @@ module Api
               event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
               event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
               event.summary = "Attend Common Dinner"
-              event.description = "#{meal.description}\n\n\n\nView here: #{host}#{mr.community.slug}.comeals#{top_level}/meals/#{mr.meal.id}/edit"
+              event.description = "#{mr.meal.description}\n\n\n\nView here: #{host}#{mr.community.slug}.comeals#{top_level}/meals/#{mr.meal.id}/edit"
               cal.add_event(event) unless Bill.joins(:meal).where(resident_id: resident.id).where("meals.date = ?", mr.meal.date).present?
             end
 
