@@ -75,9 +75,10 @@ class Bill < ApplicationRecord
   # HELPERS
   def max_amount
     return amount_cents unless persisted?
-
     return amount_cents if meal.cost == 0
-    ((amount_cents.to_f / meal.cost) * amount_cents).round
+    return amount_cents if meal.cap == Float::INFINITY
+
+    ((amount_cents.to_f / meal.max_cost) * amount_cents).round
   end
 
   def reconciled?
