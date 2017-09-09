@@ -7,6 +7,12 @@ const styles = {
   main: {
     border: "0.5px solid",
     gridArea: "a2"
+  },
+  hidden: {
+    visibility: "hidden"
+  },
+  shown: {
+    visibility: "visible"
   }
 };
 
@@ -20,15 +26,21 @@ const InfoBox = inject("store")(
       <div className="flex nowrap space-between">
         <h4 className="info-circle">
           <div>Total</div>
-          <div>{store.attendeesCount}</div>
+          <div style={store.isLoading ? styles.hidden : styles.shown}>
+            {store.attendeesCount}
+          </div>
         </h4>
         <h4 className="info-circle">
           <div>Veg</div>
-          <div>{store.vegetarianCount}</div>
+          <div style={store.isLoading ? styles.hidden : styles.shown}>
+            {store.vegetarianCount}
+          </div>
         </h4>
         <h4 className="info-circle">
           <div>Late</div>
-          <div>{store.lateCount}</div>
+          <div style={store.isLoading ? styles.hidden : styles.shown}>
+            {store.lateCount}
+          </div>
         </h4>
         <Extras />
       </div>

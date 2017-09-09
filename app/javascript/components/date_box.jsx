@@ -18,6 +18,12 @@ const styles = {
     flexFlow: "column",
     justifyContent: "center",
     alignItems: "center"
+  },
+  hidden: {
+    visibility: "hidden"
+  },
+  shown: {
+    visibility: "visible"
   }
 };
 
@@ -39,9 +45,17 @@ const DateBox = inject("store")(
       </div>
       <br />
       {store.meal.reconciled ? (
-        <h1 className="text-black">RECONCILED</h1>
+        <h1
+          className="text-black"
+          style={store.isLoading ? styles.hidden : styles.shown}
+        >
+          RECONCILED
+        </h1>
       ) : (
-        <h1 className={store.meal.closed ? "text-primary" : "text-green"}>
+        <h1
+          className={store.meal.closed ? "text-primary" : "text-green"}
+          style={store.isLoading ? styles.hidden : styles.shown}
+        >
           {store.meal.closed ? "CLOSED" : "OPEN"}
         </h1>
       )}
