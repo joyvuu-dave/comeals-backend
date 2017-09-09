@@ -136,7 +136,7 @@ export const DataStore = types
           }
         })
         .catch(function(error) {
-          self.meal.closed = !val;
+          self.meal.toggleClosed();
           console.log("Meal closed patch - Fail!");
 
           if (error.response) {
@@ -414,6 +414,9 @@ export const DataStore = types
     },
     clearBills() {
       self.billStore.bills.clear();
+    },
+    clearGuests() {
+      self.guestStore.guests.clear();
     },
     appendGuest(obj) {
       self.guestStore.guests.put(obj);

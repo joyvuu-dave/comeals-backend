@@ -70,6 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (store.residentStore && store.residentStore.residents) {
       store.clearResidents();
     }
+    if (store.guestStore && store.guestStore.guests) {
+      store.clearGuests();
+    }
 
     store.loadDataAsync();
   });

@@ -26,6 +26,11 @@ const Meal = types
     }
   }))
   .actions(self => ({
+    toggleClosed() {
+      self.closed = !self.closed;
+      console.log("Closed toggled.");
+      return self.closed;
+    },
     resetExtras() {
       self.extras = null;
       console.log("Extras reset to null.");
