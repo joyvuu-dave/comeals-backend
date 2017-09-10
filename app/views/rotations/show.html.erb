@@ -1,23 +1,23 @@
 
-<h1><%= "Rotation #{@rotation.id}" %></h1>
-<h2><%= @rotation.description %></h2>
-
 <style>
 body {
   background-color: initial !important;
 }
+.text-strike {
+  text-decoration: line-through;
+}
+.text-underline {
+  text-decoration: underline;
+}
 </style>
 
-<h3>Not Signed Up</h3>
-<ul>
-<% @un_signed_up_residents.each do |resident| %>
-  <li><%= "#{resident.unit.name} - #{resident.name}" %></li>
-<% end %>
-</ul>
+<h1 class="text-underline"><%= "Rotation #{@rotation.id}" %></h1>
+</br>
+<h2 class="text-success"><%= @rotation.description %></h2>
+</br>
 
-<h3>Signed Up</h3>
 <ul>
-<% @signed_up_residents.each do |resident| %>
-  <li><%= "#{resident.unit.name} - #{resident.name}" %></li>
-<% end %>
+  <% @eligible_cooks.each do |resident| %>
+    <li class="<%= @signed_up_residents_ids.include?(resident.id) ? 'text-strike text-muted' : 'text-bold text-italic' %>"><%= "#{resident.unit.name} - #{resident.name}" %></li>
+  <% end %>
 </ul>

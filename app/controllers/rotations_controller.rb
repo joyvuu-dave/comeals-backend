@@ -6,15 +6,12 @@ class RotationsController < ApplicationController
     bill_ids = Bill.where(meal_id: meal_ids)
 
     # Signed Up Residents
-    signed_up_residents_ids = Bill.joins(:resident).where(id: bill_ids).pluck("residents.id")
-    @signed_up_residents = Resident.joins(:unit).where(id: signed_up_residents_ids).order("units.name")
+    @signed_up_residents_ids = Bill.joins(:resident).where(id: bill_ids).pluck("residents.id")
 
     community = @rotation.community
-    elible_cooks_ids = community.residents.where("multiplier >= 2").where(can_cook: true).ids
 
-    # Residents eligble to cook who aren't signed up
-    un_signed_up_resident_ids = elible_cooks_ids - signed_up_residents_ids
-    @un_signed_up_residents = Resident.joins(:unit).where(id: un_signed_up_resident_ids).order("units.name")
+    eligible_cooks_ids = community.residents.where("multiplier >= 2").ids
+    @eligible_cooks = Resident.joins(:unit).where(id: eligible_cooks_ids).order("units.name")
   end
 
 end
