@@ -1,6 +1,7 @@
 import React from "react";
+import Cookie from "js-cookie";
 
-const Footer = () =>
+const Footer = () => (
   <footer>
     <h4 className="text-center text-secondary">
       Created by{" "}
@@ -11,7 +12,9 @@ const Footer = () =>
       >
         David
       </a>
+      <span className="text-small">{` v${Cookie.get("version")}`}</span>
     </h4>
-  </footer>;
+  </footer>
+);
 
 export default Footer;

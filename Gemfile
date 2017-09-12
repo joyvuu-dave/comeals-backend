@@ -46,6 +46,7 @@ gem 'newrelic_rpm'
 gem 'sendgrid-ruby'
 gem 'icalendar'
 gem 'font-awesome-sass'
+gem 'platform-api'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

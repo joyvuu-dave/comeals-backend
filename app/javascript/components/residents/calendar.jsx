@@ -42,6 +42,9 @@ class ResidentsCalendar extends React.Component {
 
     // Fix for mobile flex bug
     document.getElementById("main").remove();
+
+    // Change today's background color
+    $(".fc-today").css("background-color", "pink");
   }
 
   logout() {

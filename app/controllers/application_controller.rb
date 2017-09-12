@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include Pundit
   before_action :handle_invalid_domain
+  before_action :set_version
 
   def current_identity
     @current_identity ||= Key.find_by(token: cookies[:token])&.identity
@@ -32,5 +33,20 @@ class ApplicationController < ActionController::Base
 
   def not_found
     render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return
+  end
+
+  def set_version
+    if Rails.env.production?
+      require 'platform-api'
+      heroku = PlatformAPI.connect_oauth(ENV['HEROKU_OAUTH_TOKEN'])
+      version = heroku.release.list('comeals').to_a.last["version"]
+    else
+      version = 1
+    end
+
+    cookies.permanent[:version] = {
+      value: version,
+      domain: :all
+    }
   end
 end
