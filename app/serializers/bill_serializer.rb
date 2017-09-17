@@ -28,7 +28,6 @@
 class BillSerializer < ActiveModel::Serializer
   include ApplicationHelper
 
-  cache key: 'bill'
   attributes :title,
              :start,
              :url,

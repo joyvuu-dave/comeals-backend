@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170815141458) do
+ActiveRecord::Schema.define(version: 20170913210922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,18 @@ ActiveRecord::Schema.define(version: 20170815141458) do
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_communities_on_name", unique: true
     t.index ["slug"], name: "index_communities_on_slug", unique: true
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "description", default: "", null: false
+    t.datetime "start_date", null: false
+    t.datetime "end_date"
+    t.boolean "allday", default: false, null: false
+    t.bigint "community_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_events_on_community_id"
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
@@ -214,6 +226,7 @@ ActiveRecord::Schema.define(version: 20170815141458) do
   add_foreign_key "bills", "communities"
   add_foreign_key "bills", "meals"
   add_foreign_key "bills", "residents"
+  add_foreign_key "events", "communities"
   add_foreign_key "guests", "meals"
   add_foreign_key "guests", "residents"
   add_foreign_key "meal_residents", "communities"

@@ -32,6 +32,10 @@ body {
   background-color: var(--color-green);
 }
 
+.background-transition {
+  transition: background-color 3s, color 4s;
+}
+
 .background-yellow {
   background-color: var(--hasana-yellow);
 }

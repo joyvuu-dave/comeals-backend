@@ -2,8 +2,10 @@ ActiveAdmin.register AdminUser do
   # MENU
   menu label: "Admins"
 
+  # STRONG PARAMS
   permit_params :email, :password, :password_confirmation
 
+  # SCOPE
   scope_to :current_admin_user
 
   # CONFIG

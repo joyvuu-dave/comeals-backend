@@ -43,11 +43,9 @@ const AttendeeComponent = inject("store")(
             <td
               onClick={e => resident.toggleAttending()}
               className={
-                resident.attending ? (
-                  "background-green text-white pointer"
-                ) : (
-                  "pointer"
-                )
+                resident.attending
+                  ? "background-green text-white pointer background-transition"
+                  : "pointer background-transition"
               }
               style={Object.assign(
                 {},

@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         get '/residents/:id/ical', to: 'residents#ical', as: :resident_ical
         get '/communities/:id/ical', to: 'communities#ical', as: :community_ical
         get '/version', to: 'site#version'
+        get '/events', to: 'events#index'
       end
     end
   end
@@ -59,6 +60,7 @@ Rails.application.routes.draw do
   get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
+  get '/events/:id/edit', to: 'events#show'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

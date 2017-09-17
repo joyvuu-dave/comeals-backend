@@ -43,6 +43,7 @@ class AdminUser < ApplicationRecord
   has_many :residents, through: :community
   has_many :units, through: :community
   has_many :rotations, through: :community
+  has_many :events, through: :community
 
   def admin_users
     AdminUser.where(community_id: community_id)

@@ -20,6 +20,9 @@ class ResidentsCalendar extends React.Component {
         },
         {
           url: `${window.host}api.comeals${window.topLevel}/api/v1/rotations?community_id=${window.community_id}`
+        },
+        {
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/events?community_id=${window.community_id}`
         }
       ],
       contentHeight: "auto",
