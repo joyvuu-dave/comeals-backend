@@ -136,7 +136,7 @@ class Meal < ApplicationRecord
 
   def self.create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
     # Are we finished?
-    return num_meals_created if start_date >= end_date
+    return num_meals_created if start_date > end_date
 
     # Is it a holiday?
     if Meal.is_holiday(start_date)
