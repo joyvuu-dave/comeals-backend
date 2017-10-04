@@ -61,6 +61,7 @@ Rails.application.routes.draw do
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
   get '/events/:id/edit', to: 'events#show'
+  get '/react-calendar', to: 'residents#react_calendar'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

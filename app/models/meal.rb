@@ -139,7 +139,10 @@ class Meal < ApplicationRecord
     return num_meals_created if start_date >= end_date
 
     # Is it a holiday?
-    start_date += 24.hour if Meal.is_holiday(start_date)
+    if Meal.is_holiday(start_date)
+      start_date += 24.hour
+      return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
+    end
 
     # Is it a common dinner day?
     if [alternating_dinner_day, 2, 4].any? { |num| num == start_date.wday }
@@ -162,10 +165,10 @@ class Meal < ApplicationRecord
 
       start_date += 24.hour
       return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
+    else
+      start_date += 24.hour
+      return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
     end
-
-    start_date += 24.hour
-    return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
   end
 
   def self.is_holiday(date)
@@ -188,7 +191,7 @@ class Meal < ApplicationRecord
 
   def self.is_newyears(date)
     return true if date.month == 1 && date.day == 1
-    true
+    false
   end
 
 end

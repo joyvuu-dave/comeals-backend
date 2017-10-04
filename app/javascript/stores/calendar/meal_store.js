@@ -1,12 +1,12 @@
 import { types, getParent } from "mobx-state-tree";
-import Bill from "./bill";
+import Meal from "./meal";
 
-const BillStore = types
-  .model("BillStore", { bills: types.map(Bill) })
+const MealStore = types
+  .model("MealStore", { bills: types.map(Meal) })
   .views(self => ({
     get form() {
       return getParent(self);
     }
   }));
 
-export default BillStore;
+export default MealStore;

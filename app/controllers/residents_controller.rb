@@ -9,6 +9,10 @@ class ResidentsController < ApplicationController
     @resident_id = current_resident&.id
   end
 
+  # GET /residents/react-calendar (subdomains)
+  def react_calendar
+  end
+
   # GET /residents/password-reset
   def password_reset
   end
