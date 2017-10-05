@@ -26,11 +26,14 @@ const BillEdit = inject("store")(
         style={styles.select}
       >
         <option value={""} key={-1} />
-        {store.residents.values().map(resident => (
-          <option value={resident.id} key={resident.id}>
-            {resident.name}
-          </option>
-        ))}
+        {store.residents
+          .values()
+          .filter(resident => resident.can_cook === true)
+          .map(resident => (
+            <option value={resident.id} key={resident.id}>
+              {resident.name}
+            </option>
+          ))}
       </select>
       <div className="input-group">
         <span className="input-addon">$</span>

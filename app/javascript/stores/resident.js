@@ -11,7 +11,8 @@ const Resident = types
     attending: false,
     attending_at: types.maybe(types.Date),
     late: false,
-    vegetarian: false
+    vegetarian: false,
+    can_cook: true
   })
   .views(self => ({
     get guests() {
