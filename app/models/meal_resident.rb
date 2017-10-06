@@ -44,10 +44,34 @@ class MealResident < ApplicationRecord
   validates :community, presence: true
   validates_uniqueness_of :meal_id, { scope: :resident_id }
   validates :multiplier, numericality: { only_integer: true }
-  validate :meal_has_open_spots
+  validate :meal_has_open_spots, on: :create
+  before_destroy :record_can_be_removed
 
   def meal_has_open_spots
-    errors.add(:base, "Meal has no open spots.") unless meal.max.nil? || meal.attendees_count < meal.max
+    # Scenario: Meal is open
+    return true if meal.closed == false
+
+    # Scenario: Meal is closed, max has been set, there are open spots
+    return true if meal.closed == true && meal.max.present? && meal.attendees_count < meal.max
+
+    # Scenario: Meal is closed and, max has NOT been set
+    errors.add(:base, "Meal has been closed.") if meal.closed == true && meal.max.nil?
+
+    # Scenario: Meal is closed, max has been set, there are NOT open spots
+    errors.add(:base, "Meal has no open spots.") if meal.closed == true && meal.max.present? && meal.attendees_count == meal.max
+  end
+
+  def record_can_be_removed
+    # Scenario: Meal is open
+    return true if meal.closed == false
+
+    # Scenario: Meal is closed, resident signed up after meal was closed (there were extras)
+    return true if meal.closed == true && created_at > meal.closed_at
+
+    # Scenario: Meal is closed, resident signed up before meal was closed (there were extras)
+    errors.add(:base, "Meal has been closed.") if meal.closed == true && created_at <= meal.closed_at
+    false
+    throw(:abort)
   end
 
   def set_multiplier
