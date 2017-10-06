@@ -245,7 +245,7 @@ const Resident = types
         })
         .catch(function(error) {
           console.log("Late click - Fail!");
-          self.late = !val;
+          self.setLate(!val);
 
           if (error.response) {
             // The request was made and the server responded with a status code

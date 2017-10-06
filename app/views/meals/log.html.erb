@@ -20,8 +20,15 @@ body {
   <% (@meal.associated_audits + @meal.audits).sort { |a,b| b.created_at <=> a.created_at }.each do |audit| %>
     <tr>
       <td><%= audit.id %></td>
-      <td><%= audit.user&.name || "Admin" %></td>
-      <td><%= "#{audit.auditable_type}, #{audit.action}" %></td>
+
+      <% if audit.user&.name.present? && audit.user&.name == "Dave Riddle" %>
+      <td>Common House</td>
+      <% elsif audit.user&.name.present? && audit.user&.name != "Dave Riddle" %>
+      <td><%= resident_name_helper(audit.user&.name) %></td>
+      <% else %>
+      <td>Admin</td>
+      <% end %>
+      <td><%= parse_audit(audit) %></td>
       <td><%= (ActiveSupport::TimeZone.find_tzinfo('Pacific Time (US & Canada)').utc_to_local(audit.created_at)).strftime("%B %d, %Y at %I:%M %p") %></td>
     </tr>
   <% end %>

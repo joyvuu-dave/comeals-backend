@@ -3268,9 +3268,9 @@ mobx-state-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/mobx-state-tree/-/mobx-state-tree-1.0.1.tgz#7b42616e5947e36d4c3413b404c2800b79c4305b"
 
-mobx@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-3.3.0.tgz#1bc1dd7e78547065af04b49bdb7f2098cada47aa"
+mobx@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-3.3.1.tgz#c38fc1a287a0dda3f5d4b85efe1137fedd9dcdf0"
 
 moment@^2.18.1, moment@^2.9.0:
   version "2.18.1"

@@ -40,7 +40,7 @@ module Api
         if @meal_resident.update(meal_resident_params)
           render json: { message: 'MealResident updated.' } and return
         else
-          render json: { message: 'Could not update MealResident.' }, status: :bad_request and return
+          render json: { message: @meal_resident.errors.first[1] }, status: :bad_request and return
         end
       end
 
