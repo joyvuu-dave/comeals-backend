@@ -91,7 +91,12 @@ module ApplicationHelper
 
   def parse_meal_resident_audit(audit)
     changes = audit.audited_changes
-    resident = Resident.find_by(id: changes["resident_id"])
+    if audit.action == "update"
+      resident = MealResident.find_by(id: audit.auditable_id)&.resident
+    else
+      resident = Resident.find_by(id: changes["resident_id"])
+    end
+
     name = resident.present? ? resident_name_helper(resident.name) : "unknown"
 
     return "#{name} added" if audit.action == 'create'

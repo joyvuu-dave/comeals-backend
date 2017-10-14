@@ -25,7 +25,9 @@ const BillEdit = inject("store")(
         onChange={e => bill.setResident(e.target.value)}
         style={styles.select}
       >
-        <option value={""} key={-1} />
+        <option value={""} key={-1}>
+          ¯\_(ツ)_/¯
+        </option>
         {store.residents
           .values()
           .filter(resident => resident.can_cook === true)

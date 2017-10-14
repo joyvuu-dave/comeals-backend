@@ -5,22 +5,22 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "8.6.0",
-    "yarn": "1.1.0",
+    "node": "8.7.0",
+    "yarn": "1.2.1",
     "npm": "5.4.2"
   },
   "dependencies": {
     "@rails/webpacker": "^3.0.2",
     "axios": "^0.16.2",
     "babel-preset-react": "^6.24.1",
-    "coffeescript": "1.12.7",
-    "fullcalendar": "3.5.1",
+    "coffeescript": "^2.0.1",
+    "fullcalendar": "3.6.1",
     "jquery": "^3.2.1",
     "js-cookie": "^2.1.4",
     "mobx": "^3.3.1",
     "mobx-react": "^4.3.3",
     "mobx-state-tree": "^1.0.1",
-    "moment": "^2.18.1",
+    "moment": "2.19.1",
     "pretty-checkbox": "^2.2.1",
     "prop-types": "^15.6.0",
     "pusher-js": "^4.2.1",
@@ -29,10 +29,11 @@
     "react-debounce-input": "^3.1.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
-    "react-redux-form": "^1.14.2",
+    "react-redux-form": "1.14.6",
     "redux": "^3.7.2",
-    "shoelace-css": "1.0.0-beta23",
-    "uuid": "^3.1.0"
+    "shoelace-css": "1.0.0-beta24",
+    "uuid": "^3.1.0",
+    "webpack": "^3.7.1"
   },
   "devDependencies": {
     "prettier": "^1.7.4",
