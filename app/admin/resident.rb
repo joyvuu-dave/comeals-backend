@@ -1,6 +1,6 @@
 ActiveAdmin.register Resident do
   # STRONG PARAMS
-  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian, :can_cook
+  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian, :can_cook, :active
 
   # SCOPE
   scope_to :current_admin_user
@@ -56,6 +56,7 @@ ActiveAdmin.register Resident do
     end
     column :unit
     column :can_cook
+    column :active
     column 'Balance', :balance do |resident|
       number_to_currency(resident.balance.to_f / 100) unless resident.balance == 0
     end
@@ -71,6 +72,7 @@ ActiveAdmin.register Resident do
       row('Category') { |r| r.multiplier < 2 ? "Child" : "Adult" }
       row :unit
       row :can_cook
+      row :active
       row :email
       row :vegetarian
       table_for resident.meals.order('date') do
@@ -125,6 +127,7 @@ ActiveAdmin.register Resident do
       f.input :multiplier, label: 'Price Category', as: :radio, collection: [['Adult', 2], ['Child', 1]]
       f.input :unit, collection: Unit.where(community_id: current_admin_user.community_id).order('name')
       f.input :can_cook
+      f.input :active
       f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
     end
     f.label 'Note: passwords can be reset through the resident login page'

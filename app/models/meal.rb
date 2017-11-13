@@ -52,7 +52,7 @@ class Meal < ApplicationRecord
   has_many :guests, inverse_of: :meal, dependent: :destroy
   has_many :hosts, through: :guests, source: :resident
   has_many :attendees, through: :meal_residents, source: :resident
-  has_many :residents, through: :community
+  has_many :residents, -> { where active: true }, through: :community
 
   validates :date, presence: true
   validates :community, presence: true

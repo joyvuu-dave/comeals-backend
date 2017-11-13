@@ -28,7 +28,8 @@ class MealFormSerializer < ActiveModel::Serializer
                :attending_at,
                :late,
                :vegetarian,
-               :can_cook
+               :can_cook,
+               :active
 
     def meal_id
       scope.id

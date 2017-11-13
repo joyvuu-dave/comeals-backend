@@ -12,7 +12,8 @@ const Resident = types
     attending_at: types.maybe(types.Date),
     late: false,
     vegetarian: false,
-    can_cook: true
+    can_cook: true,
+    active: true
   })
   .views(self => ({
     get guests() {
@@ -138,7 +139,9 @@ const Resident = types
         self.form.form.meal.decrementExtras();
         axios({
           method: "post",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+            self.meal_id
+          }/residents/${self.id}`,
           data: {
             socket_id: window.socketId,
             late: currentLate,
@@ -181,7 +184,9 @@ const Resident = types
         self.form.form.meal.incrementExtras();
         axios({
           method: "delete",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}`,
+          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+            self.meal_id
+          }/residents/${self.id}`,
           data: {
             socket_id: window.socketId
           },
@@ -231,7 +236,9 @@ const Resident = types
 
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          self.meal_id
+        }/residents/${self.id}`,
         data: {
           late: val,
           socket_id: window.socketId
@@ -278,8 +285,9 @@ const Resident = types
 
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${this
-          .id}`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          self.meal_id
+        }/residents/${this.id}`,
         data: {
           vegetarian: val,
           socket_id: window.socketId
@@ -320,7 +328,9 @@ const Resident = types
 
       axios({
         method: "post",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}/guests`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          self.meal_id
+        }/residents/${self.id}/guests`,
         data: {
           socket_id: window.socketId,
           vegetarian: options.vegetarian
@@ -379,7 +389,9 @@ const Resident = types
 
       axios({
         method: "delete",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal_id}/residents/${self.id}/guests/${guestId}`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          self.meal_id
+        }/residents/${self.id}/guests/${guestId}`,
         data: {
           socket_id: window.socketId
         },
