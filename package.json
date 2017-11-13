@@ -24,10 +24,10 @@
     "pretty-checkbox": "^2.2.1",
     "prop-types": "^15.6.0",
     "pusher-js": "^4.2.1",
-    "react": "^16.0.0",
+    "react": "^16.1.1",
     "react-big-calendar": "^0.17.0",
     "react-debounce-input": "^3.1.0",
-    "react-dom": "^16.0.0",
+    "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
     "react-redux-form": "1.16.0",
     "redux": "^3.7.2",
@@ -37,6 +37,6 @@
   },
   "devDependencies": {
     "prettier": "^1.7.4",
-    "webpack-dev-server": "^2.9.2"
+    "webpack-dev-server": "^2.9.4"
   }
 }
