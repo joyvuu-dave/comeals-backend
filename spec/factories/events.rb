@@ -21,7 +21,7 @@
 #  fk_rails_...  (community_id => communities.id)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :event do
     title "Maintenance Committee Meeting"
     start_date "2017-09-13 20:00:00"

@@ -19,7 +19,7 @@
 #  fk_rails_...  (community_id => communities.id)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :unit do
     community
     name { ("A".."Z").to_a.sample }

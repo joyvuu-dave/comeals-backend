@@ -32,7 +32,7 @@
 #  fk_rails_...  (unit_id => units.id)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :resident do
     community
     unit

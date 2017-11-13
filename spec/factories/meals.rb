@@ -34,7 +34,7 @@
 #  fk_rails_...  (rotation_id => rotations.id)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :meal do
     community
     date  { Faker::Date.backward(365) }

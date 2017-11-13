@@ -15,7 +15,7 @@
 #  index_communities_on_slug  (slug) UNIQUE
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :community do
     name { Faker::Company.name }
   end

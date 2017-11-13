@@ -16,7 +16,7 @@ const styles = {
 };
 
 const Extras = inject("store")(
-  observer(({ store }) =>
+  observer(({ store }) => (
     <div style={styles.main}>
       <h5 style={styles.title}>Extras</h5>
       <div style={store.meal.closed ? styles.closed : styles.open}>
@@ -40,7 +40,7 @@ const Extras = inject("store")(
         })}
       </div>
     </div>
-  )
+  ))
 );
 
 export default Extras;

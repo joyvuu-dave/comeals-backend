@@ -139,9 +139,9 @@ const AttendeeComponent = inject("store")(
   )
 );
 
-const AttendeeForm = inject("store")(
+const AttendeesBox = inject("store")(
   observer(
-    class AttendeeForm extends React.Component {
+    class AttendeesBox extends React.Component {
       render() {
         return (
           <div style={styles.main}>
@@ -181,4 +181,4 @@ const AttendeeForm = inject("store")(
   )
 );
 
-export default AttendeeForm;
+export default AttendeesBox;

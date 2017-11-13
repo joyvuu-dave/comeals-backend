@@ -23,7 +23,7 @@
 #  fk_rails_...  (resident_id => residents.id)
 #
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :guest do
     meal
     resident
