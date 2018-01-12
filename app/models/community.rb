@@ -8,6 +8,7 @@
 #  slug       :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  timezone   :string           default("America/Los_Angeles"), not null
 #
 # Indexes
 #

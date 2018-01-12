@@ -113,8 +113,9 @@ export const DataStore = types
       self.meal.closed = val;
 
       axios({
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
-          .meal.id}/closed`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          self.meal.id
+        }/closed`,
         method: "patch",
         withCredentials: true,
         data: {
@@ -191,8 +192,9 @@ export const DataStore = types
 
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
-          .meal.id}/description`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          self.meal.id
+        }/description`,
         data: obj,
         withCredentials: true
       })
@@ -263,8 +265,9 @@ export const DataStore = types
 
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self
-          .meal.id}/bills`,
+        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          self.meal.id
+        }/bills`,
         data: obj,
         withCredentials: true
       })
@@ -294,13 +297,26 @@ export const DataStore = types
             window.alert("Error: could not submit form.");
           }
           const config = error.config;
+
+          if (self.billStore && self.billStore.bills) {
+            self.clearBills();
+          }
+          if (self.residentStore && self.residentStore.residents) {
+            self.clearResidents();
+          }
+          if (self.guestStore && self.guestStore.guests) {
+            self.clearGuests();
+          }
+
+          self.loadDataAsync();
         });
     },
     loadDataAsync() {
       axios
         .get(
-          `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.meal
-            .id}/cooks`
+          `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+            self.meal.id
+          }/cooks`
         )
         .then(function(response) {
           if (response.status === 200) {

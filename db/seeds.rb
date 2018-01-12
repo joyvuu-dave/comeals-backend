@@ -22,11 +22,11 @@ puts "#{AdminUser.count} AdminUser created"
   unless letter == 'O' || letter == 'I'
     unit = Unit.create!(name: letter, community_id: community.id)
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
-                    multiplier: 1, unit_id: unit.id, community_id: community.id, password: '') if index % 5 == 0
+                    multiplier: 1, unit_id: unit.id, community_id: community.id, password: '', birthday: Date.new((Date.today.year - 10..Date.today.year - 1).to_a.shuffle.first, (1..12).to_a.shuffle.first, (1..28).to_a.shuffle.first)) if index % 5 == 0
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
-                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password')
+                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password', birthday: Date.new((Date.today.year - 90..Date.today.year - 20).to_a.shuffle.first, (1..12).to_a.shuffle.first, (1..28).to_a.shuffle.first))
     Resident.create!(name: "#{Faker::Name.first_name} #{Faker::Name.last_name}",
-                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password', vegetarian: true) if index % 2 == 0
+                    multiplier: 2, unit_id: unit.id, email: Faker::Internet.email, community_id: community.id, password: 'password', vegetarian: true, birthday: Date.new((Date.today.year - 90..Date.today.year - 20).to_a.shuffle.first, (1..12).to_a.shuffle.first, (1..28).to_a.shuffle.first)) if index % 2 == 0
   end
 end
 

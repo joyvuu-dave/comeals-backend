@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         get '/residents/:id', to: 'residents#show'
         post '/residents/password-reset', to: 'residents#password_reset'
         post '/residents/password-reset/:token', to: 'residents#password_new'
+        patch '/residents/profile', to: 'residents#update_profile'
         post '/communities', to: 'communities#create'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
@@ -55,6 +56,7 @@ Rails.application.routes.draw do
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
   get '/calendar', to: 'residents#calendar'
+  get '/profile', to: 'residents#profile'
   get '/meals/:id/edit', to: 'meals#show', as: :meal
   get '/meals/:id/previous', to: 'meals#previous'
   get '/meals/:id/next', to: 'meals#next'

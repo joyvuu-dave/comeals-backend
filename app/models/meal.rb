@@ -20,6 +20,7 @@
 #  closed_at                 :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
+#  start_time                :datetime         not null
 #
 # Indexes
 #
@@ -54,6 +55,8 @@ class Meal < ApplicationRecord
   has_many :attendees, through: :meal_residents, source: :resident
   has_many :residents, -> { where active: true }, through: :community
 
+  before_validation :set_start_time, on: :create
+
   validates :date, presence: true
   validates :community, presence: true
   validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
@@ -66,12 +69,20 @@ class Meal < ApplicationRecord
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
 
+  def get_start_time
+    self.start_time.in_time_zone(community.timezone)
+  end
+
   def cap
     read_attribute(:cap) || Float::INFINITY
   end
 
   def set_cap
     self.cap = community.cap
+  end
+
+  def set_start_time
+    self.start_time = date.wday == 0 ? date.to_datetime + 18.hours : date.to_datetime + 19.hours
   end
 
   def conditionally_set_max
@@ -130,6 +141,10 @@ class Meal < ApplicationRecord
   end
 
   # HELPERS
+  def another_meal_in_this_rotation_has_less_than_two_cooks?
+    Meal.where(rotation_id: rotation_id).where.not(id: id).pluck(:bills_count).any? { |num| num < 2 }
+  end
+
   def max_cost
     cap * multiplier
   end

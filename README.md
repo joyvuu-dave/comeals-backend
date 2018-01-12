@@ -1,5 +1,8 @@
 # Comeals
-This app was designed to allow [Cohousing](https://en.wikipedia.org/wiki/Cohousing) communities to reconcile the cost of common meals.
+
+This app was designed to allow
+[Cohousing](https://en.wikipedia.org/wiki/Cohousing) communities to reconcile
+the cost of common meals.
 
 ## Getting Started
 
@@ -9,4 +12,4 @@ This app was designed to allow [Cohousing](https://en.wikipedia.org/wiki/Cohousi
 * `bundle exec rake db:setup`
 * Configure project with `puma-dev` (https://github.com/puma/puma-dev)
 * `./bin/webpack-dev-server`
-* `open http://comeals.dev`
+* `open http://comeals.test`

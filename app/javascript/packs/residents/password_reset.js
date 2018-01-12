@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".com";
   } else {
     window.host = "http://";
-    window.topLevel = ".dev";
+    window.topLevel = ".test";
   }
 
   ReactDOM.render(<ResidentsPasswordReset />, document.getElementById("main"));

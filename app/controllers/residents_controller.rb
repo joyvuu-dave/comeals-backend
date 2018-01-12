@@ -9,6 +9,13 @@ class ResidentsController < ApplicationController
     @resident_id = current_resident&.id
   end
 
+  # GET /residents/profile (subdomains)
+  def profile
+    @community = Community.find_by(slug: subdomain)
+    @resident_id = current_resident&.id
+    @resident = current_resident
+  end
+
   # GET /residents/react-calendar (subdomains)
   def react_calendar
   end
