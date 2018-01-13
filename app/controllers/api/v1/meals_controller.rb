@@ -96,14 +96,14 @@ module Api
             # Scenario #1: adding cooks
             if cook_ids.length > @meal.bills.count
               if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
-                render json: { message: "Cook cannot be added -- other meals need cooks."}, status: :bad_request and return
+                render json: { message: "No third cooks permitted until all meals in the rotation have at least two cooks."}, status: :bad_request and return
               end
             end
 
             # Scenario #2: switching cooks
             if cook_ids.length == @meal.bills.count
               if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
-                render json: { message: "Cook cannot be switched -- other meals need cooks."}, status: :bad_request and return
+                render json: { message: "Third cook cannot be switched when there are other meals in the rotation without at least two cooks."}, status: :bad_request and return
               end
             end
           end
