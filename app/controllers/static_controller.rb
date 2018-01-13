@@ -10,7 +10,7 @@ class StaticController < ApplicationController
       top_level = ".com"
     else
       host = "http://"
-      top_level = ".dev"
+      top_level = ".test"
     end
 
     cookies.delete(:remember_admin_user_token)
@@ -25,7 +25,7 @@ class StaticController < ApplicationController
       top_level = ".com"
     else
       host = "http://"
-      top_level = ".dev"
+      top_level = ".test"
     end
 
     if current_admin_user.present?

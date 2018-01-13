@@ -88,6 +88,27 @@ module Api
         params[:bills].each do |bill|
           cook_ids.push(bill['resident_id'])
         end
+
+        # Future meal
+        if @meal.date > Date.today
+          # More than two cooks
+          if cook_ids.length > 2
+            # Scenario #1: adding cooks
+            if cook_ids.length > @meal.bills.count
+              if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+                render json: { message: "No third cooks permitted until all meals in the rotation have at least two cooks."}, status: :bad_request and return
+              end
+            end
+
+            # Scenario #2: switching cooks
+            if cook_ids.length == @meal.bills.count
+              if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+                render json: { message: "Third cook cannot be switched when there are other meals in the rotation without at least two cooks."}, status: :bad_request and return
+              end
+            end
+          end
+        end
+
         @meal.update(:cook_ids => cook_ids)
         @meal.reload
 

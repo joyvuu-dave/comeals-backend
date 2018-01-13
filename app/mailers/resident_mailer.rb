@@ -7,7 +7,7 @@ class ResidentMailer < ApplicationMailer
       top_level = ".com"
     else
       host = "http://"
-      top_level = ".dev"
+      top_level = ".test"
     end
 
     @resident = resident

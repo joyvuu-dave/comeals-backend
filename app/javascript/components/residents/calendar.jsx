@@ -11,18 +11,26 @@ class ResidentsCalendar extends React.Component {
     $(calendar).fullCalendar({
       eventSources: [
         {
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals?community_id=${window.community_id}`,
+          url: `${window.host}api.comeals${
+            window.topLevel
+          }/api/v1/meals?community_id=${window.community_id}`,
           color: "#6699cc" // livid
         },
         {
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/bills?community_id=${window.community_id}`,
+          url: `${window.host}api.comeals${
+            window.topLevel
+          }/api/v1/bills?community_id=${window.community_id}`,
           color: "#444" // almost-black
         },
         {
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/rotations?community_id=${window.community_id}`
+          url: `${window.host}api.comeals${
+            window.topLevel
+          }/api/v1/rotations?community_id=${window.community_id}`
         },
         {
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/events?community_id=${window.community_id}`
+          url: `${window.host}api.comeals${
+            window.topLevel
+          }/api/v1/events?community_id=${window.community_id}`
         }
       ],
       contentHeight: "auto",
@@ -55,6 +63,10 @@ class ResidentsCalendar extends React.Component {
     window.location.href = "/";
   }
 
+  openProfile() {
+    window.open("/profile", "_blank");
+  }
+
   refetch(calendar) {
     $(calendar).fullCalendar("refetchEvents");
   }
@@ -63,6 +75,9 @@ class ResidentsCalendar extends React.Component {
     return (
       <div className="offwhite">
         <header className="header flex right">
+          <button onClick={this.openProfile} className="button-link">
+            Profile
+          </button>
           <button onClick={this.logout} className="button-link">
             logout
           </button>

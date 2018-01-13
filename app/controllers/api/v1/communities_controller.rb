@@ -19,7 +19,7 @@ module Api
           top_level = ".com"
         else
           host = "http://"
-          top_level = ".dev"
+          top_level = ".test"
         end
 
         community = Community.find(params[:id])

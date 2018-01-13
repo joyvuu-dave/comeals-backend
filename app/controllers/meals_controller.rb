@@ -51,7 +51,7 @@ class MealsController < ApplicationController
       top_level = ".com"
     else
       host = "http://"
-      top_level = ".dev"
+      top_level = ".test"
     end
 
     redirect_to "#{host}www.comeals#{top_level}" and return unless current_resident.present?

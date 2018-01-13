@@ -1,6 +1,6 @@
 ActiveAdmin.register Resident do
   # STRONG PARAMS
-  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian, :can_cook, :active
+  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian, :can_cook, :active, :birthday
 
   # SCOPE
   scope_to :current_admin_user
@@ -44,6 +44,7 @@ ActiveAdmin.register Resident do
   # INDEX
   index do
     column :name
+    column :birthday
     column 'Price Category', :multiplier, sortable: :multiplier do |resident|
       if resident.multiplier == 2
         'Adult'
@@ -69,6 +70,7 @@ ActiveAdmin.register Resident do
     attributes_table do
       row :id
       row :name
+      row :birthday
       row('Category') { |r| r.multiplier < 2 ? "Child" : "Adult" }
       row :unit
       row :can_cook
@@ -119,6 +121,12 @@ ActiveAdmin.register Resident do
   form do |f|
     f.inputs do
       f.input :name
+      f.input :birthday, as: :datepicker,
+        datepicker_options: {
+          change_month: true,
+          change_year: true,
+          year_range: "1900:#{Time.now.year}"
+      }
       f.input :email
       if f.object.new_record?
         f.input :password

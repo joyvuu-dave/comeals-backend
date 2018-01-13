@@ -25,6 +25,11 @@ module Api
         end
       end
 
+      # PATCH
+      def update_profile
+        resident = Resident.find_by(email: params[:email])
+      end
+
       # POST
       def password_reset
         resident = Resident.find_by(email: params[:email])
@@ -66,7 +71,7 @@ module Api
           top_level = ".com"
         else
           host = "http://"
-          top_level = ".dev"
+          top_level = ".test"
         end
 
         resident = Resident.find(params[:id])

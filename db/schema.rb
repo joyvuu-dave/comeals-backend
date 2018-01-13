@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171114001858) do
+ActiveRecord::Schema.define(version: 20171127154541) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,7 @@ ActiveRecord::Schema.define(version: 20171114001858) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "timezone", default: "America/Los_Angeles", null: false
     t.index ["name"], name: "index_communities_on_name", unique: true
     t.index ["slug"], name: "index_communities_on_slug", unique: true
   end
@@ -160,6 +161,7 @@ ActiveRecord::Schema.define(version: 20171114001858) do
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "start_time", null: false
     t.index ["community_id"], name: "index_meals_on_community_id"
     t.index ["reconciliation_id"], name: "index_meals_on_reconciliation_id"
     t.index ["rotation_id"], name: "index_meals_on_rotation_id"

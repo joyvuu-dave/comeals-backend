@@ -20,6 +20,7 @@
 #  closed_at                 :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
+#  start_time                :datetime         not null
 #
 # Indexes
 #
