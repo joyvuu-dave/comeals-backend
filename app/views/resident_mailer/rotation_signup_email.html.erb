@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1><%= @resident.name %>, please sign up to cook</h1>
+    <p>
+      We still need cooks for the rotation happening <%= @rotation.description %>.
+    </p>
+    <p>
+      The following dates are still available:
+    </p>
+    <ul>
+      <% @open_meal_dates.each do |date| %>
+        <li><%= date %></li>
+      <% end %>
+    <ul>
+    <p>
+      Sign up now: <%= @url %>.
+    </p>
+    <p>Have a great day!</p>
+    <p>~<%= @community.name %>
+  </body>
+</html>

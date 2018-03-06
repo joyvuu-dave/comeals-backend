@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171127154541) do
+ActiveRecord::Schema.define(version: 20180306184334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -213,6 +213,8 @@ ActiveRecord::Schema.define(version: 20171127154541) do
     t.string "color", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "residents_notified", default: false, null: false
+    t.date "start_date"
     t.index ["community_id"], name: "index_rotations_on_community_id"
   end
 

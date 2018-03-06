@@ -2,12 +2,14 @@
 #
 # Table name: rotations
 #
-#  id           :integer          not null, primary key
-#  community_id :integer          not null
-#  description  :string           not null
-#  color        :string           not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id                 :integer          not null, primary key
+#  community_id       :integer          not null
+#  description        :string           not null
+#  color              :string           not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  residents_notified :boolean          default(FALSE), not null
+#  start_date         :date
 #
 # Indexes
 #
@@ -24,6 +26,7 @@ class Rotation < ApplicationRecord
 
   before_validation :set_color, on: :create
   after_commit :set_description
+  after_commit :set_start_date
   validates_presence_of :color
 
   COLORS = ["#3DC656", "#009EDC", "#D9443F", "#FFC857", "#E9724C"]
@@ -40,6 +43,10 @@ class Rotation < ApplicationRecord
 
   def set_description
     self.update_columns(description: "#{self.meals&.order(:date)&.first&.date&.to_s} to #{self.meals&.order(:date)&.last&.date&.to_s}")
+  end
+
+  def set_start_date
+    self.update_columns(start_date: self.meals&.order(:date)&.first&.date)
   end
 
   def meals_count
