@@ -2,12 +2,14 @@
 #
 # Table name: rotations
 #
-#  id           :integer          not null, primary key
-#  community_id :integer          not null
-#  description  :string           not null
-#  color        :string           not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id                 :integer          not null, primary key
+#  community_id       :integer          not null
+#  description        :string           not null
+#  color              :string           not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  residents_notified :boolean          default(FALSE), not null
+#  start_date         :date
 #
 # Indexes
 #

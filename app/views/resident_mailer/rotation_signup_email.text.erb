@@ -1,0 +1,12 @@
+<%= @resident.name %>, please sign up to cook
+===============================================
+
+We still need cooks for the rotation happening <%= @rotation.description %>.
+The following dates are still available:
+<% @open_meal_dates.each do |date| %>
+  <%= date %><%= "\r\n" %>
+<% end %>
+Sign up now: <%= @url %>.
+
+Have a great day!
+~<%= @community.name %>
