@@ -5,7 +5,7 @@ namespace :residents do
     start_time = Time.current
 
     # Find all the rotations that start within the next week where we haven't already notified the residents
-    Rotation.where("start_date > ?", Date.today).where("start_date < ?", Date.today + 1.month).where(residents_notified: false).find_each do |rotation|
+    Rotation.where("start_date > ?", Date.today).where("start_date < ?", Date.today + 1.week).where(residents_notified: false).find_each do |rotation|
       Rails.logger.info("Processing rotation #{rotation.id}: #{rotation.description}...")
 
       # For the given rotation, find the residents who aren't already signed up to cook
