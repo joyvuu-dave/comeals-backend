@@ -31,4 +31,20 @@ class ResidentMailer < ApplicationMailer
     @url  = "#{host}#{@community.slug}.comeals#{top_level}/calendar"
     mail(to: @resident.email, subject: 'Sign up to cook')
   end
+
+  def new_rotation_email(resident, rotation, community)
+    if Rails.env.production?
+      host = "https://"
+      top_level = ".com"
+    else
+      host = "http://"
+      top_level = ".test"
+    end
+
+    @rotation  = rotation
+    @community = community
+
+    @url  = "#{host}#{community.slug}.comeals#{top_level}/calendar"
+    mail(to: resident.email, subject: 'New Rotation Posted!')
+  end
 end

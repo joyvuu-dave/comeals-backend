@@ -27,6 +27,7 @@ class Rotation < ApplicationRecord
   before_validation :set_color, on: :create
   after_commit :set_description
   after_commit :set_start_date
+  after_create :inform_residents
   validates_presence_of :color
 
   COLORS = ["#3DC656", "#009EDC", "#D9443F", "#FFC857", "#E9724C"]
@@ -51,6 +52,13 @@ class Rotation < ApplicationRecord
 
   def meals_count
     meals.count
+  end
+
+  def inform_residents
+    residents = community.residents.where(active: true).where.not(email: nil)
+    residents.each do |resident|
+      ResidentMailer.new_rotation_email(resident, self, community).deliver_now
+    end
   end
 
 end
