@@ -287,7 +287,7 @@ const Resident = types
         method: "patch",
         url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
           self.meal_id
-        }/residents/${this.id}`,
+        }/residents/${self.id}`,
         data: {
           vegetarian: val,
           socket_id: window.socketId
