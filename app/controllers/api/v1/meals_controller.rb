@@ -82,7 +82,12 @@ module Api
         end
       end
 
+      # PATCH /meals/:meal_id/bills
+      # PAYLOAD {id: 1, bills: [{resident_id: 3, amount_cents: 0}, {resident_id: "4", amount_cents: 0}]}
       def update_bills
+        message = 'Form submitted.'
+        request_symbol = :ok
+
         # Cooks
         cook_ids = []
         params[:bills].each do |bill|
@@ -96,14 +101,16 @@ module Api
             # Scenario #1: adding cooks
             if cook_ids.length > @meal.bills.count
               if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
-                render json: { message: "No third cooks permitted until all meals in the rotation have at least two cooks."}, status: :bad_request and return
+                message = "Warning: third cooks should not be added until all meals in the rotation have at least two cooks."
+                request_symbol = :bad_request
               end
             end
 
             # Scenario #2: switching cooks
             if cook_ids.length == @meal.bills.count
               if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
-                render json: { message: "Third cook cannot be switched when there are other meals in the rotation without at least two cooks."}, status: :bad_request and return
+                message = "Warning: third cook should not be switched when there are other meals in the rotation without at least two cooks."
+                request_symbol = :bad_request
               end
             end
           end
@@ -117,7 +124,7 @@ module Api
           @meal.bills.find_by(resident_id: bill['resident_id']).update(amount_cents: bill['amount_cents'])
         end
 
-        render json: { message: 'Form submitted.' }
+        render json: { message: message }, status: request_symbol
       end
 
       def update_closed
