@@ -3394,8 +3394,8 @@ locate-path@^2.0.0:
     path-exists "^3.0.0"
 
 lodash-es@^4.17.5, lodash-es@^4.2.1:
-  version "4.17.5"
-  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.5.tgz#9fc6e737b1c4d151d8f9cae2247305d552ce748f"
+  version "4.17.6"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.6.tgz#b90209ca7627de7cadd5212dff8b77c607aec8b0"
 
 lodash._baseassign@^3.0.0:
   version "3.2.0"
@@ -3757,9 +3757,9 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkd
   dependencies:
     minimist "0.0.8"
 
-mobx-react@^4.4.2:
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-4.4.2.tgz#22d710974883de1763cdafce3025570a79c64336"
+mobx-react@^4.4.3:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-4.4.3.tgz#baa9ec41165ee35ae7b9df19bca10190f36f117e"
   dependencies:
     hoist-non-react-statics "^2.3.1"
 

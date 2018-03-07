@@ -95,6 +95,11 @@ class Resident < ApplicationRecord
     self.email = nil if email == ""
   end
 
+  def age
+    now = Time.now.utc.to_date
+    now.year - birthday.year - ((now.month > birthday.month || (now.month == birthday.month && now.day >= birthday.day)) ? 0 : 1)
+  end
+
 
   # DERIVED DATA
   def bill_reimbursements
