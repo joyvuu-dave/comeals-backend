@@ -2,7 +2,7 @@ class EventsController < ApplicationController
   before_action :set_event
 
   # GET /events/:id/edit (subdomains)
-  def show
+  def edit
   end
 
   private

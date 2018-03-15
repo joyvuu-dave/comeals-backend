@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180306184334) do
+ActiveRecord::Schema.define(version: 20180313172509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,17 @@ ActiveRecord::Schema.define(version: 20180306184334) do
     t.index ["resident_id"], name: "index_bills_on_resident_id"
   end
 
+  create_table "common_house_reservations", force: :cascade do |t|
+    t.bigint "community_id", null: false
+    t.bigint "resident_id", null: false
+    t.datetime "start_date", null: false
+    t.datetime "end_date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_common_house_reservations_on_community_id"
+    t.index ["resident_id"], name: "index_common_house_reservations_on_resident_id"
+  end
+
   create_table "communities", force: :cascade do |t|
     t.string "name", null: false
     t.integer "cap"
@@ -103,6 +114,16 @@ ActiveRecord::Schema.define(version: 20180306184334) do
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
+  end
+
+  create_table "guest_room_reservations", force: :cascade do |t|
+    t.bigint "community_id", null: false
+    t.bigint "resident_id", null: false
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["community_id"], name: "index_guest_room_reservations_on_community_id"
+    t.index ["resident_id"], name: "index_guest_room_reservations_on_resident_id"
   end
 
   create_table "guests", force: :cascade do |t|
@@ -232,7 +253,11 @@ ActiveRecord::Schema.define(version: 20180306184334) do
   add_foreign_key "bills", "communities"
   add_foreign_key "bills", "meals"
   add_foreign_key "bills", "residents"
+  add_foreign_key "common_house_reservations", "communities"
+  add_foreign_key "common_house_reservations", "residents"
   add_foreign_key "events", "communities"
+  add_foreign_key "guest_room_reservations", "communities"
+  add_foreign_key "guest_room_reservations", "residents"
   add_foreign_key "guests", "meals"
   add_foreign_key "guests", "residents"
   add_foreign_key "meal_residents", "communities"

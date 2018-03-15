@@ -32,6 +32,8 @@ class Community < ApplicationRecord
   has_many :admin_users, dependent: :destroy
   has_many :rotations, dependent: :destroy
   has_many :events, dependent: :destroy
+  has_many :guest_room_reservations, dependent: :destroy
+  has_many :common_house_reservations, dependent: :destroy
 
   accepts_nested_attributes_for :admin_users
 

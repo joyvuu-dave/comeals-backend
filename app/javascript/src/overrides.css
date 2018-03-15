@@ -20,6 +20,11 @@ body {
   min-width: 30rem;
 }
 
+/* Fixes issue with button half-hovering */
+.fc-state-hover {
+  background-position: 0 -36px;
+}
+
 .monospace {
   font-family: var(--font-monospace);
 }

@@ -6,6 +6,8 @@ module ApplicationHelper
   end
 
   def resident_name_helper(name)
+    return '' if name.blank?
+
     first = name.split(' ')[0]
     last = name.split(' ')[1]
 

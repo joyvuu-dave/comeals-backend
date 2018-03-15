@@ -32,12 +32,14 @@
         <%= yield %>
       </div>
       <div id="calendar"></div>
-      <div id="footer"></div>
     </div>
     <%= render 'partials/data' %>
     <%= javascript_pack_tag 'footer' %>
+    <div class="flex space-between w-30">
     <%= link_to 'Subscribe to My Meals', api_v1_resident_ical_url(protocol: :webcal, format: :ics, id: @resident_id) if @resident_id.present? %>
     <br />
     <%= link_to 'Subscribe to All Meals', api_v1_community_ical_url(protocol: :webcal, format: :ics, id: @community&.id) if @community&.id.present? %>
+    </div>
+    <div id="footer"></div>
   </body>
 </html>

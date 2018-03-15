@@ -1,6 +1,7 @@
 module Api
   module V1
     class CommunitiesController < ApplicationController
+      before_action :set_community, only: [:ical, :birthdays]
 
       # POST /api/v1/communities
       def create
@@ -22,22 +23,20 @@ module Api
           top_level = ".test"
         end
 
-        community = Community.find(params[:id])
-
         respond_to do |format|
           format.ics do
 
             require 'icalendar/tzinfo'
-            tzid = "America/Los_Angeles"
+            tzid = @community.timezone
             tz = TZInfo::Timezone.get tzid
             timezone = tz.ical_timezone DateTime.new 2017, 6, 1, 8, 0, 0
 
             cal = Icalendar::Calendar.new
             cal.add_timezone timezone
 
-            cal.x_wr_calname = community.name
+            cal.x_wr_calname = @community.name
 
-            Meal.where(community_id: community.id).each do |meal|
+            Meal.where(community_id: @community.id).each do |meal|
               event = Icalendar::Event.new
 
               meal_date = meal.date
@@ -47,13 +46,23 @@ module Api
               event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
               event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
               event.summary = "Common Dinner"
-              event.description = "#{meal.description}\n\n\n\nSign up here: #{host}#{community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
+              event.description = "#{meal.description}\n\n\n\nSign up here: #{host}#{@community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
               cal.add_event(event)
             end
 
             render plain: cal.to_ical, content_type: "text/calendar"
           end
         end
+      end
+
+      # GET /api/v1/communities/:id/birthdays
+      def birthdays
+        render json: @community.residents.active.where('extract(month from birthday) = ?', Date.today.month), each_serializer: ResidentBirthdaySerializer
+      end
+
+      private
+      def set_community
+        @community = Community.find(params[:id])
       end
 
     end

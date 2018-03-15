@@ -78,7 +78,7 @@ class ResidentsLogin extends React.Component {
           <button type="submit">Submit</button>
         </LocalForm>
         <br />
-        <a href="/residents/password-reset">Forgot you password?</a>
+        <a href="/residents/password-reset">Reset your password</a>
       </div>
     );
   }

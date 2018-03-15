@@ -6,6 +6,16 @@ class ResidentsController < ApplicationController
   # GET /residents/calendar (subdomains)
   def calendar
     @community = Community.find_by(slug: subdomain)
+
+    redirect_to :root and return if @community.nil?
+
+    @resident_id = current_resident&.id
+    @resident = current_resident
+  end
+
+  # GET /residents/guest-room (subdomains)
+  def guest_room
+    @community = Community.find_by(slug: subdomain)
     @resident_id = current_resident&.id
   end
 
@@ -27,7 +37,7 @@ class ResidentsController < ApplicationController
   # GET /residents/password-reset/:token
   def password_new
     resident = Resident.find_by(reset_password_token: params[:token])
-    @email = resident&.email
+    @name = resident_name_helper(resident&.name)
     @token = resident&.reset_password_token
   end
 

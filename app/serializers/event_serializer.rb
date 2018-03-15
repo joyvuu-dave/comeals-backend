@@ -29,6 +29,14 @@ class EventSerializer < ActiveModel::Serializer
              :url,
              :description
 
+  def title
+    object.title
+  end
+
+  def description
+    object.description
+  end
+
   def start
     object.start_date
   end
