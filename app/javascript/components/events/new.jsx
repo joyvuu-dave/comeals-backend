@@ -8,18 +8,18 @@ class EventsNew extends React.Component {
       .post(`${window.host}api.comeals${window.topLevel}/api/v1/events?community_id=${window.community_id}`, {
         title: values.title,
         description: values.description,
-        start_year: values.day.split("-")[0],
-        start_month: values.day.split("-")[1],
-        start_day: values.day.split("-")[2],
-        start_hours: values.start_time.split(":")[0],
-        start_minutes: values.start_time.split(":")[1],
-        end_hours: values.end_time.split(":")[0],
-        end_minutes: values.end_time.split(":")[1],
+        start_year: values.day && values.day.split("-")[0],
+        start_month: values.day && values.day.split("-")[1],
+        start_day: values.day && values.day.split("-")[2],
+        start_hours: values.start_time && values.start_time.split(":")[0],
+        start_minutes: values.start_time && values.start_time.split(":")[1],
+        end_hours: values.end_time && values.end_time.split(":")[0],
+        end_minutes: values.end_time && values.end_time.split(":")[1],
         all_day: values.all_day
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {
@@ -79,7 +79,7 @@ class EventsNew extends React.Component {
             <Control.input type="checkbox" model=".all_day" className="w-75" />
             <br />
 
-            <button type="submit" className="button-dark">Update</button>
+            <button type="submit" className="button-dark">Create</button>
           </LocalForm>
         </fieldset>
       </div>

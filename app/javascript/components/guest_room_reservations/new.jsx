@@ -11,7 +11,7 @@ class GuestRoomReservationsNew extends React.Component {
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {

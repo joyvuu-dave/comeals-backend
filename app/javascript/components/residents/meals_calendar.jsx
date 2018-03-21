@@ -73,39 +73,39 @@ class ResidentsMealsCalendar extends React.Component {
   }
 
   openNewGuestRoomReservation() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/guest-room-reservations/new`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/guest-room-reservations/new`)
   }
 
   openNewCommonHouseReservation() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/common-house-reservations/new`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/common-house-reservations/new`)
   }
 
   openNewEvent() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/events/new`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/events/new`)
   }
 
   openAllCalendars() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/calendar`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar`)
   }
 
   openMealCalendar() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/calendar/meals`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/meals`)
   }
 
   openGuestRoomCalendar() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/calendar/guest-room`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/guest-room`)
   }
 
   openCommonHouseCalendar() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/calendar/common-house`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/common-house`)
   }
 
   openEventsCalendar() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/calendar/events`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/events`)
   }
 
   openBirthdaysCalendar() {
-    window.open(`${window.host}patches.comeals${window.topLevel}/calendar/birthdays`)
+    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/birthdays`)
   }
 
   refetch(calendar) {

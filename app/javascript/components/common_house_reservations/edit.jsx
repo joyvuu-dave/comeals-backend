@@ -9,17 +9,17 @@ class CommonHouseReservationsEdit extends React.Component {
     axios
       .patch(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations/${this.props.event.id}/update`, {
         resident_id: values.resident_id,
-        start_year: values.day.split("-")[0],
-        start_month: values.day.split("-")[1],
-        start_day: values.day.split("-")[2],
-        start_hours: values.start_time.split(":")[0],
-        start_minutes: values.start_time.split(":")[1],
-        end_hours: values.end_time.split(":")[0],
-        end_minutes: values.end_time.split(":")[1]
+        start_year: values.day && values.day.split("-")[0],
+        start_month: values.day && values.day.split("-")[1],
+        start_day: values.day && alues.day.split("-")[2],
+        start_hours: values.start_time && values.start_time.split(":")[0],
+        start_minutes: values.start_time && values.start_time.split(":")[1],
+        end_hours: values.end_time && values.end_time.split(":")[0],
+        end_minutes: values.end_time && values.end_time.split(":")[1]
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {
@@ -49,7 +49,7 @@ class CommonHouseReservationsEdit extends React.Component {
       .delete(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations/${this.props.event.id}/delete`)
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {

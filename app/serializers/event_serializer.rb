@@ -25,12 +25,17 @@ class EventSerializer < ActiveModel::Serializer
 
   cache key: 'event'
   attributes :title,
+             :description,
              :start,
              :url,
-             :description
+             :allDay
 
   def title
-    "\nEvent\n#{object.title}"
+    if object.allday
+      "ALL DAY\nEvent\n#{object.title}"
+    else
+      "\nEvent\n#{object.title}"
+    end
   end
 
   def description
@@ -43,5 +48,9 @@ class EventSerializer < ActiveModel::Serializer
 
   def url
     "/events/#{object.id}/edit"
+  end
+
+  def allDay
+    object.allday
   end
 end

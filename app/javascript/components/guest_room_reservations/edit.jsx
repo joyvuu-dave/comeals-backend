@@ -11,7 +11,7 @@ class GuestRoomReservationsEdit extends React.Component {
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {
@@ -41,7 +41,7 @@ class GuestRoomReservationsEdit extends React.Component {
       .delete(`${window.host}api.comeals${window.topLevel}/api/v1/guest-room-reservations/${this.props.event.id}/delete`)
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {

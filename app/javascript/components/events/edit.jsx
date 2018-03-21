@@ -8,18 +8,18 @@ class EventsEdit extends React.Component {
       .patch(`${window.host}api.comeals${window.topLevel}/api/v1/events/${this.props.event.id}/update`, {
         title: values.title,
         description: values.description,
-        start_year: values.day.split("-")[0],
-        start_month: values.day.split("-")[1],
-        start_day: values.day.split("-")[2],
-        start_hours: values.start_time.split(":")[0],
-        start_minutes: values.start_time.split(":")[1],
-        end_hours: values.end_time.split(":")[0],
-        end_minutes: values.end_time.split(":")[1],
+        start_year: values.day && values.day.split("-")[0],
+        start_month: values.day && values.day.split("-")[1],
+        start_day: values.day && values.day.split("-")[2],
+        start_hours: values.start_time && values.start_time.split(":")[0],
+        start_minutes: values.start_time && values.start_time.split(":")[1],
+        end_hours: values.end_time && values.end_time.split(":")[0],
+        end_minutes: values.end_time && values.end_time.split(":")[1],
         all_day: values.all_day
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {
@@ -49,7 +49,7 @@ class EventsEdit extends React.Component {
       .delete(`${window.host}api.comeals${window.topLevel}/api/v1/events/${this.props.event.id}/delete`)
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
         }
       })
       .catch(function(error) {
@@ -91,6 +91,7 @@ class EventsEdit extends React.Component {
               day: `${new Date(this.props.event.start_date).getFullYear()}-${new Date(this.props.event.start_date).getMonth() < 9 ? `0${(new Date(this.props.event.start_date).getMonth() + 1)}` : new Date(this.props.event.start_date).getMonth() + 1}-${new Date(this.props.event.start_date).getDate()}`,
               start_time: `${new Date(this.props.event.start_date).getUTCHours()}:${new Date(this.props.event.start_date).getUTCMinutes() < 10 ? `0${new Date(this.props.event.start_date).getUTCMinutes()}` : new Date(this.props.event.start_date).getUTCMinutes()}`,
               end_time: `${new Date(this.props.event.end_date).getUTCHours()}:${new Date(this.props.event.end_date).getUTCMinutes() < 10 ? `0${new Date(this.props.event.end_date).getMinutes()}` : new Date(this.props.event.end_date).getMinutes()}`,
+              all_day: this.props.event.allday
             }}
           >
             <label>Title</label>
@@ -114,7 +115,7 @@ class EventsEdit extends React.Component {
             <br />
 
             <label>All Day</label>
-            <Control.input type="checkbox" model=".all_day" className="w-75" />
+            <Control.checkbox model=".all_day" className="w-75" />
             <br />
 
             <button type="submit" className="button-dark">Update</button>
