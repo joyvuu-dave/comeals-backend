@@ -17,7 +17,7 @@ const styles = {
   }
 };
 
-class ResidentsCalendar extends React.Component {
+class ResidentsGuestRoomCalendar extends React.Component {
   componentDidMount() {
     const { calendar } = this.refs;
     $(calendar).fullCalendar({
@@ -26,39 +26,7 @@ class ResidentsCalendar extends React.Component {
         {
           url: `${window.host}api.comeals${
             window.topLevel
-          }/api/v1/meals?community_id=${window.community_id}`,
-          color: "#6699cc" // livid
-        },
-        {
-          url: `${window.host}api.comeals${
-            window.topLevel
-          }/api/v1/bills?community_id=${window.community_id}`,
-          color: "#444" // almost-black
-        },
-        {
-          url: `${window.host}api.comeals${
-            window.topLevel
-          }/api/v1/rotations?community_id=${window.community_id}`
-        },
-        {
-          url: `${window.host}api.comeals${
-            window.topLevel
-          }/api/v1/events?community_id=${window.community_id}`
-        },
-        {
-          url: `${window.host}api.comeals${
-            window.topLevel
           }/api/v1/guest-room-reservations?community_id=${window.community_id}`
-        },
-        {
-          url: `${window.host}api.comeals${
-            window.topLevel
-          }/api/v1/common-house-reservations?community_id=${window.community_id}`
-        },
-        {
-          url: `${window.host}api.comeals${
-            window.topLevel
-          }/api/v1/communities/${window.community_id}/birthdays?community_id=${window.community_id}`
         }
       ],
       contentHeight: "auto",
@@ -178,4 +146,4 @@ class ResidentsCalendar extends React.Component {
   }
 }
 
-export default ResidentsCalendar;
+export default ResidentsGuestRoomCalendar;

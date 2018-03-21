@@ -71,7 +71,7 @@ class GuestRoomReservationsEdit extends React.Component {
       <div>
         <div className="flex">
           <h2 className="mar-md">Guest Room Reservation</h2>
-          <button type="button" className="mar-md button-warning" onClick={this.handleDelete.bind(this)}>Delete</button>
+          <button onClick={this.handleDelete.bind(this)} type="button" className="mar-md button-warning">Delete</button>
         </div>
         <fieldset className="w-50">
           <legend>Edit</legend>

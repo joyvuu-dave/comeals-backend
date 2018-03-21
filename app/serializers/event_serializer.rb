@@ -30,11 +30,11 @@ class EventSerializer < ActiveModel::Serializer
              :description
 
   def title
-    object.title
+    "\nEvent\n#{object.title}"
   end
 
   def description
-    object.description
+    "Event\n#{object.description}"
   end
 
   def start

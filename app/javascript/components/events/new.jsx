@@ -2,10 +2,10 @@ import React from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
-class EventsEdit extends React.Component {
+class EventsNew extends React.Component {
   handleSubmit(values) {
     axios
-      .patch(`${window.host}api.comeals${window.topLevel}/api/v1/events/${this.props.event.id}/update`, {
+      .post(`${window.host}api.comeals${window.topLevel}/api/v1/events?community_id=${window.community_id}`, {
         title: values.title,
         description: values.description,
         start_year: values.day.split("-")[0],
@@ -44,54 +44,16 @@ class EventsEdit extends React.Component {
       });
   }
 
-  handleDelete() {
-    axios
-      .delete(`${window.host}api.comeals${window.topLevel}/api/v1/events/${this.props.event.id}/delete`)
-      .then(function(response) {
-        if (response.status === 200) {
-          window.location.href = `${window.host}patches.comeals${window.topLevel}/calendar`;
-        }
-      })
-      .catch(function(error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data;
-          const status = error.response.status;
-          const headers = error.response.headers;
-
-          window.alert(data.message);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request;
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message;
-        }
-        const config = error.config;
-      });
-  }
-
   render() {
     return (
       <div>
         <div className="flex">
-          <h2 className="mar-md">Event</h2>
-          <button onClick={this.handleDelete.bind(this)} type="button" className="mar-md button-warning">Delete</button>
+          <h2 className="mar-md">New Event</h2>
         </div>
         <fieldset className="w-50">
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
-            initialState={{
-              title: this.props.event.title,
-              description: this.props.event.description,
-              day: `${new Date(this.props.event.start_date).getFullYear()}-${new Date(this.props.event.start_date).getMonth() < 9 ? `0${(new Date(this.props.event.start_date).getMonth() + 1)}` : new Date(this.props.event.start_date).getMonth() + 1}-${new Date(this.props.event.start_date).getDate()}`,
-              start_time: `${new Date(this.props.event.start_date).getUTCHours()}:${new Date(this.props.event.start_date).getUTCMinutes() < 10 ? `0${new Date(this.props.event.start_date).getUTCMinutes()}` : new Date(this.props.event.start_date).getUTCMinutes()}`,
-              end_time: `${new Date(this.props.event.end_date).getUTCHours()}:${new Date(this.props.event.end_date).getUTCMinutes() < 10 ? `0${new Date(this.props.event.end_date).getMinutes()}` : new Date(this.props.event.end_date).getMinutes()}`,
-            }}
           >
             <label>Title</label>
             <Control.text model=".title" className="w-75" />
@@ -125,4 +87,4 @@ class EventsEdit extends React.Component {
   }
 }
 
-export default EventsEdit;
+export default EventsNew;

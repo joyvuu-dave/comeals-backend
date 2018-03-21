@@ -3,7 +3,7 @@ class ResidentsController < ApplicationController
   def login
   end
 
-  # GET /residents/calendar (subdomains)
+  # GET /calendar (subdomains)
   def calendar
     @community = Community.find_by(slug: subdomain)
 
@@ -39,6 +39,56 @@ class ResidentsController < ApplicationController
     resident = Resident.find_by(reset_password_token: params[:token])
     @name = resident_name_helper(resident&.name)
     @token = resident&.reset_password_token
+  end
+
+  # GET /calendar/meals
+  def meals_calendar
+    @community = Community.find_by(slug: subdomain)
+
+    redirect_to :root and return if @community.nil?
+
+    @resident_id = current_resident&.id
+    @resident = current_resident
+  end
+
+  # GET /calendar/guest-room
+  def guest_room_calendar
+    @community = Community.find_by(slug: subdomain)
+
+    redirect_to :root and return if @community.nil?
+
+    @resident_id = current_resident&.id
+    @resident = current_resident
+  end
+
+  # GET /calendar/common-house
+  def common_house_calendar
+    @community = Community.find_by(slug: subdomain)
+
+    redirect_to :root and return if @community.nil?
+
+    @resident_id = current_resident&.id
+    @resident = current_resident
+  end
+
+  # GET /calendar/events
+  def events_calendar
+    @community = Community.find_by(slug: subdomain)
+
+    redirect_to :root and return if @community.nil?
+
+    @resident_id = current_resident&.id
+    @resident = current_resident
+  end
+
+  # GET /calendar/birthdays
+  def birthdays_calendar
+    @community = Community.find_by(slug: subdomain)
+
+    redirect_to :root and return if @community.nil?
+
+    @resident_id = current_resident&.id
+    @resident = current_resident
   end
 
 end

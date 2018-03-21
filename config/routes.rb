@@ -45,6 +45,9 @@ Rails.application.routes.draw do
         get '/communities/:id/ical', to: 'communities#ical', as: :community_ical
         get '/version', to: 'site#version'
         get '/events', to: 'events#index'
+        patch '/events/:id/update', to: 'events#update'
+        delete '/events/:id/delete', to: 'events#destroy'
+        post '/events', to: 'events#create'
         get '/guest-room-reservations', to: 'guest_room_reservations#index'
         patch '/guest-room-reservations/:id/update', to: 'guest_room_reservations#update'
         delete '/guest-room-reservations/:id/delete', to: 'guest_room_reservations#destroy'
@@ -65,6 +68,11 @@ Rails.application.routes.draw do
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
   get '/calendar', to: 'residents#calendar'
+  get '/calendar/meals', to: 'residents#meals_calendar'
+  get '/calendar/guest-room', to: 'residents#guest_room_calendar'
+  get '/calendar/common-house', to: 'residents#common_house_calendar'
+  get '/calendar/events', to: 'residents#events_calendar'
+  get '/calendar/birthdays', to: 'residents#birthdays_calendar'
   get '/guest-room', to: 'residents#guest_room'
   get '/profile', to: 'residents#profile'
   get '/meals/:id/edit', to: 'meals#show', as: :meal
@@ -73,6 +81,7 @@ Rails.application.routes.draw do
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
   get '/events/:id/edit', to: 'events#edit'
+  get '/events/new', to: 'events#new'
   get '/common-house-reservations/:id/edit', to: 'common_house_reservations#edit'
   get '/common-house-reservations/new', to: 'common_house_reservations#new'
   get '/guest-room-reservations/:id/edit', to: 'guest_room_reservations#edit'
