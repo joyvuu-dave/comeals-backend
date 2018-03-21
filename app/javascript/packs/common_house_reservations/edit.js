@@ -16,5 +16,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<CommonHouseReservationsEdit />, document.getElementById("main"));
+  ReactDOM.render(<CommonHouseReservationsEdit residents={data.residents} event={data.event} />, document.getElementById("main"));
 });

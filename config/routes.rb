@@ -46,7 +46,13 @@ Rails.application.routes.draw do
         get '/version', to: 'site#version'
         get '/events', to: 'events#index'
         get '/guest-room-reservations', to: 'guest_room_reservations#index'
+        patch '/guest-room-reservations/:id/update', to: 'guest_room_reservations#update'
+        delete '/guest-room-reservations/:id/delete', to: 'guest_room_reservations#destroy'
+        post '/guest-room-reservations', to: 'guest_room_reservations#create'
         get '/common-house-reservations', to: 'common_house_reservations#index'
+        patch '/common-house-reservations/:id/update', to: 'common_house_reservations#update'
+        delete '/common-house-reservations/:id/delete', to: 'common_house_reservations#destroy'
+        post '/common-house-reservations', to: 'common_house_reservations#create'
       end
     end
   end
@@ -68,7 +74,9 @@ Rails.application.routes.draw do
   get '/rotations/:id', to: 'rotations#show'
   get '/events/:id/edit', to: 'events#edit'
   get '/common-house-reservations/:id/edit', to: 'common_house_reservations#edit'
+  get '/common-house-reservations/new', to: 'common_house_reservations#new'
   get '/guest-room-reservations/:id/edit', to: 'guest_room_reservations#edit'
+  get '/guest-room-reservations/new', to: 'guest_room_reservations#new'
   get '/react-calendar', to: 'residents#react_calendar'
 
   # Everything Else

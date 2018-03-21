@@ -29,7 +29,7 @@
     "react-debounce-input": "^3.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.7",
-    "react-redux-form": "1.16.6",
+    "react-redux-form": "1.16.8",
     "redux": "^3.7.2",
     "shoelace-css": "1.0.0-beta24",
     "uuid": "^3.2.1",

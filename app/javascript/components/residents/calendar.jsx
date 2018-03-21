@@ -92,6 +92,14 @@ class ResidentsCalendar extends React.Component {
     window.open("https://wiki.swansway.com/", "_blank");
   }
 
+  openNewGuestRoomReservation() {
+    window.open(`${window.host}patches.comeals${window.topLevel}/guest-room-reservations/new`)
+  }
+
+  openNewCommonHouseReservation() {
+    window.open(`${window.host}patches.comeals${window.topLevel}/common-house-reservations/new`)
+  }
+
   refetch(calendar) {
     $(calendar).fullCalendar("refetchEvents");
   }
@@ -119,8 +127,8 @@ class ResidentsCalendar extends React.Component {
         <div style={styles.main}>
           <div style={styles.sideBar}>
             <h3 className="mar-sm">Reserve</h3>
-            <button className="mar-sm">Guest Room</button>
-            <button className="mar-sm">Common House</button>
+            <button onClick={this.openNewGuestRoomReservation} className="mar-sm">Guest Room</button>
+            <button onClick={this.openNewCommonHouseReservation} className="mar-sm">Common House</button>
             <hr></hr>
             <h3 className="mar-sm">Calendars</h3>
             <button className="button-info mar-sm">ALL</button>
