@@ -170,7 +170,7 @@ GEM
       kaminari-core (= 1.1.1)
     kaminari-core (1.1.1)
     libv8 (6.3.292.48.1)
-    loofah (2.2.0)
+    loofah (2.2.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.0)
