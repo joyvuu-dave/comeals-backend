@@ -23,9 +23,11 @@ module Api
         start_date = DateTime.new(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
         end_date = DateTime.new(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
 
-        chr.update!(start_date: start_date, end_date: end_date, resident_id: params[:resident_id])
-
-        render json: {message: 'Common House Reservation has been updated'}
+        if chr.update(start_date: start_date, end_date: end_date, resident_id: params[:resident_id])
+          render json: {message: 'Common House Reservation has been updated'}
+        else
+          render json: {message: chr.errors.full_messages.join("\n")}, status: :bad_request
+        end
       end
 
       # DELETE /api/v1/common-house-reservations/:id/delete

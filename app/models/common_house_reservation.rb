@@ -24,4 +24,8 @@
 class CommonHouseReservation < ApplicationRecord
   belongs_to :community
   belongs_to :resident
+
+  validates_presence_of :resident
+  validates_presence_of :start_date
+  validates_presence_of :end_date
 end

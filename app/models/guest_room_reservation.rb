@@ -24,5 +24,7 @@ class GuestRoomReservation < ApplicationRecord
   belongs_to :community
   belongs_to :resident
 
+  validates_presence_of :resident
+  validates_presence_of :date
   validates_uniqueness_of :date, { scope: :community_id }
 end

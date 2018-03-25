@@ -19,9 +19,12 @@ module Api
       # PATCH /api/v1/guest-room-reservations/:id/update
       def update
         grr = GuestRoomReservation.find(params[:id])
-        grr.update!(date: params[:date], resident_id: params[:resident_id])
 
-        render json: {message: 'Guest Room Reservation has been updated'}
+        if grr.update(date: params[:date], resident_id: params[:resident_id])
+          render json: {message: 'Guest Room Reservation has been updated'}
+        else
+          render json: {message: grr.errors.full_messages.join("\n")}, status: :bad_request
+        end
       end
 
       # DELETE /api/v1/guest-room-reservations/:id/delete

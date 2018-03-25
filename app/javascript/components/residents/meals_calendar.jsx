@@ -85,27 +85,27 @@ class ResidentsMealsCalendar extends React.Component {
   }
 
   openAllCalendars() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar`)
+    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`
   }
 
   openMealCalendar() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/meals`)
+    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/meals`
   }
 
   openGuestRoomCalendar() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/guest-room`)
+    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/guest-room`
   }
 
   openCommonHouseCalendar() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/common-house`)
+    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/common-house`
   }
 
   openEventsCalendar() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/events`)
+    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/events`
   }
 
   openBirthdaysCalendar() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/calendar/birthdays`)
+    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/birthdays`
   }
 
   refetch(calendar) {
@@ -132,6 +132,7 @@ class ResidentsMealsCalendar extends React.Component {
             {this.logoutText()}
           </button>
         </header>
+        <h2 className="flex center"><u>Meals</u></h2>
         <div style={styles.main}>
           <div style={styles.sideBar}>
             <h3 className="mar-sm">Reserve</h3>

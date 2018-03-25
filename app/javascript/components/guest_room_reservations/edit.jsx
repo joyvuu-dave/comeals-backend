@@ -37,33 +37,35 @@ class GuestRoomReservationsEdit extends React.Component {
   }
 
   handleDelete() {
-    axios
-      .delete(`${window.host}api.comeals${window.topLevel}/api/v1/guest-room-reservations/${this.props.event.id}/delete`)
-      .then(function(response) {
-        if (response.status === 200) {
-          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
-        }
-      })
-      .catch(function(error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data;
-          const status = error.response.status;
-          const headers = error.response.headers;
+    if(window.confirm("Do you really want to delete this reservation?")) {
+      axios
+        .delete(`${window.host}api.comeals${window.topLevel}/api/v1/guest-room-reservations/${this.props.event.id}/delete`)
+        .then(function(response) {
+          if (response.status === 200) {
+            window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
 
-          window.alert(data.message);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request;
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message;
-        }
-        const config = error.config;
-      });
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    }
   }
 
   render() {
