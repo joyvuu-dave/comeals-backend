@@ -1,9 +1,43 @@
-Events
+Idea
+====
+- every time someone from outside your unit signs you up for something, send an email, except for the common house
 
-x Meals - can't be on same day _ Guest Room - can't be on same day _
-Committees - no restrictions _ Common House - can't overlap time _ Birthdays -
-no restrictions
 
-* Prevent 3rd cook signup if there are meals in that rotations with less than 2
-  cooks
-* Auto set multiplier status based on birthday
+Features
+========
+- more robust authorization
+- better way to do common house login
+- single page app
+- fix bills_count on meals model
+
+
+Other
+=====
+Comomon House Cleaning
+  - unit
+  - date
+  - community
+  - reminder 1 week before
+
+
+
+
+Problems
+========
+1) people forget to enter meal costs
+2) people accidently sign up other people to cook / eat
+3) handling reconciliation is a pain
+  - people need to give me checks
+  - i need to deposit them
+  - i need to write people checks
+4) people forget to sign up for a rotation
+
+
+Solutions
+=========
+1) Steps:
+  - send 3 weekly reminder emails
+  - autofill amount
+    - community decided
+    - average
+    - meal becomes free

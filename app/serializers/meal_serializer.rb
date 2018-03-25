@@ -44,17 +44,17 @@ class MealSerializer < ActiveModel::Serializer
 
   def title
     if Date.today > object.date
-      return "#{object.attendees_count} attended"
+      return "Dinner\n#{object.attendees_count} attended"
     end
 
     if Date.today <= object.date && object.max.present?
       count = object.max - object.attendees_count
 
-      return "#{object.attendees_count} signed up\n #{count} extra#{count == 1 ? '' : 's'}"
+      return "Dinner\n#{object.attendees_count} signed up\n #{count} extra#{count == 1 ? '' : 's'}"
     end
 
     if Date.today <= object.date && object.max.nil?
-      return "#{object.attendees_count} signed up"
+      return "Dinner\n#{object.attendees_count} signed up"
     end
   end
 

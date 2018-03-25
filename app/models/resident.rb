@@ -38,6 +38,7 @@ class Resident < ApplicationRecord
   attr_reader :password
 
   scope :adult, -> { where("multiplier >= 2") }
+  scope :active, -> { where(active: true) }
 
   belongs_to :community
   belongs_to :unit
@@ -48,6 +49,8 @@ class Resident < ApplicationRecord
   has_many :meal_residents, dependent: :destroy
   has_many :meals, through: :meal_residents
   has_many :guests, dependent: :destroy
+  has_many :guest_room_reservations, dependent: :destroy
+  has_many :common_house_reservations, dependent: :destroy
 
   counter_culture :unit
 

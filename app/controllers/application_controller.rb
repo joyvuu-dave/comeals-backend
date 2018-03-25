@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include Pundit
   before_action :handle_invalid_domain
   before_action :set_version
+  before_action :set_community
 
   def current_identity
     @current_identity ||= Key.find_by(token: cookies[:token])&.identity
@@ -53,5 +54,9 @@ class ApplicationController < ActionController::Base
       value: version,
       domain: :all
     }
+  end
+
+  def set_community
+    @community = Community.find_by(slug: subdomain)
   end
 end

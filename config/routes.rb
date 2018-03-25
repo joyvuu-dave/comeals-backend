@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         post '/residents/password-reset/:token', to: 'residents#password_new'
         patch '/residents/profile', to: 'residents#update_profile'
         post '/communities', to: 'communities#create'
+        get '/communities/:id/birthdays', to: 'communities#birthdays'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
         post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_meal_resident'
@@ -44,6 +45,17 @@ Rails.application.routes.draw do
         get '/communities/:id/ical', to: 'communities#ical', as: :community_ical
         get '/version', to: 'site#version'
         get '/events', to: 'events#index'
+        patch '/events/:id/update', to: 'events#update'
+        delete '/events/:id/delete', to: 'events#destroy'
+        post '/events', to: 'events#create'
+        get '/guest-room-reservations', to: 'guest_room_reservations#index'
+        patch '/guest-room-reservations/:id/update', to: 'guest_room_reservations#update'
+        delete '/guest-room-reservations/:id/delete', to: 'guest_room_reservations#destroy'
+        post '/guest-room-reservations', to: 'guest_room_reservations#create'
+        get '/common-house-reservations', to: 'common_house_reservations#index'
+        patch '/common-house-reservations/:id/update', to: 'common_house_reservations#update'
+        delete '/common-house-reservations/:id/delete', to: 'common_house_reservations#destroy'
+        post '/common-house-reservations', to: 'common_house_reservations#create'
       end
     end
   end
@@ -56,13 +68,24 @@ Rails.application.routes.draw do
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
   get '/calendar', to: 'residents#calendar'
+  get '/calendar/meals', to: 'residents#meals_calendar'
+  get '/calendar/guest-room', to: 'residents#guest_room_calendar'
+  get '/calendar/common-house', to: 'residents#common_house_calendar'
+  get '/calendar/events', to: 'residents#events_calendar'
+  get '/calendar/birthdays', to: 'residents#birthdays_calendar'
+  get '/guest-room', to: 'residents#guest_room'
   get '/profile', to: 'residents#profile'
   get '/meals/:id/edit', to: 'meals#show', as: :meal
   get '/meals/:id/previous', to: 'meals#previous'
   get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
-  get '/events/:id/edit', to: 'events#show'
+  get '/events/:id/edit', to: 'events#edit'
+  get '/events/new', to: 'events#new'
+  get '/common-house-reservations/:id/edit', to: 'common_house_reservations#edit'
+  get '/common-house-reservations/new', to: 'common_house_reservations#new'
+  get '/guest-room-reservations/:id/edit', to: 'guest_room_reservations#edit'
+  get '/guest-room-reservations/new', to: 'guest_room_reservations#new'
   get '/react-calendar', to: 'residents#react_calendar'
 
   # Everything Else

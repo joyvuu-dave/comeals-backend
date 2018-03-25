@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const production = data.production;
 
   window.community_id = data.community_id;
+  window.slug = data.slug;
+  window.comeals = data;
   if (production) {
     window.host = "https://";
     window.topLevel = ".com";

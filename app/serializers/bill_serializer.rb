@@ -27,6 +27,7 @@
 
 class BillSerializer < ActiveModel::Serializer
   include ApplicationHelper
+  include ActiveSupport::NumberHelper
 
   attributes :title,
              :start,
@@ -34,9 +35,9 @@ class BillSerializer < ActiveModel::Serializer
              :description
 
   def title
-    object.amount_cents == 0 && object.meal.date < Date.today ?
-      "#{resident_name_helper(object.resident.name)}*" :
-      "#{resident_name_helper(object.resident.name)}"
+    object.amount_cents > 0 && object.meal.date < Date.today ?
+      "Cook\n#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}\n#{number_to_currency(object.amount_cents / 100)}" :
+      "Cook\n#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
 
   end
 
@@ -49,6 +50,9 @@ class BillSerializer < ActiveModel::Serializer
   end
 
   def description
-    "Unit #{object.resident.unit.name}"
+    object.amount_cents > 0 && object.meal.date < Date.today ?
+      "Cook:  #{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name} - #{number_to_currency(object.amount_cents / 100)}" :
+      "Cook:  #{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
+
   end
 end

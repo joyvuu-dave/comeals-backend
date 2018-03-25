@@ -6,6 +6,8 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+start = Time.now
+
 # Community
 community = Community.create!(name: "Patches Way", cap: 250)
 community.update_attribute(:slug, 'patches')
@@ -36,14 +38,14 @@ Resident.where(id: Resident.where(multiplier: 2).pluck(:id).shuffle.take(3)).eac
   resident.update_attributes(name: "#{first_name} #{Faker::Name.last_name}")
 end
 
-# Make 1 (adult) Resident have a simple email address
-Resident.where(multiplier: 2).first.update_attributes(email: 'bowen@email.com')
+# Make 1 (adult) Resident have a simple email address and matching name
+Resident.where(multiplier: 2).first.update_attributes(email: 'bowen@email.com', name: 'Bowen Riddle')
 
 puts "#{Unit.count} Units created"
 puts "#{Resident.count} Residents created"
 
 # Meals (will be reconciled)
-Meal.create_templates(community.id, 26.weeks.ago.to_date, 8.weeks.ago.to_date, 0, 0)
+Meal.create_templates(community.id, 26.weeks.ago.to_date, 8.weeks.ago.to_date, 0)
 
 puts "#{Meal.count} Meals created"
 
@@ -116,7 +118,7 @@ puts "#{Reconciliation.count} Reconciliation created"
 
 
 # Meals (will not be reconciled)
-Meal.create_templates(community.id, 7.weeks.ago.to_date, 26.weeks.from_now.to_date, 0, 0)
+Meal.create_templates(community.id, 7.weeks.ago.to_date, 26.weeks.from_now.to_date, 0)
 
 # MealResidents & Guests
 Meal.all.each do |meal|
@@ -205,3 +207,29 @@ puts "#{Meal.count} Meals created (#{Meal.unreconciled.count} unreconciled)"
 community.auto_create_rotations
 
 puts "#{Rotation.count} Rotations created"
+
+
+# Event
+Time.zone = community.timezone
+Event.create!(community_id: community.id, title: "HOA Meeting", start_date: Time.new(Time.now.year, Time.now.month, Time.now.day, 20, 0, 0))
+
+puts "#{Event.count} Event#{'s' unless Event.count == 1} created"
+
+
+# GuestRoomReservation
+GuestRoomReservation.create!(community_id: community.id, resident_id: Resident.adult.where(community_id: community.id).pluck(:id).shuffle.first, date: Date.today)
+
+puts "#{GuestRoomReservation.count} GuestRoomReservation#{'s' unless GuestRoomReservation.count == 1} created"
+
+
+# CommonHouseReservation
+CommonHouseReservation.create!(community_id: community.id, resident_id: Resident.adult.where(community_id: community.id).pluck(:id).shuffle.first,
+  start_date: Time.new(Date.tomorrow.year, Date.tomorrow.month, Date.tomorrow.day, 10, 30, 0),
+  end_date:   Time.new(Date.tomorrow.year, Date.tomorrow.month, Date.tomorrow.day, 14,  0, 0)
+)
+
+puts "#{CommonHouseReservation.count} CommonHouseReservation#{'s' unless CommonHouseReservation.count == 1} created"
+
+
+# Analytics
+puts "Seed records created in #{Time.now - start}s"

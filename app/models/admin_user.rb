@@ -44,6 +44,8 @@ class AdminUser < ApplicationRecord
   has_many :units, through: :community
   has_many :rotations, through: :community
   has_many :events, through: :community
+  has_many :guest_room_reservations, through: :community
+  has_many :common_house_reservations, through: :community
 
   def admin_users
     AdminUser.where(community_id: community_id)

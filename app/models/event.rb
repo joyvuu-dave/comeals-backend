@@ -23,4 +23,7 @@
 
 class Event < ApplicationRecord
   belongs_to :community
+
+  validates_presence_of :title
+  validates_presence_of :start_date
 end

@@ -80,7 +80,7 @@ module Api
           format.ics do
 
             require 'icalendar/tzinfo'
-            tzid = "America/Los_Angeles"
+            tzid = resident.community.timezone
             tz = TZInfo::Timezone.get tzid
             timezone = tz.ical_timezone DateTime.new 2017, 6, 1, 8, 0, 0
 
