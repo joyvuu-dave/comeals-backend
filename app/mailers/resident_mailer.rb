@@ -28,8 +28,8 @@ class ResidentMailer < ApplicationMailer
     @rotation  = rotation
     @community = community
     @open_meal_dates = open_meal_dates
-    @url  = "#{host}#{@community.slug}.comeals#{top_level}/calendar"
-    mail(to: @resident.email, subject: 'Sign up to cook')
+    @url  = "#{host}#{@community.slug}.comeals#{top_level}"
+    mail(to: @resident.email, subject: 'Sign up to Cook')
   end
 
   def new_rotation_email(resident, rotation, community)
@@ -44,7 +44,7 @@ class ResidentMailer < ApplicationMailer
     @rotation  = rotation
     @community = community
 
-    @url  = "#{host}#{community.slug}.comeals#{top_level}/calendar"
-    mail(to: resident.email, subject: 'New Rotation Posted!')
+    @url  = "#{host}#{community.slug}.comeals#{top_level}"
+    mail(to: resident.email, subject: 'New Rotation Posted')
   end
 end

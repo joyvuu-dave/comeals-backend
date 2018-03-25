@@ -95,7 +95,7 @@ class CommonHouseReservationsEdit extends React.Component {
             <label>Resident</label>
             <Control.select model=".resident_id" id="local.resident_id" className="w-75">
               {this.props.residents.map(resident => (
-                <option key={resident[0]} value={resident[0]}>{resident[1]} - Unit {resident[2]}</option>
+                <option key={resident[0]} value={resident[0]}>{resident[2]} - {resident[1]}</option>
               ))}
             </Control.select>
             <br />

@@ -45,7 +45,7 @@ puts "#{Unit.count} Units created"
 puts "#{Resident.count} Residents created"
 
 # Meals (will be reconciled)
-Meal.create_templates(community.id, 26.weeks.ago.to_date, 8.weeks.ago.to_date, 0, 0)
+Meal.create_templates(community.id, 26.weeks.ago.to_date, 8.weeks.ago.to_date, 0)
 
 puts "#{Meal.count} Meals created"
 
@@ -118,7 +118,7 @@ puts "#{Reconciliation.count} Reconciliation created"
 
 
 # Meals (will not be reconciled)
-Meal.create_templates(community.id, 7.weeks.ago.to_date, 26.weeks.from_now.to_date, 0, 0)
+Meal.create_templates(community.id, 7.weeks.ago.to_date, 26.weeks.from_now.to_date, 0)
 
 # MealResidents & Guests
 Meal.all.each do |meal|

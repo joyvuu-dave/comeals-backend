@@ -4,7 +4,7 @@
 #
 #  id                 :integer          not null, primary key
 #  community_id       :integer          not null
-#  description        :string           not null
+#  description        :string           default(""), not null
 #  color              :string           not null
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

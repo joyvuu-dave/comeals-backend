@@ -48,7 +48,7 @@ class CommonHouseReservationsNew extends React.Component {
     return (
       <div>
         <div className="flex">
-          <h2 className="mar-md">New Common House Reservation</h2>
+          <h2 className="mar-md">Common House Reservation</h2>
         </div>
         <fieldset className="w-50">
           <legend>Edit</legend>
@@ -59,7 +59,7 @@ class CommonHouseReservationsNew extends React.Component {
             <Control.select model=".resident_id" id="local.resident_id" className="w-75">
               <option></option>
               {this.props.residents.map(resident => (
-                <option key={resident[0]} value={resident[0]}>{resident[1]} - Unit {resident[2]}</option>
+                <option key={resident[0]} value={resident[0]}>{resident[2]} - {resident[1]}</option>
               ))}
             </Control.select>
             <br />

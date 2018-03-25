@@ -61,6 +61,8 @@ class Meal < ApplicationRecord
   validates :community, presence: true
   validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
 
+  validates_uniqueness_of :date, { scope: :community_id }
+
   before_create :set_cap
   before_save :conditionally_set_max
   before_save :conditionally_set_closed_at
@@ -149,44 +151,34 @@ class Meal < ApplicationRecord
     cap * multiplier
   end
 
-  def self.create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
-    # Are we finished?
-    return num_meals_created if start_date > end_date
+  def self.create_templates(community_id, start_date, end_date, alternating_dinner_day)
+    count = 0
+    community = Community.find(community_id)
+    dates = (start_date..end_date).to_a
 
-    # Is it a holiday?
-    if Meal.is_holiday(start_date)
-      start_date += 24.hour
-      return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
-    end
+    dates.each do |date|
+      # Skip holidays
+      next if Meal.is_holiday?(date)
 
-    # Is it a common dinner day?
-    if [alternating_dinner_day, 2, 4].any? { |num| num == start_date.wday }
-      # Flip if alternating dinner day
-      if start_date.wday == alternating_dinner_day
-        alternating_dinner_day = (alternating_dinner_day - 1) ** 2
-      end
+      # Skip days without dinner
+      next unless [0, alternating_dinner_day, 4].any? { |num| num == date.wday }
 
-      community = Community.find(community_id)
-      temp = Meal.new(date: start_date, cap: community.cap, community_id: community_id)
-      if temp.save
-        num_meals_created += 1
+      # Flip the alternating dinner day
+      alternating_dinner_day = [1, 2].find { |val| val != alternating_dinner_day } if date.wday == alternating_dinner_day
+
+      # Create the meal
+      meal = Meal.new(date: date, community_id: community_id)
+      if meal.save
+        count += 1
       else
-        puts temp.errors.to_s
+        puts meal.errors.to_s
       end
-
-      # If common dinner was on a Sunday, we
-      # don't have dinner the next day
-      start_date += 24.hour if start_date.wday == 0
-
-      start_date += 24.hour
-      return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
-    else
-      start_date += 24.hour
-      return create_templates(community_id, start_date, end_date, alternating_dinner_day, num_meals_created)
     end
+
+    count
   end
 
-  def self.is_holiday(date)
+  def self.is_holiday?(date)
     return true if Meal.is_thanksgiving(date) || Meal.is_christmas(date) || Meal.is_newyears(date)
     false
   end

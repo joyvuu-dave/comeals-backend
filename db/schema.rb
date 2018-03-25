@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180313172509) do
+ActiveRecord::Schema.define(version: 20180323165313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -230,7 +230,7 @@ ActiveRecord::Schema.define(version: 20180313172509) do
 
   create_table "rotations", force: :cascade do |t|
     t.bigint "community_id", null: false
-    t.string "description", null: false
+    t.string "description", default: "", null: false
     t.string "color", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

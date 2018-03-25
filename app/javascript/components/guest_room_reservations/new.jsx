@@ -51,7 +51,7 @@ class GuestRoomReservationsNew extends React.Component {
             <Control.select model=".resident_id" id="local.resident_id" className="w-75">
               <option></option>
               {this.props.hosts.map(host => (
-                <option key={host[0]} value={host[0]}>{host[1]} - Unit {host[2]}</option>
+                <option key={host[0]} value={host[0]}>{host[2]} - {host[1]}</option>
               ))}
             </Control.select>
             <br />

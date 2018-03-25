@@ -4,12 +4,12 @@
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   </head>
   <body>
-    <h1>The new roation has been posted!</h1>
+    <h1>New Rotation Posted</h1>
     <p>
-      A new rotation has just been created for the period <%= @rotation.description %>.
+      A new meals rotation has just been created for the period <%= @rotation.description %>.
     </p>
     <p>
-      Sign up to cook and attend dinner now: <%= @url %>.
+      <%= link_to 'Sign up', @url %> to cook and attend dinner now.
     </p>
     <p>Have a great day!</p>
     <p>~<%= @community.name %>

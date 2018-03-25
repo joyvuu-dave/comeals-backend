@@ -52,7 +52,19 @@ class Community < ApplicationRecord
     val.to_f.nan? ? '--' : val
   end
 
-  def rotation_length
+  def meals_per_rotation
+    12
+  end
+
+  def permanent_meal_days
+    [0, 4]
+  end
+
+  def alternating_meal_days
+    [1, 2]
+  end
+
+  def auto_rotation_length
     residents.where("multiplier >= 2").where(can_cook: true).size / 2
   end
 
@@ -60,10 +72,42 @@ class Community < ApplicationRecord
     meals = Meal.where(community_id: id, rotation_id: nil).order(:date)
     rotation = nil
     meals.find_each do |meal|
-      rotation = Rotation.create!(community_id: id, description: "#{meal.date.to_s} to #{meal.date.to_s}") if rotation.nil?
+      rotation = Rotation.create!(community_id: id, description: "#{meal.date.to_s} to #{meal.date.to_s}", no_email: true) if rotation.nil?
       meal.update!(rotation_id: rotation.id)
       rotation.update!(description: "#{rotation.meals.order(:date).first.date.to_s} to #{rotation.meals.order(:date).last.date.to_s}")
-      rotation = nil if rotation.meals.count == rotation_length
+      rotation = nil if rotation.meals.count == auto_rotation_length
     end
+  end
+
+  def create_next_rotation
+    raise "Currently #{Meal.where(rotation_id: nil).count} Meals not assigned to Rotations" if Meal.where(rotation_id: nil).count > 0
+
+    current_date = [Date.today, meals.order(:date).last&.date&.tomorrow].max
+    last_alternating_date = meals.where("extract(dow from date) = ?", alternating_meal_days[0])
+                                 .or(
+                            meals.where("extract(dow from date) = ?", alternating_meal_days[1]))
+                                 .order(:date).last&.date
+    if last_alternating_date.nil?
+      last_alternating_date = current_date.beginning_of_week(Date::DAYNAMES[alternating_meal_days.last].downcase.to_sym) - 7
+    end
+
+    current_alternating_day = last_alternating_date.wday == alternating_meal_days[0] ? alternating_meal_days[1] : alternating_meal_days[0]
+
+    rotation_meals = []
+    until rotation_meals.length == meals_per_rotation do
+      unless Meal.is_holiday?(current_date)
+        if permanent_meal_days.include?(current_date.wday) || (current_date.wday == current_alternating_day && current_date.cweek != last_alternating_date.cweek)
+          rotation_meals.push({ date: current_date, community_id: id })
+        end
+      end
+
+      if current_date.wday == current_alternating_day && current_date.cweek != last_alternating_date.cweek
+        last_alternating_date = current_date
+        current_alternating_day = current_alternating_day == alternating_meal_days[0] ? alternating_meal_days[1] : alternating_meal_days[0]
+      end
+      current_date = current_date.tomorrow
+    end
+
+    Rotation.create!(community_id: id, meals_attributes: rotation_meals)
   end
 end
