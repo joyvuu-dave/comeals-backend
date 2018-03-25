@@ -1,61 +1,24 @@
-
-- 3 rotations x 12 meals per rotation
-- alternate monday / tuesday
-- mother's day - no meal (may 13th)
-- april rotation
-    - bonnie & steven can cook
-- next rotation
-    - carly & steven off
-- then...
-    - carly & steven off
-    - jose & amika off
-- then...
-    - jose & amika off
-    - carly & steven on
-
-
-- Common House Cleaning
-  - emails 1 week before
-- Guest Room
-  - 10 day limit per Unit per year
-
-
+Idea
+====
 - every time someone from outside your unit signs you up for something, send an email, except for the common house
 
 
-==========
-
+Features
+========
 - more robust authorization
 - better way to do common house login
 - single page app
 - fix bills_count on meals model
 
 
-
-===========
-
+Other
+=====
 Comomon House Cleaning
   - unit
   - date
   - community
   - reminder 1 week before
 
-
-
-============
-
-
-1) Way to figure out what everybody owes for common dinner
-2) Way to sign up for common dinner
-3) Way to reserve guest room
-4) Way to reserve common house
-5) Way to add an event to the calendar
-
-
-
-Someday...
-==========
-- way to reconcile what everybody owes
 
 
 
