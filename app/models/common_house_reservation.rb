@@ -28,4 +28,15 @@ class CommonHouseReservation < ApplicationRecord
   validates_presence_of :resident
   validates_presence_of :start_date
   validates_presence_of :end_date
+
+  validate :period_is_free
+
+  def period_is_free
+    errors.add(:base, "Time period is already taken") if CommonHouseReservation
+                                                            .where(community_id: community_id)
+                                                            .where.not(id: id)
+                                                            .where("start_date <= ?", end_date)
+                                                            .where("end_date >= ?", start_date)
+                                                            .exists?
+  end
 end

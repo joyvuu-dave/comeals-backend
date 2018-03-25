@@ -6,6 +6,11 @@ class CommonHouseReservationsNew extends React.Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {
+    if(values.start_time > values.end_time) {
+      window.alert('Start time cannot be later than end time')
+      return
+    }
+
     axios
       .post(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations?community_id=${window.community_id}`, {
         resident_id: values.resident_id,

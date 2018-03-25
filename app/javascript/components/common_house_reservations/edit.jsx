@@ -6,12 +6,17 @@ class CommonHouseReservationsEdit extends React.Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {
+    if(values.start_time > values.end_time) {
+      window.alert('Start time cannot be later than end time')
+      return
+    }
+
     axios
       .patch(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations/${this.props.event.id}/update`, {
         resident_id: values.resident_id,
         start_year: values.day && values.day.split("-")[0],
         start_month: values.day && values.day.split("-")[1],
-        start_day: values.day && alues.day.split("-")[2],
+        start_day: values.day && values.day.split("-")[2],
         start_hours: values.start_time && values.start_time.split(":")[0],
         start_minutes: values.start_time && values.start_time.split(":")[1],
         end_hours: values.end_time && values.end_time.split(":")[0],
