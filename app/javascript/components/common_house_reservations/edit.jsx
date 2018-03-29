@@ -1,10 +1,18 @@
 import React from "react";
-import { LocalForm, Control } from "react-redux-form";
+import { LocalForm, Control, actions } from "react-redux-form";
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import { formatDate, parseDate } from 'react-day-picker/moment';
+import moment from "moment";
 import axios from "axios";
 
+import 'react-day-picker/lib/style.css';
+
 class CommonHouseReservationsEdit extends React.Component {
-  handleChange(values) {}
-  handleUpdate(form) {}
+  constructor(props) {
+    super(props);
+    this.handleDayChange = this.handleDayChange.bind(this);
+  }
+
   handleSubmit(values) {
     if(values.start_time > values.end_time) {
       window.alert('Start time cannot be later than end time')
@@ -14,9 +22,9 @@ class CommonHouseReservationsEdit extends React.Component {
     axios
       .patch(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations/${this.props.event.id}/update`, {
         resident_id: values.resident_id,
-        start_year: values.day && values.day.split("-")[0],
-        start_month: values.day && values.day.split("-")[1],
-        start_day: values.day && values.day.split("-")[2],
+        start_year: values.day && new Date(values.day).getFullYear(),
+        start_month: values.day && new Date(values.day).getMonth() + 1,
+        start_day: values.day && new Date(values.day).getDate(),
         start_hours: values.start_time && values.start_time.split(":")[0],
         start_minutes: values.start_time && values.start_time.split(":")[1],
         end_hours: values.end_time && values.end_time.split(":")[0],
@@ -81,6 +89,62 @@ class CommonHouseReservationsEdit extends React.Component {
     }
   }
 
+  handleDayChange(val) {
+    this.formDispatch(actions.change('local.day', val));
+  }
+
+  getDayPickerInput() {
+    return (
+      <DayPickerInput
+        formatDate={formatDate}
+        parseDate={parseDate}
+        onDayChange={this.handleDayChange}
+        value={formatDate(this.props.event.start_date)}
+        />
+    );
+  }
+
+  attachDispatch(dispatch) {
+    this.formDispatch = dispatch;
+  }
+
+  generateTimes() {
+    var times = [];
+    var ending = "AM";
+
+    for(var half = 0; half < 2; half++) {
+      for(var hour = 0; hour < 12; hour++) {
+        for(var min = 0; min < 4; min++) {
+          var time = {
+            display: null,
+            value: null
+          };
+
+          var valueHour = hour;
+
+          if(half === 1) {
+            ending = "PM";
+            valueHour += 12;
+          }
+
+          var minutes = `${(min * 15).toString().padStart(2, "0")}`;
+
+          if(hour === 0) {
+            time.display = `12:${minutes} ${ending}`;
+          } else {
+            time.display = `${hour}:${minutes} ${ending}`;
+          }
+
+          time.value = `${(valueHour).toString().padStart(2, "0")}:${minutes}`;
+
+          times.push(time);
+        }
+      }
+    }
+
+    return times;
+  }
+
   render() {
     return (
       <div>
@@ -92,11 +156,12 @@ class CommonHouseReservationsEdit extends React.Component {
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
+            getDispatch={(dispatch) => this.attachDispatch(dispatch)}
             initialState={{
               resident_id: this.props.event.resident_id,
-              day: `${new Date(this.props.event.start_date).getFullYear()}-${new Date(this.props.event.start_date).getMonth() < 9 ? `0${(new Date(this.props.event.start_date).getMonth() + 1)}` : new Date(this.props.event.start_date).getMonth() + 1}-${new Date(this.props.event.start_date).getDate()}`,
-              start_time: `${new Date(this.props.event.start_date).getUTCHours()}:${new Date(this.props.event.start_date).getUTCMinutes()}`,
-              end_time: `${new Date(this.props.event.end_date).getUTCHours()}:${new Date(this.props.event.end_date).getUTCMinutes() < 10 ? `0${new Date(this.props.event.end_date).getMinutes()}` : new Date(this.props.event.end_date).getMinutes()}`,
+              day: this.props.event.start_date,
+              start_time: `${(new Date(this.props.event.start_date).getHours()).toString().padStart(2, "0")}:${(new Date(this.props.event.start_date).getMinutes()).toString().padStart(2, "0")}`,
+              end_time: `${(new Date(this.props.event.end_date).getHours()).toString().padStart(2, "0")}:${(new Date(this.props.event.end_date).getMinutes()).toString().padStart(2, "0")}`
             }}
           >
             <label>Resident</label>
@@ -108,15 +173,27 @@ class CommonHouseReservationsEdit extends React.Component {
             <br />
 
             <label>Day</label>
-            <Control type="date" id="local.day" model=".day" className="w-75" />
+            <br />
+            <Control.text model="local.day" id="local.day" component={this.getDayPickerInput.bind(this)} />
+            <br />
             <br />
 
             <label>Start Time</label>
-            <Control type="time" id="local.start_time" model=".start_time" className="w-75" />
+            <Control.select model="local.start_time" id="local.start_time" className="w-50">
+              <option></option>
+              {this.generateTimes().map(time => (
+                <option key={time.value} value={time.value}>{time.display}</option>
+              ))}
+            </Control.select>
             <br />
 
             <label>End Time</label>
-            <Control type="time" id="local.end_time" model=".end_time" className="w-75" />
+            <Control.select model="local.end_time" id="local.resident_id" className="w-50">
+              <option></option>
+              {this.generateTimes().map(time => (
+                <option key={time.value} value={time.value}>{time.display}</option>
+              ))}
+            </Control.select>
             <br />
 
             <button type="submit" className="button-dark">Update</button>

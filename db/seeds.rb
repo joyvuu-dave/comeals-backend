@@ -217,12 +217,14 @@ puts "#{Event.count} Event#{'s' unless Event.count == 1} created"
 
 
 # GuestRoomReservation
+Time.zone = community.timezone
 GuestRoomReservation.create!(community_id: community.id, resident_id: Resident.adult.where(community_id: community.id).pluck(:id).shuffle.first, date: Date.today)
 
 puts "#{GuestRoomReservation.count} GuestRoomReservation#{'s' unless GuestRoomReservation.count == 1} created"
 
 
 # CommonHouseReservation
+Time.zone = community.timezone
 CommonHouseReservation.create!(community_id: community.id, resident_id: Resident.adult.where(community_id: community.id).pluck(:id).shuffle.first,
   start_date: Time.new(Date.tomorrow.year, Date.tomorrow.month, Date.tomorrow.day, 10, 30, 0),
   end_date:   Time.new(Date.tomorrow.year, Date.tomorrow.month, Date.tomorrow.day, 14,  0, 0)
