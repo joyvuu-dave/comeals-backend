@@ -1,8 +1,18 @@
 import React from "react";
 import { LocalForm, Control, actions } from "react-redux-form";
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import { formatDate, parseDate } from 'react-day-picker/moment';
+import moment from "moment";
 import axios from "axios";
 
+import 'react-day-picker/lib/style.css';
+
 class GuestRoomReservationsNew extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleDayChange = this.handleDayChange.bind(this);
+  }
+
   handleSubmit(values) {
     axios
       .post(`${window.host}api.comeals${window.topLevel}/api/v1/guest-room-reservations?community_id=${window.community_id}`, {
@@ -36,6 +46,24 @@ class GuestRoomReservationsNew extends React.Component {
       });
   }
 
+  handleDayChange(val) {
+    this.formDispatch(actions.change('local.day', val));
+  }
+
+  getDayPickerInput() {
+    return (
+      <DayPickerInput
+        formatDate={formatDate}
+        parseDate={parseDate}
+        placeholder={""}
+        onDayChange={this.handleDayChange} />
+    );
+  }
+
+  attachDispatch(dispatch) {
+    this.formDispatch = dispatch;
+  }
+
   render() {
     return (
       <div>
@@ -46,9 +74,10 @@ class GuestRoomReservationsNew extends React.Component {
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
+            getDispatch={(dispatch) => this.attachDispatch(dispatch)}
           >
             <label>Host</label>
-            <Control.select model=".resident_id" id="local.resident_id" className="w-75">
+            <Control.select model="local.resident_id" id="local.resident_id" className="w-75">
               <option></option>
               {this.props.hosts.map(host => (
                 <option key={host[0]} value={host[0]}>{host[2]} - {host[1]}</option>
@@ -57,7 +86,9 @@ class GuestRoomReservationsNew extends React.Component {
             <br />
 
             <label>Day</label>
-            <Control type="date" model=".day" id="local.day" className="w-75" />
+            <br />
+            <Control.text model="local.day" id="local.day" component={this.getDayPickerInput.bind(this)} />
+            <br />
             <br />
 
             <button type="submit" className="button-dark">Create</button>

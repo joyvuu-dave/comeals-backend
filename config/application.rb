@@ -38,5 +38,8 @@ module Comeals
 
     # Disable Strong Params
     config.action_controller.permit_all_parameters = true
+
+    # Set Time Zone
+    config.time_zone = "America/Los_Angeles"
   end
 end

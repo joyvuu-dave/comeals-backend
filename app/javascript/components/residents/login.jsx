@@ -67,7 +67,7 @@ class ResidentsLogin extends React.Component {
             </label>
             <br />
             <label className="w-80">
-              <Control
+              <Control.password
                 type="password"
                 model=".password"
                 placeholder="Password"
