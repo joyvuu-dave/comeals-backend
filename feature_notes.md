@@ -18,6 +18,7 @@ Comomon House Cleaning
   - date
   - community
   - reminder 1 week before
+  Add query params to calendar for url month navigation
 
 
 
