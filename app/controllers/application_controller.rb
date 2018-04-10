@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  include Pundit
+  skip_before_action :verify_authenticity_token
   before_action :handle_invalid_domain
   before_action :set_version
   before_action :set_community
