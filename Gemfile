@@ -46,7 +46,6 @@ gem 'connection_pool'
 gem 'newrelic_rpm'
 gem 'sendgrid-ruby'
 gem 'icalendar'
-gem 'font-awesome-sass'
 gem 'platform-api'
 
 # Use ActiveStorage variant

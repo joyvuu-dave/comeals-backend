@@ -167,8 +167,8 @@ const AttendeesBox = inject("store")(
                 </tr>
               </thead>
               <tbody>
-                {store.residents
-                  .values()
+                {Array.from(store.residents
+                  .values())
                   .map(resident => (
                     <AttendeeComponent key={resident.id} resident={resident} />
                   ))}

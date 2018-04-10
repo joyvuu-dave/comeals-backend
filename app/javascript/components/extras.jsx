@@ -22,19 +22,18 @@ const Extras = inject("store")(
       <div style={store.meal.closed ? styles.closed : styles.open}>
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(val => {
           return (
-            <div key={val} className="pretty circle success">
+            <div key={val} className="pretty p-default p-round p-fill">
               <input
                 key={val}
-                type="radio"
+                type="checkbox"
                 value={val}
                 checked={store.meal.extras === val}
                 onChange={e => store.meal.setExtras(e.target.value)}
                 disabled={store.meal.reconciled}
               />
-              <label>
-                <i className="fa fa-check" />
-                {val}{" "}
-              </label>
+              <div className="state p-success">
+                <label>{val}</label>
+              </div>
             </div>
           );
         })}
