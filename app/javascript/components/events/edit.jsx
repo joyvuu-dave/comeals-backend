@@ -1,16 +1,30 @@
 import React from "react";
-import { LocalForm, Control } from "react-redux-form";
+import { LocalForm, Control, actions } from "react-redux-form";
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import { formatDate, parseDate } from 'react-day-picker/moment';
+import moment from "moment";
 import axios from "axios";
+import { generateTimes } from "../../helpers/helpers";
 
 class EventsEdit extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleDayChange = this.handleDayChange.bind(this);
+  }
+
   handleSubmit(values) {
+    if(values.start_time > values.end_time) {
+      window.alert('Start time cannot be later than end time')
+      return
+    }
+
     axios
       .patch(`${window.host}api.comeals${window.topLevel}/api/v1/events/${this.props.event.id}/update`, {
         title: values.title,
         description: values.description,
-        start_year: values.day && values.day.split("-")[0],
-        start_month: values.day && values.day.split("-")[1],
-        start_day: values.day && values.day.split("-")[2],
+        start_year: values.day && new Date(values.day).getFullYear(),
+        start_month: values.day && new Date(values.day).getMonth() + 1,
+        start_day: values.day && new Date(values.day).getDate(),
         start_hours: values.start_time && values.start_time.split(":")[0],
         start_minutes: values.start_time && values.start_time.split(":")[1],
         end_hours: values.end_time && values.end_time.split(":")[0],
@@ -76,6 +90,25 @@ class EventsEdit extends React.Component {
     }
   }
 
+  handleDayChange(val) {
+    this.formDispatch(actions.change('local.day', val));
+  }
+
+  getDayPickerInput() {
+    return (
+      <DayPickerInput
+        formatDate={formatDate}
+        parseDate={parseDate}
+        onDayChange={this.handleDayChange}
+        value={formatDate(this.props.event.start_date)}
+        />
+    );
+  }
+
+  attachDispatch(dispatch) {
+    this.formDispatch = dispatch;
+  }
+
   render() {
     return (
       <div>
@@ -87,6 +120,7 @@ class EventsEdit extends React.Component {
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
+            getDispatch={(dispatch) => this.attachDispatch(dispatch)}
             initialState={{
               title: this.props.event.title,
               description: this.props.event.description,
@@ -105,19 +139,32 @@ class EventsEdit extends React.Component {
             <br />
 
             <label>Day</label>
-            <Control.input type="date" model=".day" className="w-75" />
+            <br />
+            <Control.text model="local.day" id="local.day" component={this.getDayPickerInput.bind(this)} />
+            <br />
             <br />
 
             <label>Start Time</label>
-            <Control.input type="time" model=".start_time" className="w-75" />
+            <Control.select model="local.start_time" id="local.start_time" className="w-50">
+              <option></option>
+              {generateTimes().map(time => (
+                <option key={time.value} value={time.value}>{time.display}</option>
+              ))}
+            </Control.select>
             <br />
 
             <label>End Time</label>
-            <Control.input type="time" model=".end_time" className="w-75" />
+            <Control.select model="local.end_time" id="local.end_time" className="w-50">
+              <option></option>
+              {generateTimes().map(time => (
+                <option key={time.value} value={time.value}>{time.display}</option>
+              ))}
+            </Control.select>
             <br />
 
             <label>All Day</label>
             <Control.checkbox model=".all_day" className="w-75" />
+            <br />
             <br />
 
             <button type="submit" className="button-dark">Update</button>
