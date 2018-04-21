@@ -17,8 +17,8 @@ const Resident = types
   })
   .views(self => ({
     get guests() {
-      return self.form.form.guestStore.guests
-        .values()
+      return Array.from(self.form.form.guestStore.guests
+        .values())
         .filter(guest => guest.resident_id === self.id);
     },
     get guestsCount() {
@@ -50,7 +50,7 @@ const Resident = types
       if (
         self.guestsCount > 0 &&
         self.form.form.meal.closed &&
-        self.guests.filter(
+        Array.from(self.guests).filter(
           guest => guest.created_at <= self.form.form.meal.closed_at
         ).length > 0
       ) {
@@ -378,7 +378,7 @@ const Resident = types
       }
 
       // Sort Guests
-      const sortedGuests = self.guests.sort((a, b) => {
+      const sortedGuests = Array.from(self.guests).sort((a, b) => {
         if (a.created_at > b.created_at) return -1;
         if (a.created_at < b.created_at) return 1;
         return 0;

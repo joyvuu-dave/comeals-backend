@@ -1,16 +1,14 @@
-import React from "react";
+import React, { Component } from "react";
 import axios from "axios";
 import { inject, observer } from "mobx-react";
 import Cow from "../packs/images/cow.png";
 import Carrot from "../packs/images/carrot.png";
+import GuestDropdown from "./guest_dropdown";
 
 const styles = {
   main: {
     margin: "1em 0 1em 0",
     gridArea: "a5"
-  },
-  topButton: {
-    marginBottom: "1px"
   },
   icon: {
     maxHeight: "1rem"
@@ -28,7 +26,7 @@ const styles = {
 
 const AttendeeComponent = inject("store")(
   observer(
-    class AttendeeComponent extends React.Component {
+    class AttendeeComponent extends Component {
       render() {
         const resident = this.props.resident;
         const guests = resident.guests;
@@ -107,23 +105,11 @@ const AttendeeComponent = inject("store")(
               </span>
             </td>
             <td>
-              <div className="dropdown">
-                <button
-                  className="dropdown-trigger mar-r-sm"
-                  style={styles.topButton}
-                  disabled={store.meal.reconciled || !store.canAdd}
-                >
-                  + Guest
-                </button>
-                <div className="dropdown-menu">
-                  <a onClick={e => resident.addGuest({ vegetarian: false })}>
-                    <img src={Cow} className="pointer" alt="cow-icon" />
-                  </a>
-                  <a onClick={e => resident.addGuest({ vegetarian: true })}>
-                    <img src={Carrot} className="pointer" alt="carrot-icon" />
-                  </a>
-                </div>
-              </div>
+              <GuestDropdown
+                resident={resident}
+                reconciled={store.meal.reconciled}
+                canAdd={store.canAdd}
+              />
               <button
                 className="monospace"
                 onClick={e => resident.removeGuest()}
@@ -141,7 +127,7 @@ const AttendeeComponent = inject("store")(
 
 const AttendeesBox = inject("store")(
   observer(
-    class AttendeesBox extends React.Component {
+    class AttendeesBox extends Component {
       render() {
         return (
           <div style={styles.main}>
@@ -167,11 +153,9 @@ const AttendeesBox = inject("store")(
                 </tr>
               </thead>
               <tbody>
-                {store.residents
-                  .values()
-                  .map(resident => (
-                    <AttendeeComponent key={resident.id} resident={resident} />
-                  ))}
+                {Array.from(store.residents.values()).map(resident => (
+                  <AttendeeComponent key={resident.id} resident={resident} />
+                ))}
               </tbody>
             </table>
           </div>

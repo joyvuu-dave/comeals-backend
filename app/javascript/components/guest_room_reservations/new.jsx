@@ -5,8 +5,6 @@ import { formatDate, parseDate } from 'react-day-picker/moment';
 import moment from "moment";
 import axios from "axios";
 
-import 'react-day-picker/lib/style.css';
-
 class GuestRoomReservationsNew extends React.Component {
   constructor(props) {
     super(props);

@@ -1,7 +1,7 @@
 import React from "react";
 import $ from "jquery";
 import "fullcalendar";
-import "fullcalendar/dist/fullcalendar.css";
+
 import Cookie from "js-cookie";
 import moment from "moment";
 

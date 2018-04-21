@@ -44,24 +44,28 @@ export const DataStore = types
       return self.guestStore.guests.size;
     },
     get mealResidentsCount() {
-      return self.residents.values().filter(resident => resident.attending)
-        .length;
+      return Array.from(self.residents.values()).filter(
+        resident => resident.attending
+      ).length;
     },
     get attendeesCount() {
       return self.guestsCount + self.mealResidentsCount;
     },
     get vegetarianCount() {
-      const vegResidents = self.residents
-        .values()
-        .filter(resident => resident.attending && resident.vegetarian).length;
+      const vegResidents = Array.from(self.residents.values()).filter(
+        resident => resident.attending && resident.vegetarian
+      ).length;
 
-      const vegGuests = self.guests.values().filter(guest => guest.vegetarian)
-        .length;
+      const vegGuests = Array.from(self.guests.values()).filter(
+        guest => guest.vegetarian
+      ).length;
 
       return vegResidents + vegGuests;
     },
     get lateCount() {
-      return self.residents.values().filter(resident => resident.late).length;
+      return Array.from(self.residents.values()).filter(
+        resident => resident.late
+      ).length;
     },
     get extras() {
       // Extras only show when the meal is closed
@@ -228,14 +232,17 @@ export const DataStore = types
     },
     submitBills() {
       // Check for errors with bills
-      if (self.bills.values().some(bill => bill.amountIsValid === false)) {
+      if (
+        Array.from(self.bills.values()).some(
+          bill => bill.amountIsValid === false
+        )
+      ) {
         self.editBillsMode = true;
         return;
       }
 
       // Format Bills
-      let bills = self.bills
-        .values()
+      let bills = Array.from(self.bills.values())
         .map(bill => bill.toJSON())
         .map(bill => {
           let obj = Object.assign({}, bill);

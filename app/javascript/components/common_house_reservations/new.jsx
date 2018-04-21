@@ -4,8 +4,7 @@ import DayPickerInput from 'react-day-picker/DayPickerInput';
 import { formatDate, parseDate } from 'react-day-picker/moment';
 import moment from "moment";
 import axios from "axios";
-
-import 'react-day-picker/lib/style.css';
+import { generateTimes } from "../../helpers/helpers";
 
 class CommonHouseReservationsNew extends React.Component {
   constructor(props) {
@@ -75,43 +74,6 @@ class CommonHouseReservationsNew extends React.Component {
     this.formDispatch = dispatch;
   }
 
-  generateTimes() {
-    var times = [];
-    var ending = "AM";
-
-    for(var half = 0; half < 2; half++) {
-      for(var hour = 0; hour < 12; hour++) {
-        for(var min = 0; min < 4; min++) {
-          var time = {
-            display: null,
-            value: null
-          };
-
-          var valueHour = hour;
-
-          if(half === 1) {
-            ending = "PM";
-            valueHour += 12;
-          }
-
-          var minutes = `${(min * 15).toString().padStart(2, "0")}`;
-
-          if(hour === 0) {
-            time.display = `12:${minutes} ${ending}`;
-          } else {
-            time.display = `${hour}:${minutes} ${ending}`;
-          }
-
-          time.value = `${(valueHour).toString().padStart(2, "0")}:${minutes}`;
-
-          times.push(time);
-        }
-      }
-    }
-
-    return times;
-  }
-
   render() {
     return (
       <div>
@@ -142,16 +104,16 @@ class CommonHouseReservationsNew extends React.Component {
             <label>Start Time</label>
             <Control.select model="local.start_time" id="local.start_time" className="w-50">
               <option></option>
-              {this.generateTimes().map(time => (
+              {generateTimes().map(time => (
                 <option key={time.value} value={time.value}>{time.display}</option>
               ))}
             </Control.select>
             <br />
 
             <label>End Time</label>
-            <Control.select model="local.end_time" id="local.resident_id" className="w-50">
+            <Control.select model="local.end_time" id="local.end_time" className="w-50">
               <option></option>
-              {this.generateTimes().map(time => (
+              {generateTimes().map(time => (
                 <option key={time.value} value={time.value}>{time.display}</option>
               ))}
             </Control.select>

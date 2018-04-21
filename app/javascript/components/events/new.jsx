@@ -1,9 +1,23 @@
 import React from "react";
-import { LocalForm, Control } from "react-redux-form";
+import { LocalForm, Control, actions } from "react-redux-form";
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import { formatDate, parseDate } from 'react-day-picker/moment';
+import moment from "moment";
 import axios from "axios";
+import { generateTimes } from "../../helpers/helpers"
 
 class EventsNew extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleDayChange = this.handleDayChange.bind(this);
+  }
+
   handleSubmit(values) {
+    if(values.start_time > values.end_time) {
+      window.alert('Start time cannot be later than end time')
+      return
+    }
+
     axios
       .post(`${window.host}api.comeals${window.topLevel}/api/v1/events?community_id=${window.community_id}`, {
         title: values.title,
@@ -44,6 +58,24 @@ class EventsNew extends React.Component {
       });
   }
 
+  handleDayChange(val) {
+    this.formDispatch(actions.change('local.day', val));
+  }
+
+  getDayPickerInput() {
+    return (
+      <DayPickerInput
+        formatDate={formatDate}
+        parseDate={parseDate}
+        placeholder={""}
+        onDayChange={this.handleDayChange} />
+    );
+  }
+
+  attachDispatch(dispatch) {
+    this.formDispatch = dispatch;
+  }
+
   render() {
     return (
       <div>
@@ -54,6 +86,7 @@ class EventsNew extends React.Component {
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
+            getDispatch={(dispatch) => this.attachDispatch(dispatch)}
           >
             <label>Title</label>
             <Control.text model=".title" className="w-75" />
@@ -64,19 +97,32 @@ class EventsNew extends React.Component {
             <br />
 
             <label>Day</label>
-            <Control.input type="date" model=".day" className="w-75" />
+            <br />
+            <Control.text model="local.day" id="local.day" component={this.getDayPickerInput.bind(this)} />
+            <br />
             <br />
 
             <label>Start Time</label>
-            <Control.input type="time" model=".start_time" className="w-75" />
+            <Control.select model="local.start_time" id="local.start_time" className="w-50">
+              <option></option>
+              {generateTimes().map(time => (
+                <option key={time.value} value={time.value}>{time.display}</option>
+              ))}
+            </Control.select>
             <br />
 
             <label>End Time</label>
-            <Control.input type="time" model=".end_time" className="w-75" />
+            <Control.select model="local.end_time" id="local.end_time" className="w-50">
+              <option></option>
+              {generateTimes().map(time => (
+                <option key={time.value} value={time.value}>{time.display}</option>
+              ))}
+            </Control.select>
             <br />
 
-            <label>All Day</label>
-            <Control.input type="checkbox" model=".all_day" className="w-75" />
+            <label>All Day</label>{' '}
+            <Control.input type="checkbox" model="local.all_day" className="w-75" />
+            <br />
             <br />
 
             <button type="submit" className="button-dark">Create</button>

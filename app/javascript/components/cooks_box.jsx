@@ -28,8 +28,8 @@ const BillEdit = inject("store")(
         <option value={""} key={-1}>
           ¯\_(ツ)_/¯
         </option>
-        {store.residents
-          .values()
+        {Array.from(store.residents
+          .values())
           .filter(resident => resident.can_cook === true)
           .map(resident => (
             <option value={resident.id} key={resident.id}>
@@ -66,8 +66,8 @@ const Display = inject("store")(
   observer(({ store }) => (
     <table>
       <tbody>
-        {store.bills
-          .values()
+        {Array.from(store.bills
+          .values())
           .map(bill => <BillShow key={bill.id} bill={bill} />)}
       </tbody>
     </table>
@@ -77,7 +77,7 @@ const Display = inject("store")(
 const Edit = inject("store")(
   observer(({ store }) => (
     <div>
-      {store.bills.values().map(bill => <BillEdit key={bill.id} bill={bill} />)}
+      {Array.from(store.bills.values()).map(bill => <BillEdit key={bill.id} bill={bill} />)}
     </div>
   ))
 );
