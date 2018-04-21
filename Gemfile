@@ -29,9 +29,7 @@ gem 'webpacker', '>= 4.0.x'
 gem 'annotate'
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'has_scope', github: 'joyvuu-dave/has_scope'
-gem 'inherited_resources', github: 'joyvuu-dave/inherited_resources'
-gem 'activeadmin', github: 'joyvuu-dave/activeadmin'
+gem 'activeadmin', github: 'activeadmin/activeadmin'
 gem 'devise'
 gem 'friendly_id'
 gem 'scrypt'
@@ -40,13 +38,13 @@ gem 'money-rails'
 gem 'counter_culture'
 gem 'active_model_serializers', '~> 0.10'
 gem 'pusher'
-gem 'audited', github: 'joyvuu-dave/audited'
+gem 'audited'
 gem 'dalli'
 gem 'connection_pool'
 gem 'newrelic_rpm'
 gem 'sendgrid-ruby'
 gem 'icalendar'
-gem 'platform-api'
+gem 'platform-api', github: 'heroku/platform-api'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
@@ -56,6 +54,10 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+
+group :production do
+  gem 'heroku-deflater'
+end
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
