@@ -57,7 +57,13 @@ module Api
 
       # GET /api/v1/communities/:id/birthdays
       def birthdays
-        render json: @community.residents.active.where('extract(month from birthday) = ?', Date.today.month), each_serializer: ResidentBirthdaySerializer
+        if params[:start]
+          month_int = (Date.parse(params[:start]) + 2.weeks).month
+        else
+          month_int = Date.today.month
+        end
+
+        render json: @community.residents.active.where('extract(month from birthday) = ?', month_int), each_serializer: ResidentBirthdaySerializer
       end
 
       private

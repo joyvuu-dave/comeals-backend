@@ -91,7 +91,7 @@ class Resident < ApplicationRecord
 
   # HELPERS
   def email_presence
-    errors.add(:email,'cannot be blank.') if multiplier >= 2 && email.nil?
+    errors.add(:email,'cannot be blank.') if active && can_cook && multiplier >= 2 && email.nil?
   end
 
   def set_email

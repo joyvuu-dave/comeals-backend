@@ -8,9 +8,9 @@ class ResidentBirthdaySerializer < ActiveModel::Serializer
 
   def title
     object.age < 22 ?
-      "#{resident_name_helper(object.name)}'s #{object.age.ordinalize} Birthday!"
+      "#{resident_name_helper(object.name)}'s #{object.age.ordinalize} B-day!"
       :
-      "#{resident_name_helper(object.name)}'s Birthday!"
+      "#{resident_name_helper(object.name)}'s B-day!"
   end
 
   def description
