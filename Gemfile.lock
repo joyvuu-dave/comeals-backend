@@ -329,6 +329,8 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.1)
       tilt (~> 2.0)
+    skylight (1.6.1)
+      activesupport (>= 3.0.0)
     sprockets (3.7.1)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
@@ -402,6 +404,7 @@ DEPENDENCIES
   scrypt
   selenium-webdriver
   sendgrid-ruby
+  skylight
   tzinfo-data
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)

@@ -45,6 +45,7 @@ gem 'newrelic_rpm'
 gem 'sendgrid-ruby'
 gem 'icalendar'
 gem 'platform-api', github: 'heroku/platform-api'
+gem 'skylight'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
