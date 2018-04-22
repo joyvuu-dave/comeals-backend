@@ -36,11 +36,11 @@ const DateBox = inject("store")(
           style={styles.arrow}
           onClick={store.previousMeal}
         >
-          <i className="fa fa-chevron-left fa-3x pad-r-md" />
+          <i className="fas fa-chevron-left fa-3x pad-r-md" />
         </div>
         <h2>{moment(store.meal.date).format("ddd, MMM Do")}</h2>
         <div className="arrow" style={styles.arrow} onClick={store.nextMeal}>
-          <i className="fa fa-chevron-right fa-3x pad-l-md" />
+          <i className="fas fa-chevron-right fa-3x pad-l-md" />
         </div>
       </div>
       <br />

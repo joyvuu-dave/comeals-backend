@@ -29,7 +29,7 @@ gem 'webpacker', '>= 4.0.x'
 gem 'annotate'
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'activeadmin', github: 'activeadmin/activeadmin'
+gem 'activeadmin'
 gem 'devise'
 gem 'friendly_id'
 gem 'scrypt'
