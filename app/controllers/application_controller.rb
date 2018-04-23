@@ -41,17 +41,17 @@ class ApplicationController < ActionController::Base
       require 'platform-api'
       heroku = PlatformAPI.connect_oauth(ENV['HEROKU_OAUTH_TOKEN'])
       begin
-        version = heroku.release.list('comeals').to_a.last["version"]
+        @version = heroku.release.list('comeals').to_a.last["version"]
       rescue Exception => e
         Rails.logger.info e
-        version = 1
+        @version = 1
       end
     else
-      version = 0
+      @version = 0
     end
 
     cookies.permanent[:version] = {
-      value: version,
+      value: @version,
       domain: :all
     }
   end

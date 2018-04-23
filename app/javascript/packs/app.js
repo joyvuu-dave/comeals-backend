@@ -1,4 +1,3 @@
-import "babel-polyfill";
 import "../src/overrides.css";
 import axios from "axios";
 import Cookie from "js-cookie";
