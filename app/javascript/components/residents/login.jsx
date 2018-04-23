@@ -1,11 +1,9 @@
-import React from "react";
+import React, { Component } from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 import Cookie from "js-cookie";
 
-class ResidentsLogin extends React.Component {
-  handleChange(values) {}
-  handleUpdate(form) {}
+class ResidentsLogin extends Component {
   handleSubmit(values) {
     axios
       .post(
@@ -22,8 +20,9 @@ class ResidentsLogin extends React.Component {
             expires: 7300,
             domain: `.comeals${window.topLevel}`
           });
-          window.location.href = `${window.host}${response.data
-            .slug}.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${response.data.slug}.comeals${
+            window.topLevel
+          }/calendar`;
         }
       })
       .catch(function(error) {
@@ -51,11 +50,7 @@ class ResidentsLogin extends React.Component {
   render() {
     return (
       <div>
-        <LocalForm
-          onUpdate={form => this.handleUpdate(form)}
-          onChange={values => this.handleChange(values)}
-          onSubmit={values => this.handleSubmit(values)}
-        >
+        <LocalForm onSubmit={values => this.handleSubmit(values)}>
           <fieldset className="login-box">
             <legend>Resident Login</legend>
             <label className="w-80">

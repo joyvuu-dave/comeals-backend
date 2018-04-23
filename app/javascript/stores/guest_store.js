@@ -12,7 +12,7 @@ const GuestStore = types
   }))
   .actions(self => ({
     removeGuest(id) {
-      self.guests = Object.assign({}, self.guests.delete(id));
+      self.guests.delete(id.toString());
     }
   }));
 

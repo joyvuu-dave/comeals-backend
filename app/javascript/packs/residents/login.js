@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import ResidentsLogin from "../../components/residents/login";
 
@@ -16,8 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(
-    <ResidentsLogin />,
-    document.getElementById("resident_login")
-  );
+  render(<ResidentsLogin />, document.getElementById("resident_login"));
 });

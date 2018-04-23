@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import GuestRoomReservationsEdit from "../../components/guest_room_reservations/edit";
 
@@ -18,5 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<GuestRoomReservationsEdit hosts={data.hosts} event={data.event} />, document.getElementById("main"));
+  render(
+    <GuestRoomReservationsEdit hosts={data.hosts} event={data.event} />,
+    document.getElementById("main")
+  );
 });

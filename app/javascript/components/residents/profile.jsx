@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
-class ResidentsProfile extends React.Component {
+class ResidentsProfile extends Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {

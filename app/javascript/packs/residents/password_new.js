@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import ResidentsPasswordNew from "../../components/residents/password_new";
 
@@ -19,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(
+  render(
     <ResidentsPasswordNew token={token} email={email} />,
     document.getElementById("main")
   );

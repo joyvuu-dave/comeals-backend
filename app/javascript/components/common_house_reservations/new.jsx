@@ -1,37 +1,47 @@
-import React from "react";
+import React, { Component } from "react";
 import { LocalForm, Control, actions } from "react-redux-form";
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import { formatDate, parseDate } from 'react-day-picker/moment';
+import DayPickerInput from "react-day-picker/DayPickerInput";
+import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
 import { generateTimes } from "../../helpers/helpers";
 
-class CommonHouseReservationsNew extends React.Component {
+class CommonHouseReservationsNew extends Component {
   constructor(props) {
     super(props);
     this.handleDayChange = this.handleDayChange.bind(this);
   }
 
   handleSubmit(values) {
-    if(values.start_time > values.end_time) {
-      window.alert('Start time cannot be later than end time')
-      return
+    if (values.start_time > values.end_time) {
+      window.alert("Start time cannot be later than end time");
+      return;
     }
 
     axios
-      .post(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations?community_id=${window.community_id}`, {
-        resident_id: values.resident_id,
-        start_year: values.day && values.day.getFullYear(),
-        start_month: values.day && values.day.getMonth() + 1,
-        start_day: values.day && values.day.getDate(),
-        start_hours: values && values.start_time && values.start_time.split(":")[0],
-        start_minutes: values && values.start_time && values.start_time.split(":")[1],
-        end_hours: values && values.end_time && values.end_time.split(":")[0],
-        end_minutes: values && values.end_time && values.end_time.split(":")[1]
-      })
+      .post(
+        `${window.host}api.comeals${
+          window.topLevel
+        }/api/v1/common-house-reservations?community_id=${window.community_id}`,
+        {
+          resident_id: values.resident_id,
+          start_year: values.day && values.day.getFullYear(),
+          start_month: values.day && values.day.getMonth() + 1,
+          start_day: values.day && values.day.getDate(),
+          start_hours:
+            values && values.start_time && values.start_time.split(":")[0],
+          start_minutes:
+            values && values.start_time && values.start_time.split(":")[1],
+          end_hours: values && values.end_time && values.end_time.split(":")[0],
+          end_minutes:
+            values && values.end_time && values.end_time.split(":")[1]
+        }
+      )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${
+            window.topLevel
+          }/calendar`;
         }
       })
       .catch(function(error) {
@@ -57,7 +67,7 @@ class CommonHouseReservationsNew extends React.Component {
   }
 
   handleDayChange(val) {
-    this.formDispatch(actions.change('local.day', val));
+    this.formDispatch(actions.change("local.day", val));
   }
 
   getDayPickerInput() {
@@ -66,7 +76,8 @@ class CommonHouseReservationsNew extends React.Component {
         formatDate={formatDate}
         parseDate={parseDate}
         placeholder={""}
-        onDayChange={this.handleDayChange} />
+        onDayChange={this.handleDayChange}
+      />
     );
   }
 
@@ -84,42 +95,66 @@ class CommonHouseReservationsNew extends React.Component {
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
-            getDispatch={(dispatch) => this.attachDispatch(dispatch)}
+            getDispatch={dispatch => this.attachDispatch(dispatch)}
           >
             <label>Resident</label>
-            <Control.select model=".resident_id" id="local.resident_id" className="w-75">
-              <option></option>
+            <Control.select
+              model=".resident_id"
+              id="local.resident_id"
+              className="w-75"
+            >
+              <option />
               {this.props.residents.map(resident => (
-                <option key={resident[0]} value={resident[0]}>{resident[2]} - {resident[1]}</option>
+                <option key={resident[0]} value={resident[0]}>
+                  {resident[2]} - {resident[1]}
+                </option>
               ))}
             </Control.select>
             <br />
 
             <label>Day</label>
             <br />
-            <Control.text model="local.day" id="local.day" component={this.getDayPickerInput.bind(this)} />
+            <Control.text
+              model="local.day"
+              id="local.day"
+              component={this.getDayPickerInput.bind(this)}
+            />
             <br />
             <br />
 
             <label>Start Time</label>
-            <Control.select model="local.start_time" id="local.start_time" className="w-50">
-              <option></option>
+            <Control.select
+              model="local.start_time"
+              id="local.start_time"
+              className="w-50"
+            >
+              <option />
               {generateTimes().map(time => (
-                <option key={time.value} value={time.value}>{time.display}</option>
+                <option key={time.value} value={time.value}>
+                  {time.display}
+                </option>
               ))}
             </Control.select>
             <br />
 
             <label>End Time</label>
-            <Control.select model="local.end_time" id="local.end_time" className="w-50">
-              <option></option>
+            <Control.select
+              model="local.end_time"
+              id="local.end_time"
+              className="w-50"
+            >
+              <option />
               {generateTimes().map(time => (
-                <option key={time.value} value={time.value}>{time.display}</option>
+                <option key={time.value} value={time.value}>
+                  {time.display}
+                </option>
               ))}
             </Control.select>
             <br />
 
-            <button type="submit" className="button-dark">Create</button>
+            <button type="submit" className="button-dark">
+              Create
+            </button>
           </LocalForm>
         </fieldset>
       </div>

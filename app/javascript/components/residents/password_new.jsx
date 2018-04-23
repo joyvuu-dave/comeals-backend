@@ -1,15 +1,16 @@
-import React from "react";
+import React, { Component } from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
-class ResidentsPasswordNew extends React.Component {
+class ResidentsPasswordNew extends Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {
     axios
       .post(
-        `${window.host}api.comeals${window.topLevel}/api/v1/residents/password-reset/${this
-          .props.token}`,
+        `${window.host}api.comeals${
+          window.topLevel
+        }/api/v1/residents/password-reset/${this.props.token}`,
         {
           password: values.password
         }

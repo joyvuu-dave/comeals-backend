@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import EventsNew from "../../components/events/new";
 
@@ -19,5 +18,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<EventsNew />, document.getElementById("main"));
+  render(<EventsNew />, document.getElementById("main"));
 });

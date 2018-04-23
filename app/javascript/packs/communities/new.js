@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import CommunitiesNew from "../../components/communities/new";
 
@@ -16,5 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<CommunitiesNew />, document.getElementById("main"));
+  render(<CommunitiesNew />, document.getElementById("main"));
 });

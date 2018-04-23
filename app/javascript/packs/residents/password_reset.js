@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import ResidentsPasswordReset from "../../components/residents/password_reset";
 
@@ -16,5 +15,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<ResidentsPasswordReset />, document.getElementById("main"));
+  render(<ResidentsPasswordReset />, document.getElementById("main"));
 });

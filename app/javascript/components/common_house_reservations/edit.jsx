@@ -1,37 +1,44 @@
-import React from "react";
+import React, { Component } from "react";
 import { LocalForm, Control, actions } from "react-redux-form";
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import { formatDate, parseDate } from 'react-day-picker/moment';
+import DayPickerInput from "react-day-picker/DayPickerInput";
+import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
-import { generateTimes } from "../../helpers/helpers"
+import { generateTimes } from "../../helpers/helpers";
 
-class CommonHouseReservationsEdit extends React.Component {
+class CommonHouseReservationsEdit extends Component {
   constructor(props) {
     super(props);
     this.handleDayChange = this.handleDayChange.bind(this);
   }
 
   handleSubmit(values) {
-    if(values.start_time > values.end_time) {
-      window.alert('Start time cannot be later than end time')
-      return
+    if (values.start_time > values.end_time) {
+      window.alert("Start time cannot be later than end time");
+      return;
     }
 
     axios
-      .patch(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations/${this.props.event.id}/update`, {
-        resident_id: values.resident_id,
-        start_year: values.day && new Date(values.day).getFullYear(),
-        start_month: values.day && new Date(values.day).getMonth() + 1,
-        start_day: values.day && new Date(values.day).getDate(),
-        start_hours: values.start_time && values.start_time.split(":")[0],
-        start_minutes: values.start_time && values.start_time.split(":")[1],
-        end_hours: values.end_time && values.end_time.split(":")[0],
-        end_minutes: values.end_time && values.end_time.split(":")[1]
-      })
+      .patch(
+        `${window.host}api.comeals${
+          window.topLevel
+        }/api/v1/common-house-reservations/${this.props.event.id}/update`,
+        {
+          resident_id: values.resident_id,
+          start_year: values.day && new Date(values.day).getFullYear(),
+          start_month: values.day && new Date(values.day).getMonth() + 1,
+          start_day: values.day && new Date(values.day).getDate(),
+          start_hours: values.start_time && values.start_time.split(":")[0],
+          start_minutes: values.start_time && values.start_time.split(":")[1],
+          end_hours: values.end_time && values.end_time.split(":")[0],
+          end_minutes: values.end_time && values.end_time.split(":")[1]
+        }
+      )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${
+            window.topLevel
+          }/calendar`;
         }
       })
       .catch(function(error) {
@@ -57,12 +64,18 @@ class CommonHouseReservationsEdit extends React.Component {
   }
 
   handleDelete() {
-    if(window.confirm("Do you really want to delete this reservation?")) {
+    if (window.confirm("Do you really want to delete this reservation?")) {
       axios
-        .delete(`${window.host}api.comeals${window.topLevel}/api/v1/common-house-reservations/${this.props.event.id}/delete`)
+        .delete(
+          `${window.host}api.comeals${
+            window.topLevel
+          }/api/v1/common-house-reservations/${this.props.event.id}/delete`
+        )
         .then(function(response) {
           if (response.status === 200) {
-            window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
+            window.location.href = `${window.host}${window.slug}.comeals${
+              window.topLevel
+            }/calendar`;
           }
         })
         .catch(function(error) {
@@ -89,7 +102,7 @@ class CommonHouseReservationsEdit extends React.Component {
   }
 
   handleDayChange(val) {
-    this.formDispatch(actions.change('local.day', val));
+    this.formDispatch(actions.change("local.day", val));
   }
 
   getDayPickerInput() {
@@ -99,7 +112,7 @@ class CommonHouseReservationsEdit extends React.Component {
         parseDate={parseDate}
         onDayChange={this.handleDayChange}
         value={formatDate(this.props.event.start_date)}
-        />
+      />
     );
   }
 
@@ -112,53 +125,95 @@ class CommonHouseReservationsEdit extends React.Component {
       <div>
         <div className="flex">
           <h2 className="mar-md">Common House Reservation</h2>
-          <button onClick={this.handleDelete.bind(this)} type="button" className="mar-md button-warning">Delete</button>
+          <button
+            onClick={this.handleDelete.bind(this)}
+            type="button"
+            className="mar-md button-warning"
+          >
+            Delete
+          </button>
         </div>
         <fieldset className="w-50">
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
-            getDispatch={(dispatch) => this.attachDispatch(dispatch)}
+            getDispatch={dispatch => this.attachDispatch(dispatch)}
             initialState={{
               resident_id: this.props.event.resident_id,
               day: this.props.event.start_date,
-              start_time: `${(new Date(this.props.event.start_date).getHours()).toString().padStart(2, "0")}:${(new Date(this.props.event.start_date).getMinutes()).toString().padStart(2, "0")}`,
-              end_time: `${(new Date(this.props.event.end_date).getHours()).toString().padStart(2, "0")}:${(new Date(this.props.event.end_date).getMinutes()).toString().padStart(2, "0")}`
+              start_time: `${new Date(this.props.event.start_date)
+                .getHours()
+                .toString()
+                .padStart(2, "0")}:${new Date(this.props.event.start_date)
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")}`,
+              end_time: `${new Date(this.props.event.end_date)
+                .getHours()
+                .toString()
+                .padStart(2, "0")}:${new Date(this.props.event.end_date)
+                .getMinutes()
+                .toString()
+                .padStart(2, "0")}`
             }}
           >
             <label>Resident</label>
-            <Control.select model=".resident_id" id="local.resident_id" className="w-75">
+            <Control.select
+              model=".resident_id"
+              id="local.resident_id"
+              className="w-75"
+            >
               {this.props.residents.map(resident => (
-                <option key={resident[0]} value={resident[0]}>{resident[2]} - {resident[1]}</option>
+                <option key={resident[0]} value={resident[0]}>
+                  {resident[2]} - {resident[1]}
+                </option>
               ))}
             </Control.select>
             <br />
 
             <label>Day</label>
             <br />
-            <Control.text model="local.day" id="local.day" component={this.getDayPickerInput.bind(this)} />
+            <Control.text
+              model="local.day"
+              id="local.day"
+              component={this.getDayPickerInput.bind(this)}
+            />
             <br />
             <br />
 
             <label>Start Time</label>
-            <Control.select model="local.start_time" id="local.start_time" className="w-50">
-              <option></option>
+            <Control.select
+              model="local.start_time"
+              id="local.start_time"
+              className="w-50"
+            >
+              <option />
               {generateTimes().map(time => (
-                <option key={time.value} value={time.value}>{time.display}</option>
+                <option key={time.value} value={time.value}>
+                  {time.display}
+                </option>
               ))}
             </Control.select>
             <br />
 
             <label>End Time</label>
-            <Control.select model="local.end_time" id="local.end_time" className="w-50">
-              <option></option>
+            <Control.select
+              model="local.end_time"
+              id="local.end_time"
+              className="w-50"
+            >
+              <option />
               {generateTimes().map(time => (
-                <option key={time.value} value={time.value}>{time.display}</option>
+                <option key={time.value} value={time.value}>
+                  {time.display}
+                </option>
               ))}
             </Control.select>
             <br />
 
-            <button type="submit" className="button-dark">Update</button>
+            <button type="submit" className="button-dark">
+              Update
+            </button>
           </LocalForm>
         </fieldset>
       </div>

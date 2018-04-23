@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import EventsEdit from "../../components/events/edit";
 
@@ -18,5 +17,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<EventsEdit event={data.event} />, document.getElementById("main"));
+  render(<EventsEdit event={data.event} />, document.getElementById("main"));
 });

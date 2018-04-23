@@ -1,8 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
-class CommunitiesNew extends React.Component {
+class CommunitiesNew extends Component {
   handleChange(values) {}
   handleUpdate(form) {}
   handleSubmit(values) {
@@ -14,7 +14,9 @@ class CommunitiesNew extends React.Component {
       })
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}admin.comeals${window.topLevel}`;
+          window.location.href = `${window.host}admin.comeals${
+            window.topLevel
+          }`;
         }
       })
       .catch(function(error) {

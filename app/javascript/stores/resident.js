@@ -17,9 +17,9 @@ const Resident = types
   })
   .views(self => ({
     get guests() {
-      return Array.from(self.form.form.guestStore.guests
-        .values())
-        .filter(guest => guest.resident_id === self.id);
+      return Array.from(self.form.form.guestStore.guests.values()).filter(
+        guest => guest.resident_id === self.id
+      );
     },
     get guestsCount() {
       return self.guests.length;

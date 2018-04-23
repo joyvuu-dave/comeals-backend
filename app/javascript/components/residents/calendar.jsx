@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import $ from "jquery";
 import "fullcalendar";
 
@@ -17,7 +17,7 @@ const styles = {
   }
 };
 
-class ResidentsCalendar extends React.Component {
+class ResidentsCalendar extends Component {
   componentDidMount() {
     const { calendar } = this.refs;
     $(calendar).fullCalendar({
@@ -53,12 +53,16 @@ class ResidentsCalendar extends React.Component {
         {
           url: `${window.host}api.comeals${
             window.topLevel
-          }/api/v1/common-house-reservations?community_id=${window.community_id}`
+          }/api/v1/common-house-reservations?community_id=${
+            window.community_id
+          }`
         },
         {
           url: `${window.host}api.comeals${
             window.topLevel
-          }/api/v1/communities/${window.community_id}/birthdays?community_id=${window.community_id}`
+          }/api/v1/communities/${window.community_id}/birthdays?community_id=${
+            window.community_id
+          }`
         }
       ],
       contentHeight: "auto",
@@ -93,39 +97,61 @@ class ResidentsCalendar extends React.Component {
   }
 
   openNewGuestRoomReservation() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/guest-room-reservations/new`)
+    window.open(
+      `${window.host}${window.slug}.comeals${
+        window.topLevel
+      }/guest-room-reservations/new`
+    );
   }
 
   openNewCommonHouseReservation() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/common-house-reservations/new`)
+    window.open(
+      `${window.host}${window.slug}.comeals${
+        window.topLevel
+      }/common-house-reservations/new`
+    );
   }
 
   openNewEvent() {
-    window.open(`${window.host}${window.slug}.comeals${window.topLevel}/events/new`)
+    window.open(
+      `${window.host}${window.slug}.comeals${window.topLevel}/events/new`
+    );
   }
 
   openAllCalendars() {
-    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`
+    window.location.href = `${window.host}${window.slug}.comeals${
+      window.topLevel
+    }/calendar`;
   }
 
   openMealCalendar() {
-    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/meals`
+    window.location.href = `${window.host}${window.slug}.comeals${
+      window.topLevel
+    }/calendar/meals`;
   }
 
   openGuestRoomCalendar() {
-    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/guest-room`
+    window.location.href = `${window.host}${window.slug}.comeals${
+      window.topLevel
+    }/calendar/guest-room`;
   }
 
   openCommonHouseCalendar() {
-    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/common-house`
+    window.location.href = `${window.host}${window.slug}.comeals${
+      window.topLevel
+    }/calendar/common-house`;
   }
 
   openEventsCalendar() {
-    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/events`
+    window.location.href = `${window.host}${window.slug}.comeals${
+      window.topLevel
+    }/calendar/events`;
   }
 
   openBirthdaysCalendar() {
-    window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar/birthdays`
+    window.location.href = `${window.host}${window.slug}.comeals${
+      window.topLevel
+    }/calendar/birthdays`;
   }
 
   refetch(calendar) {
@@ -134,7 +160,7 @@ class ResidentsCalendar extends React.Component {
 
   logoutText() {
     const token = Cookie.get("token");
-    if(typeof token  === "undefined") {
+    if (typeof token === "undefined") {
       return "login";
     } else {
       return `logout ${window.comeals.name}`;
@@ -145,7 +171,10 @@ class ResidentsCalendar extends React.Component {
     return (
       <div className="offwhite">
         <header className="header flex right">
-          <button onClick={this.openWiki} className="button-link text-secondary">
+          <button
+            onClick={this.openWiki}
+            className="button-link text-secondary"
+          >
             wiki
           </button>
           <button onClick={this.logout} className="button-link text-secondary">
@@ -155,21 +184,66 @@ class ResidentsCalendar extends React.Component {
         <div style={styles.main}>
           <div style={styles.sideBar}>
             <h3 className="mar-sm">Reserve</h3>
-            <button onClick={this.openNewGuestRoomReservation} className="mar-sm">Guest Room</button>
-            <button onClick={this.openNewCommonHouseReservation} className="mar-sm">Common House</button>
-            <hr></hr>
+            <button
+              onClick={this.openNewGuestRoomReservation}
+              className="mar-sm"
+            >
+              Guest Room
+            </button>
+            <button
+              onClick={this.openNewCommonHouseReservation}
+              className="mar-sm"
+            >
+              Common House
+            </button>
+            <hr />
             <h3 className="mar-sm">Calendars</h3>
-            <button onClick={this.openAllCalendars} className="button-info mar-sm">ALL</button>
-            <hr></hr>
-            <button onClick={this.openMealCalendar} className="button-info mar-sm">Meals</button>
-            <button onClick={this.openGuestRoomCalendar} className="button-info mar-sm">Guest Room</button>
-            <button onClick={this.openCommonHouseCalendar} className="button-info mar-sm">Common House</button>
-            <hr></hr>
-            <button onClick={this.openEventsCalendar} className="button-info mar-sm">Events</button>
-            <button onClick={this.openBirthdaysCalendar} className="button-info mar-sm">Birthdays</button>
-            <hr></hr>
+            <button
+              onClick={this.openAllCalendars}
+              className="button-info mar-sm"
+            >
+              ALL
+            </button>
+            <hr />
+            <button
+              onClick={this.openMealCalendar}
+              className="button-info mar-sm"
+            >
+              Meals
+            </button>
+            <button
+              onClick={this.openGuestRoomCalendar}
+              className="button-info mar-sm"
+            >
+              Guest Room
+            </button>
+            <button
+              onClick={this.openCommonHouseCalendar}
+              className="button-info mar-sm"
+            >
+              Common House
+            </button>
+            <hr />
+            <button
+              onClick={this.openEventsCalendar}
+              className="button-info mar-sm"
+            >
+              Events
+            </button>
+            <button
+              onClick={this.openBirthdaysCalendar}
+              className="button-info mar-sm"
+            >
+              Birthdays
+            </button>
+            <hr />
             <h3 className="mar-sm">Add</h3>
-            <button onClick={this.openNewEvent} className="mar-sm button-secondary">Event</button>
+            <button
+              onClick={this.openNewEvent}
+              className="mar-sm button-secondary"
+            >
+              Event
+            </button>
           </div>
           <div ref="calendar" className="calendar" />
         </div>

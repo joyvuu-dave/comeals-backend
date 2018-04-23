@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import GuestRoomReservationsNew from "../../components/guest_room_reservations/new";
 
@@ -19,5 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<GuestRoomReservationsNew hosts={data.hosts} />, document.getElementById("main"));
+  render(
+    <GuestRoomReservationsNew hosts={data.hosts} />,
+    document.getElementById("main")
+  );
 });

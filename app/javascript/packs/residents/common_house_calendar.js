@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import ResidentsCommonHouseCalendar from "../../components/residents/common_house_calendar";
 
@@ -20,5 +19,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<ResidentsCommonHouseCalendar />, document.getElementById("calendar"));
+  render(<ResidentsCommonHouseCalendar />, document.getElementById("calendar"));
 });

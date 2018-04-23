@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import $ from "jquery";
 import "fullcalendar";
 
@@ -17,7 +17,7 @@ const styles = {
   }
 };
 
-class ResidentsBirthdaysCalendar extends React.Component {
+class ResidentsBirthdaysCalendar extends Component {
   componentDidMount() {
     const { calendar } = this.refs;
 

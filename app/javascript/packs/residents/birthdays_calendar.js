@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import ResidentsBirthdaysCalendar from "../../components/residents/birthdays_calendar";
 
@@ -20,5 +19,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<ResidentsBirthdaysCalendar />, document.getElementById("calendar"));
+  render(<ResidentsBirthdaysCalendar />, document.getElementById("calendar"));
 });

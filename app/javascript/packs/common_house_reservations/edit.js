@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import CommonHouseReservationsEdit from "../../components/common_house_reservations/edit";
 
@@ -18,5 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<CommonHouseReservationsEdit residents={data.residents} event={data.event} />, document.getElementById("main"));
+  render(
+    <CommonHouseReservationsEdit
+      residents={data.residents}
+      event={data.event}
+    />,
+    document.getElementById("main")
+  );
 });

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Component } from "react";
 import { LocalForm, Control, actions } from "react-redux-form";
-import DayPickerInput from 'react-day-picker/DayPickerInput';
-import { formatDate, parseDate } from 'react-day-picker/moment';
+import DayPickerInput from "react-day-picker/DayPickerInput";
+import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
 
-class GuestRoomReservationsEdit extends React.Component {
+class GuestRoomReservationsEdit extends Component {
   constructor(props) {
     super(props);
     this.handleDayChange = this.handleDayChange.bind(this);
@@ -13,13 +13,20 @@ class GuestRoomReservationsEdit extends React.Component {
 
   handleSubmit(values) {
     axios
-      .patch(`${window.host}api.comeals${window.topLevel}/api/v1/guest-room-reservations/${this.props.event.id}/update`, {
-        resident_id: values.resident_id,
-        date: values.day
-      })
+      .patch(
+        `${window.host}api.comeals${
+          window.topLevel
+        }/api/v1/guest-room-reservations/${this.props.event.id}/update`,
+        {
+          resident_id: values.resident_id,
+          date: values.day
+        }
+      )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
+          window.location.href = `${window.host}${window.slug}.comeals${
+            window.topLevel
+          }/calendar`;
         }
       })
       .catch(function(error) {
@@ -45,12 +52,18 @@ class GuestRoomReservationsEdit extends React.Component {
   }
 
   handleDelete() {
-    if(window.confirm("Do you really want to delete this reservation?")) {
+    if (window.confirm("Do you really want to delete this reservation?")) {
       axios
-        .delete(`${window.host}api.comeals${window.topLevel}/api/v1/guest-room-reservations/${this.props.event.id}/delete`)
+        .delete(
+          `${window.host}api.comeals${
+            window.topLevel
+          }/api/v1/guest-room-reservations/${this.props.event.id}/delete`
+        )
         .then(function(response) {
           if (response.status === 200) {
-            window.location.href = `${window.host}${window.slug}.comeals${window.topLevel}/calendar`;
+            window.location.href = `${window.host}${window.slug}.comeals${
+              window.topLevel
+            }/calendar`;
           }
         })
         .catch(function(error) {
@@ -77,7 +90,7 @@ class GuestRoomReservationsEdit extends React.Component {
   }
 
   handleDayChange(val) {
-    this.formDispatch(actions.change('local.day', val));
+    this.formDispatch(actions.change("local.day", val));
   }
 
   getDayPickerInput() {
@@ -87,7 +100,7 @@ class GuestRoomReservationsEdit extends React.Component {
         parseDate={parseDate}
         onDayChange={this.handleDayChange}
         value={formatDate(this.props.event.date)}
-        />
+      />
     );
   }
 
@@ -100,30 +113,51 @@ class GuestRoomReservationsEdit extends React.Component {
       <div>
         <div className="flex">
           <h2 className="mar-md">Guest Room Reservation</h2>
-          <button onClick={this.handleDelete.bind(this)} type="button" className="mar-md button-warning">Delete</button>
+          <button
+            onClick={this.handleDelete.bind(this)}
+            type="button"
+            className="mar-md button-warning"
+          >
+            Delete
+          </button>
         </div>
         <fieldset className="w-50">
           <legend>Edit</legend>
           <LocalForm
             onSubmit={values => this.handleSubmit(values)}
-            getDispatch={(dispatch) => this.attachDispatch(dispatch)}
-            initialState={{resident_id: this.props.event.resident_id, day: this.props.event.date}}
+            getDispatch={dispatch => this.attachDispatch(dispatch)}
+            initialState={{
+              resident_id: this.props.event.resident_id,
+              day: this.props.event.date
+            }}
           >
             <label>Host</label>
-            <Control.select model=".resident_id" id="local.resident_id" className="w-75">
+            <Control.select
+              model=".resident_id"
+              id="local.resident_id"
+              className="w-75"
+            >
               {this.props.hosts.map(host => (
-                <option key={host[0]} value={host[0]}>{host[2]} - {host[1]}</option>
+                <option key={host[0]} value={host[0]}>
+                  {host[2]} - {host[1]}
+                </option>
               ))}
             </Control.select>
             <br />
 
             <label>Day</label>
             <br />
-            <Control.text model="local.day" id="local.day" component={this.getDayPickerInput.bind(this)} />
+            <Control.text
+              model="local.day"
+              id="local.day"
+              component={this.getDayPickerInput.bind(this)}
+            />
             <br />
             <br />
 
-            <button type="submit" className="button-dark">Update</button>
+            <button type="submit" className="button-dark">
+              Update
+            </button>
           </LocalForm>
         </fieldset>
       </div>

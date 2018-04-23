@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Component } from "react";
 import $ from "jquery";
 import "fullcalendar";
 
 import Cookie from "js-cookie";
 import moment from "moment";
 
-class ResidentsGuestRoom extends React.Component {
+class ResidentsGuestRoom extends Component {
   componentDidMount() {
     const { calendar } = this.refs;
     $(calendar).fullCalendar({

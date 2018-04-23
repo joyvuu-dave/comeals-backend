@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 import { Provider } from "mobx-react";
 import Pusher from "pusher-js";
 
@@ -77,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     store.loadDataAsync();
   });
 
-  ReactDOM.render(
+  render(
     <Provider store={store}>
       <div className="comeals-container">
         <Header />

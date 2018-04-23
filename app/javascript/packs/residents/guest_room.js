@@ -1,6 +1,5 @@
-import "babel-polyfill";
 import React from "react";
-import ReactDOM from "react-dom";
+import { render } from "react-dom";
 
 import ResidentsGuestRoom from "../../components/residents/guest_room";
 
@@ -18,5 +17,5 @@ document.addEventListener("DOMContentLoaded", () => {
     window.topLevel = ".test";
   }
 
-  ReactDOM.render(<ResidentsGuestRoom />, document.getElementById("calendar"));
+  render(<ResidentsGuestRoom />, document.getElementById("calendar"));
 });
