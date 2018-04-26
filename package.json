@@ -38,7 +38,7 @@
     "caniuse-lite": "1.0.30000830",
     "webpack": "4.6.0",
     "webpack-sources": "1.1.0",
-    "upath": "kyranet/upath#patch-1"
+    "upath": "robertknight/upath#remove-engines-constraint"
   },
   "devDependencies": {
     "prettier": "1.12.1",
