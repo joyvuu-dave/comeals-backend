@@ -36,7 +36,6 @@
 #
 
 class MealSerializer < ActiveModel::Serializer
-  cache key: 'meal'
   attributes :title,
              :start,
              :url,
