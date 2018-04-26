@@ -43,10 +43,6 @@ class ResidentsGuestRoom extends Component {
     window.location.href = "/";
   }
 
-  openProfile() {
-    window.open("/profile", "_blank");
-  }
-
   refetch(calendar) {
     $(calendar).fullCalendar("refetchEvents");
   }
@@ -55,9 +51,6 @@ class ResidentsGuestRoom extends Component {
     return (
       <div className="offwhite">
         <header className="header flex right">
-          <button onClick={this.openProfile} className="button-link">
-            Profile
-          </button>
           <button onClick={this.logout} className="button-link">
             logout
           </button>

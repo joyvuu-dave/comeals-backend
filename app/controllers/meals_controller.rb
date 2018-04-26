@@ -3,7 +3,7 @@ class MealsController < ApplicationController
   before_action :authorize
 
   # GET /meals/:id/edit (subdomains)
-  def show
+  def edit
   end
 
   # GET /meals/:id/previous (subdomains)

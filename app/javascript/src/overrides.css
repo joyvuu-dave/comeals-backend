@@ -22,7 +22,7 @@ body {
 
 /* Fixes issue with button half-hovering */
 .fc-state-hover {
-  background-position: 0 -36px;
+  background-position: 0 -36px !important;
 }
 
 .monospace {

@@ -5,9 +5,9 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "9.11.1",
+    "node": "10.0.0",
     "yarn": "1.6.0",
-    "npm": "5.8.0"
+    "npm": "6.0.0"
   },
   "dependencies": {
     "@rails/webpacker": "4.0.0-pre.2",

@@ -23,7 +23,6 @@ Rails.application.routes.draw do
         get '/residents/:id', to: 'residents#show'
         post '/residents/password-reset', to: 'residents#password_reset'
         post '/residents/password-reset/:token', to: 'residents#password_new'
-        patch '/residents/profile', to: 'residents#update_profile'
         post '/communities', to: 'communities#create'
         get '/communities/:id/birthdays', to: 'communities#birthdays'
         get '/meals', to: 'meals#index'
@@ -74,8 +73,7 @@ Rails.application.routes.draw do
   get '/calendar/events', to: 'residents#events_calendar'
   get '/calendar/birthdays', to: 'residents#birthdays_calendar'
   get '/guest-room', to: 'residents#guest_room'
-  get '/profile', to: 'residents#profile'
-  get '/meals/:id/edit', to: 'meals#show', as: :meal
+  get '/meals/:id/edit', to: 'meals#edit', as: :meal
   get '/meals/:id/previous', to: 'meals#previous'
   get '/meals/:id/next', to: 'meals#next'
   get '/meals/:id/log', to: 'meals#log'
@@ -86,7 +84,6 @@ Rails.application.routes.draw do
   get '/common-house-reservations/new', to: 'common_house_reservations#new'
   get '/guest-room-reservations/:id/edit', to: 'guest_room_reservations#edit'
   get '/guest-room-reservations/new', to: 'guest_room_reservations#new'
-  get '/react-calendar', to: 'residents#react_calendar'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

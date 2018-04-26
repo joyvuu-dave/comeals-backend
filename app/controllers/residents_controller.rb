@@ -1,33 +1,17 @@
 class ResidentsController < ApplicationController
+  before_action :ensure_community, except: [:login, :password_reset, :password_new]
+  before_action :set_resident, except: [:login, :password_reset, :password_new]
+
   # GET /residents/login (www)
   def login
   end
 
   # GET /calendar (subdomains)
   def calendar
-    @community = Community.find_by(slug: subdomain)
-
-    redirect_to :root and return if @community.nil?
-
-    @resident_id = current_resident&.id
-    @resident = current_resident
   end
 
   # GET /residents/guest-room (subdomains)
   def guest_room
-    @community = Community.find_by(slug: subdomain)
-    @resident_id = current_resident&.id
-  end
-
-  # GET /residents/profile (subdomains)
-  def profile
-    @community = Community.find_by(slug: subdomain)
-    @resident_id = current_resident&.id
-    @resident = current_resident
-  end
-
-  # GET /residents/react-calendar (subdomains)
-  def react_calendar
   end
 
   # GET /residents/password-reset
@@ -41,52 +25,34 @@ class ResidentsController < ApplicationController
     @token = resident&.reset_password_token
   end
 
-  # GET /calendar/meals
+  # GET /calendar/meals (subdomains)
   def meals_calendar
-    @community = Community.find_by(slug: subdomain)
-
-    redirect_to :root and return if @community.nil?
-
-    @resident_id = current_resident&.id
-    @resident = current_resident
   end
 
-  # GET /calendar/guest-room
+  # GET /calendar/guest-room (subdomains)
   def guest_room_calendar
-    @community = Community.find_by(slug: subdomain)
-
-    redirect_to :root and return if @community.nil?
-
-    @resident_id = current_resident&.id
-    @resident = current_resident
   end
 
-  # GET /calendar/common-house
+  # GET /calendar/common-house (subdomains)
   def common_house_calendar
-    @community = Community.find_by(slug: subdomain)
-
-    redirect_to :root and return if @community.nil?
-
-    @resident_id = current_resident&.id
-    @resident = current_resident
   end
 
-  # GET /calendar/events
+  # GET /calendar/events (subdomains)
   def events_calendar
-    @community = Community.find_by(slug: subdomain)
-
-    redirect_to :root and return if @community.nil?
-
-    @resident_id = current_resident&.id
-    @resident = current_resident
   end
 
-  # GET /calendar/birthdays
+  # GET /calendar/birthdays (subdomains)
   def birthdays_calendar
+  end
+
+  private
+  def ensure_community
     @community = Community.find_by(slug: subdomain)
 
     redirect_to :root and return if @community.nil?
+  end
 
+  def set_resident
     @resident_id = current_resident&.id
     @resident = current_resident
   end

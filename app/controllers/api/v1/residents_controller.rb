@@ -25,11 +25,6 @@ module Api
         end
       end
 
-      # PATCH
-      def update_profile
-        resident = Resident.find_by(email: params[:email])
-      end
-
       # POST
       def password_reset
         resident = Resident.find_by(email: params[:email])
