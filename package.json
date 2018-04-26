@@ -37,7 +37,8 @@
   "resolutions": {
     "caniuse-lite": "1.0.30000830",
     "webpack": "4.6.0",
-    "webpack-sources": "1.1.0"
+    "webpack-sources": "1.1.0",
+    "upath": "kyranet/upath#patch-1"
   },
   "devDependencies": {
     "prettier": "1.12.1",
