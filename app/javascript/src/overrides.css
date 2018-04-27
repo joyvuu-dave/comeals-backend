@@ -133,6 +133,10 @@ table {
     transition: width 0.5s;
   }
 
+  .responsive-calendar {
+    flex-direction: column !important;
+  }
+
   .wrapper {
     display: grid;
     grid-gap: 1rem;
@@ -159,6 +163,10 @@ table {
     margin-top: 1rem;
     margin-bottom: 1rem;
     transition: width 0.5s;
+  }
+
+  .responsive-calendar {
+    flex-direction: row !important;
   }
 
   .wrapper {
