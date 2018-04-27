@@ -44,16 +44,16 @@ class MealSerializer < ActiveModel::Serializer
   def title
     message = "Dinner\n#{object.attendees_count}"
 
-    if Date.today > object.date
+    if Time.zone.today > object.date
       message << " attended"
       return message
     end
 
-    if Date.today == object.date
+    if Time.zone.today == object.date
       message << " attending"
     end
 
-    if Date.today < object.date
+    if Time.zone.today < object.date
       message << " signed up"
     end
 
