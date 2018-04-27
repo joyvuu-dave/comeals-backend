@@ -32,14 +32,12 @@
     "react-redux-form": "1.16.8",
     "redux": "4.0.0",
     "shoelace-css": "1.0.0-beta24",
-    "upath": "robertknight/upath#remove-engines-constraint",
     "uuid": "3.2.1"
   },
   "resolutions": {
     "caniuse-lite": "1.0.30000830",
     "webpack": "4.6.0",
-    "webpack-sources": "1.1.0",
-    "upath": "robertknight/upath#remove-engines-constraint"
+    "webpack-sources": "1.1.0"
   },
   "devDependencies": {
     "prettier": "1.12.1",

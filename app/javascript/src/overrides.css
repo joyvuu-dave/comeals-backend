@@ -306,3 +306,10 @@ button:focus {
 .cell.twelve {
   width: 100%;
 }
+
+/*
+Prevent FullCalendar title text from being cut off
+*/
+.fc-day-grid-event > .fc-content {
+  white-space: inherit !important;
+}
