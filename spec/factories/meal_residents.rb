@@ -2,10 +2,10 @@
 #
 # Table name: meal_residents
 #
-#  id           :integer          not null, primary key
-#  meal_id      :integer          not null
-#  resident_id  :integer          not null
-#  community_id :integer          not null
+#  id           :bigint(8)        not null, primary key
+#  meal_id      :bigint(8)        not null
+#  resident_id  :bigint(8)        not null
+#  community_id :bigint(8)        not null
 #  multiplier   :integer          not null
 #  vegetarian   :boolean          default(FALSE), not null
 #  late         :boolean          default(FALSE), not null

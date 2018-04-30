@@ -2,13 +2,13 @@
 #
 # Table name: events
 #
-#  id           :integer          not null, primary key
+#  id           :bigint(8)        not null, primary key
 #  title        :string           not null
 #  description  :string           default(""), not null
 #  start_date   :datetime         not null
 #  end_date     :datetime
 #  allday       :boolean          default(FALSE), not null
-#  community_id :integer          not null
+#  community_id :bigint(8)        not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #

@@ -2,11 +2,11 @@
 #
 # Table name: residents
 #
-#  id                   :integer          not null, primary key
+#  id                   :bigint(8)        not null, primary key
 #  name                 :string           not null
 #  email                :string
-#  community_id         :integer          not null
-#  unit_id              :integer          not null
+#  community_id         :bigint(8)        not null
+#  unit_id              :bigint(8)        not null
 #  vegetarian           :boolean          default(FALSE), not null
 #  bill_costs           :integer          default(0), not null
 #  bills_count          :integer          default(0), not null

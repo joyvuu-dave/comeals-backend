@@ -2,8 +2,8 @@
 #
 # Table name: rotations
 #
-#  id                 :integer          not null, primary key
-#  community_id       :integer          not null
+#  id                 :bigint(8)        not null, primary key
+#  community_id       :bigint(8)        not null
 #  description        :string           default(""), not null
 #  color              :string           not null
 #  created_at         :datetime         not null

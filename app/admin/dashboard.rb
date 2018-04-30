@@ -27,9 +27,9 @@ ActiveAdmin.register_page 'Dashboard' do
       end
 
       column do
-        panel "Meals - #{current_admin_user.meals.count(true)}" do
+        panel "Unreconciled Meals - #{current_admin_user.meals.unreconciled.count(true)}" do
           ul do
-            current_admin_user.meals.order('date DESC').map do |meal|
+            current_admin_user.meals.unreconciled.order('date DESC').map do |meal|
               li link_to(meal.date, admin_meal_path(meal))
             end
           end

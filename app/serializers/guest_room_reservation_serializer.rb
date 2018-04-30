@@ -2,9 +2,9 @@
 #
 # Table name: guest_room_reservations
 #
-#  id           :integer          not null, primary key
-#  community_id :integer          not null
-#  resident_id  :integer          not null
+#  id           :bigint(8)        not null, primary key
+#  community_id :bigint(8)        not null
+#  resident_id  :bigint(8)        not null
 #  date         :date             not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
@@ -19,8 +19,6 @@
 #  fk_rails_...  (community_id => communities.id)
 #  fk_rails_...  (resident_id => residents.id)
 #
-
-
 
 class GuestRoomReservationSerializer < ActiveModel::Serializer
   include ApplicationHelper

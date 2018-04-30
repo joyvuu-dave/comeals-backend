@@ -2,7 +2,7 @@
 #
 # Table name: admin_users
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint(8)        not null, primary key
 #  email                  :string           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  reset_password_token   :string
@@ -13,7 +13,7 @@
 #  last_sign_in_at        :datetime
 #  current_sign_in_ip     :inet
 #  last_sign_in_ip        :inet
-#  community_id           :integer          not null
+#  community_id           :bigint(8)        not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #

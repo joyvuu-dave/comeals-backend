@@ -2,7 +2,7 @@
 #
 # Table name: meals
 #
-#  id                        :integer          not null, primary key
+#  id                        :bigint(8)        not null, primary key
 #  date                      :date             not null
 #  cap                       :integer
 #  meal_residents_count      :integer          default(0), not null
@@ -14,9 +14,9 @@
 #  description               :text             default(""), not null
 #  max                       :integer
 #  closed                    :boolean          default(FALSE), not null
-#  community_id              :integer          not null
-#  reconciliation_id         :integer
-#  rotation_id               :integer
+#  community_id              :bigint(8)        not null
+#  reconciliation_id         :bigint(8)
+#  rotation_id               :bigint(8)
 #  closed_at                 :datetime
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null

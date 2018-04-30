@@ -2,13 +2,14 @@
 #
 # Table name: common_house_reservations
 #
-#  id           :integer          not null, primary key
-#  community_id :integer          not null
-#  resident_id  :integer          not null
+#  id           :bigint(8)        not null, primary key
+#  community_id :bigint(8)        not null
+#  resident_id  :bigint(8)        not null
 #  start_date   :datetime         not null
 #  end_date     :datetime         not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  title        :string
 #
 # Indexes
 #
@@ -21,8 +22,6 @@
 #  fk_rails_...  (resident_id => residents.id)
 #
 
-
-
 class CommonHouseReservationSerializer < ActiveModel::Serializer
   include ApplicationHelper
   cache key: 'chr'
@@ -33,7 +32,7 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
              :description
 
   def title
-    "\nCommon House\n#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
+    "\nCommon House\n#{object.title.present? ? "#{object.title}\n" : ''}#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
   end
 
   def description

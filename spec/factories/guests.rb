@@ -2,9 +2,9 @@
 #
 # Table name: guests
 #
-#  id          :integer          not null, primary key
-#  meal_id     :integer          not null
-#  resident_id :integer          not null
+#  id          :bigint(8)        not null, primary key
+#  meal_id     :bigint(8)        not null
+#  resident_id :bigint(8)        not null
 #  multiplier  :integer          default(2), not null
 #  name        :string           default(""), not null
 #  vegetarian  :boolean          default(FALSE), not null

@@ -31,7 +31,8 @@ class CommonHouseReservationsEdit extends Component {
           start_hours: values.start_time && values.start_time.split(":")[0],
           start_minutes: values.start_time && values.start_time.split(":")[1],
           end_hours: values.end_time && values.end_time.split(":")[0],
-          end_minutes: values.end_time && values.end_time.split(":")[1]
+          end_minutes: values.end_time && values.end_time.split(":")[1],
+          title: values && values.title
         }
       )
       .then(function(response) {
@@ -154,7 +155,8 @@ class CommonHouseReservationsEdit extends Component {
                 .padStart(2, "0")}:${new Date(this.props.event.end_date)
                 .getMinutes()
                 .toString()
-                .padStart(2, "0")}`
+                .padStart(2, "0")}`,
+              title: this.props.event.title
             }}
           >
             <label>Resident</label>
@@ -169,6 +171,17 @@ class CommonHouseReservationsEdit extends Component {
                 </option>
               ))}
             </Control.select>
+            <br />
+
+            <label>Title</label>
+            <br />
+            <Control.text
+              model="local.title"
+              id="local.title"
+              placeholder="optional"
+              className="w-75"
+            />
+            <br />
             <br />
 
             <label>Day</label>

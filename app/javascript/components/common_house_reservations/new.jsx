@@ -34,7 +34,8 @@ class CommonHouseReservationsNew extends Component {
             values && values.start_time && values.start_time.split(":")[1],
           end_hours: values && values.end_time && values.end_time.split(":")[0],
           end_minutes:
-            values && values.end_time && values.end_time.split(":")[1]
+            values && values.end_time && values.end_time.split(":")[1],
+          title: values && values.title
         }
       )
       .then(function(response) {
@@ -110,6 +111,16 @@ class CommonHouseReservationsNew extends Component {
                 </option>
               ))}
             </Control.select>
+            <br />
+            <label>Title</label>
+            <br />
+            <Control.text
+              model="local.title"
+              id="local.title"
+              placeholder="optional"
+              className="w-75"
+            />
+            <br />
             <br />
 
             <label>Day</label>

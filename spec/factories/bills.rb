@@ -2,10 +2,10 @@
 #
 # Table name: bills
 #
-#  id              :integer          not null, primary key
-#  meal_id         :integer          not null
-#  resident_id     :integer          not null
-#  community_id    :integer          not null
+#  id              :bigint(8)        not null, primary key
+#  meal_id         :bigint(8)        not null
+#  resident_id     :bigint(8)        not null
+#  community_id    :bigint(8)        not null
 #  amount_cents    :integer          default(0), not null
 #  amount_currency :string           default("USD"), not null
 #  created_at      :datetime         not null

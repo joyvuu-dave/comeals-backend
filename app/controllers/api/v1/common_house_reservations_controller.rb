@@ -23,7 +23,7 @@ module Api
         start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
         end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
 
-        if chr.update(start_date: start_date, end_date: end_date, resident_id: params[:resident_id])
+        if chr.update(start_date: start_date, end_date: end_date, resident_id: params[:resident_id], title: params[:title])
           render json: {message: 'Common House Reservation has been updated'}
         else
           render json: {message: chr.errors.full_messages.join("\n")}, status: :bad_request
@@ -43,7 +43,7 @@ module Api
         start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
         end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
 
-        chr = CommonHouseReservation.new(resident_id: params[:resident_id], start_date: start_date, end_date: end_date, community_id: params[:community_id])
+        chr = CommonHouseReservation.new(resident_id: params[:resident_id], start_date: start_date, end_date: end_date, community_id: params[:community_id], title: params[:title])
         if chr.save
           render json: {message: 'Common House Reservation has been created'}
         else
