@@ -5,10 +5,38 @@ class MealFormSerializer < ActiveModel::Serializer
              :closed,
              :closed_at,
              :date,
-             :reconciled
+             :reconciled,
+             :next_id,
+             :prev_id
 
   def reconciled
     scope.reconciled?
+  end
+
+  def next_id
+    meals = Meal.where(community_id: scope.community_id).order(:date)
+    meal_index = meals.find_index { |meal| meal.id == scope.id }
+
+    # Scenario #1: This is the last meal
+    next_index = meal_index if meal_index == meals.size - 1
+
+    # Scenario #2: This is NOT the last meal
+    next_index = meal_index + 1 if meal_index < meals.size - 1
+
+    meals[next_index].id
+  end
+
+  def prev_id
+    meals = Meal.where(community_id: scope.community_id).order(:date)
+    meal_index = meals.find_index { |meal| meal.id == scope.id }
+
+    # Scenario #1: This is the first meal
+    previous_index = meal_index if meal_index == 0
+
+    # Scenario #2: This is NOT the first meal
+    previous_index = meal_index - 1 if meal_index > 0
+
+    meals[previous_index].id
   end
 
   has_many :bills

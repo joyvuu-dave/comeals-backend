@@ -13,18 +13,14 @@ const styles = {
   }
 };
 
-class ResidentsGuestRoomCalendar extends Component {
+class Calendar extends Component {
   componentDidMount() {
     const { calendar } = this.refs;
+    var eventSources = this.props.eventSources;
+
     $(calendar).fullCalendar({
       displayEventEnd: true,
-      eventSources: [
-        {
-          url: `${window.host}api.comeals${
-            window.topLevel
-          }/api/v1/guest-room-reservations?community_id=${window.community_id}`
-        }
-      ],
+      eventSources: eventSources,
       contentHeight: "auto",
       eventRender: function(event, eventElement) {
         const startString = moment(event.start).format();
@@ -48,7 +44,10 @@ class ResidentsGuestRoomCalendar extends Component {
   }
 
   logout() {
-    Cookie.remove("token", { domain: `.comeals${window.topLevel}` });
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    Cookie.remove("token", { domain: `.comeals.${topLevel}` });
     window.location.href = "/";
   }
 
@@ -65,7 +64,7 @@ class ResidentsGuestRoomCalendar extends Component {
     if (typeof token === "undefined") {
       return "login";
     } else {
-      return `logout ${window.comeals.name}`;
+      return `logout ${this.props.userName}`;
     }
   }
 
@@ -84,7 +83,7 @@ class ResidentsGuestRoomCalendar extends Component {
           </button>
         </header>
         <h2 className="flex center">
-          <u>Guest Room</u>
+          <u>{this.props.calendarName}</u>
         </h2>
         <div style={styles.main} className="responsive-calendar">
           <SideBar />
@@ -95,4 +94,4 @@ class ResidentsGuestRoomCalendar extends Component {
   }
 }
 
-export default ResidentsGuestRoomCalendar;
+export default Calendar;

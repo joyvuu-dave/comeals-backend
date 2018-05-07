@@ -1,2 +1,10 @@
 
-<%= javascript_pack_tag 'residents/meals_calendar' %>
+<%= content_tag :div,
+  id: "calendar-data",
+  data: {
+    name: "meals",
+    displayName: "MEALS"
+}.to_json do %>
+<% end %>
+
+<%= javascript_pack_tag 'residents/calendar' %>

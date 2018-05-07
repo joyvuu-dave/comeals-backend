@@ -3,13 +3,25 @@ import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
 class ResidentsPasswordNew extends Component {
-  handleChange(values) {}
-  handleUpdate(form) {}
+  constructor(props) {
+    super(props);
+
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    this.state = {
+      host: `${window.location.protocol}//`,
+      topLevel: `.${topLevel}`
+    };
+  }
+
   handleSubmit(values) {
+    var myState = this.state;
+
     axios
       .post(
-        `${window.host}api.comeals${
-          window.topLevel
+        `${myState.host}api.comeals${
+          myState.topLevel
         }/api/v1/residents/password-reset/${this.props.token}`,
         {
           password: values.password
@@ -18,7 +30,9 @@ class ResidentsPasswordNew extends Component {
       .then(function(response) {
         if (response.status === 200) {
           window.alert(response.data.message);
-          window.location.href = `${window.host}www.comeals${window.topLevel}`;
+          window.location.href = `${myState.host}www.comeals${
+            myState.topLevel
+          }`;
         }
       })
       .catch(function(error) {

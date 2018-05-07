@@ -1,23 +1,24 @@
 import React from "react";
 import { render } from "react-dom";
 
-import ResidentsCalendar from "../../components/residents/calendar";
+import Calendar from "../../components/calendar/show";
+import { getEventSources } from "../../helpers/helpers";
 
 document.addEventListener("DOMContentLoaded", () => {
   const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
-  const production = data.production;
 
-  window.community_id = data.community_id;
-  window.slug = data.slug;
-  window.comeals = data;
-  if (production) {
-    window.host = "https://";
-    window.topLevel = ".com";
-  } else {
-    window.host = "http://";
-    window.topLevel = ".test";
-  }
+  var eventSources = getEventSources(data.community_id);
 
-  render(<ResidentsCalendar />, document.getElementById("calendar"));
+  const node2 = document.getElementById("calendar-data");
+  const data2 = JSON.parse(node2.getAttribute("data"));
+
+  render(
+    <Calendar
+      calendarName={data2.displayName}
+      eventSources={eventSources[data2.name]}
+      userName={data.name}
+    />,
+    document.getElementById("calendar")
+  );
 });

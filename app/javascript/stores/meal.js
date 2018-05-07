@@ -10,8 +10,10 @@ const Meal = types
     extras: types.maybe(types.number),
     closed: false,
     closed_at: types.maybe(types.Date),
-    date: types.Date,
-    reconciled: false
+    date: types.maybe(types.Date),
+    reconciled: false,
+    nextId: types.maybe(types.number),
+    prevId: types.maybe(types.number)
   })
   .views(self => ({
     get max() {
@@ -49,13 +51,16 @@ const Meal = types
     },
     setExtras(val) {
       const previousExtras = self.extras;
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
 
       // Scenario #1: empty string
       if (val === null) {
         self.extras = null;
 
         axios({
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.id}/max`,
+          url: `${host}api.comeals${topLevel}/api/v1/meals/${self.id}/max`,
           method: "patch",
           data: {
             max: null,
@@ -104,7 +109,7 @@ const Meal = types
 
         axios({
           method: "patch",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${self.id}/max`,
+          url: `${host}api.comeals${topLevel}/api/v1/meals/${self.id}/max`,
           data: {
             max: self.max,
             socket_id: window.socketId

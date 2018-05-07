@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { inject, observer } from "mobx-react";
-import Cow from "../packs/images/cow.png";
-import Carrot from "../packs/images/carrot.png";
+import Cow from "../../packs/images/cow.png";
+import Carrot from "../../packs/images/carrot.png";
 import GuestDropdown from "./guest_dropdown";
 
 const styles = {

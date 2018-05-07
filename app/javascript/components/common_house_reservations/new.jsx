@@ -4,12 +4,24 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
+import Cookie from "js-cookie";
+
 import { generateTimes } from "../../helpers/helpers";
 
 class CommonHouseReservationsNew extends Component {
   constructor(props) {
     super(props);
     this.handleDayChange = this.handleDayChange.bind(this);
+
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    this.state = {
+      host: `${window.location.protocol}//`,
+      topLevel: `.${topLevel}`,
+      slug: window.location.hostname.split(".")[0],
+      communityId: Cookie.get("community_id")
+    };
   }
 
   handleSubmit(values) {
@@ -18,11 +30,15 @@ class CommonHouseReservationsNew extends Component {
       return;
     }
 
+    var myState = this.state;
+
     axios
       .post(
-        `${window.host}api.comeals${
-          window.topLevel
-        }/api/v1/common-house-reservations?community_id=${window.community_id}`,
+        `${myState.host}api.comeals${
+          myState.topLevel
+        }/api/v1/common-house-reservations?community_id=${
+          myState.community_id
+        }`,
         {
           resident_id: values.resident_id,
           start_year: values.day && values.day.getFullYear(),
@@ -40,8 +56,8 @@ class CommonHouseReservationsNew extends Component {
       )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}${window.slug}.comeals${
-            window.topLevel
+          window.location.href = `${myState.host}${myState.slug}.comeals${
+            myState.topLevel
           }/calendar`;
         }
       })
