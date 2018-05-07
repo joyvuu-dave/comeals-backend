@@ -45,71 +45,99 @@ export function generateTimes() {
   return times;
 }
 
-export function getEventSources(community_id) {
+export function getCalendarInfo(community_id, calendar_type) {
   var host = `${window.location.protocol}//`;
   var topLevel = window.location.hostname.split(".");
   topLevel = `.${topLevel[topLevel.length - 1]}`;
 
-  const EventSources = {
-    all: [
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}`,
-        color: "#6699cc" // livid
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}`,
-        color: "#444" // almost-black
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}`
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}`
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}`
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}`
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}`
-      }
-    ],
-    birthdays: [
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}`
-      }
-    ],
-    commonHouse: [
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}`
-      }
-    ],
-    events: [
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}`
-      }
-    ],
-    guestRoom: [
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}`
-      }
-    ],
-    meals: [
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}`,
-        color: "#6699cc" // livid
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}`,
-        color: "#444" // almost-black
-      },
-      {
-        url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}`
-      }
-    ]
+  let result = {
+    eventSources: [],
+    displayName: ""
   };
 
-  return EventSources;
+  switch (calendar_type) {
+    case "all":
+      result.eventSources = [
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}`,
+          color: "#6699cc" // livid
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}`,
+          color: "#444" // almost-black
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}`
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}`
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}`
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}`
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}`
+        }
+      ];
+      result.displayName = "ALL";
+      break;
+
+    case "birthdays":
+      result.eventSources = [
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}`
+        }
+      ];
+      result.displayName = "BIRTHDAYS";
+      break;
+
+    case "common-house":
+      result.eventSources = [
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}`
+        }
+      ];
+      result.displayName = "COMMON HOUSE";
+      break;
+
+    case "events":
+      result.eventSources = [
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}`
+        }
+      ];
+      result.displayName = "EVENTS";
+      break;
+
+    case "guest-room":
+      result.eventSources = [
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}`
+        }
+      ];
+      result.displayName = "GUEST ROOM";
+      break;
+
+    case "meals":
+      result.eventSources = [
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}`,
+          color: "#6699cc" // livid
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}`,
+          color: "#444" // almost-black
+        },
+        {
+          url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}`
+        }
+      ];
+      result.displayName = "MEALS";
+      break;
+  }
+
+  return result;
 }

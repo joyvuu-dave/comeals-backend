@@ -184,12 +184,6 @@ export const DataStore = types
     history() {
       window.open(`/meals/${self.id}/log`, "_blank");
     },
-    previousMeal() {
-      window.location.href = `/meals/${self.id}/previous`;
-    },
-    nextMeal() {
-      window.location.href = `/meals/${self.id}/next`;
-    },
     submitDescription() {
       let obj = {
         id: self.meal.id,

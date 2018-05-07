@@ -1,12 +1,15 @@
 class ResidentsController < ApplicationController
+  VALID_CALENDAR_TYPES = ['all', 'birthdays', 'common-house', 'events', 'guest-room', 'meals']
+
   before_action :ensure_community, except: [:login, :password_reset, :password_new]
   before_action :set_resident, except: [:login, :password_reset, :password_new]
+  before_action :validate_calendar, only: [:calendar]
 
   # GET /residents/login (www)
   def login
   end
 
-  # GET /calendar (subdomains)
+  # GET /calendar/(:type) (subdomains)
   def calendar
   end
 
@@ -25,26 +28,6 @@ class ResidentsController < ApplicationController
     @token = resident&.reset_password_token
   end
 
-  # GET /calendar/meals (subdomains)
-  def meals_calendar
-  end
-
-  # GET /calendar/guest-room (subdomains)
-  def guest_room_calendar
-  end
-
-  # GET /calendar/common-house (subdomains)
-  def common_house_calendar
-  end
-
-  # GET /calendar/events (subdomains)
-  def events_calendar
-  end
-
-  # GET /calendar/birthdays (subdomains)
-  def birthdays_calendar
-  end
-
   private
   def ensure_community
     @community = Community.find_by(slug: subdomain)
@@ -55,6 +38,12 @@ class ResidentsController < ApplicationController
   def set_resident
     @resident_id = current_resident&.id
     @resident = current_resident
+  end
+
+  def validate_calendar
+    @calendar_type = params[:type] || 'all'
+
+    render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return unless VALID_CALENDAR_TYPES.include?(@calendar_type)
   end
 
 end

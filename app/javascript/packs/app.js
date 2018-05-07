@@ -40,4 +40,4 @@ function checkVersion() {
     });
 }
 
-window.setInterval(checkVersion, 60000);
+window.setInterval(checkVersion, 300000);

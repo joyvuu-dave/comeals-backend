@@ -25,7 +25,7 @@
     "pretty-checkbox": "3.0.3",
     "pusher-js": "4.2.2",
     "react": "16.3.2",
-    "react-day-picker": "7.1.7",
+    "react-day-picker": "7.1.8",
     "react-debounce-input": "3.2.0",
     "react-dom": "16.3.2",
     "react-onclickoutside": "^6.7.1",
@@ -38,7 +38,7 @@
   },
   "resolutions": {
     "caniuse-lite": "1.0.30000835",
-    "webpack": "4.7.0",
+    "webpack": "4.8.1",
     "webpack-sources": "1.1.0"
   },
   "devDependencies": {
