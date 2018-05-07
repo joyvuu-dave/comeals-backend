@@ -24,7 +24,7 @@
 
 class CommonHouseReservationSerializer < ActiveModel::Serializer
   include ApplicationHelper
-  cache key: 'chr'
+
   attributes :title,
              :start,
              :end,

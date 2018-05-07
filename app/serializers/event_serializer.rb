@@ -22,8 +22,6 @@
 #
 
 class EventSerializer < ActiveModel::Serializer
-
-  cache key: 'event'
   attributes :title,
              :description,
              :start,

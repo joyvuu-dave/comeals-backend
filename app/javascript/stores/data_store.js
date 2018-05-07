@@ -496,9 +496,11 @@ export const DataStore = types
       self.loadDataAsync();
     },
     goToPrevMeal() {
+      self.isLoading = true;
       self.switchMeals({ id: self.meal.prevId });
     },
     goToNextMeal() {
+      self.isLoading = true;
       self.switchMeals({ id: self.meal.nextId });
     }
   }));
