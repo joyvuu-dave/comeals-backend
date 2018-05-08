@@ -30,14 +30,14 @@ const SideBar = inject("store", "routingStore")(
         }
 
         componentDidMount() {
-          this.setCalendarInfo();
+          this.setInfo();
         }
 
         componentDidUpdate() {
-          this.setCalendarInfo();
+          this.setInfo();
         }
 
-        setCalendarInfo() {
+        setInfo() {
           var pathNameArray = this.props.routingStore.router.location.pathname.split(
             "/"
           );
@@ -51,8 +51,10 @@ const SideBar = inject("store", "routingStore")(
             pathName
           );
 
-          store.setCalendarName(calendarInfo.displayName);
-          store.setEventSources(calendarInfo.eventSources);
+          store.setCalendarInfo(
+            calendarInfo.displayName,
+            calendarInfo.eventSources
+          );
         }
 
         openNewGuestRoomReservation() {

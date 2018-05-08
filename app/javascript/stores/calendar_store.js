@@ -8,10 +8,8 @@ export const CalendarStore = types
     eventSources: types.array(EventSource)
   })
   .actions(self => ({
-    setCalendarName(name) {
+    setCalendarInfo(name, array) {
       self.calendarName = name;
-    },
-    setEventSources(array) {
       self.eventSources = array;
     }
   }));
