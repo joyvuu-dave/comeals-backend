@@ -28,6 +28,7 @@
     "react-day-picker": "7.1.8",
     "react-debounce-input": "3.2.0",
     "react-dom": "16.3.2",
+    "react-modal": "^3.4.4",
     "react-onclickoutside": "^6.7.1",
     "react-redux": "5.0.7",
     "react-redux-form": "1.16.8",

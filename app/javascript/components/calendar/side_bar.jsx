@@ -58,27 +58,32 @@ const SideBar = inject("store", "routingStore")(
         }
 
         openNewGuestRoomReservation() {
-          window.open(
-            `${this.state.host}${this.state.slug}.comeals${
-              this.state.topLevel
-            }/guest-room-reservations/new`
-          );
+          // window.open(
+          //   `${this.state.host}${this.state.slug}.comeals${
+          //     this.state.topLevel
+          //   }/guest-room-reservations/new`
+          // );
+          store.openModal("guestRoomNew");
         }
 
         openNewCommonHouseReservation() {
-          window.open(
-            `${this.state.host}${this.state.slug}.comeals${
-              this.state.topLevel
-            }/common-house-reservations/new`
-          );
+          // window.open(
+          //   `${this.state.host}${this.state.slug}.comeals${
+          //     this.state.topLevel
+          //   }/common-house-reservations/new`
+          // );
+
+          store.openModal("commonHouseNew");
         }
 
         openNewEvent() {
-          window.open(
-            `${this.state.host}${this.state.slug}.comeals${
-              this.state.topLevel
-            }/events/new`
-          );
+          // window.open(
+          //   `${this.state.host}${this.state.slug}.comeals${
+          //     this.state.topLevel
+          //   }/events/new`
+          // );
+
+          store.openModal("eventNew");
         }
 
         openAllCalendars() {

@@ -11,6 +11,8 @@ class ResidentsController < ApplicationController
 
   # GET /calendar/(:type) (subdomains)
   def calendar
+    @hosts = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+    @residents = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
   end
 
   # GET /residents/guest-room (subdomains)

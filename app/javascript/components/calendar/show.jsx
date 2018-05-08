@@ -8,6 +8,11 @@ import SideBar from "./side_bar";
 import Cookie from "js-cookie";
 import moment from "moment";
 
+import Modal from "react-modal";
+import GuestRoomReservationsNew from "../guest_room_reservations/new";
+import CommonHouseReservationsNew from "../common_house_reservations/new";
+import EventsNew from "../events/new";
+
 const styles = {
   main: {
     display: "flex",
@@ -15,10 +20,52 @@ const styles = {
   }
 };
 
+Modal.setAppElement("#site");
 const Calendar = inject("store")(
   withRouter(
     observer(
       class Calendar extends Component {
+        constructor(props) {
+          super(props);
+
+          const node = document.getElementById("site-data");
+          const data = JSON.parse(node.getAttribute("data"));
+          this.state = {
+            hosts: data.hosts,
+            residents: data.residents
+          };
+          this.handleCloseModal = this.handleCloseModal.bind(this);
+        }
+
+        renderModal() {
+          if (store.modalActive === false) {
+            return null;
+          }
+
+          switch (store.modalName) {
+            case "guestRoomNew":
+              return <GuestRoomReservationsNew hosts={this.state.hosts} />;
+              break;
+
+            case "commonHouseNew":
+              return (
+                <CommonHouseReservationsNew residents={this.state.residents} />
+              );
+              break;
+
+            case "eventNew":
+              return <EventsNew />;
+              break;
+
+            default:
+              return null;
+          }
+        }
+
+        handleCloseModal() {
+          store.closeModal();
+        }
+
         updateEventSources() {
           const { calendar } = this.refs;
           var eventSources = store.eventSources;
@@ -106,6 +153,18 @@ const Calendar = inject("store")(
                 <SideBar />
                 <div ref="calendar" className="calendar" />
               </div>
+              <Modal
+                isOpen={store.modalActive}
+                contentLabel="Minimal Modal Example"
+                onRequestClose={this.handleCloseModal}
+                style={{
+                  content: {
+                    backgroundColor: "#6699cc"
+                  }
+                }}
+              >
+                {this.renderModal()}
+              </Modal>
             </div>
           );
         }
