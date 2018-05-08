@@ -98,7 +98,7 @@ const DateBox = inject("store", "routingStore")(
                 </div>
                 <h2>
                   {store.meal.date === null
-                    ? "..."
+                    ? ""
                     : moment(store.meal.date).format("ddd, MMM Do")}
                 </h2>
                 <div
