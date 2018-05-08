@@ -3,19 +3,34 @@ import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
 class CommunitiesNew extends Component {
-  handleChange(values) {}
-  handleUpdate(form) {}
+  constructor(props) {
+    super(props);
+
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    this.state = {
+      host: `${window.location.protocol}//`,
+      topLevel: `.${topLevel}`
+    };
+  }
+
   handleSubmit(values) {
+    var myState = this.state;
+
     axios
-      .post(`${window.host}api.comeals${window.topLevel}/api/v1/communities`, {
-        name: values.name,
-        email: values.email,
-        password: values.password
-      })
+      .post(
+        `${myState.host}api.comeals${myState.topLevel}/api/v1/communities`,
+        {
+          name: values.name,
+          email: values.email,
+          password: values.password
+        }
+      )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}admin.comeals${
-            window.topLevel
+          window.location.href = `${myState.host}admin.comeals${
+            myState.topLevel
           }`;
         }
       })
@@ -47,11 +62,7 @@ class CommunitiesNew extends Component {
         <h2>Create a new Community</h2>
         <fieldset className="w-50">
           <legend>Community</legend>
-          <LocalForm
-            onUpdate={form => this.handleUpdate(form)}
-            onChange={values => this.handleChange(values)}
-            onSubmit={values => this.handleSubmit(values)}
-          >
+          <LocalForm onSubmit={values => this.handleSubmit(values)}>
             <label>Community Name</label>
             <Control.text model=".name" className="w-75" />
             <br />

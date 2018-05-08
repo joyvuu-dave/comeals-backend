@@ -3,8 +3,11 @@ import axios from "axios";
 import Cookie from "js-cookie";
 
 function checkVersion() {
+  var topLevel = window.location.hostname.split(".");
+  topLevel = topLevel[topLevel.length - 1];
+
   axios
-    .get(`${window.host}api.comeals${window.topLevel}/api/v1/version`)
+    .get(`${window.location.protocol}//api.comeals.${topLevel}/api/v1/version`)
     .then(function(response) {
       if (response.status === 200) {
         const clientVersion = response.data.version.toString();
@@ -37,4 +40,4 @@ function checkVersion() {
     });
 }
 
-window.setInterval(checkVersion, 60000);
+window.setInterval(checkVersion, 300000);

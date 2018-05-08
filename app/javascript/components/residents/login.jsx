@@ -4,10 +4,24 @@ import axios from "axios";
 import Cookie from "js-cookie";
 
 class ResidentsLogin extends Component {
+  constructor(props) {
+    super(props);
+
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    this.state = {
+      host: `${window.location.protocol}//`,
+      topLevel: `.${topLevel}`
+    };
+  }
+
   handleSubmit(values) {
+    var myState = this.state;
+
     axios
       .post(
-        `${window.host}api.comeals${window.topLevel}/api/v1/residents/token`,
+        `${myState.host}api.comeals${myState.topLevel}/api/v1/residents/token`,
         {
           email: values.email,
           password: values.password
@@ -18,11 +32,12 @@ class ResidentsLogin extends Component {
           console.log("data", response.data);
           Cookie.set("token", response.data.token, {
             expires: 7300,
-            domain: `.comeals${window.topLevel}`
+            domain: `.comeals${myState.topLevel}`
           });
-          window.location.href = `${window.host}${response.data.slug}.comeals${
-            window.topLevel
+          var newUrl = `${myState.host}${response.data.slug}.comeals${
+            myState.topLevel
           }/calendar`;
+          window.location.href = newUrl;
         }
       })
       .catch(function(error) {

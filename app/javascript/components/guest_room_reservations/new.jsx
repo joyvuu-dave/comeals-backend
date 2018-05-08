@@ -4,19 +4,32 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
+import Cookie from "js-cookie";
 
 class GuestRoomReservationsNew extends Component {
   constructor(props) {
     super(props);
     this.handleDayChange = this.handleDayChange.bind(this);
+
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    this.state = {
+      host: `${window.location.protocol}//`,
+      topLevel: `.${topLevel}`,
+      slug: window.location.hostname.split(".")[0],
+      communityId: Cookie.get("community_id")
+    };
   }
 
   handleSubmit(values) {
+    var myState = this.state;
+
     axios
       .post(
-        `${window.host}api.comeals${
-          window.topLevel
-        }/api/v1/guest-room-reservations?community_id=${window.community_id}`,
+        `${myState.host}api.comeals${
+          myState.topLevel
+        }/api/v1/guest-room-reservations?community_id=${myState.communityId}`,
         {
           resident_id: values.resident_id,
           date: values.day
@@ -24,8 +37,8 @@ class GuestRoomReservationsNew extends Component {
       )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}${window.slug}.comeals${
-            window.topLevel
+          window.location.href = `${myState.host}${myState.slug}.comeals${
+            myState.topLevel
           }/calendar`;
         }
       })

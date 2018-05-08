@@ -9,13 +9,24 @@ class GuestRoomReservationsEdit extends Component {
   constructor(props) {
     super(props);
     this.handleDayChange = this.handleDayChange.bind(this);
+
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    this.state = {
+      host: `${window.location.protocol}//`,
+      topLevel: `.${topLevel}`,
+      slug: window.location.hostname.split(".")[0]
+    };
   }
 
   handleSubmit(values) {
+    var myState = this.state;
+
     axios
       .patch(
-        `${window.host}api.comeals${
-          window.topLevel
+        `${myState.host}api.comeals${
+          myState.topLevel
         }/api/v1/guest-room-reservations/${this.props.event.id}/update`,
         {
           resident_id: values.resident_id,
@@ -24,8 +35,8 @@ class GuestRoomReservationsEdit extends Component {
       )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${window.host}${window.slug}.comeals${
-            window.topLevel
+          window.location.href = `${myState.host}${myState.slug}.comeals${
+            myState.topLevel
           }/calendar`;
         }
       })
@@ -53,16 +64,18 @@ class GuestRoomReservationsEdit extends Component {
 
   handleDelete() {
     if (window.confirm("Do you really want to delete this reservation?")) {
+      var myState = this.state;
+
       axios
         .delete(
-          `${window.host}api.comeals${
-            window.topLevel
+          `${myState.host}api.comeals${
+            myState.topLevel
           }/api/v1/guest-room-reservations/${this.props.event.id}/delete`
         )
         .then(function(response) {
           if (response.status === 200) {
-            window.location.href = `${window.host}${window.slug}.comeals${
-              window.topLevel
+            window.location.href = `${myState.host}${myState.slug}.comeals${
+              myState.topLevel
             }/calendar`;
           }
         })

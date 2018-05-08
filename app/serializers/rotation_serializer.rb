@@ -21,7 +21,6 @@
 #
 
 class RotationSerializer < ActiveModel::Serializer
-  cache key: 'rotation'
   attributes :start,
              :end,
              :color,

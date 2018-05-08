@@ -22,7 +22,7 @@
 
 class GuestRoomReservationSerializer < ActiveModel::Serializer
   include ApplicationHelper
-  cache key: 'grr'
+
   attributes :title,
              :start,
              :url,

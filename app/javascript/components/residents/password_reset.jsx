@@ -3,13 +3,25 @@ import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 
 class ResidentsPasswordReset extends Component {
-  handleChange(values) {}
-  handleUpdate(form) {}
+  constructor(props) {
+    super(props);
+
+    var topLevel = window.location.hostname.split(".");
+    topLevel = topLevel[topLevel.length - 1];
+
+    this.state = {
+      host: `${window.location.protocol}//`,
+      topLevel: `.${topLevel}`
+    };
+  }
+
   handleSubmit(values) {
+    var myState = this.state;
+
     axios
       .post(
-        `${window.host}api.comeals${
-          window.topLevel
+        `${myState.host}api.comeals${
+          myState.topLevel
         }/api/v1/residents/password-reset`,
         {
           email: values.email
@@ -18,7 +30,9 @@ class ResidentsPasswordReset extends Component {
       .then(function(response) {
         if (response.status === 200) {
           window.alert(response.data.message);
-          window.location.href = `${window.host}www.comeals${window.topLevel}`;
+          window.location.href = `${myState.host}www.comeals${
+            myState.topLevel
+          }`;
         }
       })
       .catch(function(error) {
@@ -45,11 +59,7 @@ class ResidentsPasswordReset extends Component {
 
   render() {
     return (
-      <LocalForm
-        onUpdate={form => this.handleUpdate(form)}
-        onChange={values => this.handleChange(values)}
-        onSubmit={values => this.handleSubmit(values)}
-      >
+      <LocalForm onSubmit={values => this.handleSubmit(values)}>
         <fieldset className="w-50">
           <legend>Password Reset</legend>
           <label className="w-75">

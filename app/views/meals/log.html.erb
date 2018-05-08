@@ -1,12 +1,11 @@
 
-<h1><%= @meal.date %></h1>
-
 <style>
-body {
-  background-color: initial !important;
-}
+  body {
+    background-color: initial !important;
+  }
 </style>
 
+<h1><%= @meal.date %></h1>
 <table class="table-striped">
   <thead>
     <tr>
@@ -22,11 +21,11 @@ body {
       <td><%= audit.id %></td>
 
       <% if audit.user&.name.present? && audit.user&.name == "Dave Riddle" %>
-      <td>Common House</td>
+        <td>Common House</td>
       <% elsif audit.user&.name.present? && audit.user&.name != "Dave Riddle" %>
-      <td><%= resident_name_helper(audit.user&.name) %></td>
+        <td><%= resident_name_helper(audit.user&.name) %></td>
       <% else %>
-      <td>Admin</td>
+        <td>Admin</td>
       <% end %>
       <td><%= parse_audit(audit) %></td>
       <td><%= (ActiveSupport::TimeZone.find_tzinfo('Pacific Time (US & Canada)').utc_to_local(audit.created_at)).strftime("%B %d, %Y at %I:%M %p") %></td>

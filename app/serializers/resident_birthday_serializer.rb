@@ -1,7 +1,6 @@
 class ResidentBirthdaySerializer < ActiveModel::Serializer
   include ApplicationHelper
 
-  cache key: 'resident_birthday'
   attributes :title,
              :description,
              :start

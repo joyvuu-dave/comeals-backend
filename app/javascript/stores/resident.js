@@ -1,5 +1,4 @@
 import { types, getParent } from "mobx-state-tree";
-import { v4 } from "uuid";
 import axios from "axios";
 import Cookie from "js-cookie";
 
@@ -104,6 +103,10 @@ const Resident = types
       return val;
     },
     toggleAttending(options = { late: false, toggleVeg: false }) {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       // Scenario #1: Meal is closed, you're not attending
       //              there are no extras -- can't add yourself
       if (
@@ -139,7 +142,7 @@ const Resident = types
         self.form.form.meal.decrementExtras();
         axios({
           method: "post",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          url: `${host}api.comeals${topLevel}/api/v1/meals/${
             self.meal_id
           }/residents/${self.id}`,
           data: {
@@ -184,7 +187,7 @@ const Resident = types
         self.form.form.meal.incrementExtras();
         axios({
           method: "delete",
-          url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+          url: `${host}api.comeals${topLevel}/api/v1/meals/${
             self.meal_id
           }/residents/${self.id}`,
           data: {
@@ -226,6 +229,10 @@ const Resident = types
       }
     },
     toggleLate() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       if (self.attending === false) {
         self.toggleAttending({ late: true });
         return;
@@ -236,7 +243,7 @@ const Resident = types
 
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${
           self.meal_id
         }/residents/${self.id}`,
         data: {
@@ -275,6 +282,10 @@ const Resident = types
         });
     },
     toggleVeg() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       if (self.attending === false) {
         self.toggleAttending({ toggleVeg: true });
         return;
@@ -285,7 +296,7 @@ const Resident = types
 
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${
           self.meal_id
         }/residents/${self.id}`,
         data: {
@@ -324,11 +335,15 @@ const Resident = types
         });
     },
     addGuest(options = { vegetarian: false }) {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       self.form.form.meal.decrementExtras();
 
       axios({
         method: "post",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${
           self.meal_id
         }/residents/${self.id}/guests`,
         data: {
@@ -373,6 +388,10 @@ const Resident = types
     removeGuest() {
       console.log("This Resident Can Remove Guests: ", self.canRemoveGuest);
 
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       if (!self.canRemoveGuest) {
         return false;
       }
@@ -389,7 +408,7 @@ const Resident = types
 
       axios({
         method: "delete",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${
           self.meal_id
         }/residents/${self.id}/guests/${guestId}`,
         data: {

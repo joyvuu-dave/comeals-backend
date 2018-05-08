@@ -116,10 +116,13 @@ export const DataStore = types
       const val = !self.meal.closed;
       self.meal.closed = val;
 
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       axios({
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
-          self.meal.id
-        }/closed`,
+        url: `${
+          window.location.protocol
+        }//api.comeals${topLevel}/api/v1/meals/${self.meal.id}/closed`,
         method: "patch",
         withCredentials: true,
         data: {
@@ -167,23 +170,19 @@ export const DataStore = types
         });
     },
     logout() {
-      Cookie.remove("token", { domain: `.comeals${window.topLevel}` });
-      setTimeout(
-        () =>
-          (window.location.href = `${window.host}comeals${window.topLevel}/`)
-      );
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+      var host = `${window.location.protocol}//`;
+
+      Cookie.remove("token", { domain: `.comeals${topLevel}` });
+
+      setTimeout(() => (window.location.href = `${host}comeals${topLevel}/`));
     },
     calendar() {
       window.location.href = "/calendar";
     },
     history() {
       window.open(`/meals/${self.id}/log`, "_blank");
-    },
-    previousMeal() {
-      window.location.href = `/meals/${self.id}/previous`;
-    },
-    nextMeal() {
-      window.location.href = `/meals/${self.id}/next`;
     },
     submitDescription() {
       let obj = {
@@ -194,9 +193,13 @@ export const DataStore = types
 
       console.log(obj);
 
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${
           self.meal.id
         }/description`,
         data: obj,
@@ -270,11 +273,13 @@ export const DataStore = types
 
       console.log(obj);
 
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       axios({
         method: "patch",
-        url: `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
-          self.meal.id
-        }/bills`,
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${self.meal.id}/bills`,
         data: obj,
         withCredentials: true
       })
@@ -318,13 +323,18 @@ export const DataStore = types
           self.loadDataAsync();
         });
     },
-    loadDataAsync() {
+    loadDataAsync(id) {
+      var myId = id;
+      if (typeof myId === "undefined") {
+        myId = self.meal.id;
+      }
+
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
       axios
-        .get(
-          `${window.host}api.comeals${window.topLevel}/api/v1/meals/${
-            self.meal.id
-          }/cooks`
-        )
+        .get(`${host}api.comeals${topLevel}/api/v1/meals/${myId}/cooks`)
         .then(function(response) {
           if (response.status === 200) {
             window.data = response.data;
@@ -354,10 +364,20 @@ export const DataStore = types
     },
     loadData(data) {
       // Assign Meal Data
+      const dateArray = data.date.split("-");
+      const date = new Date(
+        dateArray[0],
+        Number(dateArray[1] - 1),
+        Number(dateArray[2])
+      );
+
+      self.meal.date = date;
       self.meal.description = data.description;
       self.meal.closed = data.closed;
       self.meal.closed_at = new Date(data.closed_at);
       self.meal.reconciled = data.reconciled;
+      self.meal.nextId = data.next_id;
+      self.meal.prevId = data.prev_id;
 
       if (data.max === null) {
         self.meal.extras = null;
@@ -443,5 +463,42 @@ export const DataStore = types
     },
     appendGuest(obj) {
       self.guestStore.guests.put(obj);
+    },
+    addMeal(obj) {
+      self.meals.push(obj);
+    },
+    switchMeals(obj) {
+      if (
+        typeof self.meals.find((item, index, array) => item.id === obj.id) ===
+        "undefined"
+      ) {
+        self.addMeal(obj);
+      }
+
+      self.meal = obj.id;
+
+      if (self.billStore && self.billStore.bills) {
+        self.clearBills();
+      }
+      if (self.residentStore && self.residentStore.residents) {
+        self.clearResidents();
+      }
+      if (self.guestStore && self.guestStore.guests) {
+        self.clearGuests();
+      }
+
+      self.loadDataAsync();
+    },
+    goToPrevMeal() {
+      self.isLoading = true;
+      self.switchMeals({ id: self.meal.prevId });
+    },
+    goToNextMeal() {
+      self.isLoading = true;
+      self.switchMeals({ id: self.meal.nextId });
+    },
+    goToMeal(mealId) {
+      self.isLoading = true;
+      self.switchMeals({ id: Number.parseInt(mealId, 10) });
     }
   }));

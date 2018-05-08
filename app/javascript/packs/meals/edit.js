@@ -1,53 +1,45 @@
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "mobx-react";
+import { types } from "mobx-state-tree";
 import Pusher from "pusher-js";
 
-import { DataStore } from "../../stores/data_store";
+import createBrowserHistory from "history/createBrowserHistory";
+import { RouterModel, syncHistoryWithStore } from "mst-react-router";
+import { Router } from "react-router";
 
-import Header from "../../components/header";
-import Extras from "../../components/extras";
-import ButtonBar from "../../components/button_bar";
-import DateBox from "../../components/date_box";
-import MenuBox from "../../components/menu_box";
-import CooksBox from "../../components/cooks_box";
-import InfoBox from "../../components/info_box";
-import AttendeesBox from "../../components/attendees_box";
+import { DataStore } from "../../stores/data_store";
+import MealsEdit from "../../components/meals/edit";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const styles = {
-    section: {
-      margin: "1em 0 1em 0"
-    }
-  };
-
   const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
   const id = parseInt(data.id);
 
-  // Gotta format our date obj because JavaScript
-  const dateArray = data.date.split("-");
-  const date = new Date(
-    dateArray[0],
-    Number(dateArray[1] - 1),
-    Number(dateArray[2])
-  );
+  const browserHistory = createBrowserHistory();
+  const routerModel = RouterModel.create();
 
-  const production = data.production;
-  if (production) {
-    window.host = "https://";
-    window.topLevel = ".com";
-  } else {
-    window.host = "http://";
-    window.topLevel = ".test";
-  }
+  // Define root model type
+  const Model = types.model({
+    router: RouterModel
+  });
+
+  const routingStore = Model.create({ router: routerModel });
 
   const store = DataStore.create({
     meal: id,
-    meals: [{ id: id, date: date }]
+    meals: [{ id: id }]
   });
 
   window.store = store;
+
+  const stores = {
+    routingStore: routingStore,
+    store: store
+  };
+
+  // Hook up router model to browser history object
+  const history = syncHistoryWithStore(createBrowserHistory(), routerModel);
 
   var pusher = new Pusher("8affd7213bb4643ca7f1", {
     cluster: "us2",
@@ -77,21 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   render(
-    <Provider store={store}>
-      <div className="comeals-container">
-        <Header />
-        <div className="comeals-container">
-          <section style={styles.section}>
-            <div className="wrapper">
-              <DateBox />
-              <MenuBox />
-              <CooksBox />
-              <InfoBox />
-              <AttendeesBox />
-            </div>
-          </section>
-        </div>
-      </div>
+    <Provider {...stores}>
+      <Router history={history}>
+        <MealsEdit />
+      </Router>
     </Provider>,
     document.getElementById("main")
   );
