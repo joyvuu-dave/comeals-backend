@@ -37,7 +37,6 @@ class ResidentsLogin extends Component {
           var newUrl = `${myState.host}${response.data.slug}.comeals${
             myState.topLevel
           }/calendar`;
-          console.log("newUrl", newUrl);
           window.location.href = newUrl;
         }
       })
