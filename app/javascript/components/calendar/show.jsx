@@ -101,7 +101,9 @@ const Calendar = inject("store")(
         }
 
         componentDidUpdate() {
-          this.updateEventSources();
+          if (!store.modalIsChanging) {
+            this.updateEventSources();
+          }
         }
 
         logout() {
