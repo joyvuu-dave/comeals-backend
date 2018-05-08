@@ -28,26 +28,40 @@ const styles = {
   }
 };
 
-const DateBox = inject("store", "routing")(
+const DateBox = inject("store", "routingStore")(
   withRouter(
     observer(
       class DateBox extends Component {
         constructor(props) {
           super(props);
+
           this.handlePrevClick = this.handlePrevClick.bind(this);
           this.handleNextClick = this.handleNextClick.bind(this);
         }
 
+        componentDidUpdate() {
+          var pathNameArray = this.props.routingStore.router.location.pathname.split(
+            "/"
+          );
+          var mealId = pathNameArray[pathNameArray.length - 2];
+
+          if (store.meal) {
+            if (Number.parseInt(mealId, 10) !== store.meal.id) {
+              store.goToMeal(mealId);
+            }
+          }
+        }
+
         handlePrevClick() {
-          const { push } = this.props.routing;
-          push(`/meals/${store.meal.prevId}/edit`);
-          store.goToPrevMeal();
+          this.props.routingStore.router.push(
+            `/meals/${store.meal.prevId}/edit`
+          );
         }
 
         handleNextClick() {
-          const { push } = this.props.routing;
-          push(`/meals/${store.meal.nextId}/edit`);
-          store.goToNextMeal();
+          this.props.routingStore.router.push(
+            `/meals/${store.meal.nextId}/edit`
+          );
         }
 
         displayDate() {

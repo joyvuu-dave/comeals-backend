@@ -15,7 +15,7 @@ const styles = {
   }
 };
 
-const Calendar = inject("store", "routing")(
+const Calendar = inject("store")(
   withRouter(
     observer(
       class Calendar extends Component {

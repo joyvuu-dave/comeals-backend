@@ -1,10 +1,11 @@
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "mobx-react";
+import { types } from "mobx-state-tree";
 import Pusher from "pusher-js";
 
 import createBrowserHistory from "history/createBrowserHistory";
-import { RouterStore, syncHistoryWithStore } from "mobx-react-router";
+import { RouterModel, syncHistoryWithStore } from "mst-react-router";
 import { Router } from "react-router";
 
 import { DataStore } from "../../stores/data_store";
@@ -16,7 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const id = parseInt(data.id);
 
   const browserHistory = createBrowserHistory();
-  const routingStore = new RouterStore();
+  const routerModel = RouterModel.create();
+
+  // Define root model type
+  const Model = types.model({
+    router: RouterModel
+  });
+
+  const routingStore = Model.create({ router: routerModel });
 
   const store = DataStore.create({
     meal: id,
@@ -26,11 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
   window.store = store;
 
   const stores = {
-    routing: routingStore,
+    routingStore: routingStore,
     store: store
   };
 
-  const history = syncHistoryWithStore(browserHistory, routingStore);
+  // Hook up router model to browser history object
+  const history = syncHistoryWithStore(createBrowserHistory(), routerModel);
 
   var pusher = new Pusher("8affd7213bb4643ca7f1", {
     cluster: "us2",

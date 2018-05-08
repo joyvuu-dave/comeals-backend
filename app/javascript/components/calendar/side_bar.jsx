@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
 import { getCalendarInfo } from "../../helpers/helpers";
+import Cookie from "js-cookie";
 
 const styles = {
   sideBar: {
@@ -11,7 +12,7 @@ const styles = {
   }
 };
 
-const SideBar = inject("store", "routing")(
+const SideBar = inject("store", "routingStore")(
   withRouter(
     observer(
       class SideBar extends Component {
@@ -26,6 +27,32 @@ const SideBar = inject("store", "routing")(
             topLevel: `.${topLevel}`,
             slug: window.location.hostname.split(".")[0]
           };
+        }
+
+        componentDidMount() {
+          this.setCalendarInfo();
+        }
+
+        componentDidUpdate() {
+          this.setCalendarInfo();
+        }
+
+        setCalendarInfo() {
+          var pathNameArray = this.props.routingStore.router.location.pathname.split(
+            "/"
+          );
+          var pathName = pathNameArray[pathNameArray.length - 1];
+          if (pathName === "calendar") {
+            pathName = "all";
+          }
+
+          var calendarInfo = getCalendarInfo(
+            Cookie.get("community_id"),
+            pathName
+          );
+
+          store.setCalendarName(calendarInfo.displayName);
+          store.setEventSources(calendarInfo.eventSources);
         }
 
         openNewGuestRoomReservation() {
@@ -53,57 +80,27 @@ const SideBar = inject("store", "routing")(
         }
 
         openAllCalendars() {
-          const { push } = this.props.routing;
-          push("/calendar");
-
-          var calendarInfo = getCalendarInfo(1, "all");
-          store.setCalendarName(calendarInfo.displayName);
-          store.setEventSources(calendarInfo.eventSources);
+          this.props.routingStore.router.push("/calendar");
         }
 
         openMealCalendar() {
-          const { push } = this.props.routing;
-          push("/calendar/meals");
-
-          var calendarInfo = getCalendarInfo(1, "meals");
-          store.setCalendarName(calendarInfo.displayName);
-          store.setEventSources(calendarInfo.eventSources);
+          this.props.routingStore.router.push("/calendar/meals");
         }
 
         openGuestRoomCalendar() {
-          const { push } = this.props.routing;
-          push("/calendar/guest-room");
-
-          var calendarInfo = getCalendarInfo(1, "guest-room");
-          store.setCalendarName(calendarInfo.displayName);
-          store.setEventSources(calendarInfo.eventSources);
+          this.props.routingStore.router.push("/calendar/guest-room");
         }
 
         openCommonHouseCalendar() {
-          const { push } = this.props.routing;
-          push("/calendar/common-house");
-
-          var calendarInfo = getCalendarInfo(1, "common-house");
-          store.setCalendarName(calendarInfo.displayName);
-          store.setEventSources(calendarInfo.eventSources);
+          this.props.routingStore.router.push("/calendar/common-house");
         }
 
         openEventsCalendar() {
-          const { push } = this.props.routing;
-          push("/calendar/events");
-
-          var calendarInfo = getCalendarInfo(1, "events");
-          store.setCalendarName(calendarInfo.displayName);
-          store.setEventSources(calendarInfo.eventSources);
+          this.props.routingStore.router.push("/calendar/events");
         }
 
         openBirthdaysCalendar() {
-          const { push } = this.props.routing;
-          push("/calendar/birthdays");
-
-          var calendarInfo = getCalendarInfo(1, "birthdays");
-          store.setCalendarName(calendarInfo.displayName);
-          store.setEventSources(calendarInfo.eventSources);
+          this.props.routingStore.router.push("/calendar/birthdays");
         }
 
         render() {

@@ -496,5 +496,9 @@ export const DataStore = types
     goToNextMeal() {
       self.isLoading = true;
       self.switchMeals({ id: self.meal.nextId });
+    },
+    goToMeal(mealId) {
+      self.isLoading = true;
+      self.switchMeals({ id: Number.parseInt(mealId, 10) });
     }
   }));
