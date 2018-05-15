@@ -44,7 +44,7 @@ gem 'connection_pool'
 gem 'newrelic_rpm'
 gem 'sendgrid-ruby'
 gem 'icalendar'
-gem 'platform-api', github: 'heroku/platform-api'
+gem 'platform-api'
 gem 'skylight'
 
 # Use ActiveStorage variant

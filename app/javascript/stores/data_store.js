@@ -6,6 +6,8 @@ import Meal from "./meal";
 import ResidentStore from "./resident_store";
 import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
+import EventSource from "./event_source";
+import { RouterModel } from "mst-react-router";
 
 export const DataStore = types
   .model("DataStore", {
@@ -13,7 +15,9 @@ export const DataStore = types
     editDescriptionMode: true,
     editBillsMode: true,
     meal: types.maybe(types.reference(Meal)),
-    meals: types.array(Meal),
+    nextMeal: types.maybe(types.reference(Meal)),
+    prevMeal: types.maybe(types.reference(Meal)),
+    meals: types.optional(types.array(Meal), []),
     residentStore: types.optional(ResidentStore, {
       residents: {}
     }),
@@ -22,7 +26,14 @@ export const DataStore = types
     }),
     guestStore: types.optional(GuestStore, {
       guests: {}
-    })
+    }),
+    router: RouterModel,
+    calendarName: types.optional(types.string, ""),
+    userName: types.optional(types.string, ""),
+    eventSources: types.optional(types.array(EventSource), []),
+    modalActive: false,
+    modalName: types.maybe(types.string),
+    modalIsChanging: false
   })
   .views(self => ({
     get id() {
@@ -179,10 +190,11 @@ export const DataStore = types
       setTimeout(() => (window.location.href = `${host}comeals${topLevel}/`));
     },
     calendar() {
-      window.location.href = "/calendar";
+      //window.location.href = "/calendar";
+      self.router.push("/calendar");
     },
     history() {
-      window.open(`/meals/${self.id}/log`, "_blank");
+      window.open(`/meals/${self.id}/log`, "_blank", "noopener");
     },
     submitDescription() {
       let obj = {
@@ -326,7 +338,15 @@ export const DataStore = types
     loadDataAsync(id) {
       var myId = id;
       if (typeof myId === "undefined") {
-        myId = self.meal.id;
+        console.log("myId undefined");
+        if (self.meal === null) {
+          console.log("meal undefined");
+          var pathNameArray = self.router.location.pathname.split("/");
+          myId = pathNameArray[pathNameArray.length - 2];
+        } else {
+          console.log("loading meal: " + self.meal.id);
+          myId = self.meal.id;
+        }
       }
 
       var host = `${window.location.protocol}//`;
@@ -337,8 +357,7 @@ export const DataStore = types
         .get(`${host}api.comeals${topLevel}/api/v1/meals/${myId}/cooks`)
         .then(function(response) {
           if (response.status === 200) {
-            window.data = response.data;
-            self.loadData(response.data);
+            self.loadData(self.meal, response.data);
           }
         })
         .catch(function(error) {
@@ -362,7 +381,7 @@ export const DataStore = types
           const config = error.config;
         });
     },
-    loadData(data) {
+    loadData(meal, data) {
       // Assign Meal Data
       const dateArray = data.date.split("-");
       const date = new Date(
@@ -371,23 +390,23 @@ export const DataStore = types
         Number(dateArray[2])
       );
 
-      self.meal.date = date;
-      self.meal.description = data.description;
-      self.meal.closed = data.closed;
-      self.meal.closed_at = new Date(data.closed_at);
-      self.meal.reconciled = data.reconciled;
-      self.meal.nextId = data.next_id;
-      self.meal.prevId = data.prev_id;
+      meal.date = date;
+      meal.description = data.description;
+      meal.closed = data.closed;
+      meal.closed_at = new Date(data.closed_at);
+      meal.reconciled = data.reconciled;
+      meal.nextId = data.next_id;
+      meal.prevId = data.prev_id;
 
       if (data.max === null) {
-        self.meal.extras = null;
+        meal.extras = null;
       } else {
         const residentsCount = data.residents.filter(
           resident => resident.attending
         ).length;
 
         const guestsCount = data.guests.length;
-        self.meal.extras = data.max - (residentsCount + guestsCount);
+        meal.extras = data.max - (residentsCount + guestsCount);
       }
 
       let residents = data.residents.sort((a, b) => {
@@ -450,7 +469,18 @@ export const DataStore = types
       self.isLoading = false;
     },
     afterCreate() {
-      self.loadDataAsync();
+      var pathNameArray = window.location.pathname.split("/");
+
+      if (pathNameArray[pathNameArray.length - 3] === "meals") {
+        var myId = pathNameArray[pathNameArray.length - 2];
+
+        self.meals.push({ id: Number(myId) });
+        self.meal = myId;
+
+        self.loadDataAsync(myId);
+      } else {
+        console.log("must be a calendar...");
+      }
     },
     clearResidents() {
       self.residentStore.residents.clear();
@@ -500,5 +530,56 @@ export const DataStore = types
     goToMeal(mealId) {
       self.isLoading = true;
       self.switchMeals({ id: Number.parseInt(mealId, 10) });
+    },
+    fetchPrev() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
+      var myId = self.meal.id;
+
+      axios
+        .get(`${host}api.comeals${topLevel}/api/v1/meals/${myId}/prev`)
+        .then(function(response) {
+          if (response.status === 200) {
+            console.log("about to load prev data");
+            self.loadData(self.prevMeal, response.data);
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    },
+    setCalendarInfo(name, array) {
+      self.modalIsChanging = false;
+      self.calendarName = name;
+      self.eventSources = array;
+    },
+    closeModal() {
+      self.modalIsChanging = true;
+      self.modalActive = false;
+      self.modalName = null;
+    },
+    openModal(name) {
+      self.modalIsChanging = true;
+      self.modalName = name;
+      self.modalActive = true;
     }
   }));

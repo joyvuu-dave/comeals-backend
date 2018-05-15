@@ -1,4 +1,13 @@
-@import "shoelace-css/source/css/shoelace.css";
+@import "normalize.css/normalize.css";
+@import "shoelace-css/source/css/content.css";
+@import "shoelace-css/source/css/badges.css";
+@import "shoelace-css/source/css/buttons.css";
+@import "shoelace-css/source/css/dropdowns.css";
+@import "shoelace-css/source/css/forms.css";
+@import "shoelace-css/source/css/switches.css";
+@import "shoelace-css/source/css/tables.css";
+@import "shoelace-css/source/css/utilities.css";
+@import "shoelace-css/source/css/variables.css";
 
 :root {
   /* Colors */
@@ -312,4 +321,11 @@ Prevent FullCalendar title text from being cut off
 */
 .fc-day-grid-event > .fc-content {
   white-space: inherit !important;
+}
+
+/*
+Make modal showup on top of calendar
+*/
+.ReactModal__Overlay--after-open {
+  z-index: 200 !important;
 }

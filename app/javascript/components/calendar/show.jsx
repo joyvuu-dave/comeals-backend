@@ -37,6 +37,19 @@ const Calendar = inject("store")(
           this.handleCloseModal = this.handleCloseModal.bind(this);
         }
 
+        componentDidMount() {
+          console.log("calendar: i mounted");
+          this.updateEventSources();
+        }
+
+        componentDidUpdate() {
+          console.log("calendar: i updated");
+
+          if (!store.modalIsChanging) {
+            this.updateEventSources();
+          }
+        }
+
         renderModal() {
           if (store.modalActive === false) {
             return null;
@@ -70,6 +83,7 @@ const Calendar = inject("store")(
           const { calendar } = this.refs;
           var eventSources = store.eventSources;
 
+          var self = this;
           $(calendar).fullCalendar("destroy");
           $(calendar).fullCalendar({
             displayEventEnd: true,
@@ -87,23 +101,16 @@ const Calendar = inject("store")(
               }
 
               eventElement.attr("title", event.description);
+            },
+            eventClick: function(event) {
+              if (event.url) {
+                self.props.store.router.push(event.url);
+                return false;
+              }
             }
           });
 
-          setInterval(() => this.refetch(calendar), 60000);
-        }
-
-        componentDidMount() {
-          this.updateEventSources();
-
-          // Fix for mobile flex bug
-          document.getElementById("main").remove();
-        }
-
-        componentDidUpdate() {
-          if (!store.modalIsChanging) {
-            this.updateEventSources();
-          }
+          setInterval(() => this.refetch(calendar), 300000);
         }
 
         logout() {
@@ -115,7 +122,7 @@ const Calendar = inject("store")(
         }
 
         openWiki() {
-          window.open("https://wiki.swansway.com/", "_blank");
+          window.open("https://wiki.swansway.com/", "_blank", "noopener");
         }
 
         refetch(calendar) {

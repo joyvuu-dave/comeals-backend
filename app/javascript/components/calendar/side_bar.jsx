@@ -12,7 +12,7 @@ const styles = {
   }
 };
 
-const SideBar = inject("store", "routingStore")(
+const SideBar = inject("store")(
   withRouter(
     observer(
       class SideBar extends Component {
@@ -38,23 +38,25 @@ const SideBar = inject("store", "routingStore")(
         }
 
         setInfo() {
-          var pathNameArray = this.props.routingStore.router.location.pathname.split(
-            "/"
-          );
-          var pathName = pathNameArray[pathNameArray.length - 1];
-          if (pathName === "calendar") {
-            pathName = "all";
+          if (this.props.store.router) {
+            var pathNameArray = this.props.store.router.location.pathname.split(
+              "/"
+            );
+            var pathName = pathNameArray[pathNameArray.length - 1];
+            if (pathName === "calendar") {
+              pathName = "all";
+            }
+
+            var calendarInfo = getCalendarInfo(
+              Cookie.get("community_id"),
+              pathName
+            );
+
+            store.setCalendarInfo(
+              calendarInfo.displayName,
+              calendarInfo.eventSources
+            );
           }
-
-          var calendarInfo = getCalendarInfo(
-            Cookie.get("community_id"),
-            pathName
-          );
-
-          store.setCalendarInfo(
-            calendarInfo.displayName,
-            calendarInfo.eventSources
-          );
         }
 
         openNewGuestRoomReservation() {
@@ -87,27 +89,27 @@ const SideBar = inject("store", "routingStore")(
         }
 
         openAllCalendars() {
-          this.props.routingStore.router.push("/calendar");
+          this.props.store.router.push("/calendar");
         }
 
         openMealCalendar() {
-          this.props.routingStore.router.push("/calendar/meals");
+          this.props.store.router.push("/calendar/meals");
         }
 
         openGuestRoomCalendar() {
-          this.props.routingStore.router.push("/calendar/guest-room");
+          this.props.store.router.push("/calendar/guest-room");
         }
 
         openCommonHouseCalendar() {
-          this.props.routingStore.router.push("/calendar/common-house");
+          this.props.store.router.push("/calendar/common-house");
         }
 
         openEventsCalendar() {
-          this.props.routingStore.router.push("/calendar/events");
+          this.props.store.router.push("/calendar/events");
         }
 
         openBirthdaysCalendar() {
-          this.props.routingStore.router.push("/calendar/birthdays");
+          this.props.store.router.push("/calendar/birthdays");
         }
 
         render() {

@@ -9,7 +9,7 @@ module Api
         if community.save
           render json: { message: "#{community.name} has been created." } and return
         else
-          render json: { message: community.errors.first[1] }, status: :bad_request and return
+          render json: { message: community.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 

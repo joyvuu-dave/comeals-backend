@@ -19,7 +19,9 @@ const Extras = inject("store")(
   observer(({ store }) => (
     <div style={styles.main}>
       <h5 style={styles.title}>Extras</h5>
-      <div style={store.meal.closed ? styles.closed : styles.open}>
+      <div
+        style={store.meal && store.meal.closed ? styles.closed : styles.open}
+      >
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(val => {
           return (
             <div key={val} className="pretty p-default p-round p-fill">
@@ -27,9 +29,9 @@ const Extras = inject("store")(
                 key={val}
                 type="checkbox"
                 value={val}
-                checked={store.meal.extras === val}
+                checked={store.meal && store.meal.extras === val}
                 onChange={e => store.meal.setExtras(e.target.value)}
-                disabled={store.meal.reconciled}
+                disabled={store.meal && store.meal.reconciled}
               />
               <div className="state p-success">
                 <label>{val}</label>

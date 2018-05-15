@@ -3,6 +3,10 @@ import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
 import moment from "moment";
 
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import faChevronLeft from "@fortawesome/fontawesome-free-solid/faChevronLeft";
+import faChevronRight from "@fortawesome/fontawesome-free-solid/faChevronRight";
+
 const styles = {
   main: {
     display: "flex",
@@ -28,7 +32,7 @@ const styles = {
   }
 };
 
-const DateBox = inject("store", "routingStore")(
+const DateBox = inject("store")(
   withRouter(
     observer(
       class DateBox extends Component {
@@ -40,7 +44,7 @@ const DateBox = inject("store", "routingStore")(
         }
 
         componentDidUpdate() {
-          var pathNameArray = this.props.routingStore.router.location.pathname.split(
+          var pathNameArray = this.props.store.router.location.pathname.split(
             "/"
           );
           var mealId = pathNameArray[pathNameArray.length - 2];
@@ -53,18 +57,18 @@ const DateBox = inject("store", "routingStore")(
         }
 
         handlePrevClick() {
-          this.props.routingStore.router.push(
-            `/meals/${store.meal.prevId}/edit`
-          );
+          this.props.store.router.push(`/meals/${store.meal.prevId}/edit`);
         }
 
         handleNextClick() {
-          this.props.routingStore.router.push(
-            `/meals/${store.meal.nextId}/edit`
-          );
+          this.props.store.router.push(`/meals/${store.meal.nextId}/edit`);
         }
 
         displayDate() {
+          if (store.meal === null) {
+            return "loading...";
+          }
+
           if (store.meal.date === null) {
             return "";
           }
@@ -82,6 +86,18 @@ const DateBox = inject("store", "routingStore")(
           return moment(store.meal.date).from(today);
         }
 
+        displayTopDate() {
+          if (store.meal === null) {
+            return "";
+          }
+
+          if (store.meal.date === null) {
+            return "";
+          }
+
+          return moment(store.meal.date).format("ddd, MMM Do");
+        }
+
         render() {
           return (
             <div
@@ -94,23 +110,19 @@ const DateBox = inject("store", "routingStore")(
                   style={styles.arrow}
                   onClick={this.handlePrevClick}
                 >
-                  <i className="fas fa-chevron-left fa-3x pad-r-md" />
+                  <FontAwesomeIcon icon={faChevronLeft} size="3x" />
                 </div>
-                <h2>
-                  {store.meal.date === null
-                    ? ""
-                    : moment(store.meal.date).format("ddd, MMM Do")}
-                </h2>
+                <h2>{this.displayTopDate()}</h2>
                 <div
                   className="arrow"
                   style={styles.arrow}
                   onClick={this.handleNextClick}
                 >
-                  <i className="fas fa-chevron-right fa-3x pad-r-md" />
+                  <FontAwesomeIcon icon={faChevronRight} size="3x" />
                 </div>
               </div>
               <h3 className="text-black">{this.displayDate()}</h3>
-              {store.meal.reconciled ? (
+              {store.meal && store.meal.reconciled ? (
                 <h1
                   className="text-black"
                   style={store.isLoading ? styles.hidden : styles.shown}
@@ -119,10 +131,14 @@ const DateBox = inject("store", "routingStore")(
                 </h1>
               ) : (
                 <h1
-                  className={store.meal.closed ? "text-primary" : "text-green"}
+                  className={
+                    store.meal && store.meal.closed
+                      ? "text-primary"
+                      : "text-green"
+                  }
                   style={store.isLoading ? styles.hidden : styles.shown}
                 >
-                  {store.meal.closed ? "CLOSED" : "OPEN"}
+                  {store.meal && store.meal.closed ? "CLOSED" : "OPEN"}
                 </h1>
               )}
             </div>

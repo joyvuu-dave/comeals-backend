@@ -31,7 +31,7 @@ const MenuBox = inject("store")(
           debounceTimeout={700}
           className={store.editDescriptionMode ? "" : "offwhite"}
           style={styles.text}
-          value={store.meal.description}
+          value={store.meal && store.meal.description}
           onChange={e => store.setDescription(e.target.value)}
           disabled={!store.editDescriptionMode}
         />

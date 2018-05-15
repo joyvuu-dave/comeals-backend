@@ -6,46 +6,39 @@ import Pusher from "pusher-js";
 
 import createBrowserHistory from "history/createBrowserHistory";
 import { RouterModel, syncHistoryWithStore } from "mst-react-router";
-import { Router } from "react-router";
+import { Router, Route } from "react-router";
 
 import { DataStore } from "../../stores/data_store";
 import MealsEdit from "../../components/meals/edit";
+import Calendar from "../../components/calendar/show";
 
 document.addEventListener("DOMContentLoaded", () => {
   const node = document.getElementById("site-data");
   const data = JSON.parse(node.getAttribute("data"));
   const id = parseInt(data.id);
 
-  const browserHistory = createBrowserHistory();
-  const routerModel = RouterModel.create();
-
-  // Define root model type
-  const Model = types.model({
-    router: RouterModel
-  });
-
-  const routingStore = Model.create({ router: routerModel });
-
+  const routerInstance = RouterModel.create();
   const store = DataStore.create({
-    meal: id,
-    meals: [{ id: id }]
+    router: routerInstance
   });
 
   window.store = store;
 
-  const stores = {
-    routingStore: routingStore,
-    store: store
-  };
-
   // Hook up router model to browser history object
-  const history = syncHistoryWithStore(createBrowserHistory(), routerModel);
+  const history = syncHistoryWithStore(createBrowserHistory(), routerInstance);
+
+  // Listen for changes to the current location.
+  const unlisten = history.listen((location, action) => {
+    // location is an object like window.location
+    console.log(action, location.pathname, location.state);
+  });
 
   var pusher = new Pusher("8affd7213bb4643ca7f1", {
     cluster: "us2",
     encrypted: true
   });
 
+  // TODO: move to mobx-state-tree
   window.socketId = null;
   pusher.connection.bind("connected", function() {
     window.socketId = pusher.connection.socket_id;
@@ -69,9 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   render(
-    <Provider {...stores}>
+    <Provider store={store}>
       <Router history={history}>
-        <MealsEdit />
+        <div>
+          <Route path="/calendar" component={Calendar} />
+          <Route path="/meals" component={MealsEdit} />
+        </div>
       </Router>
     </Provider>,
     document.getElementById("main")

@@ -13,6 +13,7 @@ class ResidentsController < ApplicationController
   def calendar
     @hosts = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
     @residents = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+    render 'meals/edit'
   end
 
   # GET /residents/guest-room (subdomains)
