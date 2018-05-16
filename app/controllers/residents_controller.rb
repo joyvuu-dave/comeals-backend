@@ -9,7 +9,7 @@ class ResidentsController < ApplicationController
   def login
   end
 
-  # GET /calendar/(:type) (subdomains)
+  # GET /calendar/:type (subdomains)
   def calendar
     @hosts = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
     @residents = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")

@@ -51,7 +51,7 @@ class EventsEdit extends Component {
         if (response.status === 200) {
           window.location.href = `${myState.host}${myState.slug}.comeals${
             myState.topLevel
-          }/calendar`;
+          }/calendar/all`;
         }
       })
       .catch(function(error) {
@@ -90,7 +90,7 @@ class EventsEdit extends Component {
           if (response.status === 200) {
             window.location.href = `${myState.host}${myState.slug}.comeals${
               myState.topLevel
-            }/calendar`;
+            }/calendar/all`;
           }
         })
         .catch(function(error) {

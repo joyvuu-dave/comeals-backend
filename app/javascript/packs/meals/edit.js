@@ -27,12 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Hook up router model to browser history object
   const history = syncHistoryWithStore(createBrowserHistory(), routerInstance);
 
-  // Listen for changes to the current location.
-  const unlisten = history.listen((location, action) => {
-    // location is an object like window.location
-    console.log(action, location.pathname, location.state);
-  });
-
   var pusher = new Pusher("8affd7213bb4643ca7f1", {
     cluster: "us2",
     encrypted: true
@@ -65,8 +59,8 @@ document.addEventListener("DOMContentLoaded", () => {
     <Provider store={store}>
       <Router history={history}>
         <div>
-          <Route path="/calendar" component={Calendar} />
-          <Route path="/meals" component={MealsEdit} />
+          <Route path="/calendar/:type" component={Calendar} />
+          <Route path="/meals/:id/edit" component={MealsEdit} />
         </div>
       </Router>
     </Provider>,

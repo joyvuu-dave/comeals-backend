@@ -47,7 +47,7 @@ const DateBox = inject("store")(
           var pathNameArray = this.props.store.router.location.pathname.split(
             "/"
           );
-          var mealId = pathNameArray[pathNameArray.length - 2];
+          var mealId = pathNameArray[2];
 
           if (store.meal) {
             if (Number.parseInt(mealId, 10) !== store.meal.id) {
@@ -56,12 +56,16 @@ const DateBox = inject("store")(
           }
         }
 
+        componentDidMount() {
+          store.goToMeal(store.router.location.pathname.split("/")[2]);
+        }
+
         handlePrevClick() {
-          this.props.store.router.push(`/meals/${store.meal.prevId}/edit`);
+          store.router.push(`/meals/${store.meal.prevId}/edit`);
         }
 
         handleNextClick() {
-          this.props.store.router.push(`/meals/${store.meal.nextId}/edit`);
+          store.router.push(`/meals/${store.meal.nextId}/edit`);
         }
 
         displayDate() {

@@ -31,7 +31,7 @@ class StaticController < ApplicationController
     if current_admin_user.present?
       redirect_to "#{host}admin.comeals#{top_level}" and return
     elsif signed_in_resident?
-      redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar" and return
+      redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all" and return
     else
       redirect_to "#{host}www.comeals#{top_level}" and return
     end

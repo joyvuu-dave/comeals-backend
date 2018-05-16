@@ -12,11 +12,11 @@
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.7",
     "@fortawesome/fontawesome-free-solid": "^5.0.12",
-    "@fortawesome/react-fontawesome": "^0.0.19",
+    "@fortawesome/react-fontawesome": "^0.0.20",
     "@rails/webpacker": "4.0.0-pre.2",
     "axios": "0.18.0",
     "babel-preset-react": "6.24.1",
-    "caniuse-lite": "1.0.30000840",
+    "caniuse-lite": "1.0.30000841",
     "fullcalendar": "3.9.0",
     "jquery": "3.3.1",
     "js-cookie": "2.2.0",
@@ -42,7 +42,7 @@
     "uuid": "3.2.1"
   },
   "resolutions": {
-    "caniuse-lite": "1.0.30000840",
+    "caniuse-lite": "1.0.30000841",
     "webpack": "4.8.3",
     "webpack-sources": "1.1.0"
   },

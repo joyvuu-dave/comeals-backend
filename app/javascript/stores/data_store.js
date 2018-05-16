@@ -191,10 +191,10 @@ export const DataStore = types
     },
     calendar() {
       //window.location.href = "/calendar";
-      self.router.push("/calendar");
+      self.router.push("/calendar/all");
     },
     history() {
-      window.open(`/meals/${self.id}/log`, "_blank", "noopener");
+      window.open(`/meals/${self.id}/log`, "noopener");
     },
     submitDescription() {
       let obj = {
@@ -335,29 +335,16 @@ export const DataStore = types
           self.loadDataAsync();
         });
     },
-    loadDataAsync(id) {
-      var myId = id;
-      if (typeof myId === "undefined") {
-        console.log("myId undefined");
-        if (self.meal === null) {
-          console.log("meal undefined");
-          var pathNameArray = self.router.location.pathname.split("/");
-          myId = pathNameArray[pathNameArray.length - 2];
-        } else {
-          console.log("loading meal: " + self.meal.id);
-          myId = self.meal.id;
-        }
-      }
-
+    loadDataAsync() {
       var host = `${window.location.protocol}//`;
       var topLevel = window.location.hostname.split(".");
       topLevel = `.${topLevel[topLevel.length - 1]}`;
 
       axios
-        .get(`${host}api.comeals${topLevel}/api/v1/meals/${myId}/cooks`)
+        .get(`${host}api.comeals${topLevel}/api/v1/meals/${self.meal.id}/cooks`)
         .then(function(response) {
           if (response.status === 200) {
-            self.loadData(self.meal, response.data);
+            self.loadData(response.data);
           }
         })
         .catch(function(error) {
@@ -381,7 +368,7 @@ export const DataStore = types
           const config = error.config;
         });
     },
-    loadData(meal, data) {
+    loadData(data) {
       // Assign Meal Data
       const dateArray = data.date.split("-");
       const date = new Date(
@@ -390,23 +377,23 @@ export const DataStore = types
         Number(dateArray[2])
       );
 
-      meal.date = date;
-      meal.description = data.description;
-      meal.closed = data.closed;
-      meal.closed_at = new Date(data.closed_at);
-      meal.reconciled = data.reconciled;
-      meal.nextId = data.next_id;
-      meal.prevId = data.prev_id;
+      self.meal.date = date;
+      self.meal.description = data.description;
+      self.meal.closed = data.closed;
+      self.meal.closed_at = new Date(data.closed_at);
+      self.meal.reconciled = data.reconciled;
+      self.meal.nextId = data.next_id;
+      self.meal.prevId = data.prev_id;
 
       if (data.max === null) {
-        meal.extras = null;
+        self.meal.extras = null;
       } else {
         const residentsCount = data.residents.filter(
           resident => resident.attending
         ).length;
 
         const guestsCount = data.guests.length;
-        meal.extras = data.max - (residentsCount + guestsCount);
+        self.meal.extras = data.max - (residentsCount + guestsCount);
       }
 
       let residents = data.residents.sort((a, b) => {
@@ -468,20 +455,6 @@ export const DataStore = types
       // Change loading state
       self.isLoading = false;
     },
-    afterCreate() {
-      var pathNameArray = window.location.pathname.split("/");
-
-      if (pathNameArray[pathNameArray.length - 3] === "meals") {
-        var myId = pathNameArray[pathNameArray.length - 2];
-
-        self.meals.push({ id: Number(myId) });
-        self.meal = myId;
-
-        self.loadDataAsync(myId);
-      } else {
-        console.log("must be a calendar...");
-      }
-    },
     clearResidents() {
       self.residentStore.residents.clear();
     },
@@ -497,15 +470,15 @@ export const DataStore = types
     addMeal(obj) {
       self.meals.push(obj);
     },
-    switchMeals(obj) {
+    switchMeals(id) {
       if (
-        typeof self.meals.find((item, index, array) => item.id === obj.id) ===
+        typeof self.meals.find((item, index, array) => item.id === id) ===
         "undefined"
       ) {
-        self.addMeal(obj);
+        self.addMeal({ id: Number.parseInt(id, 10) });
       }
 
-      self.meal = obj.id;
+      self.meal = id;
 
       if (self.billStore && self.billStore.bills) {
         self.clearBills();
@@ -521,55 +494,20 @@ export const DataStore = types
     },
     goToPrevMeal() {
       self.isLoading = true;
-      self.switchMeals({ id: self.meal.prevId });
+      self.switchMeals(self.meal.prevId);
     },
     goToNextMeal() {
       self.isLoading = true;
-      self.switchMeals({ id: self.meal.nextId });
+      self.switchMeals(self.meal.nextId);
     },
     goToMeal(mealId) {
       self.isLoading = true;
-      self.switchMeals({ id: Number.parseInt(mealId, 10) });
-    },
-    fetchPrev() {
-      var host = `${window.location.protocol}//`;
-      var topLevel = window.location.hostname.split(".");
-      topLevel = `.${topLevel[topLevel.length - 1]}`;
-
-      var myId = self.meal.id;
-
-      axios
-        .get(`${host}api.comeals${topLevel}/api/v1/meals/${myId}/prev`)
-        .then(function(response) {
-          if (response.status === 200) {
-            console.log("about to load prev data");
-            self.loadData(self.prevMeal, response.data);
-          }
-        })
-        .catch(function(error) {
-          if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            const data = error.response.data;
-            const status = error.response.status;
-            const headers = error.response.headers;
-
-            window.alert(data.message);
-          } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            const request = error.request;
-          } else {
-            // Something happened in setting up the request that triggered an Error
-            const message = error.message;
-          }
-          const config = error.config;
-        });
+      self.switchMeals(Number.parseInt(mealId, 10));
     },
     setCalendarInfo(name, array) {
       self.modalIsChanging = false;
       self.calendarName = name;
+      self.eventSources.clear();
       self.eventSources = array;
     },
     closeModal() {

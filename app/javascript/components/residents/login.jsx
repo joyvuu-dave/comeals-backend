@@ -36,7 +36,7 @@ class ResidentsLogin extends Component {
           });
           var newUrl = `${myState.host}${response.data.slug}.comeals${
             myState.topLevel
-          }/calendar`;
+          }/calendar/all`;
           window.location.href = newUrl;
         }
       })

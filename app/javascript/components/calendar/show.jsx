@@ -5,6 +5,7 @@ import $ from "jquery";
 import "fullcalendar";
 import SideBar from "./side_bar";
 
+import { getCalendarInfo } from "../../helpers/helpers";
 import Cookie from "js-cookie";
 import moment from "moment";
 
@@ -38,14 +39,11 @@ const Calendar = inject("store")(
         }
 
         componentDidMount() {
-          console.log("calendar: i mounted");
           this.updateEventSources();
         }
 
-        componentDidUpdate() {
-          console.log("calendar: i updated");
-
-          if (!store.modalIsChanging) {
+        componentDidUpdate(prevProps) {
+          if (this.props.location.pathname !== prevProps.location.pathname) {
             this.updateEventSources();
           }
         }
@@ -80,9 +78,19 @@ const Calendar = inject("store")(
         }
 
         updateEventSources() {
+          var pathNameArray = store.router.location.pathname.split("/");
+          var calendarInfo = getCalendarInfo(
+            Cookie.get("community_id"),
+            pathNameArray[2]
+          );
+
+          store.setCalendarInfo(
+            calendarInfo.displayName,
+            calendarInfo.eventSources
+          );
+
           const { calendar } = this.refs;
           var eventSources = store.eventSources;
-
           var self = this;
           $(calendar).fullCalendar("destroy");
           $(calendar).fullCalendar({
@@ -92,24 +100,26 @@ const Calendar = inject("store")(
             eventRender: function(event, eventElement) {
               const startString = moment(event.start).format();
               const todayString = moment().format("YYYY-MM-DD");
-
               if (
                 moment(startString).isBefore(todayString, "day") &&
                 typeof event.url !== "undefined"
               ) {
                 eventElement.css("opacity", "0.5");
               }
-
               eventElement.attr("title", event.description);
             },
             eventClick: function(event) {
               if (event.url) {
-                self.props.store.router.push(event.url);
-                return false;
+                if (event.url.split("/")[1] === "meals") {
+                  self.props.store.router.push(event.url);
+                  return false;
+                } else {
+                  self.store.openModal(event.url.split("/")[1]);
+                  return false;
+                }
               }
             }
           });
-
           setInterval(() => this.refetch(calendar), 300000);
         }
 
@@ -122,7 +132,7 @@ const Calendar = inject("store")(
         }
 
         openWiki() {
-          window.open("https://wiki.swansway.com/", "_blank", "noopener");
+          window.open("https://wiki.swansway.com/", "noopener");
         }
 
         refetch(calendar) {
