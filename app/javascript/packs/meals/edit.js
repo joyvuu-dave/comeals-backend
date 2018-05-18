@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <Provider store={store}>
       <Router history={history}>
         <ScrollToTop>
-          <Route path="/calendar/:type" component={Calendar} />
+          <Route path="/calendar/:type/:date" component={Calendar} />
           <Route path="/meals/:id/edit" component={MealsEdit} />
         </ScrollToTop>
       </Router>

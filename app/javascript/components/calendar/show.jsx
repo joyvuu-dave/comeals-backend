@@ -31,13 +31,6 @@ const Calendar = inject("store")(
       class Calendar extends Component {
         constructor(props) {
           super(props);
-
-          const node = document.getElementById("site-data");
-          const data = JSON.parse(node.getAttribute("data"));
-          this.state = {
-            hosts: data.hosts,
-            residents: data.residents
-          };
           this.handleCloseModal = this.handleCloseModal.bind(this);
         }
 
@@ -58,13 +51,11 @@ const Calendar = inject("store")(
 
           switch (this.props.store.modalName) {
             case "guestRoomNew":
-              return <GuestRoomReservationsNew hosts={this.state.hosts} />;
+              return <GuestRoomReservationsNew />;
               break;
 
             case "commonHouseNew":
-              return (
-                <CommonHouseReservationsNew residents={this.state.residents} />
-              );
+              return <CommonHouseReservationsNew />;
               break;
 
             case "eventNew":
@@ -149,6 +140,41 @@ const Calendar = inject("store")(
               }
             }
           });
+
+          // Handle Prev Click
+          $(".fc-prev-button").click(function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Get Date for Prev Month
+            var myPrevDate = $(calendar).fullCalendar("getDate");
+            myPrevDate = moment(myPrevDate).format("YYYY-MM-DD");
+
+            // Update Location
+            self.props.store.router.push(`/calendar/all/${myPrevDate}`);
+            return false;
+          });
+
+          // Handle Next Click
+          $(".fc-next-button").click(function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Get Date for Next Month
+            var myNextDate = $(calendar).fullCalendar("getDate");
+            myNextDate = moment(myNextDate).format("YYYY-MM-DD");
+
+            // Update Location
+            self.props.store.router.push(`/calendar/all/${myNextDate}`);
+            return false;
+          });
+
+          $(calendar).fullCalendar(
+            "gotoDate",
+            moment(self.props.store.router.location.pathname.split("/")[3])
+          );
+
+          // Refetch Data Every 5 Minutes
           setInterval(() => this.refetch(calendar), 300000);
         }
 
