@@ -26,10 +26,6 @@ class ResidentsController < ApplicationController
     render 'meals/edit'
   end
 
-  # GET /residents/guest-room (subdomains)
-  def guest_room
-  end
-
   # GET /residents/password-reset
   def password_reset
   end
@@ -54,9 +50,7 @@ class ResidentsController < ApplicationController
   end
 
   def validate_calendar
-    @calendar_type = params[:type] || 'all'
-
-    render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return unless VALID_CALENDAR_TYPES.include?(@calendar_type)
+    render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return unless VALID_CALENDAR_TYPES.include?(params[:type])
   end
 
 end

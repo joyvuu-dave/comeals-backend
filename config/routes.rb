@@ -28,8 +28,6 @@ Rails.application.routes.draw do
         get '/communities/:id/hosts', to: 'communities#hosts'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
-        get '/meals/:meal_id/prev', to: 'meals#show_prev'
-        get '/meals/:meal_id/next', to: 'meals#show_next'
         post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_meal_resident'
         delete '/meals/:meal_id/residents/:resident_id', to: 'meals#destroy_meal_resident'
         patch '/meals/:meal_id/residents/:resident_id', to: 'meals#update_meal_resident'
@@ -73,16 +71,9 @@ Rails.application.routes.draw do
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
   get '/calendar/:type/(:date)', to: 'residents#calendar'
-  get '/guest-room', to: 'residents#guest_room'
   get '/meals/:id/edit', to: 'meals#edit', as: :meal
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
-  get '/events/:id/edit', to: 'events#edit'
-  get '/events/new', to: 'events#new'
-  get '/common-house-reservations/:id/edit', to: 'common_house_reservations#edit'
-  get '/common-house-reservations/new', to: 'common_house_reservations#new'
-  get '/guest-room-reservations/:id/edit', to: 'guest_room_reservations#edit'
-  get '/guest-room-reservations/new', to: 'guest_room_reservations#new'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all
