@@ -66,6 +66,12 @@ module Api
         render json: @community.residents.active.where('extract(month from birthday) = ?', month_int), each_serializer: ResidentBirthdaySerializer
       end
 
+      # GET /api/v1/communities/:id/hosts
+      def hosts
+        hosts = Resident.adult.active.where(community_id: params[:id]).joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+        render json: hosts
+      end
+
       private
       def set_community
         @community = Community.find(params[:id])

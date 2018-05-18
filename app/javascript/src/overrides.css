@@ -162,6 +162,14 @@ table {
     width: 100%;
     transition: width 0.5s;
   }
+
+  .ReactModal__Content {
+    width: auto;
+  }
+
+  .ReactModal__Content--after-open {
+    width: auto;
+  }
 }
 
 @media all and (min-width: 746px) {
@@ -195,7 +203,18 @@ table {
 
   .login-box {
     width: 50%;
-    transition: width 0.5s;
+  }
+
+  .ReactModal__Content {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ReactModal__Content--after-open {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -328,4 +347,16 @@ Make modal showup on top of calendar
 */
 .ReactModal__Overlay--after-open {
   z-index: 200 !important;
+}
+
+.ReactModal__Body--open {
+  overflow: hidden;
+}
+
+.close-button {
+  margin-left: auto;
+}
+
+.close-button:hover {
+  cursor: pointer;
 }

@@ -16,7 +16,7 @@
     "@rails/webpacker": "4.0.0-pre.2",
     "axios": "0.18.0",
     "babel-preset-react": "6.24.1",
-    "caniuse-lite": "1.0.30000841",
+    "caniuse-lite": "^1.0.30000842",
     "fullcalendar": "3.9.0",
     "jquery": "3.3.1",
     "js-cookie": "2.2.0",
@@ -42,7 +42,7 @@
     "uuid": "3.2.1"
   },
   "resolutions": {
-    "caniuse-lite": "1.0.30000841",
+    "caniuse-lite": "^1.0.30000842",
     "webpack": "4.8.3",
     "webpack-sources": "1.1.0"
   },

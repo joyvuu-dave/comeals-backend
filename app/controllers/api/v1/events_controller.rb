@@ -21,6 +21,13 @@ module Api
         render json: events
       end
 
+      # GET /api/v1/events/:id
+      def show
+        event = Event.find(params[:id])
+        residents = event.community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+        render json: {event: event, residents: residents}
+      end
+
       # PATCH /api/v1/events/:id/update
       def update
         event = Event.find(params[:id])

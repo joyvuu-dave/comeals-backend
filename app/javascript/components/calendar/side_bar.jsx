@@ -12,39 +12,39 @@ const styles = {
 const SideBar = inject("store")(
   class SideBar extends Component {
     openNewGuestRoomReservation() {
-      store.openModal("guestRoomNew");
+      this.props.store.openModal("guestRoomNew");
     }
 
     openNewCommonHouseReservation() {
-      store.openModal("commonHouseNew");
+      this.props.store.openModal("commonHouseNew");
     }
 
     openNewEvent() {
-      store.openModal("eventNew");
+      this.props.store.openModal("eventNew");
     }
 
     openAllCalendars() {
-      store.router.push("/calendar/all");
+      this.props.store.router.push("/calendar/all");
     }
 
     openMealCalendar() {
-      store.router.push("/calendar/meals");
+      this.props.store.router.push("/calendar/meals");
     }
 
     openGuestRoomCalendar() {
-      store.router.push("/calendar/guest-room");
+      this.props.store.router.push("/calendar/guest-room");
     }
 
     openCommonHouseCalendar() {
-      store.router.push("/calendar/common-house");
+      this.props.store.router.push("/calendar/common-house");
     }
 
     openEventsCalendar() {
-      store.router.push("/calendar/events");
+      this.props.store.router.push("/calendar/events");
     }
 
     openBirthdaysCalendar() {
-      store.router.push("/calendar/birthdays");
+      this.props.store.router.push("/calendar/birthdays");
     }
 
     render() {

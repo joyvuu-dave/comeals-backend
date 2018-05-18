@@ -48,6 +48,6 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   end
 
   def url
-    "/common-house-reservations/#{object.id}/edit"
+    "#common-house-reservations/#{object.id}/edit"
   end
 end

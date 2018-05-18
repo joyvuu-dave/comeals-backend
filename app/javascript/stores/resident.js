@@ -146,7 +146,7 @@ const Resident = types
             self.meal_id
           }/residents/${self.id}`,
           data: {
-            socket_id: window.socketId,
+            socket_id: window.Comeals.socketId,
             late: currentLate,
             vegetarian: currentVeg
           },
@@ -191,7 +191,7 @@ const Resident = types
             self.meal_id
           }/residents/${self.id}`,
           data: {
-            socket_id: window.socketId
+            socket_id: window.Comeals.socketId
           },
           withCredentials: true
         })
@@ -248,7 +248,7 @@ const Resident = types
         }/residents/${self.id}`,
         data: {
           late: val,
-          socket_id: window.socketId
+          socket_id: window.Comeals.socketId
         },
         withCredentials: true
       })
@@ -301,7 +301,7 @@ const Resident = types
         }/residents/${self.id}`,
         data: {
           vegetarian: val,
-          socket_id: window.socketId
+          socket_id: window.Comeals.socketId
         },
         withCredentials: true
       })
@@ -347,7 +347,7 @@ const Resident = types
           self.meal_id
         }/residents/${self.id}/guests`,
         data: {
-          socket_id: window.socketId,
+          socket_id: window.Comeals.socketId,
           vegetarian: options.vegetarian
         },
         withCredentials: true
@@ -412,7 +412,7 @@ const Resident = types
           self.meal_id
         }/residents/${self.id}/guests/${guestId}`,
         data: {
-          socket_id: window.socketId
+          socket_id: window.Comeals.socketId
         },
         withCredentials: true
       })

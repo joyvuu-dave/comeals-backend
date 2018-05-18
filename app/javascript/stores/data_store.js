@@ -8,6 +8,7 @@ import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
 import EventSource from "./event_source";
 import { RouterModel } from "mst-react-router";
+import Pusher from "pusher-js";
 
 export const DataStore = types
   .model("DataStore", {
@@ -33,6 +34,7 @@ export const DataStore = types
     eventSources: types.optional(types.array(EventSource), []),
     modalActive: false,
     modalName: types.maybe(types.string),
+    modalId: types.maybe(types.number),
     modalIsChanging: false
   })
   .views(self => ({
@@ -101,6 +103,22 @@ export const DataStore = types
     }
   }))
   .actions(self => ({
+    afterCreate() {
+      window.Comeals = {
+        pusher: null,
+        socketId: null,
+        channel: null
+      };
+
+      Comeals.pusher = new Pusher("8affd7213bb4643ca7f1", {
+        cluster: "us2",
+        encrypted: true
+      });
+
+      Comeals.pusher.connection.bind("connected", function() {
+        Comeals.socketId = Comeals.pusher.connection.socket_id;
+      });
+    },
     toggleEditDescriptionMode() {
       const isSaving = self.editDescriptionMode;
       self.editDescriptionMode = !self.editDescriptionMode;
@@ -138,7 +156,7 @@ export const DataStore = types
         withCredentials: true,
         data: {
           closed: val,
-          socket_id: window.socketId
+          socket_id: window.Comeals.socketId
         }
       })
         .then(function(response) {
@@ -200,7 +218,7 @@ export const DataStore = types
       let obj = {
         id: self.meal.id,
         description: self.meal.description,
-        socket_id: window.socketId
+        socket_id: window.Comeals.socketId
       };
 
       console.log(obj);
@@ -280,7 +298,7 @@ export const DataStore = types
       let obj = {
         id: self.meal.id,
         bills: bills,
-        socket_id: window.socketId
+        socket_id: window.Comeals.socketId
       };
 
       console.log(obj);
@@ -454,6 +472,29 @@ export const DataStore = types
 
       // Change loading state
       self.isLoading = false;
+
+      // Unsubscribe from previous meal
+      if (Comeals.channel !== null) {
+        Comeals.pusher.unsubscribe(Comeals.channel.name);
+      }
+
+      // Subscribe to changes of this meal
+      Comeals.channel = Comeals.pusher.subscribe(`meal-${self.meal.id}`);
+      Comeals.channel.bind("update", function(data) {
+        console.log(data.message);
+
+        if (self.billStore && self.billStore.bills) {
+          self.clearBills();
+        }
+        if (self.residentStore && self.residentStore.residents) {
+          self.clearResidents();
+        }
+        if (self.guestStore && self.guestStore.guests) {
+          self.clearGuests();
+        }
+
+        self.loadDataAsync();
+      });
     },
     clearResidents() {
       self.residentStore.residents.clear();
@@ -514,10 +555,13 @@ export const DataStore = types
       self.modalIsChanging = true;
       self.modalActive = false;
       self.modalName = null;
+
+      setTimeout(() => document.activeElement.blur());
     },
-    openModal(name) {
+    openModal(name, id) {
       self.modalIsChanging = true;
       self.modalName = name;
+      self.modalId = id;
       self.modalActive = true;
     }
   }));

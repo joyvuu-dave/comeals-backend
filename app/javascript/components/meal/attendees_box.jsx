@@ -48,7 +48,7 @@ const AttendeeComponent = inject("store")(
               style={Object.assign(
                 {},
                 resident.attending && !resident.canRemove && styles.disabled,
-                store.meal.reconciled && styles.disabled
+                this.props.store.meal.reconciled && styles.disabled
               )}
             >
               {resident.name}
@@ -77,10 +77,10 @@ const AttendeeComponent = inject("store")(
                   defaultChecked={resident.late}
                   onChange={e => resident.toggleLate()}
                   disabled={
-                    store.meal.reconciled ||
-                    (store.meal.closed &&
+                    this.props.store.meal.reconciled ||
+                    (this.props.store.meal.closed &&
                       !resident.attending &&
-                      store.meal.extras < 1)
+                      this.props.store.meal.extras < 1)
                   }
                 />
                 <label htmlFor={`late_switch_${resident.id}`} />
@@ -96,9 +96,10 @@ const AttendeeComponent = inject("store")(
                   defaultChecked={resident.vegetarian}
                   onClick={e => resident.toggleVeg()}
                   disabled={
-                    store.meal.reconciled ||
-                    (store.meal.closed && resident.attending) ||
-                    (store.meal.closed && store.meal.extras < 1)
+                    this.props.store.meal.reconciled ||
+                    (this.props.store.meal.closed && resident.attending) ||
+                    (this.props.store.meal.closed &&
+                      this.props.store.meal.extras < 1)
                   }
                 />
                 <label htmlFor={`veg_switch_${resident.id}`} />
@@ -107,13 +108,15 @@ const AttendeeComponent = inject("store")(
             <td>
               <GuestDropdown
                 resident={resident}
-                reconciled={store.meal.reconciled}
-                canAdd={store.canAdd}
+                reconciled={this.props.store.meal.reconciled}
+                canAdd={this.props.store.canAdd}
               />
               <button
                 className="monospace"
                 onClick={e => resident.removeGuest()}
-                disabled={store.meal.reconciled || !resident.canRemoveGuest}
+                disabled={
+                  this.props.store.meal.reconciled || !resident.canRemoveGuest
+                }
               >
                 - Guest
               </button>
@@ -153,9 +156,11 @@ const AttendeesBox = inject("store")(
                 </tr>
               </thead>
               <tbody>
-                {Array.from(store.residents.values()).map(resident => (
-                  <AttendeeComponent key={resident.id} resident={resident} />
-                ))}
+                {Array.from(this.props.store.residents.values()).map(
+                  resident => (
+                    <AttendeeComponent key={resident.id} resident={resident} />
+                  )
+                )}
               </tbody>
             </table>
           </div>

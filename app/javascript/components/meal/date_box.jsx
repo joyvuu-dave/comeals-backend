@@ -49,31 +49,37 @@ const DateBox = inject("store")(
           );
           var mealId = pathNameArray[2];
 
-          if (store.meal) {
-            if (Number.parseInt(mealId, 10) !== store.meal.id) {
-              store.goToMeal(mealId);
+          if (this.props.store.meal) {
+            if (Number.parseInt(mealId, 10) !== this.props.store.meal.id) {
+              this.props.store.goToMeal(mealId);
             }
           }
         }
 
         componentDidMount() {
-          store.goToMeal(store.router.location.pathname.split("/")[2]);
+          this.props.store.goToMeal(
+            this.props.store.router.location.pathname.split("/")[2]
+          );
         }
 
         handlePrevClick() {
-          store.router.push(`/meals/${store.meal.prevId}/edit`);
+          this.props.store.router.push(
+            `/meals/${this.props.store.meal.prevId}/edit`
+          );
         }
 
         handleNextClick() {
-          store.router.push(`/meals/${store.meal.nextId}/edit`);
+          this.props.store.router.push(
+            `/meals/${this.props.store.meal.nextId}/edit`
+          );
         }
 
         displayDate() {
-          if (store.meal === null) {
+          if (this.props.store.meal === null) {
             return "loading...";
           }
 
-          if (store.meal.date === null) {
+          if (this.props.store.meal.date === null) {
             return "";
           }
 
@@ -82,24 +88,24 @@ const DateBox = inject("store")(
             moment().month(),
             moment().date()
           ]);
-          var days = moment(store.meal.date).diff(today, "days");
+          var days = moment(this.props.store.meal.date).diff(today, "days");
 
           if (days === 0) return "Today";
           if (days === -1) return "Yesterday";
           if (days === 1) return "Tomorrow";
-          return moment(store.meal.date).from(today);
+          return moment(this.props.store.meal.date).from(today);
         }
 
         displayTopDate() {
-          if (store.meal === null) {
+          if (this.props.store.meal === null) {
             return "";
           }
 
-          if (store.meal.date === null) {
+          if (this.props.store.meal.date === null) {
             return "";
           }
 
-          return moment(store.meal.date).format("ddd, MMM Do");
+          return moment(this.props.store.meal.date).format("ddd, MMM Do");
         }
 
         render() {
@@ -126,23 +132,29 @@ const DateBox = inject("store")(
                 </div>
               </div>
               <h3 className="text-black">{this.displayDate()}</h3>
-              {store.meal && store.meal.reconciled ? (
+              {this.props.store.meal && this.props.store.meal.reconciled ? (
                 <h1
                   className="text-black"
-                  style={store.isLoading ? styles.hidden : styles.shown}
+                  style={
+                    this.props.store.isLoading ? styles.hidden : styles.shown
+                  }
                 >
                   RECONCILED
                 </h1>
               ) : (
                 <h1
                   className={
-                    store.meal && store.meal.closed
+                    this.props.store.meal && this.props.store.meal.closed
                       ? "text-primary"
                       : "text-green"
                   }
-                  style={store.isLoading ? styles.hidden : styles.shown}
+                  style={
+                    this.props.store.isLoading ? styles.hidden : styles.shown
+                  }
                 >
-                  {store.meal && store.meal.closed ? "CLOSED" : "OPEN"}
+                  {this.props.store.meal && this.props.store.meal.closed
+                    ? "CLOSED"
+                    : "OPEN"}
                 </h1>
               )}
             </div>

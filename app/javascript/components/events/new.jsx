@@ -5,174 +5,168 @@ import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
 import Cookie from "js-cookie";
-
+import { inject } from "mobx-react";
 import { generateTimes } from "../../helpers/helpers";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
 
-class EventsNew extends Component {
-  constructor(props) {
-    super(props);
-    this.handleDayChange = this.handleDayChange.bind(this);
+const EventsNew = inject("store")(
+  class EventsNew extends Component {
+    constructor(props) {
+      super(props);
+      this.handleDayChange = this.handleDayChange.bind(this);
 
-    var topLevel = window.location.hostname.split(".");
-    topLevel = topLevel[topLevel.length - 1];
+      var topLevel = window.location.hostname.split(".");
+      topLevel = topLevel[topLevel.length - 1];
 
-    this.state = {
-      host: `${window.location.protocol}//`,
-      topLevel: `.${topLevel}`,
-      slug: window.location.hostname.split(".")[0],
-      communityId: Cookie.get("community_id")
-    };
-  }
-
-  handleSubmit(values) {
-    if (values.start_time > values.end_time) {
-      window.alert("Start time cannot be later than end time");
-      return;
+      this.state = {
+        host: `${window.location.protocol}//`,
+        topLevel: `.${topLevel}`,
+        slug: window.location.hostname.split(".")[0],
+        communityId: Cookie.get("community_id")
+      };
     }
 
-    var myState = this.state;
+    handleSubmit(values) {
+      if (values.start_time > values.end_time) {
+        window.alert("Start time cannot be later than end time");
+        return;
+      }
 
-    axios
-      .post(
-        `${myState.host}api.comeals${
-          myState.topLevel
-        }/api/v1/events?community_id=${myState.communityId}`,
-        {
-          title: values.title,
-          description: values.description,
-          start_year: values.day && values.day.split("-")[0],
-          start_month: values.day && values.day.split("-")[1],
-          start_day: values.day && values.day.split("-")[2],
-          start_hours: values.start_time && values.start_time.split(":")[0],
-          start_minutes: values.start_time && values.start_time.split(":")[1],
-          end_hours: values.end_time && values.end_time.split(":")[0],
-          end_minutes: values.end_time && values.end_time.split(":")[1],
-          all_day: values.all_day
-        }
-      )
-      .then(function(response) {
-        if (response.status === 200) {
-          window.location.href = `${myState.host}${myState.slug}.comeals${
+      var myState = this.state;
+
+      axios
+        .post(
+          `${myState.host}api.comeals${
             myState.topLevel
-          }/calendar/all`;
-        }
-      })
-      .catch(function(error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data;
-          const status = error.response.status;
-          const headers = error.response.headers;
+          }/api/v1/events?community_id=${myState.communityId}`,
+          {
+            title: values.title,
+            description: values.description,
+            start_year: values.day && values.day.split("-")[0],
+            start_month: values.day && values.day.split("-")[1],
+            start_day: values.day && values.day.split("-")[2],
+            start_hours: values.start_time && values.start_time.split(":")[0],
+            start_minutes: values.start_time && values.start_time.split(":")[1],
+            end_hours: values.end_time && values.end_time.split(":")[0],
+            end_minutes: values.end_time && values.end_time.split(":")[1],
+            all_day: values.all_day
+          }
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            window.location.href = `${myState.host}${myState.slug}.comeals${
+              myState.topLevel
+            }/calendar/all`;
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
 
-          window.alert(data.message);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request;
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message;
-        }
-        const config = error.config;
-      });
-  }
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    }
 
-  handleDayChange(val) {
-    this.formDispatch(actions.change("local.day", val));
-  }
+    handleDayChange(val) {
+      this.formDispatch(actions.change("local.day", val));
+    }
 
-  getDayPickerInput() {
-    return (
-      <DayPickerInput
-        formatDate={formatDate}
-        parseDate={parseDate}
-        placeholder={""}
-        onDayChange={this.handleDayChange}
-      />
-    );
-  }
+    getDayPickerInput() {
+      return (
+        <DayPickerInput
+          formatDate={formatDate}
+          parseDate={parseDate}
+          placeholder={""}
+          onDayChange={this.handleDayChange}
+        />
+      );
+    }
 
-  attachDispatch(dispatch) {
-    this.formDispatch = dispatch;
-  }
+    attachDispatch(dispatch) {
+      this.formDispatch = dispatch;
+    }
 
-  render() {
-    return (
-      <div>
-        <div className="flex">
-          <h2 className="mar-md">New Event</h2>
+    render() {
+      return (
+        <div>
+          <div className="flex">
+            <h2 className="mar-md">New Event</h2>
+            <FontAwesomeIcon
+              icon={faTimes}
+              size="2x"
+              className="close-button"
+              onClick={this.props.store.closeModal}
+            />
+          </div>
+          <fieldset>
+            <legend>Edit</legend>
+            <LocalForm
+              onSubmit={values => this.handleSubmit(values)}
+              getDispatch={dispatch => this.attachDispatch(dispatch)}
+            >
+              <label>Title</label>
+              <Control.text model=".title" />
+              <br />
+              <label>Description</label>
+              <Control.textarea model=".description" placeholder="optional" />
+              <br />
+              <label>Day</label>
+              <br />
+              <Control.text
+                model="local.day"
+                id="local.day"
+                component={this.getDayPickerInput.bind(this)}
+              />
+              <br />
+              <br />
+              <label>Start Time</label>
+              <Control.select model="local.start_time" id="local.start_time">
+                <option />
+                {generateTimes().map(time => (
+                  <option key={time.value} value={time.value}>
+                    {time.display}
+                  </option>
+                ))}
+              </Control.select>
+              <br />
+              <label>End Time</label>
+              <Control.select model="local.end_time" id="local.end_time">
+                <option />
+                {generateTimes().map(time => (
+                  <option key={time.value} value={time.value}>
+                    {time.display}
+                  </option>
+                ))}
+              </Control.select>
+              <br />
+              <label>All Day</label>{" "}
+              <Control.input type="checkbox" model="local.all_day" />
+              <br />
+              <br />
+              <button type="submit" className="button-dark">
+                Create
+              </button>
+            </LocalForm>
+          </fieldset>
         </div>
-        <fieldset className="w-50">
-          <legend>Edit</legend>
-          <LocalForm
-            onSubmit={values => this.handleSubmit(values)}
-            getDispatch={dispatch => this.attachDispatch(dispatch)}
-          >
-            <label>Title</label>
-            <Control.text model=".title" className="w-75" />
-            <br />
-            <label>Description</label>
-            <Control.textarea
-              model=".description"
-              className="w-75"
-              placeholder="optional"
-            />
-            <br />
-            <label>Day</label>
-            <br />
-            <Control.text
-              model="local.day"
-              id="local.day"
-              component={this.getDayPickerInput.bind(this)}
-            />
-            <br />
-            <br />
-            <label>Start Time</label>
-            <Control.select
-              model="local.start_time"
-              id="local.start_time"
-              className="w-50"
-            >
-              <option />
-              {generateTimes().map(time => (
-                <option key={time.value} value={time.value}>
-                  {time.display}
-                </option>
-              ))}
-            </Control.select>
-            <br />
-            <label>End Time</label>
-            <Control.select
-              model="local.end_time"
-              id="local.end_time"
-              className="w-50"
-            >
-              <option />
-              {generateTimes().map(time => (
-                <option key={time.value} value={time.value}>
-                  {time.display}
-                </option>
-              ))}
-            </Control.select>
-            <br />
-            <label>All Day</label>{" "}
-            <Control.input
-              type="checkbox"
-              model="local.all_day"
-              className="w-75"
-            />
-            <br />
-            <br />
-            <button type="submit" className="button-dark">
-              Create
-            </button>
-          </LocalForm>
-        </fieldset>
-      </div>
-    );
+      );
+    }
   }
-}
+);
 
 export default EventsNew;

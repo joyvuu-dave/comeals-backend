@@ -58,10 +58,5 @@ class ApplicationController < ActionController::Base
 
   def set_community
     @community = Community.find_by(slug: subdomain)
-
-    cookies.permanent[:community_id] = {
-      value: @community&.id,
-      domain: :all
-    }
   end
 end

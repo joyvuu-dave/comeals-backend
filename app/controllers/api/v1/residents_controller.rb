@@ -1,6 +1,7 @@
 module Api
   module V1
     class ResidentsController < ApplicationController
+      # GET /api/v1/residents/:id
       def show
         resident = Resident.find_by(id: params[:id])
         render json: resident
@@ -19,6 +20,12 @@ module Api
         end
 
         if resident.present? && resident.authenticate(params[:password])
+          # Set Permanent Cookie
+          cookies.permanent[:community_id] = {
+            value: resident.community&.id,
+            domain: :all
+          }
+
           render json: { token: resident.key.token, slug: resident.community.slug } and return
         else
           render json: { message: "Incorrect password" }, status: :bad_request and return
