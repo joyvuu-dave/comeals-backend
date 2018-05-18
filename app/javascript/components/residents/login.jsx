@@ -30,7 +30,13 @@ class ResidentsLogin extends Component {
       .then(function(response) {
         if (response.status === 200) {
           console.log("data", response.data);
+          // set token cookie
           Cookie.set("token", response.data.token, {
+            expires: 7300,
+            domain: `.comeals${myState.topLevel}`
+          });
+          // set community_id cookie
+          Cookie.set("community_id", response.data.community_id, {
             expires: 7300,
             domain: `.comeals${myState.topLevel}`
           });

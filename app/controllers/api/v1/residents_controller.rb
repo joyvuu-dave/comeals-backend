@@ -20,13 +20,7 @@ module Api
         end
 
         if resident.present? && resident.authenticate(params[:password])
-          # Set Permanent Cookie
-          cookies.permanent[:community_id] = {
-            value: resident.community&.id,
-            domain: :all
-          }
-
-          render json: { token: resident.key.token, slug: resident.community.slug } and return
+          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id } and return
         else
           render json: { message: "Incorrect password" }, status: :bad_request and return
         end
