@@ -75,11 +75,10 @@ const EventsEdit = inject("store")(
         return;
       }
 
-      var myState = this.state;
       var self = this;
       axios
         .patch(
-          `${myState.host}api.comeals${myState.topLevel}/api/v1/events/${
+          `${self.state.host}api.comeals${self.state.topLevel}/api/v1/events/${
             self.props.eventId
           }/update`,
           {
@@ -97,9 +96,7 @@ const EventsEdit = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            window.location.href = `${myState.host}${myState.slug}.comeals${
-              myState.topLevel
-            }/calendar/all`;
+            self.props.store.closeModal(true);
           }
         })
         .catch(function(error) {
@@ -126,19 +123,16 @@ const EventsEdit = inject("store")(
 
     handleDelete() {
       if (window.confirm("Do you really want to delete this event?")) {
-        var myState = this.state;
-
+        var self = this;
         axios
           .delete(
-            `${myState.host}api.comeals${myState.topLevel}/api/v1/events/${
-              this.state.event.id
-            }/delete`
+            `${self.state.host}api.comeals${
+              self.state.topLevel
+            }/api/v1/events/${self.state.event.id}/delete`
           )
           .then(function(response) {
             if (response.status === 200) {
-              window.location.href = `${myState.host}${myState.slug}.comeals${
-                myState.topLevel
-              }/calendar/all`;
+              self.props.store.closeModal(true);
             }
           })
           .catch(function(error) {

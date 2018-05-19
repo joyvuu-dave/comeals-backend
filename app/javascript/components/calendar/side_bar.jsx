@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { inject } from "mobx-react";
+import moment from "moment";
 
 const styles = {
   sideBar: {
@@ -11,6 +12,10 @@ const styles = {
 
 const SideBar = inject("store")(
   class SideBar extends Component {
+    getNavDate() {
+      return this.props.store.router.location.pathname.split("/")[3];
+    }
+
     openNewGuestRoomReservation() {
       this.props.store.openModal("guestRoomNew");
     }
@@ -24,27 +29,41 @@ const SideBar = inject("store")(
     }
 
     openAllCalendars() {
-      this.props.store.router.push("/calendar/all");
+      this.props.store.router.push(
+        `/calendar/all/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
+      );
     }
 
     openMealCalendar() {
-      this.props.store.router.push("/calendar/meals");
+      this.props.store.router.push(
+        `/calendar/meals/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
+      );
     }
 
     openGuestRoomCalendar() {
-      this.props.store.router.push("/calendar/guest-room");
+      this.props.store.router.push(
+        `/calendar/guest-room/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
+      );
     }
 
     openCommonHouseCalendar() {
-      this.props.store.router.push("/calendar/common-house");
+      this.props.store.router.push(
+        `/calendar/common-house/${moment(this.getNavDate()).format(
+          "YYYY-MM-DD"
+        )}`
+      );
     }
 
     openEventsCalendar() {
-      this.props.store.router.push("/calendar/events");
+      this.props.store.router.push(
+        `/calendar/events/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
+      );
     }
 
     openBirthdaysCalendar() {
-      this.props.store.router.push("/calendar/birthdays");
+      this.props.store.router.push(
+        `/calendar/birthdays/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
+      );
     }
 
     render() {

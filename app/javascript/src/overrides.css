@@ -108,11 +108,10 @@ table {
   color: hsl(0, 0%, 92%);
 }
 
-#site {
+#main {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .comeals-container {

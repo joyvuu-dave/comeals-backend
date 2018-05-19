@@ -9,6 +9,7 @@ import GuestStore from "./guest_store";
 import EventSource from "./event_source";
 import { RouterModel } from "mst-react-router";
 import Pusher from "pusher-js";
+import moment from "moment";
 
 export const DataStore = types
   .model("DataStore", {
@@ -35,7 +36,8 @@ export const DataStore = types
     modalActive: false,
     modalName: types.maybe(types.string),
     modalId: types.maybe(types.number),
-    modalIsChanging: false
+    modalIsChanging: false,
+    modalChangedData: false
   })
   .views(self => ({
     get id() {
@@ -204,12 +206,14 @@ export const DataStore = types
       var host = `${window.location.protocol}//`;
 
       Cookie.remove("token", { domain: `.comeals${topLevel}` });
+      Cookie.remove("community_id", { domain: `.comeals${topLevel}` });
 
       setTimeout(() => (window.location.href = `${host}comeals${topLevel}/`));
     },
     calendar() {
-      //window.location.href = "/calendar";
-      self.router.push("/calendar/all");
+      self.router.push(
+        `/calendar/all/${moment(self.meal.date).format("YYYY-MM-DD")}`
+      );
     },
     history() {
       window.open(`/meals/${self.id}/log`, "noopener");
@@ -551,10 +555,11 @@ export const DataStore = types
       self.eventSources.clear();
       self.eventSources = array;
     },
-    closeModal() {
+    closeModal(dataChanged = false) {
       self.modalIsChanging = true;
       self.modalActive = false;
       self.modalName = null;
+      self.modalChangedData = dataChanged;
 
       setTimeout(() => document.activeElement.blur());
     },

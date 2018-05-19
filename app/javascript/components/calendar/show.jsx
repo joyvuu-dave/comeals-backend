@@ -24,7 +24,7 @@ const styles = {
   }
 };
 
-Modal.setAppElement("#site");
+Modal.setAppElement("#main");
 const Calendar = inject("store")(
   withRouter(
     observer(
@@ -39,7 +39,11 @@ const Calendar = inject("store")(
         }
 
         componentDidUpdate(prevProps) {
-          if (this.props.location.pathname !== prevProps.location.pathname) {
+          if (
+            this.props.location.pathname.split("/")[2] !==
+              prevProps.location.pathname.split("/")[2] ||
+            this.props.store.modalChangedData
+          ) {
             this.updateEventSources();
           }
         }
@@ -110,6 +114,9 @@ const Calendar = inject("store")(
           $(calendar).fullCalendar({
             displayEventEnd: true,
             eventSources: eventSources,
+            defaultDate: moment(
+              self.props.store.router.location.pathname.split("/")[3]
+            ),
             contentHeight: "auto",
             eventRender: function(event, eventElement) {
               const startString = moment(event.start).format();
@@ -150,8 +157,13 @@ const Calendar = inject("store")(
             var myPrevDate = $(calendar).fullCalendar("getDate");
             myPrevDate = moment(myPrevDate).format("YYYY-MM-DD");
 
+            // Get Current Calendar Type
+            const calType = self.props.store.router.location.pathname.split(
+              "/"
+            )[2];
+
             // Update Location
-            self.props.store.router.push(`/calendar/all/${myPrevDate}`);
+            self.props.store.router.push(`/calendar/${calType}/${myPrevDate}`);
             return false;
           });
 
@@ -164,15 +176,15 @@ const Calendar = inject("store")(
             var myNextDate = $(calendar).fullCalendar("getDate");
             myNextDate = moment(myNextDate).format("YYYY-MM-DD");
 
+            // Get Current Calendar Type
+            const calType = self.props.store.router.location.pathname.split(
+              "/"
+            )[2];
+
             // Update Location
-            self.props.store.router.push(`/calendar/all/${myNextDate}`);
+            self.props.store.router.push(`/calendar/${calType}/${myNextDate}`);
             return false;
           });
-
-          $(calendar).fullCalendar(
-            "gotoDate",
-            moment(self.props.store.router.location.pathname.split("/")[3])
-          );
 
           // Refetch Data Every 5 Minutes
           setInterval(() => this.refetch(calendar), 300000);
@@ -183,6 +195,7 @@ const Calendar = inject("store")(
           topLevel = topLevel[topLevel.length - 1];
 
           Cookie.remove("token", { domain: `.comeals.${topLevel}` });
+          Cookie.remove("community_id", { domain: `.comeals${topLevel}` });
           window.location.href = "/";
         }
 

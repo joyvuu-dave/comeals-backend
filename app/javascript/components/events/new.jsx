@@ -33,19 +33,18 @@ const EventsNew = inject("store")(
         return;
       }
 
-      var myState = this.state;
-
+      var self = this;
       axios
         .post(
-          `${myState.host}api.comeals${
-            myState.topLevel
-          }/api/v1/events?community_id=${myState.communityId}`,
+          `${self.state.host}api.comeals${
+            self.state.topLevel
+          }/api/v1/events?community_id=${self.state.communityId}`,
           {
             title: values.title,
             description: values.description,
-            start_year: values.day && values.day.split("-")[0],
-            start_month: values.day && values.day.split("-")[1],
-            start_day: values.day && values.day.split("-")[2],
+            start_year: values.day && values.day.getFullYear(),
+            start_month: values.day && values.day.getMonth() + 1,
+            start_day: values.day && values.day.getDate(),
             start_hours: values.start_time && values.start_time.split(":")[0],
             start_minutes: values.start_time && values.start_time.split(":")[1],
             end_hours: values.end_time && values.end_time.split(":")[0],
@@ -55,9 +54,7 @@ const EventsNew = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            window.location.href = `${myState.host}${myState.slug}.comeals${
-              myState.topLevel
-            }/calendar/all`;
+            self.props.store.closeModal(true);
           }
         })
         .catch(function(error) {
@@ -114,16 +111,20 @@ const EventsNew = inject("store")(
             />
           </div>
           <fieldset>
-            <legend>Edit</legend>
+            <legend>New</legend>
             <LocalForm
               onSubmit={values => this.handleSubmit(values)}
               getDispatch={dispatch => this.attachDispatch(dispatch)}
             >
               <label>Title</label>
-              <Control.text model=".title" />
+              <Control.text model="local.title" id="local.title" />
               <br />
               <label>Description</label>
-              <Control.textarea model=".description" placeholder="optional" />
+              <Control.textarea
+                model="local.description"
+                id="local.description"
+                placeholder="optional"
+              />
               <br />
               <label>Day</label>
               <br />

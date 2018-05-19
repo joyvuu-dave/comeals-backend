@@ -71,13 +71,12 @@ const GuestRoomReservationsEdit = inject("store")(
     }
 
     handleSubmit(values) {
-      var myState = this.state;
-
+      var self = this;
       axios
         .patch(
-          `${myState.host}api.comeals${
-            myState.topLevel
-          }/api/v1/guest-room-reservations/${this.props.eventId}/update`,
+          `${self.state.host}api.comeals${
+            self.state.topLevel
+          }/api/v1/guest-room-reservations/${self.props.eventId}/update`,
           {
             resident_id: values.resident_id,
             date: values.day
@@ -85,9 +84,7 @@ const GuestRoomReservationsEdit = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            window.location.href = `${myState.host}${myState.slug}.comeals${
-              myState.topLevel
-            }/calendar/all`;
+            self.props.store.closeModal(true);
           }
         })
         .catch(function(error) {
@@ -114,19 +111,16 @@ const GuestRoomReservationsEdit = inject("store")(
 
     handleDelete() {
       if (window.confirm("Do you really want to delete this reservation?")) {
-        var myState = this.state;
-
+        var self = this;
         axios
           .delete(
-            `${myState.host}api.comeals${
-              myState.topLevel
-            }/api/v1/guest-room-reservations/${this.props.eventId}/delete`
+            `${self.state.host}api.comeals${
+              self.state.topLevel
+            }/api/v1/guest-room-reservations/${self.props.eventId}/delete`
           )
           .then(function(response) {
             if (response.status === 200) {
-              window.location.href = `${myState.host}${myState.slug}.comeals${
-                myState.topLevel
-              }/calendar/all`;
+              self.props.store.closeModal(true);
             }
           })
           .catch(function(error) {
