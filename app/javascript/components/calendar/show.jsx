@@ -148,6 +148,27 @@ const Calendar = inject("store")(
             }
           });
 
+          // Handle Today Click
+          $(".fc-today-button").click(function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Get Date for Prev Month
+            var myCurrentDate = $(calendar).fullCalendar("getDate");
+            myCurrentDate = moment(myCurrentDate).format("YYYY-MM-DD");
+
+            // Get Current Calendar Type
+            const calType = self.props.store.router.location.pathname.split(
+              "/"
+            )[2];
+
+            // Update Location
+            self.props.store.router.push(
+              `/calendar/${calType}/${myCurrentDate}`
+            );
+            return false;
+          });
+
           // Handle Prev Click
           $(".fc-prev-button").click(function(event) {
             event.preventDefault();
