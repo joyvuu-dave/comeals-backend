@@ -180,7 +180,7 @@ class Meal < ApplicationRecord
   end
 
   def self.is_holiday?(date)
-    return true if Meal.is_thanksgiving(date) || Meal.is_christmas(date) || Meal.is_newyears(date) || Meal.is_mothers_day(date)
+    return true if Meal.is_thanksgiving(date) || Meal.is_christmas(date) || Meal.is_newyears(date) || Meal.is_mothers_day(date) || Meal.is_easter(date)
     false
   end
 
@@ -208,6 +208,28 @@ class Meal < ApplicationRecord
     return false unless date.sunday?
     return false unless date.day >= 8 && date.day <= 14
     true
+  end
+
+  def self.is_easter(date)
+    y = date.year
+    a = y % 19
+    b = y / 100
+    c = y % 100
+    d = b / 4
+    e = b % 4
+    f = (b + 8) / 25
+    g = (b - f + 1) / 3
+    h = (19 * a + b - d - g + 15) % 30
+    i = c / 4
+    k = c % 4
+    l = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * l) / 451
+
+    month = (h + l - 7 * m + 114) / 31
+    day = ((h + l - 7 * m + 114) % 31) + 1
+
+    return true if date.month == month && date.day == day
+    false
   end
 
 end

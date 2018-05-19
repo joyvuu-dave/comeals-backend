@@ -1,6 +1,7 @@
 module Api
   module V1
     class ResidentsController < ApplicationController
+      # GET /api/v1/residents/:id
       def show
         resident = Resident.find_by(id: params[:id])
         render json: resident
@@ -19,7 +20,7 @@ module Api
         end
 
         if resident.present? && resident.authenticate(params[:password])
-          render json: { token: resident.key.token, slug: resident.community.slug } and return
+          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id } and return
         else
           render json: { message: "Incorrect password" }, status: :bad_request and return
         end

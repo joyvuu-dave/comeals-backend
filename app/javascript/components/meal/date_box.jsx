@@ -3,6 +3,10 @@ import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
 import moment from "moment";
 
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import faChevronLeft from "@fortawesome/fontawesome-free-solid/faChevronLeft";
+import faChevronRight from "@fortawesome/fontawesome-free-solid/faChevronRight";
+
 const styles = {
   main: {
     display: "flex",
@@ -28,7 +32,7 @@ const styles = {
   }
 };
 
-const DateBox = inject("store", "routingStore")(
+const DateBox = inject("store")(
   withRouter(
     observer(
       class DateBox extends Component {
@@ -40,32 +44,42 @@ const DateBox = inject("store", "routingStore")(
         }
 
         componentDidUpdate() {
-          var pathNameArray = this.props.routingStore.router.location.pathname.split(
+          var pathNameArray = this.props.store.router.location.pathname.split(
             "/"
           );
-          var mealId = pathNameArray[pathNameArray.length - 2];
+          var mealId = pathNameArray[2];
 
-          if (store.meal) {
-            if (Number.parseInt(mealId, 10) !== store.meal.id) {
-              store.goToMeal(mealId);
+          if (this.props.store.meal) {
+            if (Number.parseInt(mealId, 10) !== this.props.store.meal.id) {
+              this.props.store.goToMeal(mealId);
             }
           }
         }
 
+        componentDidMount() {
+          this.props.store.goToMeal(
+            this.props.store.router.location.pathname.split("/")[2]
+          );
+        }
+
         handlePrevClick() {
-          this.props.routingStore.router.push(
-            `/meals/${store.meal.prevId}/edit`
+          this.props.store.router.push(
+            `/meals/${this.props.store.meal.prevId}/edit`
           );
         }
 
         handleNextClick() {
-          this.props.routingStore.router.push(
-            `/meals/${store.meal.nextId}/edit`
+          this.props.store.router.push(
+            `/meals/${this.props.store.meal.nextId}/edit`
           );
         }
 
         displayDate() {
-          if (store.meal.date === null) {
+          if (this.props.store.meal === null) {
+            return "loading...";
+          }
+
+          if (this.props.store.meal.date === null) {
             return "";
           }
 
@@ -74,12 +88,24 @@ const DateBox = inject("store", "routingStore")(
             moment().month(),
             moment().date()
           ]);
-          var days = moment(store.meal.date).diff(today, "days");
+          var days = moment(this.props.store.meal.date).diff(today, "days");
 
           if (days === 0) return "Today";
           if (days === -1) return "Yesterday";
           if (days === 1) return "Tomorrow";
-          return moment(store.meal.date).from(today);
+          return moment(this.props.store.meal.date).from(today);
+        }
+
+        displayTopDate() {
+          if (this.props.store.meal === null) {
+            return "";
+          }
+
+          if (this.props.store.meal.date === null) {
+            return "";
+          }
+
+          return moment(this.props.store.meal.date).format("ddd, MMM Do");
         }
 
         render() {
@@ -94,35 +120,41 @@ const DateBox = inject("store", "routingStore")(
                   style={styles.arrow}
                   onClick={this.handlePrevClick}
                 >
-                  <i className="fas fa-chevron-left fa-3x pad-r-md" />
+                  <FontAwesomeIcon icon={faChevronLeft} size="3x" />
                 </div>
-                <h2>
-                  {store.meal.date === null
-                    ? ""
-                    : moment(store.meal.date).format("ddd, MMM Do")}
-                </h2>
+                <h2>{this.displayTopDate()}</h2>
                 <div
                   className="arrow"
                   style={styles.arrow}
                   onClick={this.handleNextClick}
                 >
-                  <i className="fas fa-chevron-right fa-3x pad-r-md" />
+                  <FontAwesomeIcon icon={faChevronRight} size="3x" />
                 </div>
               </div>
               <h3 className="text-black">{this.displayDate()}</h3>
-              {store.meal.reconciled ? (
+              {this.props.store.meal && this.props.store.meal.reconciled ? (
                 <h1
                   className="text-black"
-                  style={store.isLoading ? styles.hidden : styles.shown}
+                  style={
+                    this.props.store.isLoading ? styles.hidden : styles.shown
+                  }
                 >
                   RECONCILED
                 </h1>
               ) : (
                 <h1
-                  className={store.meal.closed ? "text-primary" : "text-green"}
-                  style={store.isLoading ? styles.hidden : styles.shown}
+                  className={
+                    this.props.store.meal && this.props.store.meal.closed
+                      ? "text-primary"
+                      : "text-green"
+                  }
+                  style={
+                    this.props.store.isLoading ? styles.hidden : styles.shown
+                  }
                 >
-                  {store.meal.closed ? "CLOSED" : "OPEN"}
+                  {this.props.store.meal && this.props.store.meal.closed
+                    ? "CLOSED"
+                    : "OPEN"}
                 </h1>
               )}
             </div>

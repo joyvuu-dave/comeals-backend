@@ -15,6 +15,7 @@ module Api
         render json: meals
       end
 
+      # GET /api/v1/meal/:meal_id
       def show
         render json: @meal
       end
@@ -40,7 +41,7 @@ module Api
         if @meal_resident.update(meal_resident_params)
           render json: { message: 'MealResident updated.' } and return
         else
-          render json: { message: @meal_resident.errors.first[1] }, status: :bad_request and return
+          render json: { message: @meal_resident.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 
@@ -50,7 +51,7 @@ module Api
         if guest.save
           render json: guest and return
         else
-          render json: { message: guest.errors.first[1] }, status: :bad_request and return
+          render json: { message: guest.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 
@@ -70,7 +71,7 @@ module Api
         if @meal.update(:description => params[:description])
           render json: { message: 'Description updated.' } and return
         else
-          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 
@@ -78,7 +79,7 @@ module Api
         if @meal.update(:max => params[:max])
           render json: { message: 'Max updated.' } and return
         else
-          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 
@@ -131,7 +132,7 @@ module Api
         if @meal.update(closed: params[:closed])
           render json: { message: 'Meal closed value updated.' } and return
         else
-          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 
@@ -139,7 +140,7 @@ module Api
         if @meal.update(max: params[:max])
           render json: { message: 'Meal max value updated.' } and return
         else
-          render json: { message: @meal.errors.first[1] }, status: :bad_request and return
+          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 

@@ -16,7 +16,3 @@
 @import "pretty-checkbox/src/pretty-checkbox";
 @import "fullcalendar/dist/fullcalendar";
 @import "react-day-picker/lib/style";
-
-.ReactModal__Overlay--after-open {
-  z-index: 200 !important;
-}

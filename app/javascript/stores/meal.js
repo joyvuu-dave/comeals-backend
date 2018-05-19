@@ -63,7 +63,7 @@ const Meal = types
           method: "patch",
           data: {
             max: null,
-            socket_id: window.socketId
+            socket_id: window.Comeals.socketId
           },
           withCredentials: true
         })
@@ -111,7 +111,7 @@ const Meal = types
           url: `${host}api.comeals${topLevel}/api/v1/meals/${self.id}/max`,
           data: {
             max: self.max,
-            socket_id: window.socketId
+            socket_id: window.Comeals.socketId
           },
           withCredentials: true
         })

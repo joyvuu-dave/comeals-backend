@@ -41,6 +41,6 @@ class GuestRoomReservationSerializer < ActiveModel::Serializer
   end
 
   def url
-    "/guest-room-reservations/#{object.id}/edit"
+    "#guest-room-reservations/#{object.id}/edit"
   end
 end

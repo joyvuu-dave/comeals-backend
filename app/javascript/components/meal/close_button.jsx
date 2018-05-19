@@ -24,7 +24,7 @@ const CloseButton = inject("store")(
           <button
             onClick={store.toggleClosed}
             className={this.buttonClass()}
-            disabled={meal.reconciled}
+            disabled={meal && meal.reconciled}
           >
             Open / Close Meal
           </button>

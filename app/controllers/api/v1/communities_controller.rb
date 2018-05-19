@@ -9,7 +9,7 @@ module Api
         if community.save
           render json: { message: "#{community.name} has been created." } and return
         else
-          render json: { message: community.errors.first[1] }, status: :bad_request and return
+          render json: { message: community.errors.full_messages.join("\n") }, status: :bad_request and return
         end
       end
 
@@ -64,6 +64,12 @@ module Api
         end
 
         render json: @community.residents.active.where('extract(month from birthday) = ?', month_int), each_serializer: ResidentBirthdaySerializer
+      end
+
+      # GET /api/v1/communities/:id/hosts
+      def hosts
+        hosts = Resident.adult.active.where(community_id: params[:id]).joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+        render json: hosts
       end
 
       private

@@ -45,7 +45,7 @@ class EventSerializer < ActiveModel::Serializer
   end
 
   def url
-    "/events/#{object.id}/edit"
+    "#events/#{object.id}/edit"
   end
 
   def allDay

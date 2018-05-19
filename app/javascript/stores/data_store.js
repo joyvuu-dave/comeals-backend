@@ -6,6 +6,10 @@ import Meal from "./meal";
 import ResidentStore from "./resident_store";
 import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
+import EventSource from "./event_source";
+import { RouterModel } from "mst-react-router";
+import Pusher from "pusher-js";
+import moment from "moment";
 
 export const DataStore = types
   .model("DataStore", {
@@ -13,7 +17,7 @@ export const DataStore = types
     editDescriptionMode: true,
     editBillsMode: true,
     meal: types.maybe(types.reference(Meal)),
-    meals: types.array(Meal),
+    meals: types.optional(types.array(Meal), []),
     residentStore: types.optional(ResidentStore, {
       residents: {}
     }),
@@ -22,7 +26,16 @@ export const DataStore = types
     }),
     guestStore: types.optional(GuestStore, {
       guests: {}
-    })
+    }),
+    router: RouterModel,
+    calendarName: types.optional(types.string, ""),
+    userName: types.optional(types.string, ""),
+    eventSources: types.optional(types.array(EventSource), []),
+    modalActive: false,
+    modalName: types.maybe(types.string),
+    modalId: types.maybe(types.number),
+    modalIsChanging: false,
+    modalChangedData: false
   })
   .views(self => ({
     get id() {
@@ -90,6 +103,22 @@ export const DataStore = types
     }
   }))
   .actions(self => ({
+    afterCreate() {
+      window.Comeals = {
+        pusher: null,
+        socketId: null,
+        channel: null
+      };
+
+      Comeals.pusher = new Pusher("8affd7213bb4643ca7f1", {
+        cluster: "us2",
+        encrypted: true
+      });
+
+      Comeals.pusher.connection.bind("connected", function() {
+        Comeals.socketId = Comeals.pusher.connection.socket_id;
+      });
+    },
     toggleEditDescriptionMode() {
       const isSaving = self.editDescriptionMode;
       self.editDescriptionMode = !self.editDescriptionMode;
@@ -127,7 +156,7 @@ export const DataStore = types
         withCredentials: true,
         data: {
           closed: val,
-          socket_id: window.socketId
+          socket_id: window.Comeals.socketId
         }
       })
         .then(function(response) {
@@ -175,20 +204,23 @@ export const DataStore = types
       var host = `${window.location.protocol}//`;
 
       Cookie.remove("token", { domain: `.comeals${topLevel}` });
+      Cookie.remove("community_id", { domain: `.comeals${topLevel}` });
 
       setTimeout(() => (window.location.href = `${host}comeals${topLevel}/`));
     },
     calendar() {
-      window.location.href = "/calendar";
+      self.router.push(
+        `/calendar/all/${moment(self.meal.date).format("YYYY-MM-DD")}`
+      );
     },
     history() {
-      window.open(`/meals/${self.id}/log`, "_blank");
+      window.open(`/meals/${self.id}/log`, "noopener");
     },
     submitDescription() {
       let obj = {
         id: self.meal.id,
         description: self.meal.description,
-        socket_id: window.socketId
+        socket_id: window.Comeals.socketId
       };
 
       console.log(obj);
@@ -268,7 +300,7 @@ export const DataStore = types
       let obj = {
         id: self.meal.id,
         bills: bills,
-        socket_id: window.socketId
+        socket_id: window.Comeals.socketId
       };
 
       console.log(obj);
@@ -323,21 +355,15 @@ export const DataStore = types
           self.loadDataAsync();
         });
     },
-    loadDataAsync(id) {
-      var myId = id;
-      if (typeof myId === "undefined") {
-        myId = self.meal.id;
-      }
-
+    loadDataAsync() {
       var host = `${window.location.protocol}//`;
       var topLevel = window.location.hostname.split(".");
       topLevel = `.${topLevel[topLevel.length - 1]}`;
 
       axios
-        .get(`${host}api.comeals${topLevel}/api/v1/meals/${myId}/cooks`)
+        .get(`${host}api.comeals${topLevel}/api/v1/meals/${self.meal.id}/cooks`)
         .then(function(response) {
           if (response.status === 200) {
-            window.data = response.data;
             self.loadData(response.data);
           }
         })
@@ -448,9 +474,29 @@ export const DataStore = types
 
       // Change loading state
       self.isLoading = false;
-    },
-    afterCreate() {
-      self.loadDataAsync();
+
+      // Unsubscribe from previous meal
+      if (Comeals.channel !== null) {
+        Comeals.pusher.unsubscribe(Comeals.channel.name);
+      }
+
+      // Subscribe to changes of this meal
+      Comeals.channel = Comeals.pusher.subscribe(`meal-${self.meal.id}`);
+      Comeals.channel.bind("update", function(data) {
+        console.log(data.message);
+
+        if (self.billStore && self.billStore.bills) {
+          self.clearBills();
+        }
+        if (self.residentStore && self.residentStore.residents) {
+          self.clearResidents();
+        }
+        if (self.guestStore && self.guestStore.guests) {
+          self.clearGuests();
+        }
+
+        self.loadDataAsync();
+      });
     },
     clearResidents() {
       self.residentStore.residents.clear();
@@ -467,15 +513,15 @@ export const DataStore = types
     addMeal(obj) {
       self.meals.push(obj);
     },
-    switchMeals(obj) {
+    switchMeals(id) {
       if (
-        typeof self.meals.find((item, index, array) => item.id === obj.id) ===
+        typeof self.meals.find((item, index, array) => item.id === id) ===
         "undefined"
       ) {
-        self.addMeal(obj);
+        self.addMeal({ id: Number.parseInt(id, 10) });
       }
 
-      self.meal = obj.id;
+      self.meal = id;
 
       if (self.billStore && self.billStore.bills) {
         self.clearBills();
@@ -489,16 +535,28 @@ export const DataStore = types
 
       self.loadDataAsync();
     },
-    goToPrevMeal() {
-      self.isLoading = true;
-      self.switchMeals({ id: self.meal.prevId });
-    },
-    goToNextMeal() {
-      self.isLoading = true;
-      self.switchMeals({ id: self.meal.nextId });
-    },
     goToMeal(mealId) {
       self.isLoading = true;
-      self.switchMeals({ id: Number.parseInt(mealId, 10) });
+      self.switchMeals(Number.parseInt(mealId, 10));
+    },
+    setCalendarInfo(name, array) {
+      self.modalIsChanging = false;
+      self.calendarName = name;
+      self.eventSources.clear();
+      self.eventSources = array;
+    },
+    closeModal(dataChanged = false) {
+      self.modalIsChanging = true;
+      self.modalActive = false;
+      self.modalName = null;
+      self.modalChangedData = dataChanged;
+
+      setTimeout(() => document.activeElement.blur());
+    },
+    openModal(name, id) {
+      self.modalIsChanging = true;
+      self.modalName = name;
+      self.modalId = id;
+      self.modalActive = true;
     }
   }));

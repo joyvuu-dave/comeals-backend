@@ -5,15 +5,22 @@ module Api
       # GET /api/v1/guest-room-reservations
       def index
         if params[:start].present? && params[:end].present?
-          grr = GuestRoomReservation.where(community_id: params[:community_id])
+          grrs = GuestRoomReservation.where(community_id: params[:community_id])
                         .where("date >= ?", params[:start])
                         .where("date <= ?", params[:end])
 
         else
-          grr = GuestRoomReservation.where(community_id: params[:community_id]).all
+          grrs = GuestRoomReservation.where(community_id: params[:community_id]).all
         end
 
-        render json: grr
+        render json: grrs
+      end
+
+      # GET /api/v1/guest-room-reservations
+      def show
+        grr = GuestRoomReservation.find(params[:id])
+        hosts = grr.community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+        render json: {event: grr, hosts: hosts}
       end
 
       # PATCH /api/v1/guest-room-reservations/:id/update

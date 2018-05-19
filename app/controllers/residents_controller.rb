@@ -9,14 +9,21 @@ class ResidentsController < ApplicationController
   def login
   end
 
-  # GET /calendar/(:type) (subdomains)
+  # GET /calendar/:type/:date (subdomains)
   def calendar
-    @hosts = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
-    @residents = @community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
-  end
+    unless params[:date]
+      if Rails.env.production?
+        host = "https://"
+        top_level = ".com"
+      else
+        host = "http://"
+        top_level = ".test"
+      end
 
-  # GET /residents/guest-room (subdomains)
-  def guest_room
+      redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
+    end
+
+    render 'meals/edit'
   end
 
   # GET /residents/password-reset
@@ -43,9 +50,7 @@ class ResidentsController < ApplicationController
   end
 
   def validate_calendar
-    @calendar_type = params[:type] || 'all'
-
-    render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return unless VALID_CALENDAR_TYPES.include?(@calendar_type)
+    render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return unless VALID_CALENDAR_TYPES.include?(params[:type])
   end
 
 end

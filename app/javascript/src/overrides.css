@@ -1,4 +1,13 @@
-@import "shoelace-css/source/css/shoelace.css";
+@import "normalize.css/normalize.css";
+@import "shoelace-css/source/css/content.css";
+@import "shoelace-css/source/css/badges.css";
+@import "shoelace-css/source/css/buttons.css";
+@import "shoelace-css/source/css/dropdowns.css";
+@import "shoelace-css/source/css/forms.css";
+@import "shoelace-css/source/css/switches.css";
+@import "shoelace-css/source/css/tables.css";
+@import "shoelace-css/source/css/utilities.css";
+@import "shoelace-css/source/css/variables.css";
 
 :root {
   /* Colors */
@@ -99,11 +108,10 @@ table {
   color: hsl(0, 0%, 92%);
 }
 
-#site {
+#main {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .comeals-container {
@@ -153,6 +161,14 @@ table {
     width: 100%;
     transition: width 0.5s;
   }
+
+  .ReactModal__Content {
+    width: auto;
+  }
+
+  .ReactModal__Content--after-open {
+    width: auto;
+  }
 }
 
 @media all and (min-width: 746px) {
@@ -186,7 +202,18 @@ table {
 
   .login-box {
     width: 50%;
-    transition: width 0.5s;
+  }
+
+  .ReactModal__Content {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ReactModal__Content--after-open {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -312,4 +339,23 @@ Prevent FullCalendar title text from being cut off
 */
 .fc-day-grid-event > .fc-content {
   white-space: inherit !important;
+}
+
+/*
+Make modal showup on top of calendar
+*/
+.ReactModal__Overlay--after-open {
+  z-index: 200 !important;
+}
+
+.ReactModal__Body--open {
+  overflow: hidden;
+}
+
+.close-button {
+  margin-left: auto;
+}
+
+.close-button:hover {
+  cursor: pointer;
 }

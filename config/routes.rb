@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         post '/residents/password-reset/:token', to: 'residents#password_new'
         post '/communities', to: 'communities#create'
         get '/communities/:id/birthdays', to: 'communities#birthdays'
+        get '/communities/:id/hosts', to: 'communities#hosts'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
         post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_meal_resident'
@@ -43,14 +44,17 @@ Rails.application.routes.draw do
         get '/residents/:id/ical', to: 'residents#ical', as: :resident_ical
         get '/communities/:id/ical', to: 'communities#ical', as: :community_ical
         get '/version', to: 'site#version'
+        get '/events/:id', to: 'events#show'
         get '/events', to: 'events#index'
         patch '/events/:id/update', to: 'events#update'
         delete '/events/:id/delete', to: 'events#destroy'
         post '/events', to: 'events#create'
+        get '/guest-room-reservations/:id', to: 'guest_room_reservations#show'
         get '/guest-room-reservations', to: 'guest_room_reservations#index'
         patch '/guest-room-reservations/:id/update', to: 'guest_room_reservations#update'
         delete '/guest-room-reservations/:id/delete', to: 'guest_room_reservations#destroy'
         post '/guest-room-reservations', to: 'guest_room_reservations#create'
+        get '/common-house-reservations/:id', to: 'common_house_reservations#show'
         get '/common-house-reservations', to: 'common_house_reservations#index'
         patch '/common-house-reservations/:id/update', to: 'common_house_reservations#update'
         delete '/common-house-reservations/:id/delete', to: 'common_house_reservations#destroy'
@@ -66,17 +70,10 @@ Rails.application.routes.draw do
 
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
-  get '/calendar/(:type)', to: 'residents#calendar'
-  get '/guest-room', to: 'residents#guest_room'
+  get '/calendar/:type/(:date)', to: 'residents#calendar'
   get '/meals/:id/edit', to: 'meals#edit', as: :meal
   get '/meals/:id/log', to: 'meals#log'
   get '/rotations/:id', to: 'rotations#show'
-  get '/events/:id/edit', to: 'events#edit'
-  get '/events/new', to: 'events#new'
-  get '/common-house-reservations/:id/edit', to: 'common_house_reservations#edit'
-  get '/common-house-reservations/new', to: 'common_house_reservations#new'
-  get '/guest-room-reservations/:id/edit', to: 'guest_room_reservations#edit'
-  get '/guest-room-reservations/new', to: 'guest_room_reservations#new'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

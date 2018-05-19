@@ -4,79 +4,48 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
+import { inject } from "mobx-react";
+import FontAwesomeIcon from "@fortawesome/react-fontawesome";
+import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
 
-class GuestRoomReservationsEdit extends Component {
-  constructor(props) {
-    super(props);
-    this.handleDayChange = this.handleDayChange.bind(this);
+const GuestRoomReservationsEdit = inject("store")(
+  class GuestRoomReservationsEdit extends Component {
+    constructor(props) {
+      super(props);
+      this.handleDayChange = this.handleDayChange.bind(this);
 
-    var topLevel = window.location.hostname.split(".");
-    topLevel = topLevel[topLevel.length - 1];
+      var topLevel = window.location.hostname.split(".");
+      topLevel = topLevel[topLevel.length - 1];
 
-    this.state = {
-      host: `${window.location.protocol}//`,
-      topLevel: `.${topLevel}`,
-      slug: window.location.hostname.split(".")[0]
-    };
-  }
+      this.state = {
+        host: `${window.location.protocol}//`,
+        topLevel: `.${topLevel}`,
+        slug: window.location.hostname.split(".")[0],
+        ready: false,
+        event: {},
+        hosts: []
+      };
+    }
 
-  handleSubmit(values) {
-    var myState = this.state;
+    componentDidMount() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
 
-    axios
-      .patch(
-        `${myState.host}api.comeals${
-          myState.topLevel
-        }/api/v1/guest-room-reservations/${this.props.event.id}/update`,
-        {
-          resident_id: values.resident_id,
-          date: values.day
-        }
-      )
-      .then(function(response) {
-        if (response.status === 200) {
-          window.location.href = `${myState.host}${myState.slug}.comeals${
-            myState.topLevel
-          }/calendar`;
-        }
-      })
-      .catch(function(error) {
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          const data = error.response.data;
-          const status = error.response.status;
-          const headers = error.response.headers;
-
-          window.alert(data.message);
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-          // http.ClientRequest in node.js
-          const request = error.request;
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          const message = error.message;
-        }
-        const config = error.config;
-      });
-  }
-
-  handleDelete() {
-    if (window.confirm("Do you really want to delete this reservation?")) {
-      var myState = this.state;
-
+      var self = this;
       axios
-        .delete(
-          `${myState.host}api.comeals${
-            myState.topLevel
-          }/api/v1/guest-room-reservations/${this.props.event.id}/delete`
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/guest-room-reservations/${
+            self.props.eventId
+          }`
         )
         .then(function(response) {
           if (response.status === 200) {
-            window.location.href = `${myState.host}${myState.slug}.comeals${
-              myState.topLevel
-            }/calendar`;
+            self.setState({
+              event: response.data.event,
+              hosts: response.data.hosts
+            });
+            self.setState({ ready: true });
           }
         })
         .catch(function(error) {
@@ -100,82 +69,165 @@ class GuestRoomReservationsEdit extends Component {
           const config = error.config;
         });
     }
-  }
 
-  handleDayChange(val) {
-    this.formDispatch(actions.change("local.day", val));
-  }
+    handleSubmit(values) {
+      var self = this;
+      axios
+        .patch(
+          `${self.state.host}api.comeals${
+            self.state.topLevel
+          }/api/v1/guest-room-reservations/${self.props.eventId}/update`,
+          {
+            resident_id: values.resident_id,
+            date: values.day
+          }
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            self.props.store.closeModal(true);
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
 
-  getDayPickerInput() {
-    return (
-      <DayPickerInput
-        formatDate={formatDate}
-        parseDate={parseDate}
-        onDayChange={this.handleDayChange}
-        value={formatDate(this.props.event.date)}
-      />
-    );
-  }
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    }
 
-  attachDispatch(dispatch) {
-    this.formDispatch = dispatch;
-  }
+    handleDelete() {
+      if (window.confirm("Do you really want to delete this reservation?")) {
+        var self = this;
+        axios
+          .delete(
+            `${self.state.host}api.comeals${
+              self.state.topLevel
+            }/api/v1/guest-room-reservations/${self.props.eventId}/delete`
+          )
+          .then(function(response) {
+            if (response.status === 200) {
+              self.props.store.closeModal(true);
+            }
+          })
+          .catch(function(error) {
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              const data = error.response.data;
+              const status = error.response.status;
+              const headers = error.response.headers;
 
-  render() {
-    return (
-      <div>
-        <div className="flex">
-          <h2 className="mar-md">Guest Room Reservation</h2>
-          <button
-            onClick={this.handleDelete.bind(this)}
-            type="button"
-            className="mar-md button-warning"
-          >
-            Delete
-          </button>
+              window.alert(data.message);
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+              // http.ClientRequest in node.js
+              const request = error.request;
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              const message = error.message;
+            }
+            const config = error.config;
+          });
+      }
+    }
+
+    handleDayChange(val) {
+      this.formDispatch(actions.change("local.day", val));
+    }
+
+    getDayPickerInput() {
+      return (
+        <DayPickerInput
+          formatDate={formatDate}
+          parseDate={parseDate}
+          onDayChange={this.handleDayChange}
+          value={formatDate(this.state.event.date)}
+        />
+      );
+    }
+
+    attachDispatch(dispatch) {
+      this.formDispatch = dispatch;
+    }
+
+    render() {
+      return (
+        <div>
+          {this.state.ready && (
+            <div>
+              <div className="flex">
+                <h2 className="mar-md">Guest Room Reservation</h2>
+                <button
+                  onClick={this.handleDelete.bind(this)}
+                  type="button"
+                  className="mar-md button-warning"
+                >
+                  Delete
+                </button>
+                <FontAwesomeIcon
+                  icon={faTimes}
+                  size="2x"
+                  className="close-button"
+                  onClick={this.props.store.closeModal}
+                />
+              </div>
+              <fieldset>
+                <legend>Edit</legend>
+                <LocalForm
+                  onSubmit={values => this.handleSubmit(values)}
+                  getDispatch={dispatch => this.attachDispatch(dispatch)}
+                  initialState={{
+                    resident_id: this.state.event.resident_id,
+                    day: this.state.event.date
+                  }}
+                >
+                  <label>Host</label>
+                  <Control.select model=".resident_id" id="local.resident_id">
+                    {this.state.hosts.map(host => (
+                      <option key={host[0]} value={host[0]}>
+                        {host[2]} - {host[1]}
+                      </option>
+                    ))}
+                  </Control.select>
+                  <br />
+
+                  <label>Day</label>
+                  <br />
+                  <Control.text
+                    model="local.day"
+                    id="local.day"
+                    component={this.getDayPickerInput.bind(this)}
+                  />
+                  <br />
+                  <br />
+
+                  <button type="submit" className="button-dark">
+                    Update
+                  </button>
+                </LocalForm>
+              </fieldset>
+            </div>
+          )}
+          {!this.state.ready && <h3>Loading...</h3>}
         </div>
-        <fieldset className="w-50">
-          <legend>Edit</legend>
-          <LocalForm
-            onSubmit={values => this.handleSubmit(values)}
-            getDispatch={dispatch => this.attachDispatch(dispatch)}
-            initialState={{
-              resident_id: this.props.event.resident_id,
-              day: this.props.event.date
-            }}
-          >
-            <label>Host</label>
-            <Control.select
-              model=".resident_id"
-              id="local.resident_id"
-              className="w-75"
-            >
-              {this.props.hosts.map(host => (
-                <option key={host[0]} value={host[0]}>
-                  {host[2]} - {host[1]}
-                </option>
-              ))}
-            </Control.select>
-            <br />
-
-            <label>Day</label>
-            <br />
-            <Control.text
-              model="local.day"
-              id="local.day"
-              component={this.getDayPickerInput.bind(this)}
-            />
-            <br />
-            <br />
-
-            <button type="submit" className="button-dark">
-              Update
-            </button>
-          </LocalForm>
-        </fieldset>
-      </div>
-    );
+      );
+    }
   }
-}
+);
 
 export default GuestRoomReservationsEdit;
