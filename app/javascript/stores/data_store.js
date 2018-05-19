@@ -17,8 +17,6 @@ export const DataStore = types
     editDescriptionMode: true,
     editBillsMode: true,
     meal: types.maybe(types.reference(Meal)),
-    nextMeal: types.maybe(types.reference(Meal)),
-    prevMeal: types.maybe(types.reference(Meal)),
     meals: types.optional(types.array(Meal), []),
     residentStore: types.optional(ResidentStore, {
       residents: {}
@@ -536,14 +534,6 @@ export const DataStore = types
       }
 
       self.loadDataAsync();
-    },
-    goToPrevMeal() {
-      self.isLoading = true;
-      self.switchMeals(self.meal.prevId);
-    },
-    goToNextMeal() {
-      self.isLoading = true;
-      self.switchMeals(self.meal.nextId);
     },
     goToMeal(mealId) {
       self.isLoading = true;
