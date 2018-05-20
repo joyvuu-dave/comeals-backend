@@ -29,7 +29,7 @@ const Extras = inject("store")(
                 key={val}
                 type="checkbox"
                 value={val}
-                defaultChecked={store.meal && store.meal.extras === val}
+                checked={store.meal && store.meal.extras === val}
                 onChange={e => store.meal.setExtras(e.target.value)}
                 disabled={store.meal && store.meal.reconciled}
               />
