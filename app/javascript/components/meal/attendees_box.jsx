@@ -74,7 +74,7 @@ const AttendeeComponent = inject("store")(
                   type="checkbox"
                   className="switch"
                   key={`late_switch_${resident.id}`}
-                  defaultChecked={resident.late}
+                  checked={resident ? resident.late : false}
                   onChange={e => resident.toggleLate()}
                   disabled={
                     this.props.store.meal.reconciled ||
