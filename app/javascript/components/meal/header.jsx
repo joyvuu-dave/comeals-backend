@@ -16,7 +16,7 @@ const Header = inject("store")(
       style={styles.header}
       className="header background-yellow input-height"
     >
-      <button className="button-link text-secondary" onClick={store.calendar}>
+      <button className="button-link text-black" onClick={store.calendar}>
         Calendar
       </button>
       <div className="flex">
