@@ -5,18 +5,18 @@ module Api
       # GET /api/v1/common-house-reservations
       def index
         if params[:start].present? && params[:end].present?
-          chrs = CommonHouseReservation.where(community_id: params[:community_id])
+          chrs = CommonHouseReservation.includes({ :resident => :unit }).where(community_id: params[:community_id])
                         .where("start_date >= ?", params[:start])
                         .where("start_date <= ?", params[:end])
 
         else
-          chrs = CommonHouseReservation.where(community_id: params[:community_id]).all
+          chrs = CommonHouseReservation.includes({ :resident => :unit }).where(community_id: params[:community_id]).all
         end
 
         render json: chrs
       end
 
-      # GET /api/v1/common-house-reservations
+      # GET /api/v1/common-house-reservations/:id
       def show
         chr = CommonHouseReservation.find(params[:id])
         residents = chr.community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")

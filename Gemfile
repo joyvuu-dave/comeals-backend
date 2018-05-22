@@ -46,6 +46,7 @@ gem 'sendgrid-ruby'
 gem 'icalendar'
 gem 'platform-api'
 gem 'skylight'
+gem 'goldiloader'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
@@ -74,6 +75,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'xipio'
+  gem 'bullet'
 end
 
 group :test do

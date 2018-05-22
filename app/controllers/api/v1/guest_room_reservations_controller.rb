@@ -5,12 +5,12 @@ module Api
       # GET /api/v1/guest-room-reservations
       def index
         if params[:start].present? && params[:end].present?
-          grrs = GuestRoomReservation.where(community_id: params[:community_id])
+          grrs = GuestRoomReservation.includes({ :resident => :unit }).where(community_id: params[:community_id])
                         .where("date >= ?", params[:start])
                         .where("date <= ?", params[:end])
 
         else
-          grrs = GuestRoomReservation.where(community_id: params[:community_id]).all
+          grrs = GuestRoomReservation.includes({ :resident => :unit }).where(community_id: params[:community_id]).all
         end
 
         render json: grrs
