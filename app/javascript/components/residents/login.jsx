@@ -40,10 +40,7 @@ class ResidentsLogin extends Component {
             expires: 7300,
             domain: `.comeals${myState.topLevel}`
           });
-          var newUrl = `${myState.host}${response.data.slug}.comeals${
-            myState.topLevel
-          }/calendar/all`;
-          window.location.href = newUrl;
+          window.location.reload();
         }
       })
       .catch(function(error) {
