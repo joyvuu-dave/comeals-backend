@@ -136,7 +136,7 @@ const GuestRoomReservationsNew = inject("store")(
           {this.state.ready && (
             <div>
               <div className="flex">
-                <h2 className="mar-md">Guest Room Reservation</h2>
+                <h2>Guest Room Reservation</h2>
                 <FontAwesomeIcon
                   icon={faTimes}
                   size="2x"

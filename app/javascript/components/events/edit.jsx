@@ -23,8 +23,7 @@ const EventsEdit = inject("store")(
         topLevel: `.${topLevel}`,
         slug: window.location.hostname.split(".")[0],
         ready: false,
-        event: {},
-        residents: []
+        event: {}
       };
     }
 
@@ -41,10 +40,9 @@ const EventsEdit = inject("store")(
         .then(function(response) {
           if (response.status === 200) {
             self.setState({
-              event: response.data.event,
-              residents: response.data.residents
+              event: response.data,
+              ready: true
             });
-            self.setState({ ready: true });
           }
         })
         .catch(function(error) {
@@ -70,11 +68,6 @@ const EventsEdit = inject("store")(
     }
 
     handleSubmit(values) {
-      if (values.start_time > values.end_time) {
-        window.alert("Start time cannot be later than end time");
-        return;
-      }
-
       var self = this;
       axios
         .patch(
@@ -177,13 +170,27 @@ const EventsEdit = inject("store")(
       this.formDispatch = dispatch;
     }
 
+    getInitialEndTime() {
+      if (this.state.event.end_date === null) {
+        return "";
+      }
+
+      return `${new Date(this.state.event.end_date)
+        .getHours()
+        .toString()
+        .padStart(2, "0")}:${new Date(this.state.event.end_date)
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
+    }
+
     render() {
       return (
         <div>
           {this.state.ready && (
             <div>
               <div className="flex">
-                <h2 className="mar-md">Event</h2>
+                <h2>Event</h2>
                 <button
                   onClick={this.handleDelete.bind(this)}
                   type="button"
@@ -206,30 +213,15 @@ const EventsEdit = inject("store")(
                   initialState={{
                     title: this.state.event.title,
                     description: this.state.event.description,
-                    day: `${new Date(
-                      this.state.event.start_date
-                    ).getFullYear()}-${
-                      new Date(this.state.event.start_date).getMonth() < 9
-                        ? `0${new Date(this.state.event.start_date).getMonth() +
-                            1}`
-                        : new Date(this.state.event.start_date).getMonth() + 1
-                    }-${new Date(this.state.event.start_date).getDate()}`,
-                    start_time: `${new Date(
-                      this.state.event.start_date
-                    ).getUTCHours()}:${
-                      new Date(this.state.event.start_date).getUTCMinutes() < 10
-                        ? `0${new Date(
-                            this.state.event.start_date
-                          ).getUTCMinutes()}`
-                        : new Date(this.state.event.start_date).getUTCMinutes()
-                    }`,
-                    end_time: `${new Date(
-                      this.state.event.end_date
-                    ).getUTCHours()}:${
-                      new Date(this.state.event.end_date).getUTCMinutes() < 10
-                        ? `0${new Date(this.state.event.end_date).getMinutes()}`
-                        : new Date(this.state.event.end_date).getMinutes()
-                    }`,
+                    day: this.state.event.start_date,
+                    start_time: `${new Date(this.state.event.start_date)
+                      .getHours()
+                      .toString()
+                      .padStart(2, "0")}:${new Date(this.state.event.start_date)
+                      .getMinutes()
+                      .toString()
+                      .padStart(2, "0")}`,
+                    end_time: this.getInitialEndTime(),
                     all_day: this.state.event.allday
                   }}
                 >
@@ -280,7 +272,7 @@ const EventsEdit = inject("store")(
                   <br />
 
                   <label>All Day</label>
-                  <Control.checkbox model=".all_day" />
+                  <Control.checkbox model="local.all_day" id="local.all_day" />
                   <br />
                   <br />
 

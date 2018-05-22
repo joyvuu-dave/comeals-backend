@@ -26,4 +26,12 @@ class Event < ApplicationRecord
 
   validates_presence_of :title
   validates_presence_of :start_date
+
+  validate :start_date_is_before_end_date
+
+  def start_date_is_before_end_date
+    unless allday
+      errors.add(:base, "Start time must occur before end time") if end_date < start_date
+    end
+  end
 end

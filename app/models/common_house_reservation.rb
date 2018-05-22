@@ -31,6 +31,7 @@ class CommonHouseReservation < ApplicationRecord
   validates_presence_of :end_date
 
   validate :period_is_free
+  validate :start_date_is_before_end_date
 
   def period_is_free
     errors.add(:base, "Time period is already taken") if CommonHouseReservation
@@ -39,5 +40,9 @@ class CommonHouseReservation < ApplicationRecord
                                                             .where("start_date <= ?", end_date)
                                                             .where("end_date >= ?", start_date)
                                                             .exists?
+  end
+
+  def start_date_is_before_end_date
+    errors.add(:base, "Start time must occur before end time") if end_date < start_date
   end
 end

@@ -171,7 +171,7 @@ const GuestRoomReservationsEdit = inject("store")(
           {this.state.ready && (
             <div>
               <div className="flex">
-                <h2 className="mar-md">Guest Room Reservation</h2>
+                <h2>Guest Room Reservation</h2>
                 <button
                   onClick={this.handleDelete.bind(this)}
                   type="button"

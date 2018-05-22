@@ -28,11 +28,6 @@ const EventsNew = inject("store")(
     }
 
     handleSubmit(values) {
-      if (values.start_time > values.end_time) {
-        window.alert("Start time cannot be later than end time");
-        return;
-      }
-
       var self = this;
       axios
         .post(
@@ -45,11 +40,15 @@ const EventsNew = inject("store")(
             start_year: values.day && values.day.getFullYear(),
             start_month: values.day && values.day.getMonth() + 1,
             start_day: values.day && values.day.getDate(),
-            start_hours: values.start_time && values.start_time.split(":")[0],
-            start_minutes: values.start_time && values.start_time.split(":")[1],
-            end_hours: values.end_time && values.end_time.split(":")[0],
-            end_minutes: values.end_time && values.end_time.split(":")[1],
-            all_day: values.all_day
+            start_hours:
+              values && values.start_time && values.start_time.split(":")[0],
+            start_minutes:
+              values && values.start_time && values.start_time.split(":")[1],
+            end_hours:
+              values && values.end_time && values.end_time.split(":")[0],
+            end_minutes:
+              values && values.end_time && values.end_time.split(":")[1],
+            all_day: values && values.all_day
           }
         )
         .then(function(response) {
@@ -102,7 +101,7 @@ const EventsNew = inject("store")(
       return (
         <div>
           <div className="flex">
-            <h2 className="mar-md">New Event</h2>
+            <h2>Event</h2>
             <FontAwesomeIcon
               icon={faTimes}
               size="2x"
@@ -155,8 +154,8 @@ const EventsNew = inject("store")(
                 ))}
               </Control.select>
               <br />
-              <label>All Day</label>{" "}
-              <Control.input type="checkbox" model="local.all_day" />
+              <label>All Day</label>
+              <Control.checkbox model="local.all_day" />
               <br />
               <br />
               <button type="submit" className="button-dark">

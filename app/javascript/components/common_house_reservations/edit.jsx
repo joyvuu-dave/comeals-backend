@@ -44,9 +44,9 @@ const CommonHouseReservationsEdit = inject("store")(
           if (response.status === 200) {
             self.setState({
               event: response.data.event,
-              residents: response.data.residents
+              residents: response.data.residents,
+              ready: true
             });
-            self.setState({ ready: true });
           }
         })
         .catch(function(error) {
@@ -72,11 +72,6 @@ const CommonHouseReservationsEdit = inject("store")(
     }
 
     handleSubmit(values) {
-      if (values.start_time > values.end_time) {
-        window.alert("Start time cannot be later than end time");
-        return;
-      }
-
       var self = this;
       axios
         .patch(
@@ -184,7 +179,7 @@ const CommonHouseReservationsEdit = inject("store")(
           {this.state.ready && (
             <div>
               <div className="flex">
-                <h2 className="mar-md">Common House Reservation</h2>
+                <h2>Common House</h2>
                 <button
                   onClick={this.handleDelete.bind(this)}
                   type="button"

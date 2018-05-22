@@ -5,8 +5,8 @@ import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
 import Cookie from "js-cookie";
-import { generateTimes } from "../../helpers/helpers";
 import { inject } from "mobx-react";
+import { generateTimes } from "../../helpers/helpers";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
 
@@ -44,9 +44,9 @@ const CommonHouseReservationsNew = inject("store")(
         .then(function(response) {
           if (response.status === 200) {
             self.setState({
-              residents: response.data
+              residents: response.data,
+              ready: true
             });
-            self.setState({ ready: true });
           }
         })
         .catch(function(error) {
@@ -72,11 +72,6 @@ const CommonHouseReservationsNew = inject("store")(
     }
 
     handleSubmit(values) {
-      if (values.start_time > values.end_time) {
-        window.alert("Start time cannot be later than end time");
-        return;
-      }
-
       var self = this;
       axios
         .post(
@@ -153,7 +148,7 @@ const CommonHouseReservationsNew = inject("store")(
           {this.state.ready && (
             <div>
               <div className="flex">
-                <h2 className="mar-md">Common House Reservation</h2>
+                <h2>Common House</h2>
                 <FontAwesomeIcon
                   icon={faTimes}
                   size="2x"
@@ -184,7 +179,6 @@ const CommonHouseReservationsNew = inject("store")(
                     id="local.title"
                     placeholder="optional"
                   />
-                  <br />
                   <br />
 
                   <label>Day</label>
