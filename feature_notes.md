@@ -39,3 +39,8 @@ Comomon House Cleaning
   * community decided
   * average
   * meal becomes free
+
+# Improve Performance
+
+* always have current, next, previous meals downloaded
+* display old calendar data until the new stuff has been fetched

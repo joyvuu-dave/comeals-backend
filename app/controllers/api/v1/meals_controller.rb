@@ -150,7 +150,7 @@ module Api
       end
 
       def set_meal
-        @meal ||= Meal.find_by(id: params[:meal_id])
+        @meal ||= Meal.includes({ :residents => :unit }).find_by(id: params[:meal_id])
         @meal.socket_id = params[:socket_id]
       end
 
