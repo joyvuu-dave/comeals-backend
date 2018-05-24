@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import axios from "axios";
 import { inject, observer } from "mobx-react";
 import Cow from "../../packs/images/cow.png";
 import Carrot from "../../packs/images/carrot.png";
@@ -97,8 +96,11 @@ const AttendeeComponent = inject("store")(
                   onClick={e => resident.toggleVeg()}
                   disabled={
                     this.props.store.meal.reconciled ||
-                    (this.props.store.meal.closed && resident.attending) ||
                     (this.props.store.meal.closed &&
+                      resident.attending &&
+                      !resident.canRemove) ||
+                    (this.props.store.meal.closed &&
+                      !resident.attending &&
                       this.props.store.meal.extras < 1)
                   }
                 />

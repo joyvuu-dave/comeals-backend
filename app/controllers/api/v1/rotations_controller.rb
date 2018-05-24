@@ -25,7 +25,7 @@ module Api
       end
 
       def authorize
-        not_authorized unless current_resident.community_id == params[:community_id]
+        not_authorized unless current_resident.community_id.to_s == params[:community_id]
       end
     end
   end

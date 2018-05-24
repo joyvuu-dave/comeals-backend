@@ -4,6 +4,7 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
+import Cookie from "js-cookie";
 import { generateTimes } from "../../helpers/helpers";
 import { inject } from "mobx-react";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
@@ -35,7 +36,9 @@ const EventsEdit = inject("store")(
       var self = this;
       axios
         .get(
-          `${host}api.comeals${topLevel}/api/v1/events/${self.props.eventId}`
+          `${host}api.comeals${topLevel}/api/v1/events/${
+            self.props.eventId
+          }?token=${Cookie.get("token")}`
         )
         .then(function(response) {
           if (response.status === 200) {
@@ -73,7 +76,7 @@ const EventsEdit = inject("store")(
         .patch(
           `${self.state.host}api.comeals${self.state.topLevel}/api/v1/events/${
             self.props.eventId
-          }/update`,
+          }/update?token=${Cookie.get("token")}`,
           {
             title: values.title,
             description: values.description,
@@ -121,7 +124,9 @@ const EventsEdit = inject("store")(
           .delete(
             `${self.state.host}api.comeals${
               self.state.topLevel
-            }/api/v1/events/${self.state.event.id}/delete`
+            }/api/v1/events/${self.state.event.id}/delete?token=${Cookie.get(
+              "token"
+            )}`
           )
           .then(function(response) {
             if (response.status === 200) {

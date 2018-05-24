@@ -4,6 +4,7 @@ import DayPickerInput from "react-day-picker/DayPickerInput";
 import { formatDate, parseDate } from "react-day-picker/moment";
 import moment from "moment";
 import axios from "axios";
+import Cookie from "js-cookie";
 import { generateTimes } from "../../helpers/helpers";
 import { inject } from "mobx-react";
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
@@ -38,7 +39,7 @@ const CommonHouseReservationsEdit = inject("store")(
         .get(
           `${host}api.comeals${topLevel}/api/v1/common-house-reservations/${
             self.props.eventId
-          }`
+          }?token=${Cookie.get("token")}`
         )
         .then(function(response) {
           if (response.status === 200) {
@@ -77,7 +78,9 @@ const CommonHouseReservationsEdit = inject("store")(
         .patch(
           `${self.state.host}api.comeals${
             self.state.topLevel
-          }/api/v1/common-house-reservations/${this.props.eventId}/update`,
+          }/api/v1/common-house-reservations/${
+            this.props.eventId
+          }/update?token=${Cookie.get("token")}`,
           {
             resident_id: values.resident_id,
             start_year: values.day && new Date(values.day).getFullYear(),
@@ -124,7 +127,9 @@ const CommonHouseReservationsEdit = inject("store")(
           .delete(
             `${self.state.host}api.comeals${
               self.state.topLevel
-            }/api/v1/common-house-reservations/${self.props.eventId}/delete`
+            }/api/v1/common-house-reservations/${
+              self.props.eventId
+            }/delete?token=${Cookie.get("token")}`
           )
           .then(function(response) {
             if (response.status === 200) {

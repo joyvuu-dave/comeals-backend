@@ -21,11 +21,11 @@ module Api
 
       private
       def authenticate
-        not_authenticated unless signed_in_resident?
+        not_authenticated_api unless signed_in_resident?
       end
 
       def authorize
-        not_authorized unless current_resident.community_id.to_s == params[:community_id]
+        not_authorized_api unless current_resident.community_id.to_s == params[:community_id]
       end
     end
   end

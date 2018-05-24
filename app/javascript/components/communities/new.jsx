@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
+import Cookie from "js-cookie";
 
 class CommunitiesNew extends Component {
   constructor(props) {
@@ -20,7 +21,9 @@ class CommunitiesNew extends Component {
 
     axios
       .post(
-        `${myState.host}api.comeals${myState.topLevel}/api/v1/communities`,
+        `${myState.host}api.comeals${
+          myState.topLevel
+        }/api/v1/communities?token=${Cookie.get("token")}`,
         {
           name: values.name,
           email: values.email,

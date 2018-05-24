@@ -3,8 +3,8 @@ module Api
     class MealsController < ApplicationController
       before_action :authenticate
       before_action :authorize, only: [:index]
-      before_action :authorize_one, except: [:index]
       before_action :set_meal, except: [:index]
+      before_action :authorize_one, except: [:index]
       before_action :set_guest, only: [:destroy_guest]
       before_action :set_meal_resident, only: [:destroy_meal_resident, :update_meal_resident]
       after_action :trigger_pusher, except: [:index, :show, :show_cooks]
@@ -154,7 +154,7 @@ module Api
       def set_meal
         @meal ||= Meal.includes({ :residents => :unit }).find_by(id: params[:meal_id])
 
-        not_found unless @meal.present?
+        not_found_api unless @meal.present?
 
         @meal.socket_id = params[:socket_id]
       end
@@ -162,13 +162,13 @@ module Api
       def set_guest
         @guest = @meal.guests.find_by(id: params[:guest_id])
 
-        not_found unless @guest.present?
+        not_found_api unless @guest.present?
       end
 
       def set_meal_resident
         @meal_resident ||= MealResident.find_by(meal_id: params[:meal_id], resident_id: params[:resident_id])
 
-        not_found unless @meal_resident.present?
+        not_found_api unless @meal_resident.present?
       end
 
       def trigger_pusher
@@ -176,15 +176,15 @@ module Api
       end
 
       def authenticate
-        not_authenticated unless signed_in_resident?
+        not_authenticated_api unless signed_in_resident?
       end
 
       def authorize
-        not_authorized unless current_resident.community_id.to_s == params[:community_id]
+        not_authorized_api unless current_resident.community_id.to_s == params[:community_id]
       end
 
       def authorize_one
-        not_authorized unless current_resident.community_id == @meal.community_id
+        not_authorized_api unless current_resident.community_id == @meal.community_id
       end
 
     end

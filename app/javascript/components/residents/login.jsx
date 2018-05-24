@@ -101,7 +101,7 @@ class ResidentsLogin extends Component {
         </LocalForm>
         <br />
         <a
-          className="button button-link text-secondary"
+          className="button button-link"
           onClick={this.handlePasswordReset.bind(this)}
         >
           Reset your password

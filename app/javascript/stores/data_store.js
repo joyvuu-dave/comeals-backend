@@ -153,7 +153,9 @@ export const DataStore = types
       axios({
         url: `${
           window.location.protocol
-        }//api.comeals${topLevel}/api/v1/meals/${self.meal.id}/closed`,
+        }//api.comeals${topLevel}/api/v1/meals/${
+          self.meal.id
+        }/closed?token=${Cookie.get("token")}`,
         method: "patch",
         withCredentials: true,
         data: {
@@ -235,7 +237,7 @@ export const DataStore = types
         method: "patch",
         url: `${host}api.comeals${topLevel}/api/v1/meals/${
           self.meal.id
-        }/description`,
+        }/description?token=${Cookie.get("token")}`,
         data: obj,
         withCredentials: true
       })
@@ -313,7 +315,9 @@ export const DataStore = types
 
       axios({
         method: "patch",
-        url: `${host}api.comeals${topLevel}/api/v1/meals/${self.meal.id}/bills`,
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${
+          self.meal.id
+        }/bills?token=${Cookie.get("token")}`,
         data: obj,
         withCredentials: true
       })
@@ -363,7 +367,11 @@ export const DataStore = types
       topLevel = `.${topLevel[topLevel.length - 1]}`;
 
       axios
-        .get(`${host}api.comeals${topLevel}/api/v1/meals/${self.meal.id}/cooks`)
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.meal.id
+          }/cooks?token=${Cookie.get("token")}`
+        )
         .then(function(response) {
           if (response.status === 200) {
             self.loadData(response.data);

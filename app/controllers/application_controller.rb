@@ -2,7 +2,15 @@ class ApplicationController < ActionController::Base
   skip_before_action :verify_authenticity_token
 
   def current_resident
-    @current_resident ||= Key.find_by(token: cookies[:token])&.identity
+    if cookies[:token]
+      @current_resident = Key.find_by(token: cookies[:token])&.identity
+      return @current_resident
+    end
+
+    if params.has_key?(:token)
+      @current_resident = Key.find_by(token: params[:token])&.identity
+      return @current_resident
+    end
   end
 
   def signed_in_resident?
@@ -27,5 +35,17 @@ class ApplicationController < ActionController::Base
 
   def not_found
     render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return
+  end
+
+  def not_authenticated_api
+    render json: {message: "You are not authenticated. Please try signing in and then try again."}, status: 401 and return
+  end
+
+  def not_authorized_api
+    render json: {message: "You are not authorized to view the page. You may have mistyped the address or might be signed into the wrong account."}, status: 403 and return
+  end
+
+  def not_found_api
+    render json: {message: "The page you were looking for doesn't exist. You may have mistyped the address or the page may have moved."}, status: 404 and return
   end
 end
