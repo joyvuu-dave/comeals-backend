@@ -41,6 +41,7 @@ Rails.application.routes.draw do
         get '/bills', to: 'bills#index'
         get '/bills/:id', to: 'bills#show'
         get '/rotations', to: 'rotations#index'
+        get '/rotations/:id', to: 'rotations#show'
         get '/residents/:id/ical', to: 'residents#ical', as: :resident_ical
         get '/communities/:id/ical', to: 'communities#ical', as: :community_ical
         get '/version', to: 'site#version'

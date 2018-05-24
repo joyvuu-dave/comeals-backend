@@ -16,6 +16,7 @@ import EventsNew from "../events/new";
 import GuestRoomReservationsEdit from "../guest_room_reservations/edit";
 import CommonHouseReservationsEdit from "../common_house_reservations/edit";
 import EventsEdit from "../events/edit";
+import RotationsShow from "../rotations/show";
 
 const styles = {
   main: {
@@ -83,6 +84,9 @@ const Calendar = inject("store")(
             case "events":
               return <EventsEdit eventId={this.props.store.modalId} />;
               break;
+
+            case "rotations":
+              return <RotationsShow id={this.props.store.modalId} />;
 
             default:
               return null;

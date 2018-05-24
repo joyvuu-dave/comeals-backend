@@ -21,9 +21,7 @@ class CommunitiesNew extends Component {
 
     axios
       .post(
-        `${myState.host}api.comeals${
-          myState.topLevel
-        }/api/v1/communities?token=${Cookie.get("token")}`,
+        `${myState.host}api.comeals${myState.topLevel}/api/v1/communities`,
         {
           name: values.name,
           email: values.email,

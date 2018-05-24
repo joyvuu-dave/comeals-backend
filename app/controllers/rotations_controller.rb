@@ -12,7 +12,7 @@ class RotationsController < ApplicationController
     @signed_up_residents_ids = Bill.joins(:resident).where(id: bill_ids).pluck("residents.id")
 
     eligible_cooks_ids = @rotation.community.residents.where(can_cook: true, active: true).where("multiplier >= 2").ids
-    @eligible_cooks = Resident.joins(:unit).where(id: eligible_cooks_ids).order("units.name")
+    @eligible_cooks = Resident.includes(:unit).where(id: eligible_cooks_ids).order("units.name")
   end
 
   private
