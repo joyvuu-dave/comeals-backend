@@ -1,7 +1,21 @@
 module Api
   module V1
     class CommunitiesController < ApplicationController
-      before_action :set_community, only: [:ical, :birthdays]
+      before_action :authenticate
+      before_action :authorize
+      before_action :set_community, only: [:ical, :birthdays, :database]
+
+      def database
+        meals = Meal.includes({ :residents => :unit,
+                                :community => :bills,
+                                :community => { :meals => :residents },
+                                :community => :meal_residents,
+                                :community => { :residents => :unit } })
+                    .unreconciled
+                    .where(community_id: @community.id)
+
+        render json: meals, each_serializer: MealFormSerializer
+      end
 
       # POST /api/v1/communities
       def create
@@ -15,14 +29,6 @@ module Api
 
       # GET /api/v1/communities/:id/ical
       def ical
-        if Rails.env.production?
-          host = "https://"
-          top_level = ".com"
-        else
-          host = "http://"
-          top_level = ".test"
-        end
-
         respond_to do |format|
           format.ics do
 
@@ -75,6 +81,15 @@ module Api
       private
       def set_community
         @community = Community.find(params[:id])
+      end
+
+      private
+      def authenticate
+        not_authenticated unless signed_in_resident?
+      end
+
+      def authorize
+        not_authorized unless current_resident.community_id.to_s == params[:community_id]
       end
 
     end

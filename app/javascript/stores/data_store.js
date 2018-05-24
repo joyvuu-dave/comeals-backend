@@ -2,11 +2,13 @@ import { types, getParent } from "mobx-state-tree";
 import { v4 } from "uuid";
 import axios from "axios";
 import Cookie from "js-cookie";
+
 import Meal from "./meal";
 import ResidentStore from "./resident_store";
 import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
 import EventSource from "./event_source";
+
 import { RouterModel } from "mst-react-router";
 import Pusher from "pusher-js";
 import moment from "moment";

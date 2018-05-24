@@ -1,8 +1,12 @@
 module Api
   module V1
     class CommonHouseReservationsController < ApplicationController
+      before_action :authenticate
+      before_action :set_resource, only: [:show, :update, :destroy]
+      before_action :authorize, only: [:index, :create]
+      before_action :authorize_one, only: [:show, :update, :destroy]
 
-      # GET /api/v1/common-house-reservations
+      # GET /api/v1/common-house-reservations?start_date=123
       def index
         if params[:start].present? && params[:end].present?
           chrs = CommonHouseReservation.includes({ :resident => :unit }).where(community_id: params[:community_id])
@@ -40,13 +44,12 @@ module Api
 
       # DELETE /api/v1/common-house-reservations/:id/delete
       def destroy
-        chr = CommonHouseReservation.find(params[:id])
-        chr.destroy!
+        @chr.destroy!
 
         render json: {message: 'Common House Reservation has been removed'}
       end
 
-      # POST /api/v1/common-house-reservations/create
+      # POST /api/v1/common-house-reservations { resident_id, start_year, start_month, start_day, start_hours, start_minutes, end_hours, end_minutes, title }
       def create
         start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
         end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
@@ -58,6 +61,26 @@ module Api
           render json: {message: chr.errors.full_messages.join("\n")}, status: :bad_request
         end
       end
+
+      private
+      def authenticate
+        not_authenticated unless signed_in_resident?
+      end
+
+      def set_resource
+        @chr = CommonHouseReservation.find_by(id: params[:id])
+
+        not_found unless @chr.present?
+      end
+
+      def authorize
+        not_authorized unless current_resident.community_id.to_s == params[:community_id]
+      end
+
+      def authorize_one
+        not_authorized unless current_resident.community_id == @chr.community_id
+      end
+
     end
   end
 end

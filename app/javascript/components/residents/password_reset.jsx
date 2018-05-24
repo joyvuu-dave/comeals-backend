@@ -71,7 +71,7 @@ class ResidentsPasswordReset extends Component {
           </label>
         </fieldset>
 
-        <button type="submit">Submit</button>
+        <button type="submit">Reset</button>
       </LocalForm>
     );
   }

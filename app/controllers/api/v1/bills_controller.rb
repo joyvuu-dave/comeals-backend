@@ -1,6 +1,10 @@
 module Api
   module V1
     class BillsController < ApplicationController
+      before_action :authenticate
+      before_action :authorize
+
+      # GET /bills?start=12345&end=12345
       def index
         if params[:start].present? && params[:end].present?
           bills = Bill.where(community_id: params[:community_id]).includes(:meal, { :resident => :unit }).joins(:meal).where("meals.date >= ?", params[:start]).where("meals.date <= ?", params[:end])
@@ -15,6 +19,14 @@ module Api
         render json: Bill.find_by(params[:id])
       end
 
+      private
+      def authenticate
+        not_authenticated unless signed_in_resident?
+      end
+
+      def authorize
+        not_authorized unless current_resident.community_id.to_s == params[:community_id]
+      end
     end
   end
 end

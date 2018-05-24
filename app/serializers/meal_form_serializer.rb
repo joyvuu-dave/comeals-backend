@@ -10,12 +10,12 @@ class MealFormSerializer < ActiveModel::Serializer
              :prev_id
 
   def reconciled
-    scope.reconciled?
+    object.reconciled?
   end
 
   def next_id
-    meals = Meal.where(community_id: scope.community_id).order(:date)
-    meal_index = meals.find_index { |meal| meal.id == scope.id }
+    meals = Meal.where(community_id: object.community_id).order(:date)
+    meal_index = meals.find_index { |meal| meal.id == object.id }
 
     # Scenario #1: This is the last meal
     next_index = meal_index if meal_index == meals.size - 1
@@ -27,8 +27,8 @@ class MealFormSerializer < ActiveModel::Serializer
   end
 
   def prev_id
-    meals = Meal.where(community_id: scope.community_id).order(:date)
-    meal_index = meals.find_index { |meal| meal.id == scope.id }
+    meals = Meal.where(community_id: object.community_id).order(:date)
+    meal_index = meals.find_index { |meal| meal.id == object.id }
 
     # Scenario #1: This is the first meal
     previous_index = meal_index if meal_index == 0
@@ -60,7 +60,7 @@ class MealFormSerializer < ActiveModel::Serializer
                :active
 
     def meal_id
-      scope.id
+      object.id
     end
 
     def attending
@@ -85,7 +85,7 @@ class MealFormSerializer < ActiveModel::Serializer
 
     private
     def meal_resident
-      @meal_resident = MealResident.find_by(meal_id: scope.id, resident_id: object.id)
+      @meal_resident = MealResident.find_by(meal_id: object.id, resident_id: object.id)
     end
   end
 

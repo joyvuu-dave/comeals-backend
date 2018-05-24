@@ -16,6 +16,15 @@ document.addEventListener("DOMContentLoaded", () => {
           const clientVersion = response.data.version.toString();
           const serverVersion = Cookie.get("version");
 
+          if (serverVersion === "undefined") {
+            console.log("setting initial version cookie");
+            Cookie.set("version", clientVersion, {
+              expires: 7300,
+              domain: `.comeals${myState.topLevel}`
+            });
+            return;
+          }
+
           if (clientVersion !== serverVersion) {
             window.location.reload(true);
           }

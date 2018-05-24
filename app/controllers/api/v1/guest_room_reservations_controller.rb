@@ -1,6 +1,10 @@
 module Api
   module V1
     class GuestRoomReservationsController < ApplicationController
+      before_action :authenticate
+      before_action :set_resource, only: [:show, :update, :destroy]
+      before_action :authorize, only: [:index, :create]
+      before_action :authorize_one, only: [:show, :update, :destroy]
 
       # GET /api/v1/guest-room-reservations
       def index
@@ -18,26 +22,22 @@ module Api
 
       # GET /api/v1/guest-room-reservations
       def show
-        grr = GuestRoomReservation.find(params[:id])
-        hosts = grr.community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
-        render json: {event: grr, hosts: hosts}
+        hosts = @grr.community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+        render json: {event: @grr, hosts: hosts}
       end
 
       # PATCH /api/v1/guest-room-reservations/:id/update
       def update
-        grr = GuestRoomReservation.find(params[:id])
-
-        if grr.update(date: params[:date], resident_id: params[:resident_id])
+        if @grr.update(date: params[:date], resident_id: params[:resident_id])
           render json: {message: 'Guest Room Reservation has been updated'}
         else
-          render json: {message: grr.errors.full_messages.join("\n")}, status: :bad_request
+          render json: {message: @grr.errors.full_messages.join("\n")}, status: :bad_request
         end
       end
 
       # DELETE /api/v1/guest-room-reservations/:id/delete
       def destroy
-        grr = GuestRoomReservation.find(params[:id])
-        grr.destroy!
+        @grr.destroy!
 
         render json: {message: 'Guest Room Reservation has been removed'}
       end
@@ -51,6 +51,26 @@ module Api
           render json: {message: grr.errors.full_messages.join("\n")}, status: :bad_request
         end
       end
+
+      private
+      def authenticate
+        not_authenticated unless signed_in_resident?
+      end
+
+      def set_resource
+        @grr = GuestRoomReservation.find_by(id: params[:id])
+
+        not_found unless @grr.present?
+      end
+
+      def authorize
+        not_authorized unless current_resident.community_id.to_s == params[:community_id]
+      end
+
+      def authorize_one
+        not_authorized unless current_resident.community_id == @grr.community_id
+      end
+
     end
   end
 end
