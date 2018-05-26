@@ -14,21 +14,7 @@
       <%= yield %>
     </div>
 
-    <footer>
-      <h4 class="text-center text-secondary">
-        Created by&nbsp
-        <a
-          href="https://github.com/joyvuu-dave/comeals-rewrite"
-          target="_blank"
-          rel="noopener"
-          class="text-secondary"
-        >
-          David
-        </a>
-        <span id="version" class="text-small"></span>
-      </h4>
-    </footer>
-
+    <%= render 'partials/footer' %>
     <%= javascript_pack_tag 'app', defer: true %>
 
     <% if Rails.env.production? %>

@@ -22,13 +22,12 @@ class MealHistoryShow extends Component {
 
   componentDidMount() {
     var host = `${window.location.protocol}//`;
-    var topLevel = window.location.hostname.split(".");
-    topLevel = `.${topLevel[topLevel.length - 1]}`;
+    var topLevel = window.location.hostname.split(".")[2];
 
     var self = this;
     axios
       .get(
-        `${host}api.comeals${topLevel}/api/v1/meals/${
+        `${host}api.comeals.${topLevel}/api/v1/meals/${
           self.props.id
         }/history?token=${Cookie.get("token")}`
       )
