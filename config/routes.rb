@@ -19,7 +19,7 @@ Rails.application.routes.draw do
     namespace :api do
       namespace :v1 do
         post '/residents/token', to: 'residents#token'
-        get '/residents/:id', to: 'residents#show'
+        get '/residents/id', to: 'residents#show_id'
         post '/residents/password-reset', to: 'residents#password_reset'
         post '/residents/password-reset/:token', to: 'residents#password_new'
         post '/communities', to: 'communities#create'

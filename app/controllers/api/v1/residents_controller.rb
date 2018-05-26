@@ -1,6 +1,13 @@
 module Api
   module V1
     class ResidentsController < ApplicationController
+      before_action :authenticate, only: [:show_id]
+
+      # GET /api/v1/residents/id
+      def show_id
+        render json: current_resident.id
+      end
+
       # POST /api/v1/residents/token { email: 'email', password: 'password' }
       def token
         # Kids aren't required to have email addresses;
@@ -103,6 +110,11 @@ module Api
             render plain: cal.to_ical, content_type: "text/calendar"
           end
         end
+      end
+
+      private
+      def authenticate
+        not_authenticated_api unless signed_in_resident?
       end
 
     end

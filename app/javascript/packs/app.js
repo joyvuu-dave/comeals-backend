@@ -50,6 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const config = error.config;
       });
 
-    window.setTimeout(checkVersion, 30000);
+    window.setTimeout(checkVersion, 1800000);
   })();
 });
