@@ -15,15 +15,15 @@ document.addEventListener("DOMContentLoaded", () => {
           var clientVersion = response.data.version;
           var serverVersion = Cookie.get("version");
 
+          // update the ui
+          var element = document.getElementById("version");
+          element.innerHTML = `v${clientVersion}`;
+
           if (typeof serverVersion === "undefined") {
             Cookie.set("version", clientVersion, {
               expires: 7300,
               domain: `.comeals.${topLevel}`
             });
-
-            // update the ui
-            var element = document.getElementById("version");
-            element.innerHTML = `v${clientVersion}`;
           } else if (String(clientVersion) !== String(serverVersion)) {
             window.location.reload(true);
           }
