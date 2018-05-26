@@ -37,7 +37,8 @@ export const DataStore = types
     modalName: types.maybe(types.string),
     modalId: types.maybe(types.number),
     modalIsChanging: false,
-    modalChangedData: false
+    modalChangedData: false,
+    showHistory: false
   })
   .views(self => ({
     get id() {
@@ -217,8 +218,8 @@ export const DataStore = types
         `/calendar/all/${moment(self.meal.date).format("YYYY-MM-DD")}`
       );
     },
-    history() {
-      window.open(`/meals/${self.id}/log`, "noopener");
+    toggleHistory() {
+      self.showHistory = !self.showHistory;
     },
     submitDescription() {
       let obj = {

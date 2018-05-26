@@ -7,7 +7,7 @@ module Api
       before_action :authorize_one, except: [:index]
       before_action :set_guest, only: [:destroy_guest]
       before_action :set_meal_resident, only: [:destroy_meal_resident, :update_meal_resident]
-      after_action :trigger_pusher, except: [:index, :show, :show_cooks]
+      after_action :trigger_pusher, except: [:index, :show, :history, :show_cooks]
 
       # GET /api/v1/meals
       def index
@@ -23,6 +23,11 @@ module Api
       # GET /api/v1/meal/:meal_id
       def show
         render json: @meal
+      end
+
+      # GET /api/v1/meal/:meal_id/history
+      def history
+        render json: @meal.total_audits, each_serializer: AuditSerializer
       end
 
       # POST /api/v1/meals/:meal_id/residents/:resident_id { late, vegetarian }

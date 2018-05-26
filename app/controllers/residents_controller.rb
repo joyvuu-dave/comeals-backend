@@ -6,10 +6,6 @@ class ResidentsController < ApplicationController
 
   # GET /calendar/:type/:date (subdomains)
   def calendar
-    unless params[:date]
-      redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
-    end
-
     render 'meals/edit'
   end
 

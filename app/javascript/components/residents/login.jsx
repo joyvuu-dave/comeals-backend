@@ -49,6 +49,12 @@ class ResidentsLogin extends Component {
             expires: 7300,
             domain: `.comeals${myState.topLevel}`
           });
+
+          // set community_id cookie
+          Cookie.set("resident_id", response.data.resident_id, {
+            expires: 7300,
+            domain: `.comeals${myState.topLevel}`
+          });
           window.location.reload(true);
         }
       })

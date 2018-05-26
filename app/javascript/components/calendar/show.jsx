@@ -263,11 +263,29 @@ const Calendar = inject("store")(
               </h2>
               <div style={styles.main} className="responsive-calendar">
                 <SideBar />
-                <div ref="calendar" className="calendar" />
+                <div>
+                  <div ref="calendar" className="calendar" />
+                  <div className="flex space-between w-100">
+                    <a
+                      href={`webcal://api.comeals.com/api/v1/communities/${Cookie.get(
+                        "community_id"
+                      )}/ical.ics`}
+                    >
+                      Subscribe to All Meals
+                    </a>
+                    <a
+                      href={`webcal://api.comeals.com/api/v1/residents/${Cookie.get(
+                        "resident_id"
+                      )}/ical.ics`}
+                    >
+                      Subscribe to My Meals
+                    </a>
+                  </div>
+                </div>
               </div>
               <Modal
                 isOpen={this.props.store.modalActive}
-                contentLabel="Minimal Modal Example"
+                contentLabel="Event Modal"
                 onRequestClose={this.handleCloseModal}
                 style={{
                   content: {

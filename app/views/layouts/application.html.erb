@@ -14,11 +14,20 @@
       <%= yield %>
     </div>
 
-    <%= render 'partials/footer' %>
-
-    <% if @community&.id.present? && @resident_id.present? %>
-      <%= render 'partials/calendar_subscribe' %>
-    <% end %>
+    <footer>
+      <h4 class="text-center text-secondary">
+        Created by&nbsp
+        <a
+          href="https://github.com/joyvuu-dave/comeals-rewrite"
+          target="_blank"
+          rel="noopener"
+          class="text-secondary"
+        >
+          David
+        </a>
+        <span id="version" class="text-small"></span>
+      </h4>
+    </footer>
 
     <%= javascript_pack_tag 'app', defer: true %>
 

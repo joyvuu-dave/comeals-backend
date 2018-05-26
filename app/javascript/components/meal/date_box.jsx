@@ -2,10 +2,13 @@ import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
 import moment from "moment";
+import Modal from "react-modal";
 
 import FontAwesomeIcon from "@fortawesome/react-fontawesome";
 import faChevronLeft from "@fortawesome/fontawesome-free-solid/faChevronLeft";
 import faChevronRight from "@fortawesome/fontawesome-free-solid/faChevronRight";
+
+import MealHistoryShow from "../history/show";
 
 const styles = {
   main: {
@@ -32,6 +35,7 @@ const styles = {
   }
 };
 
+Modal.setAppElement("#main");
 const DateBox = inject("store")(
   withRouter(
     observer(
@@ -41,6 +45,7 @@ const DateBox = inject("store")(
 
           this.handlePrevClick = this.handlePrevClick.bind(this);
           this.handleNextClick = this.handleNextClick.bind(this);
+          this.handleCloseModal = this.handleCloseModal.bind(this);
         }
 
         componentDidUpdate() {
@@ -60,6 +65,23 @@ const DateBox = inject("store")(
           this.props.store.goToMeal(
             this.props.store.router.location.pathname.split("/")[2]
           );
+        }
+
+        renderModal() {
+          if (this.props.store.showHistory === false) {
+            return null;
+          }
+
+          return (
+            <MealHistoryShow
+              id={this.props.store.meal.id}
+              date={moment(this.props.store.meal.date).format("ddd, MMM Do")}
+            />
+          );
+        }
+
+        handleCloseModal() {
+          this.props.store.toggleHistory();
         }
 
         handlePrevClick() {
@@ -157,6 +179,18 @@ const DateBox = inject("store")(
                     : "OPEN"}
                 </h1>
               )}
+              <Modal
+                isOpen={this.props.store.showHistory}
+                contentLabel="History Modal"
+                onRequestClose={this.handleCloseModal}
+                style={{
+                  content: {
+                    backgroundColor: "#6699cc"
+                  }
+                }}
+              >
+                {this.renderModal()}
+              </Modal>
             </div>
           );
         }

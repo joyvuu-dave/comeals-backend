@@ -7,11 +7,6 @@ class MealsController < ApplicationController
   def edit
   end
 
-  # GET /meals/:id/log (subdomains)
-  def log
-    @meal = Meal.find(params[:id])
-  end
-
   private
   def set_meal
     @meal = Meal.find_by(id: params[:id])

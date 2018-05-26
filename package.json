@@ -5,9 +5,9 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "10.1.0",
+    "node": "10.2.1",
     "yarn": "1.7.0",
-    "npm": "6.0.1"
+    "npm": "6.1.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.7",

@@ -12,7 +12,10 @@ const styles = {
 const ButtonBar = inject("store")(
   observer(({ store }) => (
     <div style={styles.main} className="button-border-radius">
-      <button className="button-link text-secondary" onClick={store.history}>
+      <button
+        className="button-link text-secondary"
+        onClick={store.toggleHistory}
+      >
         history
       </button>
     </div>
