@@ -18,6 +18,8 @@ import CommonHouseReservationsEdit from "../common_house_reservations/edit";
 import EventsEdit from "../events/edit";
 import RotationsShow from "../rotations/show";
 
+import WebalLinks from "./webcal_links";
+
 const styles = {
   main: {
     display: "flex",
@@ -265,22 +267,7 @@ const Calendar = inject("store")(
                 <SideBar />
                 <div>
                   <div ref="calendar" className="calendar" />
-                  <div className="flex space-between w-100">
-                    <a
-                      href={`webcal://api.comeals.com/api/v1/communities/${Cookie.get(
-                        "community_id"
-                      )}/ical.ics`}
-                    >
-                      Subscribe to All Meals
-                    </a>
-                    <a
-                      href={`webcal://api.comeals.com/api/v1/residents/${Cookie.get(
-                        "resident_id"
-                      )}/ical.ics`}
-                    >
-                      Subscribe to My Meals
-                    </a>
-                  </div>
+                  <WebalLinks />
                 </div>
               </div>
               <Modal
