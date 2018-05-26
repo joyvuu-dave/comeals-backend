@@ -15,11 +15,6 @@
     </div>
 
     <%= render 'partials/footer' %>
-
-    <% if @community&.id.present? && @resident_id.present? %>
-      <%= render 'partials/calendar_subscribe' %>
-    <% end %>
-
     <%= javascript_pack_tag 'app', defer: true %>
 
     <% if Rails.env.production? %>

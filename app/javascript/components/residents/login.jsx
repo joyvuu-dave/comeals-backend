@@ -3,6 +3,8 @@ import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 import Cookie from "js-cookie";
 
+import ResidentsPasswordReset from "./password_reset";
+
 class ResidentsLogin extends Component {
   constructor(props) {
     super(props);
@@ -12,8 +14,15 @@ class ResidentsLogin extends Component {
 
     this.state = {
       host: `${window.location.protocol}//`,
-      topLevel: `.${topLevel}`
+      topLevel: `.${topLevel}`,
+      pwResetVisible: false
     };
+  }
+
+  handlePasswordReset() {
+    this.setState((prevState, props) => {
+      return { pwResetVisible: !prevState.pwResetVisible };
+    });
   }
 
   handleSubmit(values) {
@@ -40,7 +49,13 @@ class ResidentsLogin extends Component {
             expires: 7300,
             domain: `.comeals${myState.topLevel}`
           });
-          window.location.reload();
+
+          // set community_id cookie
+          Cookie.set("resident_id", response.data.resident_id, {
+            expires: 7300,
+            domain: `.comeals${myState.topLevel}`
+          });
+          window.location.reload(true);
         }
       })
       .catch(function(error) {
@@ -91,7 +106,13 @@ class ResidentsLogin extends Component {
           <button type="submit">Submit</button>
         </LocalForm>
         <br />
-        <a href="/residents/password-reset">Reset your password</a>
+        <a
+          className="button button-link"
+          onClick={this.handlePasswordReset.bind(this)}
+        >
+          Reset your password
+        </a>
+        {this.state.pwResetVisible && <ResidentsPasswordReset />}
       </div>
     );
   }

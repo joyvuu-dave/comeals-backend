@@ -59,13 +59,9 @@ class ResidentsPasswordNew extends Component {
 
   render() {
     return (
-      <LocalForm
-        onUpdate={form => this.handleUpdate(form)}
-        onChange={values => this.handleChange(values)}
-        onSubmit={values => this.handleSubmit(values)}
-      >
+      <LocalForm onSubmit={values => this.handleSubmit(values)}>
         <fieldset className="w-50">
-          <legend>Reset Password for {this.props.email}</legend>
+          <legend>Reset Password for {this.props.name}</legend>
           <label className="w-75">
             <Control
               type="password"

@@ -1,5 +1,4 @@
 import { types, getParent } from "mobx-state-tree";
-import axios from "axios";
 import Cookie from "js-cookie";
 import Resident from "./resident";
 

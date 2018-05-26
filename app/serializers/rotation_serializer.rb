@@ -40,7 +40,7 @@ class RotationSerializer < ActiveModel::Serializer
   end
 
   def url
-    "/rotations/#{object.id}"
+    "#rotations/#{object.id}"
   end
 
 end

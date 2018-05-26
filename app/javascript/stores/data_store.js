@@ -2,11 +2,13 @@ import { types, getParent } from "mobx-state-tree";
 import { v4 } from "uuid";
 import axios from "axios";
 import Cookie from "js-cookie";
+
 import Meal from "./meal";
 import ResidentStore from "./resident_store";
 import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
 import EventSource from "./event_source";
+
 import { RouterModel } from "mst-react-router";
 import Pusher from "pusher-js";
 import moment from "moment";
@@ -35,7 +37,8 @@ export const DataStore = types
     modalName: types.maybe(types.string),
     modalId: types.maybe(types.number),
     modalIsChanging: false,
-    modalChangedData: false
+    modalChangedData: false,
+    showHistory: false
   })
   .views(self => ({
     get id() {
@@ -151,7 +154,9 @@ export const DataStore = types
       axios({
         url: `${
           window.location.protocol
-        }//api.comeals${topLevel}/api/v1/meals/${self.meal.id}/closed`,
+        }//api.comeals${topLevel}/api/v1/meals/${
+          self.meal.id
+        }/closed?token=${Cookie.get("token")}`,
         method: "patch",
         withCredentials: true,
         data: {
@@ -213,8 +218,8 @@ export const DataStore = types
         `/calendar/all/${moment(self.meal.date).format("YYYY-MM-DD")}`
       );
     },
-    history() {
-      window.open(`/meals/${self.id}/log`, "noopener");
+    toggleHistory() {
+      self.showHistory = !self.showHistory;
     },
     submitDescription() {
       let obj = {
@@ -233,7 +238,7 @@ export const DataStore = types
         method: "patch",
         url: `${host}api.comeals${topLevel}/api/v1/meals/${
           self.meal.id
-        }/description`,
+        }/description?token=${Cookie.get("token")}`,
         data: obj,
         withCredentials: true
       })
@@ -311,7 +316,9 @@ export const DataStore = types
 
       axios({
         method: "patch",
-        url: `${host}api.comeals${topLevel}/api/v1/meals/${self.meal.id}/bills`,
+        url: `${host}api.comeals${topLevel}/api/v1/meals/${
+          self.meal.id
+        }/bills?token=${Cookie.get("token")}`,
         data: obj,
         withCredentials: true
       })
@@ -361,7 +368,11 @@ export const DataStore = types
       topLevel = `.${topLevel[topLevel.length - 1]}`;
 
       axios
-        .get(`${host}api.comeals${topLevel}/api/v1/meals/${self.meal.id}/cooks`)
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.meal.id
+          }/cooks?token=${Cookie.get("token")}`
+        )
         .then(function(response) {
           if (response.status === 200) {
             self.loadData(response.data);

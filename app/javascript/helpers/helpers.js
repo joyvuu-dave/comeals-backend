@@ -1,3 +1,5 @@
+import Cookie from "js-cookie";
+
 export function generateTimes() {
   var times = [];
   var ending = "AM";
@@ -59,27 +61,41 @@ export function getCalendarInfo(community_id, calendar_type) {
     case "all":
       result.eventSources = [
         {
-          url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}`,
+          url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`,
           color: "#6699cc" // livid
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}`,
+          url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`,
           color: "#444" // almost-black
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         }
       ];
       result.displayName = "ALL";
@@ -88,7 +104,9 @@ export function getCalendarInfo(community_id, calendar_type) {
     case "birthdays":
       result.eventSources = [
         {
-          url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/communities/${community_id}/birthdays?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         }
       ];
       result.displayName = "BIRTHDAYS";
@@ -97,7 +115,9 @@ export function getCalendarInfo(community_id, calendar_type) {
     case "common-house":
       result.eventSources = [
         {
-          url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/common-house-reservations?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         }
       ];
       result.displayName = "COMMON HOUSE";
@@ -106,7 +126,9 @@ export function getCalendarInfo(community_id, calendar_type) {
     case "events":
       result.eventSources = [
         {
-          url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/events?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         }
       ];
       result.displayName = "EVENTS";
@@ -115,7 +137,9 @@ export function getCalendarInfo(community_id, calendar_type) {
     case "guest-room":
       result.eventSources = [
         {
-          url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/guest-room-reservations?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         }
       ];
       result.displayName = "GUEST ROOM";
@@ -124,15 +148,21 @@ export function getCalendarInfo(community_id, calendar_type) {
     case "meals":
       result.eventSources = [
         {
-          url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}`,
+          url: `${host}api.comeals${topLevel}/api/v1/meals?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`,
           color: "#6699cc" // livid
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}`,
+          url: `${host}api.comeals${topLevel}/api/v1/bills?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`,
           color: "#444" // almost-black
         },
         {
-          url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}`
+          url: `${host}api.comeals${topLevel}/api/v1/rotations?community_id=${community_id}&token=${Cookie.get(
+            "token"
+          )}`
         }
       ];
       result.displayName = "MEALS";

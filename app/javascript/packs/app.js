@@ -3,9 +3,8 @@ import axios from "axios";
 import Cookie from "js-cookie";
 
 document.addEventListener("DOMContentLoaded", () => {
-  function checkVersion() {
-    var topLevel = window.location.hostname.split(".");
-    topLevel = topLevel[topLevel.length - 1];
+  (function checkVersion() {
+    var topLevel = window.location.hostname.split(".")[2];
 
     axios
       .get(
@@ -13,10 +12,19 @@ document.addEventListener("DOMContentLoaded", () => {
       )
       .then(function(response) {
         if (response.status === 200) {
-          const clientVersion = response.data.version.toString();
-          const serverVersion = Cookie.get("version");
+          var clientVersion = response.data.version;
+          var serverVersion = Cookie.get("version");
 
-          if (clientVersion !== serverVersion) {
+          if (typeof serverVersion === "undefined") {
+            Cookie.set("version", clientVersion, {
+              expires: 7300,
+              domain: `.comeals.${topLevel}`
+            });
+
+            // update the ui
+            var element = document.getElementById("version");
+            element.innerHTML = `v${clientVersion}`;
+          } else if (String(clientVersion) !== String(serverVersion)) {
             window.location.reload(true);
           }
         }
@@ -41,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const config = error.config;
       });
-  }
 
-  window.setInterval(checkVersion, 300000);
+    window.setTimeout(checkVersion, 30000);
+  })();
 });

@@ -16,6 +16,9 @@ import EventsNew from "../events/new";
 import GuestRoomReservationsEdit from "../guest_room_reservations/edit";
 import CommonHouseReservationsEdit from "../common_house_reservations/edit";
 import EventsEdit from "../events/edit";
+import RotationsShow from "../rotations/show";
+
+import WebalLinks from "./webcal_links";
 
 const styles = {
   main: {
@@ -83,6 +86,9 @@ const Calendar = inject("store")(
             case "events":
               return <EventsEdit eventId={this.props.store.modalId} />;
               break;
+
+            case "rotations":
+              return <RotationsShow id={this.props.store.modalId} />;
 
             default:
               return null;
@@ -259,11 +265,14 @@ const Calendar = inject("store")(
               </h2>
               <div style={styles.main} className="responsive-calendar">
                 <SideBar />
-                <div ref="calendar" className="calendar" />
+                <div>
+                  <div ref="calendar" className="calendar" />
+                  <WebalLinks />
+                </div>
               </div>
               <Modal
                 isOpen={this.props.store.modalActive}
-                contentLabel="Minimal Modal Example"
+                contentLabel="Event Modal"
                 onRequestClose={this.handleCloseModal}
                 style={{
                   content: {

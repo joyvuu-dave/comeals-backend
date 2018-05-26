@@ -33,7 +33,9 @@ const EventsNew = inject("store")(
         .post(
           `${self.state.host}api.comeals${
             self.state.topLevel
-          }/api/v1/events?community_id=${self.state.communityId}`,
+          }/api/v1/events?community_id=${
+            self.state.communityId
+          }&token=${Cookie.get("token")}`,
           {
             title: values.title,
             description: values.description,

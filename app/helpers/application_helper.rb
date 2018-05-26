@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include ActiveSupport::NumberHelper
+
   def category_helper(multiplier)
     return "Child" if multiplier == 1
     return "Adult" if multiplier == 2

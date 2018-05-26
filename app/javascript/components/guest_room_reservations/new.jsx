@@ -38,7 +38,7 @@ const GuestRoomReservationsNew = inject("store")(
         .get(
           `${host}api.comeals${topLevel}/api/v1/communities/${
             self.state.communityId
-          }/hosts`
+          }/hosts?token=${Cookie.get("token")}`
         )
         .then(function(response) {
           if (response.status === 200) {
@@ -78,7 +78,7 @@ const GuestRoomReservationsNew = inject("store")(
             self.state.topLevel
           }/api/v1/guest-room-reservations?community_id=${
             self.state.communityId
-          }`,
+          }&token=${Cookie.get("token")}`,
           {
             resident_id: values.resident_id,
             date: values.day

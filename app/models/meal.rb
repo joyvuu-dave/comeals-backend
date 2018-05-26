@@ -143,6 +143,10 @@ class Meal < ApplicationRecord
     reconciliation_id.present?
   end
 
+  def total_audits
+    (associated_audits + audits).sort { |a,b| b.created_at <=> a.created_at }
+  end
+
   # HELPERS
   def another_meal_in_this_rotation_has_less_than_two_cooks?
     Meal.where(rotation_id: rotation_id).where.not(id: id).pluck(:bills_count).any? { |num| num < 2 }

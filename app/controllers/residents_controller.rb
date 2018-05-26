@@ -1,56 +1,30 @@
 class ResidentsController < ApplicationController
-  VALID_CALENDAR_TYPES = ['all', 'birthdays', 'common-house', 'events', 'guest-room', 'meals']
-
-  before_action :ensure_community, except: [:login, :password_reset, :password_new]
-  before_action :set_resident, except: [:login, :password_reset, :password_new]
-  before_action :validate_calendar, only: [:calendar]
-
-  # GET /residents/login (www)
-  def login
-  end
+  include ApplicationHelper
+  before_action :set_resident, only: [:password_new]
+  before_action :authenticate, only: [:calendar]
+  before_action :authorize, only: [:calendar]
 
   # GET /calendar/:type/:date (subdomains)
   def calendar
-    unless params[:date]
-      if Rails.env.production?
-        host = "https://"
-        top_level = ".com"
-      else
-        host = "http://"
-        top_level = ".test"
-      end
-
-      redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
-    end
-
     render 'meals/edit'
-  end
-
-  # GET /residents/password-reset
-  def password_reset
   end
 
   # GET /residents/password-reset/:token
   def password_new
-    resident = Resident.find_by(reset_password_token: params[:token])
-    @name = resident_name_helper(resident&.name)
-    @token = resident&.reset_password_token
+    @name = resident_name_helper(@resident.name)
+    @token = @resident.reset_password_token
   end
 
   private
-  def ensure_community
-    @community = Community.find_by(slug: subdomain)
-
-    redirect_to :root and return if @community.nil?
-  end
-
   def set_resident
-    @resident_id = current_resident&.id
-    @resident = current_resident
+    @resident = Resident.find_by(reset_password_token: params[:token])
   end
 
-  def validate_calendar
-    render file: "#{Rails.root}/public/404.html", status: 404, layout: false and return unless VALID_CALENDAR_TYPES.include?(params[:type])
+  def authenticate
+    not_authenticated unless signed_in_resident?
   end
 
+  def authorize
+    not_authorized unless current_resident.community.slug == request.subdomain
+  end
 end

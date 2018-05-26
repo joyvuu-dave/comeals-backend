@@ -59,7 +59,9 @@ const Meal = types
         self.extras = null;
 
         axios({
-          url: `${host}api.comeals${topLevel}/api/v1/meals/${self.id}/max`,
+          url: `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.id
+          }/max?token=${Cookie.get("token")}`,
           method: "patch",
           data: {
             max: null,
@@ -108,7 +110,9 @@ const Meal = types
 
         axios({
           method: "patch",
-          url: `${host}api.comeals${topLevel}/api/v1/meals/${self.id}/max`,
+          url: `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.id
+          }/max?token=${Cookie.get("token")}`,
           data: {
             max: self.max,
             socket_id: window.Comeals.socketId

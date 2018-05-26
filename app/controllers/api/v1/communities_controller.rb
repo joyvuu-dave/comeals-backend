@@ -1,7 +1,22 @@
 module Api
   module V1
     class CommunitiesController < ApplicationController
-      before_action :set_community, only: [:ical, :birthdays]
+      before_action :authenticate, except: [:create, :ical]
+      before_action :authorize, except: [:create, :ical]
+      before_action :set_community, only: [:birthdays, :database]
+
+      # GET /api/v1/communities/:id/database
+      def database
+        meals = Meal.includes({ :residents => :unit,
+                                :community => :bills,
+                                :community => { :meals => :residents },
+                                :community => :meal_residents,
+                                :community => { :residents => :unit } })
+                    .unreconciled
+                    .where(community_id: @community.id)
+
+        render json: meals, each_serializer: MealFormSerializer
+      end
 
       # POST /api/v1/communities
       def create
@@ -15,28 +30,22 @@ module Api
 
       # GET /api/v1/communities/:id/ical
       def ical
-        if Rails.env.production?
-          host = "https://"
-          top_level = ".com"
-        else
-          host = "http://"
-          top_level = ".test"
-        end
+        community = Community.find(params[:id])
 
         respond_to do |format|
           format.ics do
 
             require 'icalendar/tzinfo'
-            tzid = @community.timezone
+            tzid = community.timezone
             tz = TZInfo::Timezone.get tzid
             timezone = tz.ical_timezone DateTime.new 2017, 6, 1, 8, 0, 0
 
             cal = Icalendar::Calendar.new
             cal.add_timezone timezone
 
-            cal.x_wr_calname = @community.name
+            cal.x_wr_calname = community.name
 
-            Meal.where(community_id: @community.id).each do |meal|
+            Meal.where(community_id: community.id).each do |meal|
               event = Icalendar::Event.new
 
               meal_date = meal.date
@@ -46,7 +55,7 @@ module Api
               event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
               event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
               event.summary = "Common Dinner"
-              event.description = "#{meal.description}\n\n\n\nSign up here: #{host}#{@community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
+              event.description = "#{meal.description}\n\n\n\nSign up here: #{host}#{community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
               cal.add_event(event)
             end
 
@@ -74,7 +83,17 @@ module Api
 
       private
       def set_community
-        @community = Community.find(params[:id])
+        @community = Community.find_by(id: params[:id])
+        not_found_api unless @community.present?
+      end
+
+      private
+      def authenticate
+        not_authenticated_api unless signed_in_resident?
+      end
+
+      def authorize
+        not_authorized_api unless current_resident.community_id.to_s == params[:id]
       end
 
     end

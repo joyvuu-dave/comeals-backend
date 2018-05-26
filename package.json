@@ -5,9 +5,9 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "10.1.0",
-    "yarn": "1.6.0",
-    "npm": "6.0.0"
+    "node": "10.2.1",
+    "yarn": "1.7.0",
+    "npm": "6.1.0"
   },
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.7",
@@ -29,10 +29,10 @@
     "normalize.css": "^8.0.0",
     "pretty-checkbox": "3.0.3",
     "pusher-js": "4.2.2",
-    "react": "16.3.2",
+    "react": "16.4.0",
     "react-day-picker": "7.1.9",
     "react-debounce-input": "3.2.0",
-    "react-dom": "16.3.2",
+    "react-dom": "16.4.0",
     "react-modal": "^3.4.4",
     "react-onclickoutside": "^6.7.1",
     "react-redux": "5.0.7",

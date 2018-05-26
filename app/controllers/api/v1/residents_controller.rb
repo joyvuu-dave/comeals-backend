@@ -1,12 +1,7 @@
 module Api
   module V1
     class ResidentsController < ApplicationController
-      # GET /api/v1/residents/:id
-      def show
-        resident = Resident.find_by(id: params[:id])
-        render json: resident
-      end
-
+      # POST /api/v1/residents/token { email: 'email', password: 'password' }
       def token
         # Kids aren't required to have email addresses;
         # this prevents those accounts from signing in
@@ -20,13 +15,13 @@ module Api
         end
 
         if resident.present? && resident.authenticate(params[:password])
-          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id } and return
+          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id, resident_id: resident.id } and return
         else
           render json: { message: "Incorrect password" }, status: :bad_request and return
         end
       end
 
-      # POST
+      # POST /api/v1/residents/password-reset { email: 'email' }
       def password_reset
         resident = Resident.find_by(email: params[:email])
 
@@ -43,7 +38,7 @@ module Api
         end
       end
 
-      # POST
+      # POST /api/v1/residents/password-reset/:token { password: 'password' }
       def password_new
         resident = Resident.find_by(reset_password_token: params[:token])
 
@@ -62,14 +57,6 @@ module Api
 
       # GET api/v1/residents/:id/ical
       def ical
-        if Rails.env.production?
-          host = "https://"
-          top_level = ".com"
-        else
-          host = "http://"
-          top_level = ".test"
-        end
-
         resident = Resident.find(params[:id])
 
         respond_to do |format|

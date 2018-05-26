@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const data = JSON.parse(node.getAttribute("data"));
 
   const token = data.token;
-  const email = data.email;
+  const name = data.name;
 
   render(
-    <ResidentsPasswordNew token={token} email={email} />,
+    <ResidentsPasswordNew token={token} name={name} />,
     document.getElementById("main")
   );
 });

@@ -1,6 +1,10 @@
 module Api
   module V1
     class EventsController < ApplicationController
+      before_action :authenticate
+      before_action :set_resource, only: [:show, :update, :destroy]
+      before_action :authorize, only: [:index, :create]
+      before_action :authorize_one, only: [:show, :update, :destroy]
 
       # GET /api/v1/events
       def index
@@ -23,18 +27,15 @@ module Api
 
       # GET /api/v1/events/:id
       def show
-        event = Event.find(params[:id])
-        render json: event, adapter: nil
+        render json: @event, adapter: nil
       end
 
       # PATCH /api/v1/events/:id/update
       def update
-        event = Event.find(params[:id])
-
         if params.has_key?(:all_day)
           allday = params[:all_day].to_s == "true" ? true : false
         else
-          allday = event.allday
+          allday = @event.allday
         end
 
         if allday
@@ -45,17 +46,16 @@ module Api
           end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
         end
 
-        if event.update(start_date: start_date, end_date: end_date, allday: allday, description: params[:description], title: params[:title])
+        if @event.update(start_date: start_date, end_date: end_date, allday: allday, description: params[:description], title: params[:title])
           render json: {message: 'Event has been updated'}
         else
-          render json: {message: event.errors.full_messages.join("\n")}, status: :bad_request
+          render json: {message: @event.errors.full_messages.join("\n")}, status: :bad_request
         end
       end
 
       # DELETE /api/v1/events/:id/delete
       def destroy
-        event = Event.find(params[:id])
-        event.destroy!
+        @event.destroy!
 
         render json: {message: 'Event has been removed'}
       end
@@ -82,6 +82,25 @@ module Api
         else
           render json: {message: event.errors.full_messages.join("\n")}, status: :bad_request
         end
+      end
+
+      private
+      def authenticate
+        not_authenticated_api unless signed_in_resident?
+      end
+
+      def set_resource
+        @event = Event.find_by(id: params[:id])
+
+        not_found_api unless @event.present?
+      end
+
+      def authorize
+        not_authorized_api unless current_resident.community_id.to_s == params[:community_id]
+      end
+
+      def authorize_one
+        not_authorized_api unless current_resident.community_id == @event.community_id
       end
 
     end

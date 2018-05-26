@@ -11,7 +11,6 @@ Rails.application.routes.draw do
     root to: 'static#main'
     get '/residents/login', to: 'residents#login'
     get '/communities/new', to: 'communities#new'
-    get '/residents/password-reset', to: 'residents#password_reset'
     get '/residents/password-reset/:token', to: 'residents#password_new'
   end
 
@@ -24,10 +23,12 @@ Rails.application.routes.draw do
         post '/residents/password-reset', to: 'residents#password_reset'
         post '/residents/password-reset/:token', to: 'residents#password_new'
         post '/communities', to: 'communities#create'
+        get '/communities/:id/database', to: 'communities#database'
         get '/communities/:id/birthdays', to: 'communities#birthdays'
         get '/communities/:id/hosts', to: 'communities#hosts'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
+        get '/meals/:meal_id/history', to: 'meals#history'
         post '/meals/:meal_id/residents/:resident_id', to: 'meals#create_meal_resident'
         delete '/meals/:meal_id/residents/:resident_id', to: 'meals#destroy_meal_resident'
         patch '/meals/:meal_id/residents/:resident_id', to: 'meals#update_meal_resident'
@@ -41,6 +42,7 @@ Rails.application.routes.draw do
         get '/bills', to: 'bills#index'
         get '/bills/:id', to: 'bills#show'
         get '/rotations', to: 'rotations#index'
+        get '/rotations/:id', to: 'rotations#show'
         get '/residents/:id/ical', to: 'residents#ical', as: :resident_ical
         get '/communities/:id/ical', to: 'communities#ical', as: :community_ical
         get '/version', to: 'site#version'
@@ -72,8 +74,6 @@ Rails.application.routes.draw do
   root to: 'static#root'
   get '/calendar/:type/(:date)', to: 'residents#calendar'
   get '/meals/:id/edit', to: 'meals#edit', as: :meal
-  get '/meals/:id/log', to: 'meals#log'
-  get '/rotations/:id', to: 'rotations#show'
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

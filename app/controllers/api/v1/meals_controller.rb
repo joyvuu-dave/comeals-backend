@@ -1,10 +1,15 @@
 module Api
   module V1
     class MealsController < ApplicationController
+      before_action :authenticate
+      before_action :authorize, only: [:index]
       before_action :set_meal, except: [:index]
+      before_action :authorize_one, except: [:index]
+      before_action :set_guest, only: [:destroy_guest]
       before_action :set_meal_resident, only: [:destroy_meal_resident, :update_meal_resident]
-      after_action :trigger_pusher, except: [:index, :show, :show_cooks]
+      after_action :trigger_pusher, except: [:index, :show, :history, :show_cooks]
 
+      # GET /api/v1/meals
       def index
         if params[:start].present? && params[:end].present?
           meals = Meal.where(community_id: params[:community_id]).where("date >= ?", params[:start]).where("date <= ?", params[:end])
@@ -20,23 +25,29 @@ module Api
         render json: @meal
       end
 
+      # GET /api/v1/meal/:meal_id/history
+      def history
+        render json: @meal.total_audits, each_serializer: AuditSerializer
+      end
+
+      # POST /api/v1/meals/:meal_id/residents/:resident_id { late, vegetarian }
       def create_meal_resident
         meal_resident = @meal.meal_residents.find_or_create_by(resident_id: params[:resident_id], late: params[:late], vegetarian: params[:vegetarian])
         if meal_resident.save
           render json: meal_resident
         else
-          render json: { message: meal_resident.errors.first[1] }, status: :bad_request
+          render json: { message: meal_resident.errors.full_messages.join("\n") }, status: :bad_request
         end
       end
 
+      # DELETE /api/v1/meals/:meal_id/residents/:resident_id
       def destroy_meal_resident
-        if @meal_resident&.destroy
-          render json: { message: 'MealResident destroyed.' } and return
-        else
-          render json: { message: 'Could not destroy MealResident.' }, status: :bad_request and return
-        end
+        @meal_resident.destroy!
+
+        render json: { message: 'MealResident destroyed.' }
       end
 
+      # PATCH /api/v1/meals/:meal_id/residents/:resident_id { late, vegetarian }
       def update_meal_resident
         if @meal_resident.update(meal_resident_params)
           render json: { message: 'MealResident updated.' } and return
@@ -45,6 +56,7 @@ module Api
         end
       end
 
+      # POST /api/v1/meals/:meal_id/residents/:resident_id/guests { vegetarian }
       def create_guest
         guest = Guest.new(meal_id: @meal.id, resident_id: params[:resident_id], vegetarian: params[:vegetarian])
 
@@ -55,18 +67,19 @@ module Api
         end
       end
 
+      # DELETE /api/v1/meals/:meal_id/residents/:resident_id/guests/:guest_id
       def destroy_guest
-        if @meal.guests.find_by(id: params[:guest_id])&.destroy
-          render json: { message: 'Guest was destroyed.' } and return
-        else
-          render json: { message: 'Guest could not be destroyed.' }, status: :bad_request and return
-        end
+        @guest.destroy!
+
+        render json: { message: 'Guest was destroyed.' }
       end
 
+      # GET /api/v1/meals/:meal_id/cooks
       def show_cooks
-        render json: MealFormSerializer.new(@meal), scope: @meal
+        render json: @meal, serializer: MealFormSerializer
       end
 
+      # PATCH /api/v1/meals/:meal_id/description { description }
       def update_description
         if @meal.update(:description => params[:description])
           render json: { message: 'Description updated.' } and return
@@ -75,9 +88,10 @@ module Api
         end
       end
 
+      # PATCH /api/v1/meals/:meal_id/max { max }
       def update_max
         if @meal.update(:max => params[:max])
-          render json: { message: 'Max updated.' } and return
+          render json: { message: 'Meal max value updated.' } and return
         else
           render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
         end
@@ -128,17 +142,10 @@ module Api
         render json: { message: message }, status: request_symbol
       end
 
+      # PATCH /api/v1/meals/:meal_id/closed { closed }
       def update_closed
         if @meal.update(closed: params[:closed])
           render json: { message: 'Meal closed value updated.' } and return
-        else
-          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
-        end
-      end
-
-      def update_max
-        if @meal.update(max: params[:max])
-          render json: { message: 'Meal max value updated.' } and return
         else
           render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
         end
@@ -151,15 +158,38 @@ module Api
 
       def set_meal
         @meal ||= Meal.includes({ :residents => :unit }).find_by(id: params[:meal_id])
+
+        not_found_api unless @meal.present?
+
         @meal.socket_id = params[:socket_id]
+      end
+
+      def set_guest
+        @guest = @meal.guests.find_by(id: params[:guest_id])
+
+        not_found_api unless @guest.present?
       end
 
       def set_meal_resident
         @meal_resident ||= MealResident.find_by(meal_id: params[:meal_id], resident_id: params[:resident_id])
+
+        not_found_api unless @meal_resident.present?
       end
 
       def trigger_pusher
         @meal.trigger_pusher
+      end
+
+      def authenticate
+        not_authenticated_api unless signed_in_resident?
+      end
+
+      def authorize
+        not_authorized_api unless current_resident.community_id.to_s == params[:community_id]
+      end
+
+      def authorize_one
+        not_authorized_api unless current_resident.community_id == @meal.community_id
       end
 
     end
