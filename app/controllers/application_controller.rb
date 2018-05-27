@@ -2,19 +2,19 @@ class ApplicationController < ActionController::Base
   skip_before_action :verify_authenticity_token
 
   def current_resident
-    if cookies[:token]
-      @current_resident = Key.find_by(token: cookies[:token])&.identity
-      return @current_resident
-    end
+    @current_resident ||= Key.find_by(token: cookies[:token])&.identity
+  end
 
-    if params.has_key?(:token)
-      @current_resident = Key.find_by(token: params[:token])&.identity
-      return @current_resident
-    end
+  def current_resident_api
+    @current_resident_api ||= Key.find_by(token: params[:token])&.identity
   end
 
   def signed_in_resident?
     current_resident.present?
+  end
+
+  def signed_in_resident_api?
+    current_resident_api.present?
   end
 
   def host

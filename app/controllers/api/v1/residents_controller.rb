@@ -5,7 +5,7 @@ module Api
 
       # GET /api/v1/residents/id
       def show_id
-        render json: current_resident.id
+        render json: current_resident_api.id
       end
 
       # POST /api/v1/residents/token { email: 'email', password: 'password' }
@@ -16,7 +16,7 @@ module Api
           render json: { message: "Email required." }, status: :bad_request and return
         end
 
-        resident = Resident.find_by(email: params[:email])
+        resident = Resident.find_by(email: params[:email].downcase)
         if resident.blank?
           render json: { message: "No resident with email #{params[:email]}" }, status: :bad_request and return
         end
@@ -30,7 +30,7 @@ module Api
 
       # POST /api/v1/residents/password-reset { email: 'email' }
       def password_reset
-        resident = Resident.find_by(email: params[:email])
+        resident = Resident.find_by(email: params[:email]&.downcase)
 
         unless resident.present?
           render json: { message: 'No resident with that email address.' }, status: :bad_request and return
@@ -114,7 +114,7 @@ module Api
 
       private
       def authenticate
-        not_authenticated_api unless signed_in_resident?
+        not_authenticated_api unless signed_in_resident_api?
       end
 
     end

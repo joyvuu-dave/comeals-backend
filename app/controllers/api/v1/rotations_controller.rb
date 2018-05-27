@@ -29,7 +29,7 @@ module Api
 
       private
       def authenticate
-        not_authenticated_api unless signed_in_resident?
+        not_authenticated_api unless signed_in_resident_api?
       end
 
       def set_resource
@@ -39,11 +39,11 @@ module Api
       end
 
       def authorize
-        not_authorized_api unless current_resident.community_id.to_s == params[:community_id]
+        not_authorized_api unless current_resident_api.community_id.to_s == params[:community_id]
       end
 
       def authorize_one
-        not_authorized_api unless current_resident.community_id == @rotation.community_id
+        not_authorized_api unless current_resident_api.community_id == @rotation.community_id
       end
     end
   end

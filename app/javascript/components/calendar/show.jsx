@@ -120,9 +120,7 @@ const Calendar = inject("store")(
           $(calendar).fullCalendar({
             displayEventEnd: true,
             eventSources: eventSources,
-            defaultDate: moment(
-              self.props.store.router.location.pathname.split("/")[3]
-            ),
+            defaultDate: moment(window.location.pathname.split("/")[3]),
             contentHeight: "auto",
             eventRender: function(event, eventElement) {
               const startString = moment(event.start).format();

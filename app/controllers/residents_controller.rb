@@ -4,8 +4,12 @@ class ResidentsController < ApplicationController
   before_action :authenticate, only: [:calendar]
   before_action :authorize, only: [:calendar]
 
-  # GET /calendar/:type/:date (subdomains)
+  # GET /calendar/(:type)/(:date) (subdomains)
   def calendar
+    unless params.has_key?(:type) && params.has_key?(:date)
+      redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
+    end
+
     render 'meals/edit'
   end
 

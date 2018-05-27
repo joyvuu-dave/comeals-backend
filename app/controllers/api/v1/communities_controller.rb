@@ -3,20 +3,7 @@ module Api
     class CommunitiesController < ApplicationController
       before_action :authenticate, except: [:create, :ical]
       before_action :authorize, except: [:create, :ical]
-      before_action :set_community, only: [:birthdays, :database]
-
-      # GET /api/v1/communities/:id/database
-      def database
-        meals = Meal.includes({ :residents => :unit,
-                                :community => :bills,
-                                :community => { :meals => :residents },
-                                :community => :meal_residents,
-                                :community => { :residents => :unit } })
-                    .unreconciled
-                    .where(community_id: @community.id)
-
-        render json: meals, each_serializer: MealFormSerializer
-      end
+      before_action :set_community, only: [:birthdays]
 
       # POST /api/v1/communities
       def create
@@ -89,11 +76,11 @@ module Api
 
       private
       def authenticate
-        not_authenticated_api unless signed_in_resident?
+        not_authenticated_api unless signed_in_resident_api?
       end
 
       def authorize
-        not_authorized_api unless current_resident.community_id.to_s == params[:id]
+        not_authorized_api unless current_resident_api.community_id.to_s == params[:id]
       end
 
     end
