@@ -37,8 +37,8 @@ class CommonHouseReservation < ApplicationRecord
     errors.add(:base, "Time period is already taken") if CommonHouseReservation
                                                             .where(community_id: community_id)
                                                             .where.not(id: id)
-                                                            .where("start_date <= ?", end_date)
-                                                            .where("end_date >= ?", start_date)
+                                                            .where("start_date < ?", end_date)
+                                                            .where("end_date > ?", start_date)
                                                             .exists?
   end
 
