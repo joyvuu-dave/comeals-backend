@@ -52,5 +52,5 @@ function checkVersion() {
     });
 }
 
-window.setTimeout(checkVersion, 1000);
+window.setTimeout(checkVersion, 1);
 window.setInterval(checkVersion, 300000);

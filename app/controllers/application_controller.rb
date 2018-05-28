@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   end
 
   def not_authenticated
-    render file: "#{Rails.root}/public/401.html", status: 401, layout: false and return
+    redirect_to "#{host}www.comeals#{top_level}" and return
   end
 
   def not_authorized
