@@ -157,6 +157,7 @@ const EventsNew = inject("store")(
               </Control.select>
               <br />
               <label>All Day</label>
+              {"  "}
               <Control.checkbox model="local.all_day" />
               <br />
               <br />

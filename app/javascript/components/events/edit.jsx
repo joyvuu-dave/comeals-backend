@@ -233,14 +233,12 @@ const EventsEdit = inject("store")(
                   <label>Title</label>
                   <Control.text model=".title" />
                   <br />
-
                   <label>Description</label>
                   <Control.textarea
                     model=".description"
                     placeholder="optional"
                   />
                   <br />
-
                   <label>Day</label>
                   <br />
                   <Control.text
@@ -250,7 +248,6 @@ const EventsEdit = inject("store")(
                   />
                   <br />
                   <br />
-
                   <label>Start Time</label>
                   <Control.select
                     model="local.start_time"
@@ -264,7 +261,6 @@ const EventsEdit = inject("store")(
                     ))}
                   </Control.select>
                   <br />
-
                   <label>End Time</label>
                   <Control.select model="local.end_time" id="local.end_time">
                     <option />
@@ -275,12 +271,11 @@ const EventsEdit = inject("store")(
                     ))}
                   </Control.select>
                   <br />
-
                   <label>All Day</label>
+                  {"  "}
                   <Control.checkbox model="local.all_day" id="local.all_day" />
                   <br />
                   <br />
-
                   <button type="submit" className="button-dark">
                     Update
                   </button>

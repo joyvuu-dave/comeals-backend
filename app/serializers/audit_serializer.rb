@@ -23,7 +23,6 @@ class AuditSerializer < ActiveModel::Serializer
   end
 
   def display_time
-    #ActiveSupport::TimeZone.find_tzinfo('Pacific Time (US & Canada)').utc_to_local(object.created_at).strftime("%B %d, %Y at %I:%M %p")
     object.created_at
   end
 end
