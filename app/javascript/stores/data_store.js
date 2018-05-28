@@ -204,14 +204,18 @@ export const DataStore = types
         });
     },
     logout() {
-      var topLevel = window.location.hostname.split(".");
-      topLevel = `.${topLevel[topLevel.length - 1]}`;
-      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".")[2];
 
-      Cookie.remove("token", { domain: `.comeals${topLevel}` });
-      Cookie.remove("community_id", { domain: `.comeals${topLevel}` });
+      Cookie.remove("token", { domain: `.comeals.${topLevel}` });
+      Cookie.remove("community_id", { domain: `.comeals.${topLevel}` });
+      Cookie.remove("resident_id", { domain: `.comeals.${topLevel}` });
 
-      setTimeout(() => (window.location.href = `${host}comeals${topLevel}/`));
+      setTimeout(
+        () =>
+          (window.location.href = `${
+            window.location.protocol
+          }//comeals.${topLevel}/`)
+      );
     },
     calendar() {
       self.router.push(

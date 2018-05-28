@@ -215,30 +215,12 @@ const Calendar = inject("store")(
           setInterval(() => this.refetch(calendar), 300000);
         }
 
-        logout() {
-          var topLevel = window.location.hostname.split(".");
-          topLevel = topLevel[topLevel.length - 1];
-
-          Cookie.remove("token", { domain: `.comeals.${topLevel}` });
-          Cookie.remove("community_id", { domain: `.comeals${topLevel}` });
-          window.location.href = "/";
-        }
-
         openWiki() {
           window.open("https://wiki.swansway.com/", "noopener");
         }
 
         refetch(calendar) {
           $(calendar).fullCalendar("refetchEvents");
-        }
-
-        logoutText() {
-          const token = Cookie.get("token");
-          if (typeof token === "undefined") {
-            return "login";
-          } else {
-            return `logout ${this.props.store.userName}`;
-          }
         }
 
         render() {
@@ -252,10 +234,10 @@ const Calendar = inject("store")(
                   wiki
                 </button>
                 <button
-                  onClick={this.logout}
+                  onClick={this.props.store.logout}
                   className="button-link text-secondary"
                 >
-                  {this.logoutText()}
+                  {`logout ${this.props.store.userName}`}
                 </button>
               </header>
               <h2 className="flex center">
