@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Cookie from "js-cookie";
+import moment from "moment";
 
 const styles = {
   sticky: {
@@ -93,7 +94,9 @@ class MealHistoryShow extends Component {
                       <td>{audit.id}</td>
                       <td>{audit.user_name}</td>
                       <td>{audit.description}</td>
-                      <td>{audit.display_time}</td>
+                      <td>
+                        {moment(audit.display_time).format("ddd MMM D, h:mm a")}
+                      </td>
                     </tr>
                   );
                 })}
