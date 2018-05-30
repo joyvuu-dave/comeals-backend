@@ -226,19 +226,22 @@ const Calendar = inject("store")(
         render() {
           return (
             <div className="offwhite">
-              <header className="header flex right">
-                <button
-                  onClick={this.openWiki}
-                  className="button-link text-secondary"
-                >
-                  wiki
-                </button>
-                <button
-                  onClick={this.props.store.logout}
-                  className="button-link text-secondary"
-                >
-                  {`logout ${this.props.store.userName}`}
-                </button>
+              <header className="header flex space-between">
+                <h5 className="pad-xs">{moment().format("ddd MMM Do")}</h5>
+                <span>
+                  <button
+                    onClick={this.openWiki}
+                    className="button-link text-secondary"
+                  >
+                    wiki
+                  </button>
+                  <button
+                    onClick={this.props.store.logout}
+                    className="button-link text-secondary"
+                  >
+                    {`logout ${Cookie.get("username")}`}
+                  </button>
+                </span>
               </header>
               <h2 className="flex center">
                 <u>{this.props.store.calendarName}</u>

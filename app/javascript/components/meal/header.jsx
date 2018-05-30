@@ -2,6 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import moment from "moment";
 import ButtonBar from "./button_bar";
+import Cookie from "js-cookie";
 
 const styles = {
   header: {
@@ -22,7 +23,7 @@ const Header = inject("store")(
       <div className="flex">
         <ButtonBar />
         <a className="button button-link text-secondary" onClick={store.logout}>
-          logout
+          logout {Cookie.get("username")}
         </a>
       </div>
     </header>

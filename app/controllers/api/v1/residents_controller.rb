@@ -1,6 +1,7 @@
 module Api
   module V1
     class ResidentsController < ApplicationController
+      include ApplicationHelper
       before_action :authenticate, only: [:show_id]
 
       # GET /api/v1/residents/id
@@ -22,7 +23,7 @@ module Api
         end
 
         if resident.present? && resident.authenticate(params[:password])
-          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id, resident_id: resident.id } and return
+          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id, resident_id: resident.id, username: resident_name_helper(resident.name) } and return
         else
           render json: { message: "Incorrect password" }, status: :bad_request and return
         end

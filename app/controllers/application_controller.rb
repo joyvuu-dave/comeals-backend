@@ -48,4 +48,21 @@ class ApplicationController < ActionController::Base
   def not_found_api
     render json: {message: "The page you were looking for doesn't exist. You may have mistyped the address or the page may have moved."}, status: 404 and return
   end
+
+  def version
+    if Rails.env.production?
+      require 'platform-api'
+      heroku = PlatformAPI.connect_oauth(ENV['HEROKU_OAUTH_TOKEN'])
+      begin
+        @version = heroku.release.list('comeals').to_a.last["version"]
+      rescue Exception => e
+        Rails.logger.info e
+        @version = 1
+      end
+    else
+      @version = 0
+    end
+
+    @version
+  end
 end

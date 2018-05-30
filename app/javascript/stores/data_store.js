@@ -210,6 +210,7 @@ export const DataStore = types
       Cookie.remove("token", { domain: `.comeals.${topLevel}` });
       Cookie.remove("community_id", { domain: `.comeals.${topLevel}` });
       Cookie.remove("resident_id", { domain: `.comeals.${topLevel}` });
+      Cookie.remove("username", { domain: `.comeals.${topLevel}` });
 
       setTimeout(
         () =>
@@ -374,7 +375,87 @@ export const DataStore = types
               .setItem(response.data.id.toString(), response.data)
               .then(function() {
                 self.loadData(response.data);
+              })
+              .then(function() {
+                self.loadNext();
+              })
+              .then(function() {
+                self.loadPrev();
               });
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    },
+    loadNext() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
+      axios
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.meal.nextId
+          }/cooks?token=${Cookie.get("token")}`
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            localforage.setItem(response.data.id.toString(), response.data);
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    },
+    loadPrev() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
+      axios
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.meal.prevId
+          }/cooks?token=${Cookie.get("token")}`
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            localforage.setItem(response.data.id.toString(), response.data);
           }
         })
         .catch(function(error) {
