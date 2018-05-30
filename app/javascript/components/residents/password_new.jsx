@@ -49,9 +49,11 @@ class ResidentsPasswordNew extends Component {
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
           const request = error.request;
+          window.alert("Error: no response received from server.");
         } else {
           // Something happened in setting up the request that triggered an Error
           const message = error.message;
+          window.alert("Error: could not submit form.");
         }
         const config = error.config;
       });

@@ -12,6 +12,7 @@ import EventSource from "./event_source";
 import { RouterModel } from "mst-react-router";
 import Pusher from "pusher-js";
 import moment from "moment";
+import localforage from "localforage";
 
 export const DataStore = types
   .model("DataStore", {
@@ -152,12 +153,12 @@ export const DataStore = types
       topLevel = `.${topLevel[topLevel.length - 1]}`;
 
       axios({
+        method: "patch",
         url: `${
           window.location.protocol
         }//api.comeals${topLevel}/api/v1/meals/${
           self.meal.id
         }/closed?token=${Cookie.get("token")}`,
-        method: "patch",
         withCredentials: true,
         data: {
           closed: val,
@@ -353,16 +354,6 @@ export const DataStore = types
           }
           const config = error.config;
 
-          if (self.billStore && self.billStore.bills) {
-            self.clearBills();
-          }
-          if (self.residentStore && self.residentStore.residents) {
-            self.clearResidents();
-          }
-          if (self.guestStore && self.guestStore.guests) {
-            self.clearGuests();
-          }
-
           self.loadDataAsync();
         });
     },
@@ -379,7 +370,11 @@ export const DataStore = types
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.loadData(response.data);
+            localforage
+              .setItem(response.data.id.toString(), response.data)
+              .then(function() {
+                self.loadData(response.data);
+              });
           }
         })
         .catch(function(error) {
@@ -404,6 +399,16 @@ export const DataStore = types
         });
     },
     loadData(data) {
+      if (self.billStore && self.billStore.bills) {
+        self.clearBills();
+      }
+      if (self.residentStore && self.residentStore.residents) {
+        self.clearResidents();
+      }
+      if (self.guestStore && self.guestStore.guests) {
+        self.clearGuests();
+      }
+
       // Assign Meal Data
       const dateArray = data.date.split("-");
       const date = new Date(
@@ -499,17 +504,6 @@ export const DataStore = types
       Comeals.channel = Comeals.pusher.subscribe(`meal-${self.meal.id}`);
       Comeals.channel.bind("update", function(data) {
         console.log(data.message);
-
-        if (self.billStore && self.billStore.bills) {
-          self.clearBills();
-        }
-        if (self.residentStore && self.residentStore.residents) {
-          self.clearResidents();
-        }
-        if (self.guestStore && self.guestStore.guests) {
-          self.clearGuests();
-        }
-
         self.loadDataAsync();
       });
     },
@@ -538,17 +532,14 @@ export const DataStore = types
 
       self.meal = id;
 
-      if (self.billStore && self.billStore.bills) {
-        self.clearBills();
-      }
-      if (self.residentStore && self.residentStore.residents) {
-        self.clearResidents();
-      }
-      if (self.guestStore && self.guestStore.guests) {
-        self.clearGuests();
-      }
-
-      self.loadDataAsync();
+      localforage.getItem(id.toString()).then(function(value) {
+        if (value === null) {
+          self.loadDataAsync();
+        } else {
+          self.loadData(value);
+          self.loadDataAsync();
+        }
+      });
     },
     goToMeal(mealId) {
       self.isLoading = true;

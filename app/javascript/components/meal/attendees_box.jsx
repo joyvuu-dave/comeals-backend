@@ -92,8 +92,8 @@ const AttendeeComponent = inject("store")(
                   type="checkbox"
                   className="switch"
                   key={`veg_switch_${resident.id}`}
-                  defaultChecked={resident.vegetarian}
-                  onClick={e => resident.toggleVeg()}
+                  checked={resident ? resident.vegetarian : false}
+                  onChange={e => resident.toggleVeg()}
                   disabled={
                     this.props.store.meal.reconciled ||
                     (this.props.store.meal.closed &&
