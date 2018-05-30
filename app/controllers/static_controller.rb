@@ -11,6 +11,7 @@ class StaticController < ApplicationController
 
     @host = host
     @top_level = top_level
+    @version = version
   end
 
   # GET /admin-logout (admin)

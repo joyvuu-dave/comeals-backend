@@ -10,6 +10,7 @@ class ResidentsController < ApplicationController
       redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
     end
 
+    @version = version
     render 'meals/edit'
   end
 
@@ -17,6 +18,7 @@ class ResidentsController < ApplicationController
   def password_new
     @name = resident_name_helper(@resident.name)
     @token = @resident.reset_password_token
+    @version = version
   end
 
   private

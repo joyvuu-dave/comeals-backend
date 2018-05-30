@@ -5,6 +5,7 @@ class MealsController < ApplicationController
 
   # GET /meals/:id/edit (subdomains)
   def edit
+    @version = version
   end
 
   private
