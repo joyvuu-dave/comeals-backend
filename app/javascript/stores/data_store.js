@@ -9,10 +9,9 @@ import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
 import EventSource from "./event_source";
 
-import { RouterModel } from "mst-react-router";
 import Pusher from "pusher-js";
-import moment from "moment";
 import localforage from "localforage";
+import moment from "moment";
 
 export const DataStore = types
   .model("DataStore", {
@@ -30,7 +29,6 @@ export const DataStore = types
     guestStore: types.optional(GuestStore, {
       guests: {}
     }),
-    router: RouterModel,
     calendarName: types.optional(types.string, ""),
     userName: types.optional(types.string, ""),
     eventSources: types.optional(types.array(EventSource), []),
@@ -39,12 +37,11 @@ export const DataStore = types
     modalId: types.maybe(types.number),
     modalIsChanging: false,
     modalChangedData: false,
-    showHistory: false
+    showHistory: false,
+    calendarEvents: types.optional(types.array(types.frozen), []),
+    currentDate: types.optional(types.string, moment().format("YYYY-MM-DD"))
   })
   .views(self => ({
-    get id() {
-      return self.meal.id;
-    },
     get description() {
       return self.meal.description;
     },
@@ -121,6 +118,21 @@ export const DataStore = types
 
       Comeals.pusher.connection.bind("connected", function() {
         Comeals.socketId = Comeals.pusher.connection.socket_id;
+        console.log("Pusher", Comeals.socketId);
+      });
+
+      Comeals.pusher.connection.bind("state_change", function(states) {
+        // states = {previous: 'oldState', current: 'newState'}
+        if (
+          states.previous === "unavailable" &&
+          states.current === "connected"
+        ) {
+          if (self.meal && self.meal.id) {
+            self.loadDataAsync();
+          }
+
+          self.loadMonthAsync();
+        }
       });
     },
     toggleEditDescriptionMode() {
@@ -217,11 +229,6 @@ export const DataStore = types
           (window.location.href = `${
             window.location.protocol
           }//comeals.${topLevel}/`)
-      );
-    },
-    calendar() {
-      self.router.push(
-        `/calendar/all/${moment(self.meal.date).format("YYYY-MM-DD")}`
       );
     },
     toggleHistory() {
@@ -381,6 +388,53 @@ export const DataStore = types
               })
               .then(function() {
                 self.loadPrev();
+              });
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    },
+    loadMonthAsync() {
+      console.log("loadMonthAsync...");
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
+      axios
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/communities/${Cookie.get(
+            "community_id"
+          )}/calendar/${self.currentDate}?token=${Cookie.get("token")}`
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            localforage
+              .setItem(
+                `community-${response.id}-calendar-${response.year}-${
+                  response.month
+                }`,
+                response.data
+              )
+              .then(function() {
+                self.loadMonth(response.data);
               });
           }
         })
@@ -588,6 +642,66 @@ export const DataStore = types
         self.loadDataAsync();
       });
     },
+    loadMonth(data) {
+      console.log("loadMonth...");
+      console.log("data", data);
+      if (self.calendarEvents) {
+        self.clearCalendarEvents();
+      }
+
+      // #1 Meals
+      data.meals.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #2 Bills
+      data.bills.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #3 Rotations
+      data.rotations.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #4 Birthdays
+      data.birthdays.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #5 Common House Reservations
+      data.common_house_reservations.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #6 Guest Room Reservations
+      data.guest_room_reservations.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #7 Events
+      data.events.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // Change loading state
+      self.isLoading = false;
+
+      // Unsubscribe from previous month
+      if (Comeals.channel !== null) {
+        Comeals.pusher.unsubscribe(Comeals.channel.name);
+      }
+
+      // Subscribe to changes of this month
+      Comeals.channel = Comeals.pusher.subscribe(
+        `calendar-${self.calendarMonth}`
+      );
+
+      Comeals.channel.bind("update", function(data) {
+        console.log(data.message);
+        self.loadMonthAsync();
+      });
+    },
     clearResidents() {
       self.residentStore.residents.clear();
     },
@@ -596,6 +710,9 @@ export const DataStore = types
     },
     clearGuests() {
       self.guestStore.guests.clear();
+    },
+    clearCalendarEvents() {
+      self.calendarEvents.clear();
     },
     appendGuest(obj) {
       self.guestStore.guests.put(obj);
@@ -622,9 +739,34 @@ export const DataStore = types
         }
       });
     },
+    switchMonths(date) {
+      self.currentDate = date;
+
+      var myDate = moment(date);
+      const key = `community-${Cookie.get(
+        "community_id"
+      )}-calendar-${myDate.format("YYYY")}-${myDate.format("M")}`;
+      console.log("key: ", key);
+
+      localforage.getItem(key).then(function(value) {
+        if (value === null) {
+          console.log("no key!");
+          self.loadMonthAsync();
+        } else {
+          console.log("yes key!");
+          self.loadMonth(value);
+          self.loadMonthAsync();
+        }
+      });
+    },
     goToMeal(mealId) {
       self.isLoading = true;
       self.switchMeals(Number.parseInt(mealId, 10));
+    },
+    goToMonth(date) {
+      console.log(date);
+      self.isLoading = true;
+      self.switchMonths(date);
     },
     setCalendarInfo(name, array) {
       self.modalIsChanging = false;

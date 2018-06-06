@@ -9,8 +9,6 @@ class StaticController < ApplicationController
       redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
     end
 
-    @host = host
-    @top_level = top_level
     @version = version
   end
 

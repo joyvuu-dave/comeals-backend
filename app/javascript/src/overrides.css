@@ -8,6 +8,7 @@
 @import "shoelace-css/source/css/tables.css";
 @import "shoelace-css/source/css/utilities.css";
 @import "shoelace-css/source/css/variables.css";
+@import "react-big-calendar/lib/css/react-big-calendar.css";
 
 :root {
   /* Colors */
@@ -234,6 +235,12 @@ button:focus {
   color: var(--almost-white);
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.arrow[disabled] {
+  color: initial;
+  cursor: not-allowed;
+  background-color: initial;
 }
 
 .title {

@@ -92,36 +92,62 @@ class ResidentsLogin extends Component {
   render() {
     return (
       <div>
-        <LocalForm onSubmit={values => this.handleSubmit(values)}>
-          <fieldset className="login-box">
-            <legend>Resident Login</legend>
-            <label className="w-80">
-              <Control.text
-                model=".email"
-                placeholder="Email"
-                autoCapitalize="none"
-              />
-            </label>
-            <br />
-            <label className="w-80">
-              <Control.password
-                type="password"
-                model=".password"
-                placeholder="Password"
-              />
-            </label>
-          </fieldset>
+        <header className="flex space-between header">
+          <h2 className="pad-l-sm">Comeals</h2>
+          <a
+            href={`${this.state.host}admin.comeals${this.state.topLevel}`}
+            className="pad-r-sm text-secondary"
+          >
+            admin
+          </a>
+        </header>
+        <div className="box">
+          <br />
+          <div>
+            <LocalForm onSubmit={values => this.handleSubmit(values)}>
+              <fieldset className="login-box">
+                <legend>Resident Login</legend>
+                <label className="w-80">
+                  <Control.text
+                    model=".email"
+                    placeholder="Email"
+                    autoCapitalize="none"
+                  />
+                </label>
+                <br />
+                <label className="w-80">
+                  <Control.password
+                    type="password"
+                    model=".password"
+                    placeholder="Password"
+                  />
+                </label>
+              </fieldset>
 
-          <button type="submit">Submit</button>
-        </LocalForm>
-        <br />
-        <a
-          className="button button-link"
-          onClick={this.handlePasswordReset.bind(this)}
-        >
-          Reset your password
-        </a>
-        {this.state.pwResetVisible && <ResidentsPasswordReset />}
+              <button type="submit">Submit</button>
+            </LocalForm>
+            <br />
+            <a
+              className="button button-link"
+              onClick={this.handlePasswordReset.bind(this)}
+            >
+              Reset your password
+            </a>
+            {this.state.pwResetVisible && <ResidentsPasswordReset />}
+          </div>
+          <br />
+          <div>
+            <div className="w-50">
+              <h3>Create an Account</h3>
+              <p>
+                Add your community and start managing your common meals today!
+              </p>
+              <a href="/communities/new" className="button">
+                Sign Up
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

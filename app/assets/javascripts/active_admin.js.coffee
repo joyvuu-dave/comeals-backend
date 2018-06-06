@@ -1,5 +1,5 @@
 #= require active_admin/base
-#= require moment
+#= require moment/moment
 
 $( ->
   # Format day of week on Meal index page

@@ -2,9 +2,12 @@ import React from "react";
 import { render } from "react-dom";
 import { Provider } from "mobx-react";
 
-import createBrowserHistory from "history/createBrowserHistory";
-import { RouterModel, syncHistoryWithStore } from "mst-react-router";
-import { Router, Route } from "react-router";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from "react-router-dom";
 
 import { DataStore } from "../../stores/data_store";
 import MealsEdit from "../../components/meals/edit";
@@ -13,20 +16,38 @@ import Calendar from "../../components/calendar/show";
 import ScrollToTop from "../../components/app/scroll_to_top";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const routerInstance = RouterModel.create();
-  const store = DataStore.create({
-    router: routerInstance
-  });
+  const store = DataStore.create();
 
-  // Hook up router model to browser history object
-  const history = syncHistoryWithStore(createBrowserHistory(), routerInstance);
+  window.addEventListener("load", function() {
+    function updateOnlineStatus(event) {
+      if (navigator.onLine) {
+        console.log("coming back online...");
+        if (store.meal && store.meal.id) {
+          store.loadDataAsync();
+        }
+      }
+    }
+
+    window.addEventListener("online", updateOnlineStatus);
+  });
 
   render(
     <Provider store={store}>
-      <Router history={history}>
+      <Router>
         <ScrollToTop>
-          <Route path="/calendar/:type/:date" component={Calendar} />
-          <Route path="/meals/:id/edit" component={MealsEdit} />
+          <Switch>
+            <Route
+              exact
+              strict
+              path="/:url*"
+              render={props => <Redirect to={`${props.location.pathname}/`} />}
+            />
+            <Route
+              path="/calendar/:type/:date/:modal?/:view?/:id?"
+              component={Calendar}
+            />
+            <Route path="/meals/:id/edit/:history?" component={MealsEdit} />
+          </Switch>
         </ScrollToTop>
       </Router>
     </Provider>,

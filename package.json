@@ -21,34 +21,34 @@
     "jquery": "3.3.1",
     "js-cookie": "2.2.0",
     "localforage": "^1.7.1",
-    "mobx": "4.3.0",
-    "mobx-react": "5.1.2",
+    "mobx": "4.3.1",
+    "mobx-react": "5.2.0",
     "mobx-state-tree": "2.0.5",
-    "moment": "2.22.1",
-    "mst-react-router": "^1.1.0",
+    "moment": "2.22.2",
     "normalize.css": "^8.0.0",
     "pretty-checkbox": "3.0.3",
     "pusher-js": "4.2.2",
     "react": "16.4.0",
+    "react-big-calendar": "^0.19.1",
     "react-day-picker": "7.1.9",
     "react-debounce-input": "3.2.0",
     "react-dom": "16.4.0",
     "react-modal": "^3.4.4",
     "react-onclickoutside": "^6.7.1",
     "react-redux": "5.0.7",
-    "react-redux-form": "1.16.8",
-    "react-router": "^4.2.0",
-    "redux": "^3.7.2",
+    "react-redux-form": "1.16.9",
+    "react-router-dom": "4.3.0-rc.3",
+    "redux": "4.0.0",
     "shoelace-css": "1.0.0-beta24",
     "uuid": "3.2.1"
   },
   "resolutions": {
     "caniuse-lite": "^1.0.30000842",
-    "webpack": "4.10.2",
+    "webpack": "4.11.0",
     "webpack-sources": "1.1.0"
   },
   "devDependencies": {
-    "prettier": "1.13.2",
+    "prettier": "1.13.4",
     "webpack-dev-server": "3.1.4"
   }
 }

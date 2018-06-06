@@ -25,6 +25,7 @@ Rails.application.routes.draw do
         post '/communities', to: 'communities#create'
         get '/communities/:id/birthdays', to: 'communities#birthdays'
         get '/communities/:id/hosts', to: 'communities#hosts'
+        get '/communities/:id/calendar/:date', to: 'communities#calendar'
         get '/meals', to: 'meals#index'
         get '/meals/:meal_id', to: 'meals#show'
         get '/meals/:meal_id/history', to: 'meals#history'
@@ -71,8 +72,9 @@ Rails.application.routes.draw do
 
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
-  get '/calendar/(:type)/(:date)', to: 'residents#calendar'
-  get '/meals/:id/edit', to: 'meals#edit', as: :meal
+  get '/calendar/(:type)/(:date)/(:modal)/(:view)/(:id)', to: 'residents#calendar'
+  get '/react-calendar', to: 'residents#react_calendar'
+  get '/meals/:id/edit/(history)', to: 'meals#edit', as: :meal
 
   # Everything Else
   match '*path', to: 'application#not_found', via: :all

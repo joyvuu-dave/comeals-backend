@@ -22,11 +22,21 @@
 #
 
 class EventSerializer < ActiveModel::Serializer
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :description,
              :start,
              :url,
              :allDay
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
     if object.allday
@@ -44,8 +54,12 @@ class EventSerializer < ActiveModel::Serializer
     object.start_date
   end
 
+  def end
+    object.start_date
+  end
+
   def url
-    "#events/#{object.id}/edit"
+    "events/edit/#{object.id}"
   end
 
   def allDay

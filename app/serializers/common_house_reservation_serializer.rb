@@ -25,11 +25,21 @@
 class CommonHouseReservationSerializer < ActiveModel::Serializer
   include ApplicationHelper
 
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :start,
              :end,
              :url,
              :description
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
     "\nCommon House\n#{object.title.present? ? "#{object.title}\n" : ''}#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
@@ -48,6 +58,6 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   end
 
   def url
-    "#common-house-reservations/#{object.id}/edit"
+    "common-house-reservations/edit/#{object.id}"
   end
 end

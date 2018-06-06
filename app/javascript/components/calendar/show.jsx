@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { withRouter } from "react-router";
+import { withRouter } from "react-router-dom";
 import $ from "jquery";
 import "fullcalendar";
 import SideBar from "./side_bar";
@@ -18,7 +18,10 @@ import CommonHouseReservationsEdit from "../common_house_reservations/edit";
 import EventsEdit from "../events/edit";
 import RotationsShow from "../rotations/show";
 
-import WebalLinks from "./webcal_links";
+import WebcalLinks from "./webcal_links";
+import BigCalendar from "react-big-calendar";
+
+BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 const styles = {
   main: {
@@ -34,185 +37,183 @@ const Calendar = inject("store")(
       class Calendar extends Component {
         constructor(props) {
           super(props);
+
+          console.log("calendar's constructor ran!");
+
           this.handleCloseModal = this.handleCloseModal.bind(this);
         }
 
         componentDidMount() {
-          this.updateEventSources();
+          console.log("calendar mounted!");
+          //this.updateEventSources();
+          this.props.store.goToMonth(this.props.match.params.date);
         }
 
         componentDidUpdate(prevProps) {
+          console.log("calendar updated!");
+
           if (
-            this.props.location.pathname.split("/")[2] !==
-              prevProps.location.pathname.split("/")[2] ||
-            this.props.store.modalChangedData
+            prevProps.match.params.type !== this.props.match.params.type ||
+            prevProps.match.params.date !== this.props.match.params.date
           ) {
-            this.updateEventSources();
+            console.log("different calendar!");
+            this.props.store.goToMonth(this.props.match.params.date);
           }
         }
 
         renderModal() {
-          if (this.props.store.modalActive === false) {
+          if (typeof this.props.match.params.modal === "undefined") {
             return null;
           }
 
-          switch (this.props.store.modalName) {
-            case "guestRoomNew":
-              return <GuestRoomReservationsNew />;
-              break;
+          // NEW RESOURCE
+          if (this.props.match.params.view === "new") {
+            switch (this.props.match.params.modal) {
+              case "guest-room-reservations":
+                return <GuestRoomReservationsNew />;
+                break;
 
-            case "commonHouseNew":
-              return <CommonHouseReservationsNew />;
-              break;
+              case "common-house-reservations":
+                return <CommonHouseReservationsNew />;
+                break;
 
-            case "eventNew":
-              return <EventsNew />;
-              break;
+              case "events":
+                return <EventsNew />;
+                break;
 
-            case "guest-room-reservations":
-              return (
-                <GuestRoomReservationsEdit eventId={this.props.store.modalId} />
-              );
-              break;
+              default:
+                return null;
+            }
+          }
 
-            case "common-house-reservations":
-              return (
-                <CommonHouseReservationsEdit
-                  eventId={this.props.store.modalId}
-                />
-              );
-              break;
+          // EDIT RESOURCE
+          if (this.props.match.params.view === "edit") {
+            switch (this.props.match.params.modal) {
+              case "guest-room-reservations":
+                return (
+                  <GuestRoomReservationsEdit
+                    eventId={this.props.match.params.id}
+                  />
+                );
+                break;
 
-            case "events":
-              return <EventsEdit eventId={this.props.store.modalId} />;
-              break;
+              case "common-house-reservations":
+                return (
+                  <CommonHouseReservationsEdit
+                    eventId={this.props.match.params.id}
+                  />
+                );
+                break;
 
-            case "rotations":
-              return <RotationsShow id={this.props.store.modalId} />;
+              case "events":
+                return <EventsEdit eventId={this.props.match.params.id} />;
+                break;
 
-            default:
-              return null;
+              default:
+                null;
+            }
+          }
+
+          // SHOW RESOURCE
+          if (this.props.match.params.view === "show") {
+            switch (this.props.match.params.modal) {
+              case "rotations":
+                return <RotationsShow id={this.props.match.params.id} />;
+                break;
+
+              default:
+                null;
+            }
           }
         }
 
         handleCloseModal() {
-          this.props.store.closeModal();
+          //this.props.store.closeModal();
+          this.props.history.push(
+            `/calendar/${this.props.match.params.type}/${
+              this.props.match.params.date
+            }`
+          );
         }
 
         updateEventSources() {
-          var pathNameArray = this.props.store.router.location.pathname.split(
-            "/"
-          );
-          var calendarInfo = getCalendarInfo(
-            Cookie.get("community_id"),
-            pathNameArray[2]
-          );
-
-          this.props.store.setCalendarInfo(
-            calendarInfo.displayName,
-            calendarInfo.eventSources
-          );
-
-          const { calendar } = this.refs;
-          var eventSources = this.props.store.eventSources;
-          var self = this;
-          $(calendar).fullCalendar("destroy");
-          $(calendar).fullCalendar({
-            displayEventEnd: true,
-            eventSources: eventSources,
-            defaultDate: moment(window.location.pathname.split("/")[3]),
-            contentHeight: "auto",
-            eventRender: function(event, eventElement) {
-              const startString = moment(event.start).format();
-              const todayString = moment().format("YYYY-MM-DD");
-              if (
-                moment(startString).isBefore(todayString, "day") &&
-                typeof event.url !== "undefined"
-              ) {
-                eventElement.css("opacity", "0.5");
-              }
-              eventElement.attr("title", event.description);
-            },
-            eventClick: function(event) {
-              if (event.url) {
-                if (event.url.split("/")[1] === "meals") {
-                  self.props.store.router.push(event.url);
-                  return false;
-                } else {
-                  var temp = event.url.split("#");
-                  temp = temp[1];
-                  temp = temp.split("/");
-                  self.props.store.openModal(
-                    temp[0],
-                    Number.parseInt(temp[1], 10)
-                  );
-                  return false;
-                }
-              }
-            }
-          });
-
-          // Handle Today Click
-          $(".fc-today-button").click(function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Get Date for Prev Month
-            var myCurrentDate = $(calendar).fullCalendar("getDate");
-            myCurrentDate = moment(myCurrentDate).format("YYYY-MM-DD");
-
-            // Get Current Calendar Type
-            const calType = self.props.store.router.location.pathname.split(
-              "/"
-            )[2];
-
-            // Update Location
-            self.props.store.router.push(
-              `/calendar/${calType}/${myCurrentDate}`
-            );
-            return false;
-          });
-
-          // Handle Prev Click
-          $(".fc-prev-button").click(function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Get Date for Prev Month
-            var myPrevDate = $(calendar).fullCalendar("getDate");
-            myPrevDate = moment(myPrevDate).format("YYYY-MM-DD");
-
-            // Get Current Calendar Type
-            const calType = self.props.store.router.location.pathname.split(
-              "/"
-            )[2];
-
-            // Update Location
-            self.props.store.router.push(`/calendar/${calType}/${myPrevDate}`);
-            return false;
-          });
-
-          // Handle Next Click
-          $(".fc-next-button").click(function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Get Date for Next Month
-            var myNextDate = $(calendar).fullCalendar("getDate");
-            myNextDate = moment(myNextDate).format("YYYY-MM-DD");
-
-            // Get Current Calendar Type
-            const calType = self.props.store.router.location.pathname.split(
-              "/"
-            )[2];
-
-            // Update Location
-            self.props.store.router.push(`/calendar/${calType}/${myNextDate}`);
-            return false;
-          });
-
-          // Refetch Data Every 5 Minutes
-          setInterval(() => this.refetch(calendar), 300000);
+          // var pathNameArray = this.props.location.pathname.split("/");
+          // var calendarInfo = getCalendarInfo(
+          //   Cookie.get("community_id"),
+          //   pathNameArray[2]
+          // );
+          // this.props.store.setCalendarInfo(
+          //   calendarInfo.displayName,
+          //   calendarInfo.eventSources
+          // );
+          // const { calendar } = this.refs;
+          // var events = this.props.store.calendarEvents;
+          // var self = this;
+          // $(calendar).fullCalendar("destroy");
+          // $(calendar).fullCalendar({
+          //   displayEventEnd: true,
+          //   events: events,
+          //   defaultDate: moment(window.location.pathname.split("/")[3]),
+          //   contentHeight: "auto",
+          //   eventRender: function(event, eventElement) {
+          //     const startString = moment(event.start).format();
+          //     const todayString = moment().format("YYYY-MM-DD");
+          //     if (
+          //       moment(startString).isBefore(todayString, "day") &&
+          //       typeof event.url !== "undefined"
+          //     ) {
+          //       eventElement.css("opacity", "0.5");
+          //     }
+          //     eventElement.attr("title", event.description);
+          //   },
+          //   eventClick: function(event) {
+          //     if (event.url) {
+          //       self.props.history.push(event.url);
+          //       return false;
+          //     }
+          //   }
+          // });
+          // // Handle Today Click
+          // $(".fc-today-button").click(function(event) {
+          //   event.preventDefault();
+          //   event.stopPropagation();
+          //   // Get Date for Prev Month
+          //   var myCurrentDate = $(calendar).fullCalendar("getDate");
+          //   myCurrentDate = moment(myCurrentDate).format("YYYY-MM-DD");
+          //   // Get Current Calendar Type
+          //   const calType = self.props.location.pathname.split("/")[2];
+          //   // Update Location
+          //   self.props.history.push(`/calendar/${calType}/${myCurrentDate}`);
+          //   return false;
+          // });
+          // // Handle Prev Click
+          // $(".fc-prev-button").click(function(event) {
+          //   event.preventDefault();
+          //   event.stopPropagation();
+          //   // Get Date for Prev Month
+          //   var myPrevDate = $(calendar).fullCalendar("getDate");
+          //   myPrevDate = moment(myPrevDate).format("YYYY-MM-DD");
+          //   // Get Current Calendar Type
+          //   const calType = self.props.location.pathname.split("/")[2];
+          //   // Update Location
+          //   self.props.history.push(`/calendar/${calType}/${myPrevDate}`);
+          //   return false;
+          // });
+          // // Handle Next Click
+          // $(".fc-next-button").click(function(event) {
+          //   event.preventDefault();
+          //   event.stopPropagation();
+          //   // Get Date for Next Month
+          //   var myNextDate = $(calendar).fullCalendar("getDate");
+          //   myNextDate = moment(myNextDate).format("YYYY-MM-DD");
+          //   // Get Current Calendar Type
+          //   const calType = self.props.location.pathname.split("/")[2];
+          //   // Update Location
+          //   self.props.history.push(`/calendar/${calType}/${myNextDate}`);
+          //   return false;
+          // });
+          // // Refetch Data Every 5 Minutes
+          // setInterval(() => this.refetch(calendar), 300000);
         }
 
         openWiki() {
@@ -224,6 +225,8 @@ const Calendar = inject("store")(
         }
 
         render() {
+          console.log("calendar rendered!");
+
           return (
             <div className="offwhite">
               <header className="header flex space-between">
@@ -247,14 +250,23 @@ const Calendar = inject("store")(
                 <u>{this.props.store.calendarName}</u>
               </h2>
               <div style={styles.main} className="responsive-calendar">
-                <SideBar />
+                <SideBar
+                  match={this.props.match}
+                  history={this.props.history}
+                  location={this.props.location}
+                />
                 <div>
-                  <div ref="calendar" className="calendar" />
-                  <WebalLinks />
+                  <BigCalendar
+                    defaultDate={new Date()}
+                    defaultView="month"
+                    events={this.props.store.calendarEvents.toJS()}
+                    style={{ height: "100vh", width: "85vw", minHeight: "90%" }}
+                  />
+                  <WebcalLinks />
                 </div>
               </div>
               <Modal
-                isOpen={this.props.store.modalActive}
+                isOpen={typeof this.props.match.params.modal !== "undefined"}
                 contentLabel="Event Modal"
                 onRequestClose={this.handleCloseModal}
                 style={{

@@ -13,41 +13,48 @@ const styles = {
 const SideBar = inject("store")(
   class SideBar extends Component {
     getNavDate() {
-      return this.props.store.router.location.pathname.split("/")[3];
+      return this.props.location.pathname.split("/")[3];
     }
 
     openNewGuestRoomReservation() {
-      this.props.store.openModal("guestRoomNew");
+      //this.props.store.openModal("guestRoomNew");
+      this.props.history.push(
+        `${this.props.location.pathname}/guest-room-reservations/new`
+      );
     }
 
     openNewCommonHouseReservation() {
-      this.props.store.openModal("commonHouseNew");
+      //this.props.store.openModal("commonHouseNew");
+      this.props.history.push(
+        `${this.props.location.pathname}/common-house-reservations/new`
+      );
     }
 
     openNewEvent() {
-      this.props.store.openModal("eventNew");
+      //this.props.store.openModal("eventNew");
+      this.props.history.push(`${this.props.location.pathname}/events/new`);
     }
 
     openAllCalendars() {
-      this.props.store.router.push(
+      this.props.history.push(
         `/calendar/all/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
       );
     }
 
     openMealCalendar() {
-      this.props.store.router.push(
+      this.props.history.push(
         `/calendar/meals/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
       );
     }
 
     openGuestRoomCalendar() {
-      this.props.store.router.push(
+      this.props.history.push(
         `/calendar/guest-room/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
       );
     }
 
     openCommonHouseCalendar() {
-      this.props.store.router.push(
+      this.props.history.push(
         `/calendar/common-house/${moment(this.getNavDate()).format(
           "YYYY-MM-DD"
         )}`
@@ -55,13 +62,13 @@ const SideBar = inject("store")(
     }
 
     openEventsCalendar() {
-      this.props.store.router.push(
+      this.props.history.push(
         `/calendar/events/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
       );
     }
 
     openBirthdaysCalendar() {
-      this.props.store.router.push(
+      this.props.history.push(
         `/calendar/birthdays/${moment(this.getNavDate()).format("YYYY-MM-DD")}`
       );
     }

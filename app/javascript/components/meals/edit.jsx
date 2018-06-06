@@ -19,7 +19,11 @@ class MealsEdit extends Component {
   render() {
     return (
       <div className="comeals-container">
-        <Header />
+        <Header
+          history={this.props.history}
+          location={this.props.location}
+          match={this.props.match}
+        />
         <div className="comeals-container">
           <section style={styles.section}>
             <div className="wrapper">

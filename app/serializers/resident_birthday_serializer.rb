@@ -1,9 +1,20 @@
 class ResidentBirthdaySerializer < ActiveModel::Serializer
   include ApplicationHelper
 
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :description,
-             :start
+             :start,
+             :end
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
     object.age < 22 ?
@@ -20,6 +31,10 @@ class ResidentBirthdaySerializer < ActiveModel::Serializer
   end
 
   def start
+    Date.new(Date.today.year, object.birthday.month, object.birthday.day)
+  end
+
+  def end
     Date.new(Date.today.year, object.birthday.month, object.birthday.day)
   end
 end
