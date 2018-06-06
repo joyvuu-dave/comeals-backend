@@ -77,8 +77,6 @@ const DateBox = inject("store")(
         }
 
         handleCloseModal() {
-          //this.props.store.toggleHistory();
-
           this.props.history.push(
             `${this.props.match.url.split("/history")[0]}`
           );
