@@ -38,14 +38,14 @@ const Calendar = inject("store")(
         constructor(props) {
           super(props);
 
-          console.log("calendar's constructor ran!");
-
           this.handleCloseModal = this.handleCloseModal.bind(this);
+
+          this.handleNavigate = this.handleNavigate.bind(this);
+          this.handleSelectEvent = this.handleSelectEvent.bind(this);
+          this.filterEvents = this.filterEvents.bind(this);
         }
 
         componentDidMount() {
-          console.log("calendar mounted!");
-          //this.updateEventSources();
           this.props.store.goToMonth(this.props.match.params.date);
         }
 
@@ -128,7 +128,6 @@ const Calendar = inject("store")(
         }
 
         handleCloseModal() {
-          //this.props.store.closeModal();
           this.props.history.push(
             `/calendar/${this.props.match.params.type}/${
               this.props.match.params.date
@@ -136,97 +135,11 @@ const Calendar = inject("store")(
           );
         }
 
-        updateEventSources() {
-          // var pathNameArray = this.props.location.pathname.split("/");
-          // var calendarInfo = getCalendarInfo(
-          //   Cookie.get("community_id"),
-          //   pathNameArray[2]
-          // );
-          // this.props.store.setCalendarInfo(
-          //   calendarInfo.displayName,
-          //   calendarInfo.eventSources
-          // );
-          // const { calendar } = this.refs;
-          // var events = this.props.store.calendarEvents;
-          // var self = this;
-          // $(calendar).fullCalendar("destroy");
-          // $(calendar).fullCalendar({
-          //   displayEventEnd: true,
-          //   events: events,
-          //   defaultDate: moment(window.location.pathname.split("/")[3]),
-          //   contentHeight: "auto",
-          //   eventRender: function(event, eventElement) {
-          //     const startString = moment(event.start).format();
-          //     const todayString = moment().format("YYYY-MM-DD");
-          //     if (
-          //       moment(startString).isBefore(todayString, "day") &&
-          //       typeof event.url !== "undefined"
-          //     ) {
-          //       eventElement.css("opacity", "0.5");
-          //     }
-          //     eventElement.attr("title", event.description);
-          //   },
-          //   eventClick: function(event) {
-          //     if (event.url) {
-          //       self.props.history.push(event.url);
-          //       return false;
-          //     }
-          //   }
-          // });
-          // // Handle Today Click
-          // $(".fc-today-button").click(function(event) {
-          //   event.preventDefault();
-          //   event.stopPropagation();
-          //   // Get Date for Prev Month
-          //   var myCurrentDate = $(calendar).fullCalendar("getDate");
-          //   myCurrentDate = moment(myCurrentDate).format("YYYY-MM-DD");
-          //   // Get Current Calendar Type
-          //   const calType = self.props.location.pathname.split("/")[2];
-          //   // Update Location
-          //   self.props.history.push(`/calendar/${calType}/${myCurrentDate}`);
-          //   return false;
-          // });
-          // // Handle Prev Click
-          // $(".fc-prev-button").click(function(event) {
-          //   event.preventDefault();
-          //   event.stopPropagation();
-          //   // Get Date for Prev Month
-          //   var myPrevDate = $(calendar).fullCalendar("getDate");
-          //   myPrevDate = moment(myPrevDate).format("YYYY-MM-DD");
-          //   // Get Current Calendar Type
-          //   const calType = self.props.location.pathname.split("/")[2];
-          //   // Update Location
-          //   self.props.history.push(`/calendar/${calType}/${myPrevDate}`);
-          //   return false;
-          // });
-          // // Handle Next Click
-          // $(".fc-next-button").click(function(event) {
-          //   event.preventDefault();
-          //   event.stopPropagation();
-          //   // Get Date for Next Month
-          //   var myNextDate = $(calendar).fullCalendar("getDate");
-          //   myNextDate = moment(myNextDate).format("YYYY-MM-DD");
-          //   // Get Current Calendar Type
-          //   const calType = self.props.location.pathname.split("/")[2];
-          //   // Update Location
-          //   self.props.history.push(`/calendar/${calType}/${myNextDate}`);
-          //   return false;
-          // });
-          // // Refetch Data Every 5 Minutes
-          // setInterval(() => this.refetch(calendar), 300000);
-        }
-
         openWiki() {
           window.open("https://wiki.swansway.com/", "noopener");
         }
 
-        refetch(calendar) {
-          $(calendar).fullCalendar("refetchEvents");
-        }
-
         render() {
-          console.log("calendar rendered!");
-
           return (
             <div className="offwhite">
               <header className="header flex space-between">
@@ -257,10 +170,18 @@ const Calendar = inject("store")(
                 />
                 <div>
                   <BigCalendar
-                    defaultDate={new Date()}
+                    defaultDate={moment(this.props.match.params.date).toDate()}
                     defaultView="month"
-                    events={this.props.store.calendarEvents.toJS()}
-                    style={{ height: "100vh", width: "85vw", minHeight: "90%" }}
+                    events={this.filterEvents()}
+                    style={{
+                      height: "100vh",
+                      width: "85vw",
+                      minWidth: "800px",
+                      minHeight: "1600px"
+                    }}
+                    onNavigate={this.handleNavigate}
+                    onSelectEvent={this.handleSelectEvent}
+                    views={["month"]}
                   />
                   <WebcalLinks />
                 </div>
@@ -279,6 +200,53 @@ const Calendar = inject("store")(
               </Modal>
             </div>
           );
+        }
+
+        handleNavigate(event) {
+          console.log("handleNavigate fired!");
+          console.log("event", event);
+          this.props.history.push(
+            `/calendar/${this.props.match.params.type}/${moment(event).format(
+              "YYYY-MM-DD"
+            )}`
+          );
+        }
+
+        handleSelectEvent(event) {
+          if (event.url) {
+            this.props.history.push(event.url);
+            return false;
+          }
+        }
+
+        filterEvents() {
+          var events = this.props.store.calendarEvents.toJS();
+
+          switch (this.props.match.params.type) {
+            case "all":
+              return events;
+            case "meals":
+              return events.filter(
+                event =>
+                  event.type === "Meal" ||
+                  event.type === "Rotation" ||
+                  event.type === "Bill"
+              );
+            case "guest-room":
+              return events.filter(
+                event => event.type === "GuestRoomReservation"
+              );
+            case "common-house":
+              return events.filter(
+                event => event.type === "CommonHouseReservation"
+              );
+            case "events":
+              return events.filter(event => event.type === "Event");
+            case "birthdays":
+              return events.filter(event => event.type === "Birthday");
+            default:
+              return [];
+          }
         }
       }
     )

@@ -13,7 +13,7 @@ class ResidentBirthdaySerializer < ActiveModel::Serializer
   end
 
   def type
-    object.class.to_s
+    "Birthday"
   end
 
   def title

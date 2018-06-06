@@ -27,6 +27,7 @@ class EventSerializer < ActiveModel::Serializer
              :title,
              :description,
              :start,
+             :end,
              :url,
              :allDay
 
@@ -55,7 +56,7 @@ class EventSerializer < ActiveModel::Serializer
   end
 
   def end
-    object.start_date
+    object.allday ? object.start_date : object.end_date
   end
 
   def url

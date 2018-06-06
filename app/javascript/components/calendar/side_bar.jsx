@@ -17,22 +17,19 @@ const SideBar = inject("store")(
     }
 
     openNewGuestRoomReservation() {
-      //this.props.store.openModal("guestRoomNew");
       this.props.history.push(
-        `${this.props.location.pathname}/guest-room-reservations/new`
+        `${this.props.location.pathname}guest-room-reservations/new`
       );
     }
 
     openNewCommonHouseReservation() {
-      //this.props.store.openModal("commonHouseNew");
       this.props.history.push(
-        `${this.props.location.pathname}/common-house-reservations/new`
+        `${this.props.location.pathname}common-house-reservations/new`
       );
     }
 
     openNewEvent() {
-      //this.props.store.openModal("eventNew");
-      this.props.history.push(`${this.props.location.pathname}/events/new`);
+      this.props.history.push(`${this.props.location.pathname}events/new`);
     }
 
     openAllCalendars() {

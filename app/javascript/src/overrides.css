@@ -348,6 +348,10 @@ Prevent FullCalendar title text from being cut off
   white-space: inherit !important;
 }
 
+.rbc-event-content {
+  white-space: inherit !important;
+}
+
 /*
 Make modal showup on top of calendar
 */
