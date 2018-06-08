@@ -92,7 +92,7 @@ const EventsEdit = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -132,7 +132,7 @@ const EventsEdit = inject("store")(
           )
           .then(function(response) {
             if (response.status === 200) {
-              self.props.store.closeModal(true);
+              self.props.handleCloseModal();
             }
           })
           .catch(function(error) {
@@ -211,7 +211,7 @@ const EventsEdit = inject("store")(
                   icon={faTimes}
                   size="2x"
                   className="close-button"
-                  onClick={this.props.store.closeModal}
+                  onClick={this.props.handleCloseModal}
                 />
               </div>
               <fieldset>

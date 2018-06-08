@@ -11,10 +11,6 @@ class CalendarSerializer < ActiveModel::Serializer
   has_many :guest_room_reservations, serializer: GuestRoomReservationSerializer
   has_many :events, serializer: EventSerializer
 
-  def id
-    object.cache_key_with_version
-  end
-
   def month
     instance_options[:month]
   end

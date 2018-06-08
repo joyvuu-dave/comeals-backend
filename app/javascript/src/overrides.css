@@ -133,7 +133,10 @@ table {
 
 @media all and (max-width: 746px) {
   .calendar {
+    height: 100vh;
+    min-height: 5000px;
     width: 95vw;
+    min-width: 480px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 1rem;
@@ -174,6 +177,8 @@ table {
 
 @media all and (min-width: 746px) {
   .calendar {
+    height: 100vh;
+    min-height: 990px;
     width: 85vw;
     margin-left: auto;
     margin-right: auto;
@@ -377,4 +382,27 @@ Reduce default size of calendar content
 .rbc-event-content {
   font-size: 0.9rem !important;
   line-height: 1.25 !important;
+}
+
+/*
+Offline Indicator
+*/
+#status {
+  font: bold 1em sans-serif;
+  color: #fff;
+  padding: 0.5em;
+}
+
+.online {
+  background: green;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 2s ease-in 2s, visibility 4s;
+}
+
+.offline {
+  background: red;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 2s ease-in 0s;
 }

@@ -55,7 +55,7 @@ const EventsNew = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -93,6 +93,9 @@ const EventsNew = inject("store")(
           parseDate={parseDate}
           placeholder={""}
           onDayChange={this.handleDayChange}
+          dayPickerProps={{
+            initialMonth: moment(this.props.match.params.date).toDate()
+          }}
         />
       );
     }

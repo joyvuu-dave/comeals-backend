@@ -30,14 +30,12 @@ const CommonHouseReservationsNew = inject("store")(
     }
 
     componentDidMount() {
-      var host = `${window.location.protocol}//`;
-      var topLevel = window.location.hostname.split(".");
-      topLevel = `.${topLevel[topLevel.length - 1]}`;
-
       var self = this;
       axios
         .get(
-          `${host}api.comeals${topLevel}/api/v1/communities/${
+          `${self.state.host}api.comeals${
+            self.state.topLevel
+          }/api/v1/communities/${
             self.state.communityId
           }/hosts?token=${Cookie.get("token")}`
         )
@@ -98,7 +96,7 @@ const CommonHouseReservationsNew = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -136,6 +134,9 @@ const CommonHouseReservationsNew = inject("store")(
           parseDate={parseDate}
           placeholder={""}
           onDayChange={this.handleDayChange}
+          dayPickerProps={{
+            initialMonth: moment(this.props.match.params.date).toDate()
+          }}
         />
       );
     }
@@ -155,7 +156,7 @@ const CommonHouseReservationsNew = inject("store")(
                   icon={faTimes}
                   size="2x"
                   className="close-button"
-                  onClick={this.props.store.closeModal}
+                  onClick={this.props.handleCloseModal}
                 />
               </div>
               <fieldset>

@@ -118,7 +118,6 @@ export const DataStore = types
 
       Comeals.pusher.connection.bind("connected", function() {
         Comeals.socketId = Comeals.pusher.connection.socket_id;
-        console.log("Pusher", Comeals.socketId);
       });
 
       Comeals.pusher.connection.bind("state_change", function(states) {
@@ -130,7 +129,6 @@ export const DataStore = types
           if (self.meal && self.meal.id) {
             self.loadDataAsync();
           }
-
           self.loadMonthAsync();
         }
       });
@@ -428,8 +426,8 @@ export const DataStore = types
           if (response.status === 200) {
             localforage
               .setItem(
-                `community-${response.id}-calendar-${response.year}-${
-                  response.month
+                `community-${response.data.id}-calendar-${response.data.year}-${
+                  response.data.month
                 }`,
                 response.data
               )
@@ -693,9 +691,13 @@ export const DataStore = types
       }
 
       // Subscribe to changes of this month
-      Comeals.channel = Comeals.pusher.subscribe(
-        `calendar-${self.calendarMonth}`
-      );
+      var subscribeString = `community-${Cookie.get(
+        "community_id"
+      )}-calendar-${moment(self.currentDate).format("YYYY")}-${moment(
+        self.currentDate
+      ).format("M")}`;
+      console.log("subscribeString", subscribeString);
+      Comeals.channel = Comeals.pusher.subscribe(subscribeString);
 
       Comeals.channel.bind("update", function(data) {
         console.log(data.message);
@@ -740,7 +742,9 @@ export const DataStore = types
       });
     },
     switchMonths(date) {
+      console.log("currentDate switched from:", self.currentDate);
       self.currentDate = date;
+      console.log("to", self.currentDate);
 
       var myDate = moment(date);
       const key = `community-${Cookie.get(
@@ -773,14 +777,6 @@ export const DataStore = types
       self.calendarName = name;
       self.eventSources.clear();
       self.eventSources = array;
-    },
-    closeModal(dataChanged = false) {
-      self.modalIsChanging = true;
-      self.modalActive = false;
-      self.modalName = null;
-      self.modalChangedData = dataChanged;
-
-      setTimeout(() => document.activeElement.blur());
     },
     openModal(name, id) {
       self.modalIsChanging = true;

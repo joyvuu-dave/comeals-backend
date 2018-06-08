@@ -87,7 +87,7 @@ const GuestRoomReservationsEdit = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -127,7 +127,7 @@ const GuestRoomReservationsEdit = inject("store")(
           )
           .then(function(response) {
             if (response.status === 200) {
-              self.props.store.closeModal(true);
+              self.props.handleCloseModal();
             }
           })
           .catch(function(error) {

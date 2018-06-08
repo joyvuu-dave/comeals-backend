@@ -20,15 +20,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("load", function() {
     function updateOnlineStatus(event) {
+      var status = document.getElementById("status");
+      var condition = navigator.onLine ? "online" : "offline";
+      status.className = condition;
+      status.innerHTML = condition.toUpperCase();
+
       if (navigator.onLine) {
-        console.log("coming back online...");
+        console.log(`back online at ${new Date().toLocaleTimeString()}`);
         if (store.meal && store.meal.id) {
           store.loadDataAsync();
         }
+        store.loadMonthAsync();
+      } else {
+        console.log(`offline at ${new Date().toLocaleTimeString()}`);
       }
     }
 
     window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
   });
 
   render(

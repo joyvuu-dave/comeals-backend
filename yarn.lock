@@ -3265,8 +3265,8 @@ hoek@2.x.x:
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
 
 hoist-non-react-statics@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.0.tgz#d2ca2dfc19c5a91c5a6615ce8e564ef0347e2a40"
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.3.tgz#db97beaf5e03d407ae03c74c1a7451524c051f4e"
 
 home-or-tmp@^2.0.0:
   version "2.0.0"
@@ -4510,9 +4510,9 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdir
   dependencies:
     minimist "0.0.8"
 
-mobx-react@5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-5.2.1.tgz#ee4b245978b4b1aebaa83dc9398ae36adbef0d78"
+mobx-react@5.2.2:
+  version "5.2.2"
+  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-5.2.2.tgz#63a84b093e9a4facdcc5869c03d7db6406890e67"
   dependencies:
     hoist-non-react-statics "^2.5.0"
     react-lifecycles-compat "^3.0.2"
@@ -5713,9 +5713,9 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-prettier@1.13.4, prettier@^1.12.1:
-  version "1.13.4"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.13.4.tgz#31bbae6990f13b1093187c731766a14036fa72e6"
+prettier@1.13.5, prettier@^1.12.1:
+  version "1.13.5"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.13.5.tgz#7ae2076998c8edce79d63834e9b7b09fead6bfd0"
 
 pretty-bytes@^4.0.2:
   version "4.0.2"

@@ -70,15 +70,30 @@ const Calendar = inject("store")(
           if (this.props.match.params.view === "new") {
             switch (this.props.match.params.modal) {
               case "guest-room-reservations":
-                return <GuestRoomReservationsNew />;
+                return (
+                  <GuestRoomReservationsNew
+                    handleCloseModal={this.handleCloseModal}
+                    match={this.props.match}
+                  />
+                );
                 break;
 
               case "common-house-reservations":
-                return <CommonHouseReservationsNew />;
+                return (
+                  <CommonHouseReservationsNew
+                    handleCloseModal={this.handleCloseModal}
+                    match={this.props.match}
+                  />
+                );
                 break;
 
               case "events":
-                return <EventsNew />;
+                return (
+                  <EventsNew
+                    handleCloseModal={this.handleCloseModal}
+                    match={this.props.match}
+                  />
+                );
                 break;
 
               default:
@@ -93,6 +108,7 @@ const Calendar = inject("store")(
                 return (
                   <GuestRoomReservationsEdit
                     eventId={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
                   />
                 );
                 break;
@@ -101,12 +117,18 @@ const Calendar = inject("store")(
                 return (
                   <CommonHouseReservationsEdit
                     eventId={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
                   />
                 );
                 break;
 
               case "events":
-                return <EventsEdit eventId={this.props.match.params.id} />;
+                return (
+                  <EventsEdit
+                    eventId={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
+                  />
+                );
                 break;
 
               default:
@@ -118,7 +140,12 @@ const Calendar = inject("store")(
           if (this.props.match.params.view === "show") {
             switch (this.props.match.params.modal) {
               case "rotations":
-                return <RotationsShow id={this.props.match.params.id} />;
+                return (
+                  <RotationsShow
+                    id={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
+                  />
+                );
                 break;
 
               default:
@@ -144,6 +171,7 @@ const Calendar = inject("store")(
             <div className="offwhite">
               <header className="header flex space-between">
                 <h5 className="pad-xs">{moment().format("ddd MMM Do")}</h5>
+                <span id="status" />
                 <span>
                   <button
                     onClick={this.openWiki}
@@ -173,13 +201,7 @@ const Calendar = inject("store")(
                     defaultDate={moment(this.props.match.params.date).toDate()}
                     defaultView="month"
                     events={this.filterEvents()}
-                    style={{
-                      height: "100vh",
-                      width: "100vw",
-                      minHeight: "1600px",
-                      minWidth: "100vw",
-                      maxWidth: "100vw"
-                    }}
+                    className="calendar"
                     onNavigate={this.handleNavigate}
                     onSelectEvent={this.handleSelectEvent}
                     views={["month"]}
