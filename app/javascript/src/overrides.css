@@ -349,7 +349,7 @@ Prevent FullCalendar title text from being cut off
 }
 
 .rbc-event-content {
-  white-space: inherit !important;
+  white-space: pre-line !important;
 }
 
 /*
@@ -369,4 +369,12 @@ Make modal showup on top of calendar
 
 .close-button:hover {
   cursor: pointer;
+}
+
+/*
+Reduce default size of calendar content
+*/
+.rbc-event-content {
+  font-size: 0.9rem !important;
+  line-height: 1.25 !important;
 }

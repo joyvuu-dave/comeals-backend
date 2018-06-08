@@ -421,11 +421,13 @@ const Resident = types
       }
 
       // Sort Guests
-      const sortedGuests = Array.from(self.guests).sort((a, b) => {
-        if (a.created_at > b.created_at) return -1;
-        if (a.created_at < b.created_at) return 1;
-        return 0;
-      });
+      const sortedGuests = Array.from(self.guests)
+        .slice()
+        .sort((a, b) => {
+          if (a.created_at > b.created_at) return -1;
+          if (a.created_at < b.created_at) return 1;
+          return 0;
+        });
 
       // Grab Id of newest guest
       const guestId = sortedGuests[0].id;

@@ -5,7 +5,7 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "10.3.0",
+    "node": "10.4.0",
     "yarn": "1.7.0",
     "npm": "6.1.0"
   },
@@ -22,7 +22,7 @@
     "js-cookie": "2.2.0",
     "localforage": "^1.7.1",
     "mobx": "4.3.1",
-    "mobx-react": "5.2.0",
+    "mobx-react": "5.2.1",
     "mobx-state-tree": "2.0.5",
     "moment": "2.22.2",
     "normalize.css": "^8.0.0",
@@ -44,7 +44,7 @@
   },
   "resolutions": {
     "caniuse-lite": "^1.0.30000842",
-    "webpack": "4.11.1",
+    "webpack": "4.12.0",
     "webpack-sources": "1.1.0"
   },
   "devDependencies": {

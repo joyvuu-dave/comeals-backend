@@ -175,9 +175,10 @@ const Calendar = inject("store")(
                     events={this.filterEvents()}
                     style={{
                       height: "100vh",
-                      width: "85vw",
-                      minWidth: "800px",
-                      minHeight: "1600px"
+                      width: "100vw",
+                      minHeight: "1600px",
+                      minWidth: "100vw",
+                      maxWidth: "100vw"
                     }}
                     onNavigate={this.handleNavigate}
                     onSelectEvent={this.handleSelectEvent}

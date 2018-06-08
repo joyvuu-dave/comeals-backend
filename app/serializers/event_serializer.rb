@@ -43,7 +43,7 @@ class EventSerializer < ActiveModel::Serializer
     if object.allday
       "ALL DAY\nEvent\n#{object.title}"
     else
-      "\nEvent\n#{object.title}"
+      "#{object.start_date.strftime('%l:%M%P')} - #{object.end_date.strftime('%l:%M%P')}\nEvent\n#{object.title}"
     end
   end
 
