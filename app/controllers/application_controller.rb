@@ -17,16 +17,12 @@ class ApplicationController < ActionController::Base
     current_resident_api.present?
   end
 
-  def host
-    @host ||= Rails.env.production? ? "https://" : "http://"
-  end
-
   def top_level
     @top_level ||= Rails.env.production? ? ".com" : ".test"
   end
 
   def not_authenticated
-    redirect_to "#{host}www.comeals#{top_level}" and return
+    redirect_to "https://www.comeals#{top_level}" and return
   end
 
   def not_authorized

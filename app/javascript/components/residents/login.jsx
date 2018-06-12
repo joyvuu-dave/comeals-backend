@@ -2,9 +2,14 @@ import React, { Component } from "react";
 import { LocalForm, Control } from "react-redux-form";
 import axios from "axios";
 import Cookie from "js-cookie";
+import { Link } from "react-router-dom";
+import Modal from "react-modal";
 
 import ResidentsPasswordReset from "./password_reset";
+import CommunitiesNew from "../../components/communities/new";
+import ResidentsPasswordNew from "./password_new";
 
+Modal.setAppElement("#main");
 class ResidentsLogin extends Component {
   constructor(props) {
     super(props);
@@ -15,14 +20,53 @@ class ResidentsLogin extends Component {
     this.state = {
       host: `${window.location.protocol}//`,
       topLevel: `.${topLevel}`,
-      pwResetVisible: false
+      createCommunityVisible: false
     };
+
+    this.handleCloseModal = this.handleCloseModal.bind(this);
   }
 
-  handlePasswordReset() {
-    this.setState((prevState, props) => {
-      return { pwResetVisible: !prevState.pwResetVisible };
-    });
+  renderModal() {
+    if (typeof this.props.match.params.modal === "undefined") {
+      return null;
+    }
+
+    switch (this.props.match.params.modal) {
+      case "reset-password":
+        if (typeof this.props.match.params.token === "undefined") {
+          return (
+            <ResidentsPasswordReset
+              handleCloseModal={this.handleCloseModal}
+              history={this.props.history}
+            />
+          );
+        } else {
+          return (
+            <ResidentsPasswordNew
+              handleCloseModal={this.handleCloseModal}
+              history={this.props.history}
+              match={this.props.match}
+            />
+          );
+        }
+        break;
+
+      case "create-community":
+        return (
+          <CommunitiesNew
+            handleCloseModal={this.handleCloseModal}
+            history={this.props.history}
+          />
+        );
+        break;
+
+      default:
+        return null;
+    }
+  }
+
+  handleCloseModal() {
+    this.props.history.push("/");
   }
 
   handleSubmit(values) {
@@ -127,27 +171,38 @@ class ResidentsLogin extends Component {
               <button type="submit">Submit</button>
             </LocalForm>
             <br />
-            <a
-              className="button button-link"
-              onClick={this.handlePasswordReset.bind(this)}
-            >
+            <Link to="/reset-password" className="text-black">
               Reset your password
-            </a>
-            {this.state.pwResetVisible && <ResidentsPasswordReset />}
+            </Link>
           </div>
-          <br />
           <div>
+            <br />
+            <br />
+            <br />
+            <br />
             <div className="w-50">
-              <h3>Create an Account</h3>
-              <p>
-                Add your community and start managing your common meals today!
+              <h3 className="text-black">Add your Community</h3>
+              <p className="text-black">
+                Start managing your common meals today!
               </p>
-              <a href="/communities/new" className="button">
+              <Link className="button" to="/create-community">
                 Sign Up
-              </a>
+              </Link>
             </div>
           </div>
         </div>
+        <Modal
+          isOpen={typeof this.props.match.params.modal !== "undefined"}
+          contentLabel="Login Modal"
+          onRequestClose={this.handleCloseModal}
+          style={{
+            content: {
+              backgroundColor: "#6699cc"
+            }
+          }}
+        >
+          {this.renderModal()}
+        </Modal>
       </div>
     );
   }

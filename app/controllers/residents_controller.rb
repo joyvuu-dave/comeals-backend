@@ -7,18 +7,11 @@ class ResidentsController < ApplicationController
   # GET /calendar/(:type)/(:date) (subdomains)
   def calendar
     unless params.has_key?(:type) && params.has_key?(:date)
-      redirect_to "#{host}#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
+      redirect_to "https://#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
     end
 
     @version = version
     render 'meals/edit'
-  end
-
-  # GET /residents/password-reset/:token
-  def password_new
-    @name = resident_name_helper(@resident.name)
-    @token = @resident.reset_password_token
-    @version = version
   end
 
   private

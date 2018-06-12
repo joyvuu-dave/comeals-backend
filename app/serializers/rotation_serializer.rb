@@ -42,7 +42,7 @@ class RotationSerializer < ActiveModel::Serializer
   end
 
   def end
-    object.meals.order(:date).last.date + 1.day # b/c FullCalendar date ranges are exclusive
+    object.meals.order(:date).last.date + 1.day # b/c ReactBigCalendar date ranges are exclusive
   end
 
   def title

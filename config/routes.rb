@@ -9,9 +9,8 @@ Rails.application.routes.draw do
   # Manager Pages
   constraints subdomain: 'www' do
     root to: 'static#main'
-    get '/residents/login', to: 'residents#login'
-    get '/communities/new', to: 'communities#new'
-    get '/residents/password-reset/:token', to: 'residents#password_new'
+    get '/reset-password/(:token)', to: 'static#main'
+    get '/create-community', to: 'static#main'
   end
 
   # API
@@ -20,6 +19,7 @@ Rails.application.routes.draw do
       namespace :v1 do
         post '/residents/token', to: 'residents#token'
         get '/residents/id', to: 'residents#show_id'
+        get '/residents/name/:token', to: 'residents#show_name'
         post '/residents/password-reset', to: 'residents#password_reset'
         post '/residents/password-reset/:token', to: 'residents#password_new'
         post '/communities', to: 'communities#create'
@@ -73,7 +73,6 @@ Rails.application.routes.draw do
   # Member Pages (swans.comeals.com, etc.)
   root to: 'static#root'
   get '/calendar/(:type)/(:date)/(:modal)/(:view)/(:id)', to: 'residents#calendar'
-  get '/react-calendar', to: 'residents#react_calendar'
   get '/meals/:id/edit/(history)', to: 'meals#edit', as: :meal
 
   # Everything Else

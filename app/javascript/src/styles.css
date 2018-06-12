@@ -1,4 +1,6 @@
 @import "normalize.css/normalize.css";
+@import "pretty-checkbox/dist/pretty-checkbox.css";
+@import "react-day-picker/lib/style.css";
 @import "shoelace-css/source/css/content.css";
 @import "shoelace-css/source/css/badges.css";
 @import "shoelace-css/source/css/buttons.css";
@@ -28,11 +30,6 @@
 body {
   background-color: var(--livid);
   min-width: 30rem;
-}
-
-/* Fixes issue with button half-hovering */
-.fc-state-hover {
-  background-position: 0 -36px !important;
 }
 
 .monospace {
@@ -95,18 +92,6 @@ body {
   align-items: center;
   justify-content: center;
   margin: 1rem 1rem 1rem 1rem;
-}
-
-/*
-Override Shoelace styling so it
-doesn't interfere with FullCalendar
-*/
-table {
-  margin-bottom: initial !important;
-}
-
-.fc-content {
-  color: hsl(0, 0%, 92%);
 }
 
 #main {
@@ -347,12 +332,8 @@ button:focus {
 }
 
 /*
-Prevent FullCalendar title text from being cut off
+Prevent ReactBigCalendar title text from being cut off
 */
-.fc-day-grid-event > .fc-content {
-  white-space: inherit !important;
-}
-
 .rbc-event-content {
   white-space: pre-line !important;
 }
@@ -380,8 +361,8 @@ Make modal showup on top of calendar
 Reduce default size of calendar content
 */
 .rbc-event-content {
-  font-size: 0.9rem !important;
-  line-height: 1.25 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.15 !important;
 }
 
 /*

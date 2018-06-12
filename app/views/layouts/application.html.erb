@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Post your common meal. Sign up for others. Reconcile the costs.">
     <title>Comeals</title>
-    <%= stylesheet_pack_tag 'app' %>
-    <%= stylesheet_link_tag 'application' %>
-  </head>
+    <%= stylesheet_pack_tag 'application' %>
   <body>
     <noscript>
       You need to enable JavaScript to run this app.
@@ -17,7 +15,6 @@
     </div>
 
     <%= render 'partials/footer' %>
-    <%= javascript_pack_tag 'app', defer: true %>
 
     <% if Rails.env.production? %>
       <script>

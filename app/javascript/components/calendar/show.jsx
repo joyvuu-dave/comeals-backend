@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router-dom";
-import $ from "jquery";
-import "fullcalendar";
 import SideBar from "./side_bar";
 
 import { getCalendarInfo } from "../../helpers/helpers";
@@ -162,10 +160,6 @@ const Calendar = inject("store")(
           );
         }
 
-        openWiki() {
-          window.open("https://wiki.swansway.com/", "noopener");
-        }
-
         render() {
           return (
             <div className="offwhite">
@@ -173,12 +167,6 @@ const Calendar = inject("store")(
                 <h5 className="pad-xs">{moment().format("ddd MMM Do")}</h5>
                 <span id="status" />
                 <span>
-                  <button
-                    onClick={this.openWiki}
-                    className="button-link text-secondary"
-                  >
-                    wiki
-                  </button>
                   <button
                     onClick={this.props.store.logout}
                     className="button-link text-secondary"

@@ -16,12 +16,12 @@ class ResidentsPasswordReset extends Component {
   }
 
   handleSubmit(values) {
-    var myState = this.state;
+    var self = this;
 
     axios
       .post(
-        `${myState.host}api.comeals${
-          myState.topLevel
+        `${self.state.host}api.comeals${
+          self.state.topLevel
         }/api/v1/residents/password-reset`,
         {
           email: values.email
@@ -30,9 +30,7 @@ class ResidentsPasswordReset extends Component {
       .then(function(response) {
         if (response.status === 200) {
           window.alert(response.data.message);
-          window.location.href = `${myState.host}www.comeals${
-            myState.topLevel
-          }`;
+          self.props.history.push("/");
         }
       })
       .catch(function(error) {
@@ -62,9 +60,9 @@ class ResidentsPasswordReset extends Component {
   render() {
     return (
       <LocalForm onSubmit={values => this.handleSubmit(values)}>
-        <fieldset className="w-50">
+        <fieldset>
           <legend>Password Reset</legend>
-          <label className="w-75">
+          <label className="w-100">
             <Control.text
               model=".email"
               placeholder="Email"

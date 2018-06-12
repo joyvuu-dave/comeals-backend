@@ -3,7 +3,7 @@ class MealsController < ApplicationController
   before_action :authenticate
   before_action :authorize
 
-  # GET /meals/:id/edit (subdomains)
+  # GET /meals/:id/edit/(history) (subdomains)
   def edit
     @version = version
   end

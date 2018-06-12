@@ -11,7 +11,12 @@ module Api
         if community.save
           render json: { message: "#{community.name} has been created." } and return
         else
-          render json: { message: community.errors.full_messages.join("\n") }, status: :bad_request and return
+          # Clean up message
+          error_message = community.errors.full_messages.join("\n")
+          error_message = error_message.sub("Slug", "Name")
+          error_message = error_message.sub("Admin users email", "Email")
+          error_message = error_message.sub("Admin users password", "Password")
+          render json: { message: error_message }, status: :bad_request and return
         end
       end
 
@@ -42,7 +47,7 @@ module Api
               event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
               event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
               event.summary = "Common Dinner"
-              event.description = "#{meal.description}\n\n\n\nSign up here: #{host}#{community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
+              event.description = "#{meal.description}\n\n\n\nSign up here: https://#{community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
               cal.add_event(event)
             end
 

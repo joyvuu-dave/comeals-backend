@@ -1,3 +1,4 @@
+import "../src/styles.css";
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "mobx-react";
@@ -9,11 +10,12 @@ import {
   Redirect
 } from "react-router-dom";
 
-import { DataStore } from "../../stores/data_store";
-import MealsEdit from "../../components/meals/edit";
-import Calendar from "../../components/calendar/show";
+import { DataStore } from "../stores/data_store";
+import MealsEdit from "../components/meals/edit";
+import Calendar from "../components/calendar/show";
+import ResidentsLogin from "../components/residents/login";
 
-import ScrollToTop from "../../components/app/scroll_to_top";
+import ScrollToTop from "../components/app/scroll_to_top";
 
 document.addEventListener("DOMContentLoaded", () => {
   const store = DataStore.create();
@@ -56,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
               component={Calendar}
             />
             <Route path="/meals/:id/edit/:history?" component={MealsEdit} />
+            <Route path="/:modal?/:token?" component={ResidentsLogin} />
           </Switch>
         </ScrollToTop>
       </Router>

@@ -17,11 +17,13 @@ class CommunitiesNew extends Component {
   }
 
   handleSubmit(values) {
-    var myState = this.state;
+    var self = this;
 
     axios
       .post(
-        `${myState.host}api.comeals${myState.topLevel}/api/v1/communities`,
+        `${self.state.host}api.comeals${
+          self.state.topLevel
+        }/api/v1/communities`,
         {
           name: values.name,
           email: values.email,
@@ -30,9 +32,7 @@ class CommunitiesNew extends Component {
       )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${myState.host}admin.comeals${
-            myState.topLevel
-          }`;
+          self.props.history.push("/");
         }
       })
       .catch(function(error) {
@@ -63,7 +63,7 @@ class CommunitiesNew extends Component {
     return (
       <div>
         <h2>Create a new Community</h2>
-        <fieldset className="w-50">
+        <fieldset className="w-100">
           <legend>Community</legend>
           <LocalForm onSubmit={values => this.handleSubmit(values)}>
             <label>Community Name</label>
