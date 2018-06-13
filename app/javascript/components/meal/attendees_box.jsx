@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import Cow from "../../packs/images/cow.png";
-import Carrot from "../../packs/images/carrot.png";
+import Cow from "../../images/cow.png";
+import Carrot from "../../images/carrot.png";
 import GuestDropdown from "./guest_dropdown";
 
 const styles = {

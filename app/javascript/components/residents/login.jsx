@@ -138,6 +138,7 @@ class ResidentsLogin extends Component {
       <div>
         <header className="flex space-between header">
           <h2 className="pad-l-sm">Comeals</h2>
+          <span id="status" />
           <a
             href={`${this.state.host}admin.comeals${this.state.topLevel}`}
             className="pad-r-sm text-secondary"

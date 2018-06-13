@@ -47,7 +47,6 @@ gem 'icalendar'
 gem 'platform-api'
 gem 'skylight'
 gem 'goldiloader'
-gem 'serviceworker-rails', github: 'rossta/serviceworker-rails'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'

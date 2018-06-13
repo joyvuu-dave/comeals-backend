@@ -34,6 +34,7 @@ const Header = inject("store")(
             >
               Calendar
             </button>
+            <span id="status" />
             <div className="flex">
               <ButtonBar
                 history={this.props.history}

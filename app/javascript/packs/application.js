@@ -2,6 +2,7 @@ import "../src/styles.css";
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "mobx-react";
+import Cookie from "js-cookie";
 
 import {
   BrowserRouter as Router,
@@ -32,7 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (store.meal && store.meal.id) {
           store.loadDataAsync();
         }
-        store.loadMonthAsync();
+        if (typeof Cookie.get("community_id") !== "undefined") {
+          store.loadMonthAsync();
+        }
       } else {
         console.log(`offline at ${new Date().toLocaleTimeString()}`);
       }
@@ -40,6 +43,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
+
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker
+        .register("/packs/service-worker.js")
+        .then(function(reg) {
+          console.log("Service worker registered!");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    }
   });
 
   render(
