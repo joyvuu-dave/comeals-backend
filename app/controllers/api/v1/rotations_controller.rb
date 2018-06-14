@@ -1,6 +1,6 @@
 module Api
   module V1
-    class RotationsController < ApplicationController
+    class RotationsController < ApiController
       before_action :authenticate
       before_action :set_resource, only: [:show]
       before_action :authorize, only: [:index]

@@ -153,7 +153,7 @@ GEM
       activerecord (>= 4.0.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
-    goldiloader (2.1.0)
+    goldiloader (2.1.1)
       activerecord (>= 4.2, < 5.3)
       activesupport (>= 4.2, < 5.3)
     has_scope (0.7.2)

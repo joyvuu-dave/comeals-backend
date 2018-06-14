@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (store.meal && store.meal.id) {
           store.loadDataAsync();
         }
-        if (typeof Cookie.get("community_id") !== "undefined") {
+        if (Cookie.get("community_id") !== "undefined") {
           store.loadMonthAsync();
         }
       } else {
@@ -43,17 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
-
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker
-        .register("/packs/service-worker.js")
-        .then(function(reg) {
-          console.log("Service worker registered!");
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    }
   });
 
   render(

@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CommunitiesController < ApplicationController
+    class CommunitiesController < ApiController
       before_action :authenticate, except: [:create, :ical]
       before_action :authorize, except: [:create, :ical]
       before_action :set_community, only: [:birthdays, :calendar]

@@ -1,6 +1,6 @@
 module Api
   module V1
-    class BillsController < ApplicationController
+    class BillsController < ApiController
       before_action :authenticate
       before_action :authorize
 

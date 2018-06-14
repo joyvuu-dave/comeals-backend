@@ -1,6 +1,6 @@
 module Api
   module V1
-    class MealsController < ApplicationController
+    class MealsController < ApiController
       before_action :authenticate
       before_action :authorize, only: [:index]
       before_action :set_meal, except: [:index]

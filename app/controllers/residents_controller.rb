@@ -1,8 +1,7 @@
 class ResidentsController < ApplicationController
   include ApplicationHelper
-  before_action :set_resident, only: [:password_new]
-  before_action :authenticate, only: [:calendar]
-  before_action :authorize, only: [:calendar]
+  before_action :authenticate
+  before_action :authorize
 
   # GET /calendar/(:type)/(:date) (subdomains)
   def calendar
@@ -15,10 +14,6 @@ class ResidentsController < ApplicationController
   end
 
   private
-  def set_resident
-    @resident = Resident.find_by(reset_password_token: params[:token])
-  end
-
   def authenticate
     not_authenticated unless signed_in_resident?
   end

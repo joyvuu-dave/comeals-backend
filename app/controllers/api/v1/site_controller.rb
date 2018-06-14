@@ -1,6 +1,6 @@
 module Api
   module V1
-    class SiteController < ApplicationController
+    class SiteController < ApiController
       def version
         if Rails.env.production?
           require 'platform-api'

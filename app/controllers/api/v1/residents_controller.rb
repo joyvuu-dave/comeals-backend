@@ -1,6 +1,6 @@
 module Api
   module V1
-    class ResidentsController < ApplicationController
+    class ResidentsController < ApiController
       include ApplicationHelper
       before_action :authenticate, only: [:show_id]
 

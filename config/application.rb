@@ -29,6 +29,18 @@ module Comeals
     # Don't generate system test files.
     config.generators.system_tests = nil
 
+    # Only loads a smaller set of middleware suitable for API only apps.
+    # Middleware like session, flash, cookies can be added back manually.
+    # Skip views, helpers and assets when generating a new resource.
+    config.api_only = true
+    config.app_generators.scaffold_controller = :scaffold_controller
+
+    # Middleware for ActiveAdmin
+    config.middleware.use Rack::MethodOverride
+    config.middleware.use ActionDispatch::Flash
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+
     # CORS
     config.middleware.insert_before 0, Rack::Cors do
       allow do
