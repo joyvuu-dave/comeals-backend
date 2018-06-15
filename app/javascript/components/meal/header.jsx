@@ -34,7 +34,11 @@ const Header = inject("store")(
             >
               Calendar
             </button>
-            <span id="status" />
+            {this.props.store.isOnline ? (
+              <span className="online">ONLINE</span>
+            ) : (
+              <span className="offline">OFFLINE</span>
+            )}
             <div className="flex">
               <ButtonBar
                 history={this.props.history}

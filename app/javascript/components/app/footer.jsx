@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 
 class Footer extends Component {
-  constructor() {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -50,18 +50,18 @@ class Footer extends Component {
   render() {
     return (
       <footer>
-        <h4 class="text-center text-secondary">
-          Created by&nbsp
+        <h4 className="text-center text-secondary">
+          Created by{" "}
           <a
             href="https://github.com/joyvuu-dave/comeals-rewrite"
             target="_blank"
             rel="noopener"
-            class="text-secondary"
+            className="text-secondary"
           >
             David
-          </a>
-          <span id="version" class="text-small">
-            {self.state.version}
+          </a>{" "}
+          <span id="version" className="text-small">
+            v{this.state.version}
           </span>
         </h4>
       </footer>

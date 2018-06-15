@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { inject, observer } from "mobx-react";
+import { withRouter } from "react-router-dom";
 
 import Header from "../meal/header";
 import Extras from "../meal/extras";
@@ -17,30 +19,36 @@ const styles = {
   }
 };
 
-class MealsEdit extends Component {
-  render() {
-    return (
-      <div className="comeals-container">
-        <Header
-          history={this.props.history}
-          location={this.props.location}
-          match={this.props.match}
-        />
-        <div className="comeals-container">
-          <section style={styles.section}>
-            <div className="wrapper">
-              <DateBox />
-              <MenuBox />
-              <CooksBox />
-              <InfoBox />
-              <AttendeesBox />
+const MealsEdit = inject("store")(
+  withRouter(
+    observer(
+      class MealsEdit extends Component {
+        render() {
+          return (
+            <div className="comeals-container">
+              <Header
+                history={this.props.history}
+                location={this.props.location}
+                match={this.props.match}
+              />
+              <div className="comeals-container">
+                <section style={styles.section}>
+                  <div className="wrapper">
+                    <DateBox />
+                    <MenuBox />
+                    <CooksBox />
+                    <InfoBox />
+                    <AttendeesBox />
+                  </div>
+                </section>
+              </div>
+              <Footer />
             </div>
-          </section>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-}
+          );
+        }
+      }
+    )
+  )
+);
 
 export default MealsEdit;
