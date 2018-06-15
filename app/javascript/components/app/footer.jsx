@@ -22,7 +22,7 @@ class Footer extends Component {
       .then(function(response) {
         if (response.status === 200) {
           self.setState({
-            version: response.data.version,
+            version: `v${response.data.version}`,
             ready: true
           });
         }
@@ -61,7 +61,7 @@ class Footer extends Component {
             David
           </a>{" "}
           <span id="version" className="text-small">
-            v{this.state.version}
+            {this.state.version}
           </span>
         </h4>
       </footer>

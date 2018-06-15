@@ -11,8 +11,6 @@ import ResidentsPasswordReset from "./password_reset";
 import CommunitiesNew from "../../components/communities/new";
 import ResidentsPasswordNew from "./password_new";
 
-import Footer from "../app/footer";
-
 Modal.setAppElement("#main");
 const ResidentsLogin = inject("store")(
   withRouter(
@@ -205,7 +203,6 @@ const ResidentsLogin = inject("store")(
                   </div>
                 </div>
               </div>
-              <Footer />
               <Modal
                 isOpen={typeof this.props.match.params.modal !== "undefined"}
                 contentLabel="Login Modal"

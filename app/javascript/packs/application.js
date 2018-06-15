@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (store.meal && store.meal.id) {
           store.loadDataAsync();
         }
-        if (Cookie.get("community_id") !== "undefined") {
+        if (typeof Cookie.get("community_id") !== "undefined") {
           store.loadMonthAsync();
         }
       } else {

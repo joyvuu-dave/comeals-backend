@@ -19,8 +19,6 @@ import RotationsShow from "../rotations/show";
 import WebcalLinks from "./webcal_links";
 import BigCalendar from "react-big-calendar";
 
-import Footer from "../app/footer";
-
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 const styles = {
@@ -203,7 +201,6 @@ const Calendar = inject("store")(
                   <WebcalLinks />
                 </div>
               </div>
-              <Footer />
               <Modal
                 isOpen={typeof this.props.match.params.modal !== "undefined"}
                 contentLabel="Event Modal"
