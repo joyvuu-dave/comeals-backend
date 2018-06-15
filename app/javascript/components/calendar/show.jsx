@@ -19,6 +19,8 @@ import RotationsShow from "../rotations/show";
 import WebcalLinks from "./webcal_links";
 import BigCalendar from "react-big-calendar";
 
+import Footer from "../app/footer";
+
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 const styles = {
@@ -165,7 +167,11 @@ const Calendar = inject("store")(
             <div className="offwhite">
               <header className="header flex space-between">
                 <h5 className="pad-xs">{moment().format("ddd MMM Do")}</h5>
-                <span id="status" />
+                {this.props.store.isOnline ? (
+                  <span className="online">ONLINE</span>
+                ) : (
+                  <span className="offline">OFFLINE</span>
+                )}
                 <span>
                   <button
                     onClick={this.props.store.logout}
@@ -197,6 +203,7 @@ const Calendar = inject("store")(
                   <WebcalLinks />
                 </div>
               </div>
+              <Footer />
               <Modal
                 isOpen={typeof this.props.match.params.modal !== "undefined"}
                 contentLabel="Event Modal"

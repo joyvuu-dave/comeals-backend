@@ -10,7 +10,7 @@ class StaticController < ApplicationController
     end
 
     @version = version
-    render 'meals/edit'
+    render file: "#{Rails.root}/public/index.html", status: 200, layout: false and return
   end
 
   # GET /admin-logout (admin)

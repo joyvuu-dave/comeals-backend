@@ -9,6 +9,8 @@ import CooksBox from "../meal/cooks_box";
 import InfoBox from "../meal/info_box";
 import AttendeesBox from "../meal/attendees_box";
 
+import Footer from "../app/footer";
+
 const styles = {
   section: {
     margin: "1em 0 1em 0"
@@ -35,6 +37,7 @@ class MealsEdit extends Component {
             </div>
           </section>
         </div>
+        <Footer />
       </div>
     );
   }

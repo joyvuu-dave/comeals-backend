@@ -9,6 +9,8 @@ import ResidentsPasswordReset from "./password_reset";
 import CommunitiesNew from "../../components/communities/new";
 import ResidentsPasswordNew from "./password_new";
 
+import Footer from "../app/footer";
+
 Modal.setAppElement("#main");
 class ResidentsLogin extends Component {
   constructor(props) {
@@ -192,6 +194,7 @@ class ResidentsLogin extends Component {
             </div>
           </div>
         </div>
+        <Footer />
         <Modal
           isOpen={typeof this.props.match.params.modal !== "undefined"}
           contentLabel="Login Modal"

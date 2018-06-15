@@ -39,7 +39,8 @@ export const DataStore = types
     modalChangedData: false,
     showHistory: false,
     calendarEvents: types.optional(types.array(types.frozen), []),
-    currentDate: types.optional(types.string, moment().format("YYYY-MM-DD"))
+    currentDate: types.optional(types.string, moment().format("YYYY-MM-DD")),
+    isOnline: false
   })
   .views(self => ({
     get description() {
@@ -132,6 +133,8 @@ export const DataStore = types
           self.loadMonthAsync();
         }
       });
+
+      self.setIsOnline();
     },
     toggleEditDescriptionMode() {
       const isSaving = self.editDescriptionMode;
@@ -783,5 +786,8 @@ export const DataStore = types
       self.modalName = name;
       self.modalId = id;
       self.modalActive = true;
+    },
+    setIsOnline(val) {
+      self.isOnline = navigator.onLine;
     }
   }));

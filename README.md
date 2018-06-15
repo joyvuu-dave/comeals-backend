@@ -13,3 +13,4 @@ the cost of common meals.
 - Configure project with `puma-dev` (https://github.com/puma/puma-dev)
 - `./bin/webpack --watch --colors --progress`
 - `open https://comeals.test/`
+- `workbox generateSW workbox-config.js`

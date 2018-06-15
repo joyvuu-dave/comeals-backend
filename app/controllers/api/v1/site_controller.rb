@@ -1,6 +1,8 @@
 module Api
   module V1
     class SiteController < ApiController
+
+      # GET /api/v1/version
       def version
         if Rails.env.production?
           require 'platform-api'
