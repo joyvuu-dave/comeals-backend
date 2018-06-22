@@ -11,6 +11,7 @@ the cost of common meals.
 - `yarn install`
 - `bundle exec rake db:setup`
 - Configure project with `puma-dev` (https://github.com/puma/puma-dev)
-- `./bin/rake assets:precompile` (not `./bin/webpack --watch --colors --progress`)
+- Production: `./bin/rake assets:precompile`
+- Development: `./bin/webpack --watch --colors --progress`
 - `workbox generateSW workbox-config.js`
 - `open https://comeals.test/`

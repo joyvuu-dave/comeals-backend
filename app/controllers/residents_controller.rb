@@ -9,7 +9,6 @@ class ResidentsController < ApplicationController
       redirect_to "https://#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
     end
 
-    @version = version
     render file: "#{Rails.root}/public/index.html", status: 200, layout: false and return
   end
 

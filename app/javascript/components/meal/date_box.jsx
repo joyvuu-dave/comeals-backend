@@ -4,9 +4,9 @@ import { withRouter } from "react-router-dom";
 import moment from "moment";
 import Modal from "react-modal";
 
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faChevronLeft from "@fortawesome/fontawesome-free-solid/faChevronLeft";
-import faChevronRight from "@fortawesome/fontawesome-free-solid/faChevronRight";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 import MealHistoryShow from "../history/show";
 

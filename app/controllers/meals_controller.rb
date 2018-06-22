@@ -5,7 +5,6 @@ class MealsController < ApplicationController
 
   # GET /meals/:id/edit/(history) (subdomains)
   def edit
-    @version = version
     render file: "#{Rails.root}/public/index.html", status: 200, layout: false and return
   end
 

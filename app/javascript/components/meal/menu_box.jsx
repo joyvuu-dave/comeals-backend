@@ -14,7 +14,8 @@ const styles = {
     resize: "none",
     opacity: "1",
     visibility: "visible",
-    fontSize: "1.25rem"
+    fontSize: "1.25rem",
+    whiteSpace: "pre-wrap"
   }
 };
 

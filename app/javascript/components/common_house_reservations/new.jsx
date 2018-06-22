@@ -7,8 +7,8 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import { inject } from "mobx-react";
 import { generateTimes } from "../../helpers/helpers";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const CommonHouseReservationsNew = inject("store")(
   class CommonHouseReservationsNew extends Component {

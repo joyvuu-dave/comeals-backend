@@ -5,26 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Post your common meal. Sign up for others. Reconcile the costs.">
     <title>Comeals</title>
-    <link rel="manifest" href="/manifest.webmanifest">
-    <link rel="stylesheet" media="screen" href="/packs/application-fd76c26e.css">
+  <link href="/packs/application-6bb4d70c.css" rel="stylesheet"></head>
   <body>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="main"></div>
-    <script scr="/packs/application-c8319de2f0f1d42bea4a.js"></script>
-
-
-
-    <script defer>
-        window.addEventListener("load", function() {
-          navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('SW registered!', reg))
-            .catch(err => console.log('Boo!', err));
-        });
-    </script>
-
     <div id="footer"></div>
-    <script defer scr="/packs/footer-679c5a0d3056024a7272.js"></script>
-  </body>
+    <script type="text/javascript" src="/packs/application-f6be0eafbad8f856d6b9.js"></script>
+    <script type="text/javascript" src="/packs/footer-6cbeded282b1e8ade315.js"></script>
+    <script>
+      // Check that service workers are registered
+      if ('serviceWorker' in navigator) {
+        // Use the window load event to keep the page load performant
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+          .then(() => console.log('success!'))
+          .catch(() => console.log('error!'));
+        });
+      }
+    </script>
+</body>
 </html>
