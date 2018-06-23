@@ -82,7 +82,9 @@ class Community < ApplicationRecord
   def create_next_rotation
     raise "Currently #{Meal.where(rotation_id: nil).count} Meals not assigned to Rotations" if Meal.where(rotation_id: nil).count > 0
 
-    current_date = [Date.today, meals.order(:date).last&.date&.tomorrow].max
+    day_after_last_meal = meals.order(:date).last&.date&.tomorrow
+    current_date = day_after_last_meal.nil? ? Date.today : [Date.today, day_after_last_meal].max
+
     last_alternating_date = meals.where("extract(dow from date) = ?", alternating_meal_days[0])
                                  .or(
                             meals.where("extract(dow from date) = ?", alternating_meal_days[1]))
