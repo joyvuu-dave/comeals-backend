@@ -27,7 +27,7 @@
     "pretty-checkbox": "3.0.3",
     "pusher-js": "4.2.2",
     "react": "16.4.1",
-    "react-big-calendar": "^0.19.1",
+    "react-big-calendar": "^0.19.2",
     "react-day-picker": "7.1.9",
     "react-debounce-input": "3.2.0",
     "react-dom": "16.4.1",

@@ -188,7 +188,7 @@ const Calendar = inject("store")(
                   history={this.props.history}
                   location={this.props.location}
                 />
-                <div>
+                <div style={{ height: 2000 }}>
                   <BigCalendar
                     defaultDate={moment(this.props.match.params.date).toDate()}
                     defaultView="month"
