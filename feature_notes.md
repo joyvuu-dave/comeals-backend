@@ -60,3 +60,29 @@ Comomon House Cleaning
 
 - detecting meal updates while online
 - left / right buttons should be disabled during load
+
+Issue: meals not loading
+Solution: react-big-calendar
+
+Issue: app not loading on old browsers
+Solution #1: feature detect & warn
+Solution #2: native apps
+Solution #3: polyfill
+
+Issue: Serviceworker messes with redirect
+Solution:
+
+Issue: offline cache will eventually fill up
+Solution:
+
+# HEROKU APP
+
+admin
+api
+
+# SPA
+
+www
+swans, etc.
+
+""

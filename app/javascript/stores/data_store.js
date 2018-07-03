@@ -383,12 +383,6 @@ export const DataStore = types
               .setItem(response.data.id.toString(), response.data)
               .then(function() {
                 self.loadData(response.data);
-              })
-              .then(function() {
-                self.loadNext();
-              })
-              .then(function() {
-                self.loadPrev();
               });
           }
         })
