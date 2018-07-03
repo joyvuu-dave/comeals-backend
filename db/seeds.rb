@@ -211,7 +211,8 @@ puts "#{Rotation.count} Rotations created"
 
 # Event
 Time.zone = community.timezone
-Event.create!(community_id: community.id, title: "HOA Meeting", start_date: Time.new(Time.now.year, Time.now.month, Time.now.day, 20, 0, 0))
+Event.create!(community_id: community.id, title: "HOA Meeting", start_date: Time.new(Time.now.year, Time.now.month, Time.now.day, 20, 0, 0), end_date: Time.new(Time.now.year, Time.now.month, Time.now.day, 21, 30, 0))
+Event.create!(community_id: community.id, title: "Swan's Anniversary", start_date: Time.new(Time.now.year, Time.now.month, 15, 1, 0, 0), allday: true)
 
 puts "#{Event.count} Event#{'s' unless Event.count == 1} created"
 

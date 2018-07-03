@@ -9,7 +9,7 @@ class StaticController < ApplicationController
       redirect_to "https://#{current_resident.community.slug}.comeals#{top_level}/calendar/all/#{Date.today.to_s}" and return
     end
 
-    render file: "#{Rails.root}/public/index.html", status: 200, layout: false and return
+    render file: "#{Rails.root}/public/packs/index.html", status: 200, layout: false and return
   end
 
   # GET /admin-logout (admin)

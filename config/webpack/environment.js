@@ -13,7 +13,7 @@ environment.plugins.append(
 environment.plugins.append(
   "HtmlWebpackHarddisk",
   new HtmlWebpackHarddiskPlugin({
-    outputPath: "public"
+    outputPath: "public/packs"
   })
 );
 
