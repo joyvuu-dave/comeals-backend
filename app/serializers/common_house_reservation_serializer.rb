@@ -51,11 +51,11 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   end
 
   def start
-    object.start_date
+    object.start_date + 1.minutes
   end
 
   def end
-    object.end_date
+    object.end_date + 1.minute
   end
 
   def url

@@ -51,7 +51,7 @@ class MyToolbar extends Component {
           </button>
           <button
             style={styles.chevron}
-            onClick={this.navigate.bind(null, "PREVIOUS")}
+            onClick={this.navigate.bind(null, "PREV")}
           >
             <FontAwesomeIcon icon={faChevronLeft} />
           </button>

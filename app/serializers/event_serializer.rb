@@ -53,11 +53,11 @@ class EventSerializer < ActiveModel::Serializer
   end
 
   def start
-    object.start_date
+    object.allday ? object.start_date + 1.minute : object.start_date
   end
 
   def end
-    object.allday ? object.start_date : object.end_date
+    object.allday ? object.start_date + 1.minute : object.end_date
   end
 
   def url

@@ -32,11 +32,11 @@ class ResidentBirthdaySerializer < ActiveModel::Serializer
   end
 
   def start
-    Date.new(Date.today.year, object.birthday.month, object.birthday.day)
+    Date.new(Date.today.year, (object.birthday + 1.day).month, (object.birthday + 1.day).day)
   end
 
   def end
-    Date.new(Date.today.year, object.birthday.month, object.birthday.day)
+    Date.new(Date.today.year, (object.birthday + 1.day).month, (object.birthday + 1.day).day)
   end
 
   def color

@@ -49,11 +49,11 @@ class GuestRoomReservationSerializer < ActiveModel::Serializer
   end
 
   def start
-    object.date
+    object.date + 1.minute
   end
 
   def end
-    object.date
+    object.date + 1.minute
   end
 
   def url

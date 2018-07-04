@@ -53,11 +53,11 @@ class BillSerializer < ActiveModel::Serializer
   end
 
   def start
-    object.meal.date
+    object.meal.date + 1.minute
   end
 
   def end
-    object.meal.date
+    object.meal.date + 1.minute
   end
 
   def url
