@@ -33,7 +33,8 @@ const styles = {
   chevron: {
     backgroundColor: "#444",
     border: "none",
-    opacity: "0.75"
+    opacity: "0.75",
+    width: "4rem"
   }
 };
 
@@ -54,7 +55,7 @@ class MyToolbar extends Component {
             onClick={this.navigate.bind(null, "PREV")}
           >
             <FontAwesomeIcon icon={faChevronLeft} />
-          </button>
+          </button>{" "}
           <button
             style={styles.chevron}
             onClick={this.navigate.bind(null, "NEXT")}
@@ -255,7 +256,7 @@ const Calendar = inject("store")(
                   history={this.props.history}
                   location={this.props.location}
                 />
-                <div style={{ height: 2000 }}>
+                <div style={{ height: 2000, marginRight: 15 }}>
                   <BigCalendar
                     defaultDate={moment(this.props.match.params.date).toDate()}
                     defaultView="month"
