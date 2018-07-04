@@ -1,5 +1,5 @@
 #= require active_admin/base
-#= require moment
+#= require moment/moment
 
 $( ->
   # Format day of week on Meal index page
@@ -47,4 +47,9 @@ $( ->
 
   # Make Date columns a little wider
   $('.col-date').css('min-width', '150px')
+
+  # Let People Know This is the Admin Page
+  if window.location.pathname == "/login"
+    $("body").prepend("<h3 style='margin-left:auto;margin-right:auto;width:150px'>Admin Login</h3>")
+    $("body").prepend("<a href='#{window.location.protocol}//comeals.#{window.location.hostname.split(".")[2]}/'>User Login</a>")
 )

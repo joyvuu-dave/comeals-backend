@@ -6,8 +6,8 @@ import moment from "moment";
 import axios from "axios";
 import Cookie from "js-cookie";
 import { inject } from "mobx-react";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const GuestRoomReservationsNew = inject("store")(
   class GuestRoomReservationsNew extends Component {
@@ -86,7 +86,7 @@ const GuestRoomReservationsNew = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -103,9 +103,11 @@ const GuestRoomReservationsNew = inject("store")(
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });
@@ -122,6 +124,9 @@ const GuestRoomReservationsNew = inject("store")(
           parseDate={parseDate}
           placeholder={""}
           onDayChange={this.handleDayChange}
+          dayPickerProps={{
+            initialMonth: moment(this.props.match.params.date).toDate()
+          }}
         />
       );
     }
@@ -141,7 +146,7 @@ const GuestRoomReservationsNew = inject("store")(
                   icon={faTimes}
                   size="2x"
                   className="close-button"
-                  onClick={this.props.store.closeModal}
+                  onClick={this.props.handleCloseModal}
                 />
               </div>
               <fieldset>

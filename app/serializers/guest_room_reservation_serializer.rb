@@ -23,10 +23,22 @@
 class GuestRoomReservationSerializer < ActiveModel::Serializer
   include ApplicationHelper
 
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :start,
+             :end,
              :url,
-             :description
+             :description,
+             :color
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
     "Guest Room\n#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
@@ -40,7 +52,16 @@ class GuestRoomReservationSerializer < ActiveModel::Serializer
     object.date
   end
 
-  def url
-    "#guest-room-reservations/#{object.id}/edit"
+  def end
+    object.date
   end
+
+  def url
+    "guest-room-reservations/edit/#{object.id}"
+  end
+
+  def color
+    "#bc7335"
+  end
+
 end

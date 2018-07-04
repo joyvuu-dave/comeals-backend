@@ -102,6 +102,10 @@ const Resident = types
       self.late = val;
       return val;
     },
+    setVeg(val) {
+      self.vegetarian = val;
+      return val;
+    },
     toggleAttending(options = { late: false, toggleVeg: false }) {
       var host = `${window.location.protocol}//`;
       var topLevel = window.location.hostname.split(".");
@@ -164,6 +168,16 @@ const Resident = types
             self.setAttendingAt(null);
             self.form.form.meal.incrementExtras();
 
+            // If they were clicking late to add, uncheck late
+            if (options.late) {
+              self.setLate(false);
+            }
+
+            // If they were clicking veg to add, unckeck veg
+            if (options.toggleVeg) {
+              self.setVeg(false);
+            }
+
             if (error.response) {
               // The request was made and the server responded with a status code
               // that falls out of the range of 2xx
@@ -177,9 +191,11 @@ const Resident = types
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
               const request = error.request;
+              window.alert("Error: no response received from server.");
             } else {
               // Something happened in setting up the request that triggered an Error
               const message = error.message;
+              window.alert("Error: could not submit form.");
             }
             const config = error.config;
           });
@@ -220,9 +236,11 @@ const Resident = types
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
               const request = error.request;
+              window.alert("Error: no response received from server.");
             } else {
               // Something happened in setting up the request that triggered an Error
               const message = error.message;
+              window.alert("Error: could not submit form.");
             }
             const config = error.config;
           });
@@ -274,9 +292,11 @@ const Resident = types
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });
@@ -312,7 +332,7 @@ const Resident = types
         })
         .catch(function(error) {
           console.log("Veg click - Fail!");
-          self.vegetarian = !val;
+          self.setVeg(!val);
 
           if (error.response) {
             // The request was made and the server responded with a status code
@@ -327,9 +347,11 @@ const Resident = types
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });
@@ -378,9 +400,11 @@ const Resident = types
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });
@@ -397,11 +421,13 @@ const Resident = types
       }
 
       // Sort Guests
-      const sortedGuests = Array.from(self.guests).sort((a, b) => {
-        if (a.created_at > b.created_at) return -1;
-        if (a.created_at < b.created_at) return 1;
-        return 0;
-      });
+      const sortedGuests = Array.from(self.guests)
+        .slice()
+        .sort((a, b) => {
+          if (a.created_at > b.created_at) return -1;
+          if (a.created_at < b.created_at) return 1;
+          return 0;
+        });
 
       // Grab Id of newest guest
       const guestId = sortedGuests[0].id;
@@ -439,9 +465,11 @@ const Resident = types
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });

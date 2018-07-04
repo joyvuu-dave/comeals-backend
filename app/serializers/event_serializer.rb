@@ -22,17 +22,29 @@
 #
 
 class EventSerializer < ActiveModel::Serializer
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :description,
              :start,
+             :end,
              :url,
-             :allDay
+             :allDay,
+             :color
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
     if object.allday
       "ALL DAY\nEvent\n#{object.title}"
     else
-      "\nEvent\n#{object.title}"
+      "#{object.start_date.strftime('%l:%M%P')} - #{object.end_date.strftime('%l:%M%P')}\nEvent\n#{object.title}"
     end
   end
 
@@ -44,11 +56,20 @@ class EventSerializer < ActiveModel::Serializer
     object.start_date
   end
 
+  def end
+    object.allday ? object.start_date : object.end_date
+  end
+
   def url
-    "#events/#{object.id}/edit"
+    "events/edit/#{object.id}"
   end
 
   def allDay
     object.allday
   end
+
+  def color
+    "#7ebc35"
+  end
+
 end

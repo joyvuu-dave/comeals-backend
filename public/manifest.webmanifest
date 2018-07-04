@@ -1,0 +1,22 @@
+{
+  "background_color": "#6699cc",
+  "description": "Post your common meal. Sign up for others. Reconcile the costs.",
+  "dir": "ltl",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "type": "image/x-icon",
+      "sizes": "16x16"
+    }
+  ],
+  "lang" : "en",
+  "name": "Comeals",
+  "orientation": "landscape",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "scope": "/",
+  "short_name": "Comeals",
+  "start_url": ".",
+  "theme_color": "#6699cc"
+}

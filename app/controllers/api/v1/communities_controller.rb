@@ -1,9 +1,9 @@
 module Api
   module V1
-    class CommunitiesController < ApplicationController
+    class CommunitiesController < ApiController
       before_action :authenticate, except: [:create, :ical]
       before_action :authorize, except: [:create, :ical]
-      before_action :set_community, only: [:birthdays]
+      before_action :set_community, only: [:birthdays, :calendar]
 
       # POST /api/v1/communities
       def create
@@ -11,7 +11,12 @@ module Api
         if community.save
           render json: { message: "#{community.name} has been created." } and return
         else
-          render json: { message: community.errors.full_messages.join("\n") }, status: :bad_request and return
+          # Clean up message
+          error_message = community.errors.full_messages.join("\n")
+          error_message = error_message.sub("Slug", "Name")
+          error_message = error_message.sub("Admin users email", "Email")
+          error_message = error_message.sub("Admin users password", "Password")
+          render json: { message: error_message }, status: :bad_request and return
         end
       end
 
@@ -42,7 +47,7 @@ module Api
               event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
               event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
               event.summary = "Common Dinner"
-              event.description = "#{meal.description}\n\n\n\nSign up here: #{host}#{community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
+              event.description = "#{meal.description}\n\n\n\nSign up here: https://#{community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
               cal.add_event(event)
             end
 
@@ -66,6 +71,23 @@ module Api
       def hosts
         hosts = Resident.adult.active.where(community_id: params[:id]).joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
         render json: hosts
+      end
+
+      # GET /api/v1/communities/:id/calendar/:date
+      def calendar
+        date = Date.parse(params[:date])
+
+        start_date = date.beginning_of_month.beginning_of_week(:sunday)
+        end_date = start_date + 41.days
+        month_int_array = (start_date.month..end_date.month).to_a
+
+        month = (start_date + 20.days).month
+        year = (start_date + 20.days).year
+
+        start_date = start_date.to_s
+        end_date = end_date.to_s
+
+        render json: @community, month: month, year: year, start_date: start_date, end_date: end_date, month_int_array: month_int_array, serializer: CalendarSerializer
       end
 
       private

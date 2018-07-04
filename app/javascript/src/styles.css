@@ -1,4 +1,6 @@
 @import "normalize.css/normalize.css";
+@import "pretty-checkbox/dist/pretty-checkbox.css";
+@import "react-day-picker/lib/style.css";
 @import "shoelace-css/source/css/content.css";
 @import "shoelace-css/source/css/badges.css";
 @import "shoelace-css/source/css/buttons.css";
@@ -8,6 +10,7 @@
 @import "shoelace-css/source/css/tables.css";
 @import "shoelace-css/source/css/utilities.css";
 @import "shoelace-css/source/css/variables.css";
+@import "react-big-calendar/lib/css/react-big-calendar.css";
 
 :root {
   /* Colors */
@@ -27,11 +30,6 @@
 body {
   background-color: var(--livid);
   min-width: 30rem;
-}
-
-/* Fixes issue with button half-hovering */
-.fc-state-hover {
-  background-position: 0 -36px !important;
 }
 
 .monospace {
@@ -96,18 +94,6 @@ body {
   margin: 1rem 1rem 1rem 1rem;
 }
 
-/*
-Override Shoelace styling so it
-doesn't interfere with FullCalendar
-*/
-table {
-  margin-bottom: initial !important;
-}
-
-.fc-content {
-  color: hsl(0, 0%, 92%);
-}
-
 #main {
   display: flex;
   min-height: 100vh;
@@ -133,6 +119,7 @@ table {
 @media all and (max-width: 746px) {
   .calendar {
     width: 95vw;
+    min-width: 480px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 1rem;
@@ -176,8 +163,6 @@ table {
     width: 85vw;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
     transition: width 0.5s;
   }
 
@@ -234,6 +219,12 @@ button:focus {
   color: var(--almost-white);
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.05);
+}
+
+.arrow[disabled] {
+  color: initial;
+  cursor: not-allowed;
+  background-color: initial;
 }
 
 .title {
@@ -335,10 +326,10 @@ button:focus {
 }
 
 /*
-Prevent FullCalendar title text from being cut off
+Prevent ReactBigCalendar title text from being cut off
 */
-.fc-day-grid-event > .fc-content {
-  white-space: inherit !important;
+.rbc-event-content {
+  white-space: pre-line !important;
 }
 
 /*
@@ -358,4 +349,39 @@ Make modal showup on top of calendar
 
 .close-button:hover {
   cursor: pointer;
+}
+
+/*
+Reduce default size of calendar content
+*/
+.rbc-event-content {
+  font-size: 0.85rem !important;
+  line-height: 1.15 !important;
+}
+
+/*
+Offline Indicator
+*/
+#status {
+  font: bold 1em sans-serif;
+  color: #fff;
+  padding: 0.5em;
+}
+
+.online {
+  background: green;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 2s ease-in 2s, visibility 4s;
+}
+
+.offline {
+  background: red;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 2s ease-in 0s;
+}
+
+.rbc-month-view {
+  background-color: var(--almost-white);
 }

@@ -9,7 +9,11 @@ const CloseButton = inject("store")(
           return "button-dark button-loader";
         }
 
-        if (this.props.store.meal.closed) {
+        if (
+          this.props.store &&
+          this.props.store.meal &&
+          this.props.store.meal.closed
+        ) {
           return "button-danger";
         } else {
           return "button-success";

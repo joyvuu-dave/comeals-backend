@@ -37,10 +37,22 @@
 #
 
 class MealSerializer < ActiveModel::Serializer
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :start,
+             :end,
              :url,
-             :description
+             :description,
+             :color
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
     message = "Dinner\n#{object.attendees_count}"
@@ -70,7 +82,15 @@ class MealSerializer < ActiveModel::Serializer
     object.date
   end
 
+  def end
+    object.date
+  end
+
   def url
     "/meals/#{object.id}/edit"
+  end
+
+  def color
+    "#444"
   end
 end

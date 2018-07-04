@@ -25,14 +25,25 @@
 class CommonHouseReservationSerializer < ActiveModel::Serializer
   include ApplicationHelper
 
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :start,
              :end,
              :url,
-             :description
+             :description,
+             :color
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
-    "\nCommon House\n#{object.title.present? ? "#{object.title}\n" : ''}#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
+    "#{object.start_date.strftime('%l:%M%P')} - #{object.end_date.strftime('%l:%M%P')}\nCommon House\n#{object.title.present? ? "#{object.title}\n" : ''}#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
   end
 
   def description
@@ -48,6 +59,11 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   end
 
   def url
-    "#common-house-reservations/#{object.id}/edit"
+    "common-house-reservations/edit/#{object.id}"
   end
+
+  def color
+    "#bc357e"
+  end
+
 end

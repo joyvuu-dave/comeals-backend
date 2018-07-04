@@ -1,6 +1,5 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { v4 } from "uuid";
 
 const styles = {
   main: {
@@ -28,8 +27,7 @@ const BillEdit = inject("store")(
         <option value={""} key={-1}>
           ¯\_(ツ)_/¯
         </option>
-        {Array.from(store.residents
-          .values())
+        {Array.from(store.residents.values())
           .filter(resident => resident.can_cook === true)
           .map(resident => (
             <option value={resident.id} key={resident.id}>
@@ -55,9 +53,9 @@ const BillEdit = inject("store")(
 
 const BillShow = inject("store")(
   observer(({ store, bill }) => (
-    <tr hidden={!bill.resident}>
-      <td key={v4()}>{bill.resident && bill.resident.name}</td>
-      <td key={bill.id}>${bill.amount}</td>
+    <tr key={bill.id} hidden={!bill.resident}>
+      <td>{bill.resident && bill.resident.name}</td>
+      <td>${bill.amount}</td>
     </tr>
   ))
 );
@@ -66,9 +64,9 @@ const Display = inject("store")(
   observer(({ store }) => (
     <table>
       <tbody>
-        {Array.from(store.bills
-          .values())
-          .map(bill => <BillShow key={bill.id} bill={bill} />)}
+        {Array.from(store.bills.values()).map(bill => (
+          <BillShow key={bill.id} bill={bill} />
+        ))}
       </tbody>
     </table>
   ))
@@ -77,7 +75,9 @@ const Display = inject("store")(
 const Edit = inject("store")(
   observer(({ store }) => (
     <div>
-      {Array.from(store.bills.values()).map(bill => <BillEdit key={bill.id} bill={bill} />)}
+      {Array.from(store.bills.values()).map(bill => (
+        <BillEdit key={bill.id} bill={bill} />
+      ))}
     </div>
   ))
 );

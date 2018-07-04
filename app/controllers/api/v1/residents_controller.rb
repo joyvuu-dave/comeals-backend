@@ -1,11 +1,23 @@
 module Api
   module V1
-    class ResidentsController < ApplicationController
+    class ResidentsController < ApiController
+      include ApplicationHelper
       before_action :authenticate, only: [:show_id]
 
       # GET /api/v1/residents/id
       def show_id
         render json: current_resident_api.id
+      end
+
+      # GET /api/v1/residents/name/:token
+      def show_name
+        resident = Resident.find_by(reset_password_token: params[:token])
+
+        if resident.blank?
+          render json: { message: "Password reset link is incorrect or expired." }, status: :bad_request and return
+        end
+
+        render json: { name: resident_name_helper(resident.name) }
       end
 
       # POST /api/v1/residents/token { email: 'email', password: 'password' }
@@ -16,13 +28,13 @@ module Api
           render json: { message: "Email required." }, status: :bad_request and return
         end
 
-        resident = Resident.find_by(email: params[:email].downcase)
+        resident = Resident.find_by(email: params[:email]&.strip&.downcase)
         if resident.blank?
           render json: { message: "No resident with email #{params[:email]}" }, status: :bad_request and return
         end
 
         if resident.present? && resident.authenticate(params[:password])
-          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id, resident_id: resident.id } and return
+          render json: { token: resident.key.token, slug: resident.community.slug, community_id: resident.community.id, resident_id: resident.id, username: resident_name_helper(resident.name) } and return
         else
           render json: { message: "Incorrect password" }, status: :bad_request and return
         end
@@ -30,7 +42,11 @@ module Api
 
       # POST /api/v1/residents/password-reset { email: 'email' }
       def password_reset
-        resident = Resident.find_by(email: params[:email]&.downcase)
+        if params[:email].blank?
+          render json: { message: "Email required." }, status: :bad_request and return
+        end
+
+        resident = Resident.find_by(email: params[:email]&.strip&.downcase)
 
         unless resident.present?
           render json: { message: 'No resident with that email address.' }, status: :bad_request and return
@@ -39,7 +55,7 @@ module Api
         resident.reset_password_token = SecureRandom.urlsafe_base64
         if resident.save
           ResidentMailer.password_reset_email(resident).deliver_now
-          render json: { message: 'Check your email to reset your password.' } and return
+          render json: { message: 'Check your email.' } and return
         else
           render json: { message: 'Error. Please try again.' }, status: :bad_request and return
         end
@@ -56,7 +72,7 @@ module Api
         resident.password = params[:password]
 
         if resident.save
-          render json: { message: 'Password was updated!' } and return
+          render json: { message: 'Password updated!' } and return
         else
           render json: { message: 'Invalid password.' }, status: :bad_request and return
         end
@@ -89,7 +105,7 @@ module Api
               event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
               event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
               event.summary = "Cook Common Dinner"
-              event.description = "#{bill.meal.description}\n\n\n\nView here: #{host}#{bill.community.slug}.comeals#{top_level}/meals/#{bill.meal.id}/edit"
+              event.description = "#{bill.meal.description}\n\n\n\nView here: https://#{bill.community.slug}.comeals#{top_level}/meals/#{bill.meal.id}/edit"
               cal.add_event(event)
             end
 
@@ -103,7 +119,7 @@ module Api
               event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
               event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
               event.summary = "Attend Common Dinner"
-              event.description = "#{mr.meal.description}\n\n\n\nView here: #{host}#{mr.community.slug}.comeals#{top_level}/meals/#{mr.meal.id}/edit"
+              event.description = "#{mr.meal.description}\n\n\n\nView here: https://#{mr.community.slug}.comeals#{top_level}/meals/#{mr.meal.id}/edit"
               cal.add_event(event) unless Bill.joins(:meal).where(resident_id: resident.id).where("meals.date = ?", mr.meal.date).present?
             end
 

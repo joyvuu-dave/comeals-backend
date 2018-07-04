@@ -17,11 +17,13 @@ class CommunitiesNew extends Component {
   }
 
   handleSubmit(values) {
-    var myState = this.state;
+    var self = this;
 
     axios
       .post(
-        `${myState.host}api.comeals${myState.topLevel}/api/v1/communities`,
+        `${self.state.host}api.comeals${
+          self.state.topLevel
+        }/api/v1/communities`,
         {
           name: values.name,
           email: values.email,
@@ -30,9 +32,7 @@ class CommunitiesNew extends Component {
       )
       .then(function(response) {
         if (response.status === 200) {
-          window.location.href = `${myState.host}admin.comeals${
-            myState.topLevel
-          }`;
+          self.props.history.push("/");
         }
       })
       .catch(function(error) {
@@ -49,9 +49,11 @@ class CommunitiesNew extends Component {
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
           const request = error.request;
+          window.alert("Error: no response received from server.");
         } else {
           // Something happened in setting up the request that triggered an Error
           const message = error.message;
+          window.alert("Error: could not submit form.");
         }
         const config = error.config;
       });
@@ -61,7 +63,7 @@ class CommunitiesNew extends Component {
     return (
       <div>
         <h2>Create a new Community</h2>
-        <fieldset className="w-50">
+        <fieldset className="w-100">
           <legend>Community</legend>
           <LocalForm onSubmit={values => this.handleSubmit(values)}>
             <label>Community Name</label>

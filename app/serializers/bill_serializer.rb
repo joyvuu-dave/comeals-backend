@@ -29,10 +29,21 @@ class BillSerializer < ActiveModel::Serializer
   include ApplicationHelper
   include ActiveSupport::NumberHelper
 
-  attributes :title,
+  attributes :id,
+             :type,
+             :title,
              :start,
+             :end,
              :url,
              :description
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def title
     object.amount_cents > 0 && object.meal.date < Date.today ?
@@ -42,6 +53,10 @@ class BillSerializer < ActiveModel::Serializer
   end
 
   def start
+    object.meal.date
+  end
+
+  def end
     object.meal.date
   end
 

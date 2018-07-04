@@ -7,8 +7,8 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import { generateTimes } from "../../helpers/helpers";
 import { inject } from "mobx-react";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const CommonHouseReservationsEdit = inject("store")(
   class CommonHouseReservationsEdit extends Component {
@@ -30,14 +30,12 @@ const CommonHouseReservationsEdit = inject("store")(
     }
 
     componentDidMount() {
-      var host = `${window.location.protocol}//`;
-      var topLevel = window.location.hostname.split(".");
-      topLevel = `.${topLevel[topLevel.length - 1]}`;
-
       var self = this;
       axios
         .get(
-          `${host}api.comeals${topLevel}/api/v1/common-house-reservations/${
+          `${self.state.host}api.comeals${
+            self.state.topLevel
+          }/api/v1/common-house-reservations/${
             self.props.eventId
           }?token=${Cookie.get("token")}`
         )
@@ -95,7 +93,7 @@ const CommonHouseReservationsEdit = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -112,9 +110,11 @@ const CommonHouseReservationsEdit = inject("store")(
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });
@@ -133,7 +133,7 @@ const CommonHouseReservationsEdit = inject("store")(
           )
           .then(function(response) {
             if (response.status === 200) {
-              self.props.store.closeModal(true);
+              self.props.handleCloseModal();
             }
           })
           .catch(function(error) {
@@ -150,9 +150,11 @@ const CommonHouseReservationsEdit = inject("store")(
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
               const request = error.request;
+              window.alert("Error: no response received from server.");
             } else {
               // Something happened in setting up the request that triggered an Error
               const message = error.message;
+              window.alert("Error: could not submit form.");
             }
             const config = error.config;
           });
@@ -196,7 +198,7 @@ const CommonHouseReservationsEdit = inject("store")(
                   icon={faTimes}
                   size="2x"
                   className="close-button"
-                  onClick={this.props.store.closeModal}
+                  onClick={this.props.handleCloseModal}
                 />
               </div>
               <fieldset>

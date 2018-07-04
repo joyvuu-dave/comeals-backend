@@ -7,8 +7,8 @@ import axios from "axios";
 import Cookie from "js-cookie";
 import { inject } from "mobx-react";
 import { generateTimes } from "../../helpers/helpers";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const EventsNew = inject("store")(
   class EventsNew extends Component {
@@ -55,7 +55,7 @@ const EventsNew = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -72,9 +72,11 @@ const EventsNew = inject("store")(
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });
@@ -91,6 +93,9 @@ const EventsNew = inject("store")(
           parseDate={parseDate}
           placeholder={""}
           onDayChange={this.handleDayChange}
+          dayPickerProps={{
+            initialMonth: moment(this.props.match.params.date).toDate()
+          }}
         />
       );
     }
@@ -108,7 +113,7 @@ const EventsNew = inject("store")(
               icon={faTimes}
               size="2x"
               className="close-button"
-              onClick={this.props.store.closeModal}
+              onClick={this.props.handleCloseModal}
             />
           </div>
           <fieldset>

@@ -21,18 +21,28 @@
 #
 
 class RotationSerializer < ActiveModel::Serializer
-  attributes :start,
+  attributes :id,
+             :type,
+             :start,
              :end,
              :color,
              :title,
              :url
+
+  def id
+    object.cache_key_with_version
+  end
+
+  def type
+    object.class.to_s
+  end
 
   def start
     object.meals.order(:date).first.date
   end
 
   def end
-    object.meals.order(:date).last.date + 1.day # b/c FullCalendar date ranges are exclusive
+    object.meals.order(:date).last.date + 1.day # b/c ReactBigCalendar date ranges are exclusive
   end
 
   def title
@@ -40,7 +50,7 @@ class RotationSerializer < ActiveModel::Serializer
   end
 
   def url
-    "#rotations/#{object.id}"
+    "rotations/show/#{object.id}"
   end
 
 end

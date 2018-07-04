@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { withRouter } from "react-router";
+import { withRouter } from "react-router-dom";
 import moment from "moment";
 import Modal from "react-modal";
 
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faChevronLeft from "@fortawesome/fontawesome-free-solid/faChevronLeft";
-import faChevronRight from "@fortawesome/fontawesome-free-solid/faChevronRight";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 import MealHistoryShow from "../history/show";
 
@@ -49,9 +49,7 @@ const DateBox = inject("store")(
         }
 
         componentDidUpdate() {
-          var pathNameArray = this.props.store.router.location.pathname.split(
-            "/"
-          );
+          var pathNameArray = this.props.location.pathname.split("/");
           var mealId = pathNameArray[2];
 
           if (this.props.store.meal) {
@@ -62,13 +60,11 @@ const DateBox = inject("store")(
         }
 
         componentDidMount() {
-          this.props.store.goToMeal(
-            this.props.store.router.location.pathname.split("/")[2]
-          );
+          this.props.store.goToMeal(this.props.location.pathname.split("/")[2]);
         }
 
         renderModal() {
-          if (this.props.store.showHistory === false) {
+          if (this.props.match.params.history !== "history") {
             return null;
           }
 
@@ -81,17 +77,27 @@ const DateBox = inject("store")(
         }
 
         handleCloseModal() {
-          this.props.store.toggleHistory();
+          this.props.history.push(
+            `${this.props.match.url.split("/history")[0]}`
+          );
         }
 
         handlePrevClick() {
-          this.props.store.router.push(
+          if (this.props.store.isLoading) {
+            return;
+          }
+
+          this.props.history.push(
             `/meals/${this.props.store.meal.prevId}/edit`
           );
         }
 
         handleNextClick() {
-          this.props.store.router.push(
+          if (this.props.store.isLoading) {
+            return;
+          }
+
+          this.props.history.push(
             `/meals/${this.props.store.meal.nextId}/edit`
           );
         }
@@ -141,6 +147,7 @@ const DateBox = inject("store")(
                   className="arrow"
                   style={styles.arrow}
                   onClick={this.handlePrevClick}
+                  disabled={this.props.store.isLoading}
                 >
                   <FontAwesomeIcon icon={faChevronLeft} size="3x" />
                 </div>
@@ -149,6 +156,7 @@ const DateBox = inject("store")(
                   className="arrow"
                   style={styles.arrow}
                   onClick={this.handleNextClick}
+                  disabled={this.props.store.isLoading}
                 >
                   <FontAwesomeIcon icon={faChevronRight} size="3x" />
                 </div>
@@ -180,7 +188,7 @@ const DateBox = inject("store")(
                 </h1>
               )}
               <Modal
-                isOpen={this.props.store.showHistory}
+                isOpen={typeof this.props.match.params.history !== "undefined"}
                 contentLabel="History Modal"
                 onRequestClose={this.handleCloseModal}
                 style={{

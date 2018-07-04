@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
-import { withRouter } from "react-router";
-import $ from "jquery";
-import "fullcalendar";
+import { withRouter } from "react-router-dom";
 import SideBar from "./side_bar";
 
 import { getCalendarInfo } from "../../helpers/helpers";
@@ -18,13 +16,63 @@ import CommonHouseReservationsEdit from "../common_house_reservations/edit";
 import EventsEdit from "../events/edit";
 import RotationsShow from "../rotations/show";
 
-import WebalLinks from "./webcal_links";
+import WebcalLinks from "./webcal_links";
+import BigCalendar from "react-big-calendar";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+
+BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 const styles = {
   main: {
     display: "flex",
     justifyContent: "space-between"
+  },
+  chevron: {
+    backgroundColor: "#444",
+    border: "none",
+    opacity: "0.75"
   }
+};
+
+class MyToolbar extends Component {
+  render() {
+    return (
+      <div style={styles.main}>
+        <h2>{moment(this.props.date).format("MMMM YYYY")}</h2>
+        <span>
+          <button
+            className="mar-sm"
+            onClick={this.navigate.bind(null, "TODAY")}
+          >
+            today
+          </button>
+          <button
+            style={styles.chevron}
+            onClick={this.navigate.bind(null, "PREVIOUS")}
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </button>
+          <button
+            style={styles.chevron}
+            onClick={this.navigate.bind(null, "NEXT")}
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </span>
+      </div>
+    );
+  }
+
+  navigate = action => {
+    this.props.onNavigate(action);
+  };
+}
+
+let components = {
+  toolbar: MyToolbar
 };
 
 Modal.setAppElement("#main");
@@ -34,224 +82,196 @@ const Calendar = inject("store")(
       class Calendar extends Component {
         constructor(props) {
           super(props);
+
           this.handleCloseModal = this.handleCloseModal.bind(this);
+
+          this.handleNavigate = this.handleNavigate.bind(this);
+          this.handleSelectEvent = this.handleSelectEvent.bind(this);
+          this.filterEvents = this.filterEvents.bind(this);
+          this.formatEvent = this.formatEvent.bind(this);
         }
 
         componentDidMount() {
-          this.updateEventSources();
+          this.props.store.goToMonth(this.props.match.params.date);
         }
 
         componentDidUpdate(prevProps) {
+          console.log("calendar updated!");
+
           if (
-            this.props.location.pathname.split("/")[2] !==
-              prevProps.location.pathname.split("/")[2] ||
-            this.props.store.modalChangedData
+            prevProps.match.params.type !== this.props.match.params.type ||
+            prevProps.match.params.date !== this.props.match.params.date
           ) {
-            this.updateEventSources();
+            console.log("different calendar!");
+            this.props.store.goToMonth(this.props.match.params.date);
           }
         }
 
         renderModal() {
-          if (this.props.store.modalActive === false) {
+          if (typeof this.props.match.params.modal === "undefined") {
             return null;
           }
 
-          switch (this.props.store.modalName) {
-            case "guestRoomNew":
-              return <GuestRoomReservationsNew />;
-              break;
+          // NEW RESOURCE
+          if (this.props.match.params.view === "new") {
+            switch (this.props.match.params.modal) {
+              case "guest-room-reservations":
+                return (
+                  <GuestRoomReservationsNew
+                    handleCloseModal={this.handleCloseModal}
+                    match={this.props.match}
+                  />
+                );
+                break;
 
-            case "commonHouseNew":
-              return <CommonHouseReservationsNew />;
-              break;
+              case "common-house-reservations":
+                return (
+                  <CommonHouseReservationsNew
+                    handleCloseModal={this.handleCloseModal}
+                    match={this.props.match}
+                  />
+                );
+                break;
 
-            case "eventNew":
-              return <EventsNew />;
-              break;
+              case "events":
+                return (
+                  <EventsNew
+                    handleCloseModal={this.handleCloseModal}
+                    match={this.props.match}
+                  />
+                );
+                break;
 
-            case "guest-room-reservations":
-              return (
-                <GuestRoomReservationsEdit eventId={this.props.store.modalId} />
-              );
-              break;
+              default:
+                return null;
+            }
+          }
 
-            case "common-house-reservations":
-              return (
-                <CommonHouseReservationsEdit
-                  eventId={this.props.store.modalId}
-                />
-              );
-              break;
+          // EDIT RESOURCE
+          if (this.props.match.params.view === "edit") {
+            switch (this.props.match.params.modal) {
+              case "guest-room-reservations":
+                return (
+                  <GuestRoomReservationsEdit
+                    eventId={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
+                  />
+                );
+                break;
 
-            case "events":
-              return <EventsEdit eventId={this.props.store.modalId} />;
-              break;
+              case "common-house-reservations":
+                return (
+                  <CommonHouseReservationsEdit
+                    eventId={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
+                  />
+                );
+                break;
 
-            case "rotations":
-              return <RotationsShow id={this.props.store.modalId} />;
+              case "events":
+                return (
+                  <EventsEdit
+                    eventId={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
+                  />
+                );
+                break;
 
-            default:
-              return null;
+              default:
+                null;
+            }
+          }
+
+          // SHOW RESOURCE
+          if (this.props.match.params.view === "show") {
+            switch (this.props.match.params.modal) {
+              case "rotations":
+                return (
+                  <RotationsShow
+                    id={this.props.match.params.id}
+                    handleCloseModal={this.handleCloseModal}
+                  />
+                );
+                break;
+
+              default:
+                null;
+            }
           }
         }
 
         handleCloseModal() {
-          this.props.store.closeModal();
+          this.props.history.push(
+            `/calendar/${this.props.match.params.type}/${
+              this.props.match.params.date
+            }`
+          );
         }
 
-        updateEventSources() {
-          var pathNameArray = this.props.store.router.location.pathname.split(
-            "/"
-          );
-          var calendarInfo = getCalendarInfo(
-            Cookie.get("community_id"),
-            pathNameArray[2]
-          );
+        formatEvent(event) {
+          var styles = { style: {} };
 
-          this.props.store.setCalendarInfo(
-            calendarInfo.displayName,
-            calendarInfo.eventSources
-          );
+          const startString = moment(event.start).format();
+          const todayString = moment().format("YYYY-MM-DD");
 
-          const { calendar } = this.refs;
-          var eventSources = this.props.store.eventSources;
-          var self = this;
-          $(calendar).fullCalendar("destroy");
-          $(calendar).fullCalendar({
-            displayEventEnd: true,
-            eventSources: eventSources,
-            defaultDate: moment(window.location.pathname.split("/")[3]),
-            contentHeight: "auto",
-            eventRender: function(event, eventElement) {
-              const startString = moment(event.start).format();
-              const todayString = moment().format("YYYY-MM-DD");
-              if (
-                moment(startString).isBefore(todayString, "day") &&
-                typeof event.url !== "undefined"
-              ) {
-                eventElement.css("opacity", "0.5");
-              }
-              eventElement.attr("title", event.description);
-            },
-            eventClick: function(event) {
-              if (event.url) {
-                if (event.url.split("/")[1] === "meals") {
-                  self.props.store.router.push(event.url);
-                  return false;
-                } else {
-                  var temp = event.url.split("#");
-                  temp = temp[1];
-                  temp = temp.split("/");
-                  self.props.store.openModal(
-                    temp[0],
-                    Number.parseInt(temp[1], 10)
-                  );
-                  return false;
-                }
-              }
-            }
-          });
+          if (
+            moment(startString).isBefore(todayString, "day") &&
+            typeof event.url !== "undefined"
+          ) {
+            styles.style["opacity"] = "0.5";
+          }
 
-          // Handle Today Click
-          $(".fc-today-button").click(function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Get Date for Prev Month
-            var myCurrentDate = $(calendar).fullCalendar("getDate");
-            myCurrentDate = moment(myCurrentDate).format("YYYY-MM-DD");
-
-            // Get Current Calendar Type
-            const calType = self.props.store.router.location.pathname.split(
-              "/"
-            )[2];
-
-            // Update Location
-            self.props.store.router.push(
-              `/calendar/${calType}/${myCurrentDate}`
-            );
-            return false;
-          });
-
-          // Handle Prev Click
-          $(".fc-prev-button").click(function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Get Date for Prev Month
-            var myPrevDate = $(calendar).fullCalendar("getDate");
-            myPrevDate = moment(myPrevDate).format("YYYY-MM-DD");
-
-            // Get Current Calendar Type
-            const calType = self.props.store.router.location.pathname.split(
-              "/"
-            )[2];
-
-            // Update Location
-            self.props.store.router.push(`/calendar/${calType}/${myPrevDate}`);
-            return false;
-          });
-
-          // Handle Next Click
-          $(".fc-next-button").click(function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-
-            // Get Date for Next Month
-            var myNextDate = $(calendar).fullCalendar("getDate");
-            myNextDate = moment(myNextDate).format("YYYY-MM-DD");
-
-            // Get Current Calendar Type
-            const calType = self.props.store.router.location.pathname.split(
-              "/"
-            )[2];
-
-            // Update Location
-            self.props.store.router.push(`/calendar/${calType}/${myNextDate}`);
-            return false;
-          });
-
-          // Refetch Data Every 5 Minutes
-          setInterval(() => this.refetch(calendar), 300000);
-        }
-
-        openWiki() {
-          window.open("https://wiki.swansway.com/", "noopener");
-        }
-
-        refetch(calendar) {
-          $(calendar).fullCalendar("refetchEvents");
+          styles.style["backgroundColor"] = event.color;
+          return styles;
         }
 
         render() {
           return (
             <div className="offwhite">
-              <header className="header flex right">
-                <button
-                  onClick={this.openWiki}
-                  className="button-link text-secondary"
-                >
-                  wiki
-                </button>
-                <button
-                  onClick={this.props.store.logout}
-                  className="button-link text-secondary"
-                >
-                  {`logout ${this.props.store.userName}`}
-                </button>
+              <header className="header flex space-between">
+                <h5 className="pad-xs">{moment().format("ddd MMM Do")}</h5>
+                {this.props.store.isOnline ? (
+                  <span className="online">ONLINE</span>
+                ) : (
+                  <span className="offline">OFFLINE</span>
+                )}
+                <span>
+                  <button
+                    onClick={this.props.store.logout}
+                    className="button-link text-secondary"
+                  >
+                    {`logout ${Cookie.get("username")}`}
+                  </button>
+                </span>
               </header>
               <h2 className="flex center">
-                <u>{this.props.store.calendarName}</u>
+                <u>
+                  {this.props.match.params.type.toUpperCase().replace("-", " ")}
+                </u>
               </h2>
               <div style={styles.main} className="responsive-calendar">
-                <SideBar />
-                <div>
-                  <div ref="calendar" className="calendar" />
-                  <WebalLinks />
+                <SideBar
+                  match={this.props.match}
+                  history={this.props.history}
+                  location={this.props.location}
+                />
+                <div style={{ height: 2000 }}>
+                  <BigCalendar
+                    defaultDate={moment(this.props.match.params.date).toDate()}
+                    defaultView="month"
+                    eventPropGetter={this.formatEvent.bind(this)}
+                    events={this.filterEvents()}
+                    className="calendar"
+                    onNavigate={this.handleNavigate}
+                    onSelectEvent={this.handleSelectEvent}
+                    views={["month"]}
+                    components={components}
+                  />
+                  <WebcalLinks />
                 </div>
               </div>
               <Modal
-                isOpen={this.props.store.modalActive}
+                isOpen={typeof this.props.match.params.modal !== "undefined"}
                 contentLabel="Event Modal"
                 onRequestClose={this.handleCloseModal}
                 style={{
@@ -264,6 +284,53 @@ const Calendar = inject("store")(
               </Modal>
             </div>
           );
+        }
+
+        handleNavigate(event) {
+          console.log("handleNavigate fired!");
+          console.log("event", event);
+          this.props.history.push(
+            `/calendar/${this.props.match.params.type}/${moment(event).format(
+              "YYYY-MM-DD"
+            )}`
+          );
+        }
+
+        handleSelectEvent(event) {
+          if (event.url) {
+            this.props.history.push(event.url);
+            return false;
+          }
+        }
+
+        filterEvents() {
+          var events = this.props.store.calendarEvents.toJS();
+
+          switch (this.props.match.params.type) {
+            case "all":
+              return events;
+            case "meals":
+              return events.filter(
+                event =>
+                  event.type === "Meal" ||
+                  event.type === "Rotation" ||
+                  event.type === "Bill"
+              );
+            case "guest-room":
+              return events.filter(
+                event => event.type === "GuestRoomReservation"
+              );
+            case "common-house":
+              return events.filter(
+                event => event.type === "CommonHouseReservation"
+              );
+            case "events":
+              return events.filter(event => event.type === "Event");
+            case "birthdays":
+              return events.filter(event => event.type === "Birthday");
+            default:
+              return [];
+          }
         }
       }
     )

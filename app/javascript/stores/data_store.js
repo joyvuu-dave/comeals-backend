@@ -9,8 +9,8 @@ import BillStore from "./bill_store";
 import GuestStore from "./guest_store";
 import EventSource from "./event_source";
 
-import { RouterModel } from "mst-react-router";
 import Pusher from "pusher-js";
+import localforage from "localforage";
 import moment from "moment";
 
 export const DataStore = types
@@ -29,7 +29,6 @@ export const DataStore = types
     guestStore: types.optional(GuestStore, {
       guests: {}
     }),
-    router: RouterModel,
     calendarName: types.optional(types.string, ""),
     userName: types.optional(types.string, ""),
     eventSources: types.optional(types.array(EventSource), []),
@@ -38,12 +37,12 @@ export const DataStore = types
     modalId: types.maybe(types.number),
     modalIsChanging: false,
     modalChangedData: false,
-    showHistory: false
+    showHistory: false,
+    calendarEvents: types.optional(types.array(types.frozen), []),
+    currentDate: types.optional(types.string, moment().format("YYYY-MM-DD")),
+    isOnline: false
   })
   .views(self => ({
-    get id() {
-      return self.meal.id;
-    },
     get description() {
       return self.meal.description;
     },
@@ -121,6 +120,21 @@ export const DataStore = types
       Comeals.pusher.connection.bind("connected", function() {
         Comeals.socketId = Comeals.pusher.connection.socket_id;
       });
+
+      Comeals.pusher.connection.bind("state_change", function(states) {
+        // states = {previous: 'oldState', current: 'newState'}
+        if (
+          states.previous === "unavailable" &&
+          states.current === "connected"
+        ) {
+          if (self.meal && self.meal.id) {
+            self.loadDataAsync();
+          }
+          self.loadMonthAsync();
+        }
+      });
+
+      self.setIsOnline();
     },
     toggleEditDescriptionMode() {
       const isSaving = self.editDescriptionMode;
@@ -152,12 +166,12 @@ export const DataStore = types
       topLevel = `.${topLevel[topLevel.length - 1]}`;
 
       axios({
+        method: "patch",
         url: `${
           window.location.protocol
         }//api.comeals${topLevel}/api/v1/meals/${
           self.meal.id
         }/closed?token=${Cookie.get("token")}`,
-        method: "patch",
         withCredentials: true,
         data: {
           closed: val,
@@ -209,17 +223,13 @@ export const DataStore = types
       Cookie.remove("token", { domain: `.comeals.${topLevel}` });
       Cookie.remove("community_id", { domain: `.comeals.${topLevel}` });
       Cookie.remove("resident_id", { domain: `.comeals.${topLevel}` });
+      Cookie.remove("username", { domain: `.comeals.${topLevel}` });
 
       setTimeout(
         () =>
           (window.location.href = `${
             window.location.protocol
           }//comeals.${topLevel}/`)
-      );
-    },
-    calendar() {
-      self.router.push(
-        `/calendar/all/${moment(self.meal.date).format("YYYY-MM-DD")}`
       );
     },
     toggleHistory() {
@@ -353,16 +363,6 @@ export const DataStore = types
           }
           const config = error.config;
 
-          if (self.billStore && self.billStore.bills) {
-            self.clearBills();
-          }
-          if (self.residentStore && self.residentStore.residents) {
-            self.clearResidents();
-          }
-          if (self.guestStore && self.guestStore.guests) {
-            self.clearGuests();
-          }
-
           self.loadDataAsync();
         });
     },
@@ -379,7 +379,132 @@ export const DataStore = types
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.loadData(response.data);
+            localforage
+              .setItem(response.data.id.toString(), response.data)
+              .then(function() {
+                self.loadData(response.data);
+              });
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    },
+    loadMonthAsync() {
+      console.log("loadMonthAsync...");
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
+      axios
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/communities/${Cookie.get(
+            "community_id"
+          )}/calendar/${self.currentDate}?token=${Cookie.get("token")}`
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            localforage
+              .setItem(
+                `community-${response.data.id}-calendar-${response.data.year}-${
+                  response.data.month
+                }`,
+                response.data
+              )
+              .then(function() {
+                self.loadMonth(response.data);
+              });
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    },
+    loadNext() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
+      axios
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.meal.nextId
+          }/cooks?token=${Cookie.get("token")}`
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            localforage.setItem(response.data.id.toString(), response.data);
+          }
+        })
+        .catch(function(error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            const data = error.response.data;
+            const status = error.response.status;
+            const headers = error.response.headers;
+
+            window.alert(data.message);
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const request = error.request;
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            const message = error.message;
+          }
+          const config = error.config;
+        });
+    },
+    loadPrev() {
+      var host = `${window.location.protocol}//`;
+      var topLevel = window.location.hostname.split(".");
+      topLevel = `.${topLevel[topLevel.length - 1]}`;
+
+      axios
+        .get(
+          `${host}api.comeals${topLevel}/api/v1/meals/${
+            self.meal.prevId
+          }/cooks?token=${Cookie.get("token")}`
+        )
+        .then(function(response) {
+          if (response.status === 200) {
+            localforage.setItem(response.data.id.toString(), response.data);
           }
         })
         .catch(function(error) {
@@ -404,6 +529,16 @@ export const DataStore = types
         });
     },
     loadData(data) {
+      if (self.billStore && self.billStore.bills) {
+        self.clearBills();
+      }
+      if (self.residentStore && self.residentStore.residents) {
+        self.clearResidents();
+      }
+      if (self.guestStore && self.guestStore.guests) {
+        self.clearGuests();
+      }
+
       // Assign Meal Data
       const dateArray = data.date.split("-");
       const date = new Date(
@@ -499,18 +634,71 @@ export const DataStore = types
       Comeals.channel = Comeals.pusher.subscribe(`meal-${self.meal.id}`);
       Comeals.channel.bind("update", function(data) {
         console.log(data.message);
-
-        if (self.billStore && self.billStore.bills) {
-          self.clearBills();
-        }
-        if (self.residentStore && self.residentStore.residents) {
-          self.clearResidents();
-        }
-        if (self.guestStore && self.guestStore.guests) {
-          self.clearGuests();
-        }
-
         self.loadDataAsync();
+      });
+    },
+    loadMonth(data) {
+      console.log("loadMonth...");
+      console.log("data", data);
+      if (self.calendarEvents) {
+        self.clearCalendarEvents();
+      }
+
+      // #1 Meals
+      data.meals.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #2 Bills
+      data.bills.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #3 Rotations
+      data.rotations.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #4 Birthdays
+      data.birthdays.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #5 Common House Reservations
+      data.common_house_reservations.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #6 Guest Room Reservations
+      data.guest_room_reservations.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // #7 Events
+      data.events.forEach(event => {
+        self.calendarEvents.push(event);
+      });
+
+      // Change loading state
+      self.isLoading = false;
+
+      // Unsubscribe from previous month
+      if (Comeals.channel !== null) {
+        Comeals.pusher.unsubscribe(Comeals.channel.name);
+      }
+
+      // Subscribe to changes of this month
+      var subscribeString = `community-${Cookie.get(
+        "community_id"
+      )}-calendar-${moment(self.currentDate).format("YYYY")}-${moment(
+        self.currentDate
+      ).format("M")}`;
+      console.log("subscribeString", subscribeString);
+      Comeals.channel = Comeals.pusher.subscribe(subscribeString);
+
+      Comeals.channel.bind("update", function(data) {
+        console.log(data.message);
+        self.loadMonthAsync();
       });
     },
     clearResidents() {
@@ -521,6 +709,9 @@ export const DataStore = types
     },
     clearGuests() {
       self.guestStore.guests.clear();
+    },
+    clearCalendarEvents() {
+      self.calendarEvents.clear();
     },
     appendGuest(obj) {
       self.guestStore.guests.put(obj);
@@ -538,21 +729,45 @@ export const DataStore = types
 
       self.meal = id;
 
-      if (self.billStore && self.billStore.bills) {
-        self.clearBills();
-      }
-      if (self.residentStore && self.residentStore.residents) {
-        self.clearResidents();
-      }
-      if (self.guestStore && self.guestStore.guests) {
-        self.clearGuests();
-      }
+      localforage.getItem(id.toString()).then(function(value) {
+        if (value === null) {
+          self.loadDataAsync();
+        } else {
+          self.loadData(value);
+          self.loadDataAsync();
+        }
+      });
+    },
+    switchMonths(date) {
+      console.log("currentDate switched from:", self.currentDate);
+      self.currentDate = date;
+      console.log("to", self.currentDate);
 
-      self.loadDataAsync();
+      var myDate = moment(date);
+      const key = `community-${Cookie.get(
+        "community_id"
+      )}-calendar-${myDate.format("YYYY")}-${myDate.format("M")}`;
+      console.log("key: ", key);
+
+      localforage.getItem(key).then(function(value) {
+        if (value === null) {
+          console.log("no key!");
+          self.loadMonthAsync();
+        } else {
+          console.log("yes key!");
+          self.loadMonth(value);
+          self.loadMonthAsync();
+        }
+      });
     },
     goToMeal(mealId) {
       self.isLoading = true;
       self.switchMeals(Number.parseInt(mealId, 10));
+    },
+    goToMonth(date) {
+      console.log(date);
+      self.isLoading = true;
+      self.switchMonths(date);
     },
     setCalendarInfo(name, array) {
       self.modalIsChanging = false;
@@ -560,18 +775,13 @@ export const DataStore = types
       self.eventSources.clear();
       self.eventSources = array;
     },
-    closeModal(dataChanged = false) {
-      self.modalIsChanging = true;
-      self.modalActive = false;
-      self.modalName = null;
-      self.modalChangedData = dataChanged;
-
-      setTimeout(() => document.activeElement.blur());
-    },
     openModal(name, id) {
       self.modalIsChanging = true;
       self.modalName = name;
       self.modalId = id;
       self.modalActive = true;
+    },
+    setIsOnline(val) {
+      self.isOnline = navigator.onLine;
     }
   }));

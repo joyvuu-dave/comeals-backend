@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Cow from "../../packs/images/cow.png";
-import Carrot from "../../packs/images/carrot.png";
+import Cow from "../../images/cow.png";
+import Carrot from "../../images/carrot.png";
 import onClickOutside from "react-onclickoutside";
 
 const styles = {

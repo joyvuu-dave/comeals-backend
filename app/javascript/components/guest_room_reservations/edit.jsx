@@ -6,8 +6,8 @@ import moment from "moment";
 import axios from "axios";
 import Cookie from "js-cookie";
 import { inject } from "mobx-react";
-import FontAwesomeIcon from "@fortawesome/react-fontawesome";
-import faTimes from "@fortawesome/fontawesome-free-solid/faTimes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const GuestRoomReservationsEdit = inject("store")(
   class GuestRoomReservationsEdit extends Component {
@@ -87,7 +87,7 @@ const GuestRoomReservationsEdit = inject("store")(
         )
         .then(function(response) {
           if (response.status === 200) {
-            self.props.store.closeModal(true);
+            self.props.handleCloseModal();
           }
         })
         .catch(function(error) {
@@ -104,9 +104,11 @@ const GuestRoomReservationsEdit = inject("store")(
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
             const request = error.request;
+            window.alert("Error: no response received from server.");
           } else {
             // Something happened in setting up the request that triggered an Error
             const message = error.message;
+            window.alert("Error: could not submit form.");
           }
           const config = error.config;
         });
@@ -125,7 +127,7 @@ const GuestRoomReservationsEdit = inject("store")(
           )
           .then(function(response) {
             if (response.status === 200) {
-              self.props.store.closeModal(true);
+              self.props.handleCloseModal();
             }
           })
           .catch(function(error) {
@@ -142,9 +144,11 @@ const GuestRoomReservationsEdit = inject("store")(
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
               const request = error.request;
+              window.alert("Error: no response received from server.");
             } else {
               // Something happened in setting up the request that triggered an Error
               const message = error.message;
+              window.alert("Error: could not submit form.");
             }
             const config = error.config;
           });
@@ -188,7 +192,7 @@ const GuestRoomReservationsEdit = inject("store")(
                   icon={faTimes}
                   size="2x"
                   className="close-button"
-                  onClick={this.props.store.closeModal}
+                  onClick={this.props.handleCloseModal}
                 />
               </div>
               <fieldset>

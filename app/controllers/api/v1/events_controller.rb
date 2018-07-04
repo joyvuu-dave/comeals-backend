@@ -1,6 +1,6 @@
 module Api
   module V1
-    class EventsController < ApplicationController
+    class EventsController < ApiController
       before_action :authenticate
       before_action :set_resource, only: [:show, :update, :destroy]
       before_action :authorize, only: [:index, :create]
