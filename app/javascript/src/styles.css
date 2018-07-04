@@ -167,7 +167,8 @@ body {
   }
 
   .calendar {
-    width: 635px;
+    width: calc(100vw - 185px);
+    min-width: 635px;
     margin-left: auto;
     margin-right: auto;
     transition: width 0.5s;
