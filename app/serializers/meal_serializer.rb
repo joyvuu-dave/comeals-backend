@@ -43,7 +43,8 @@ class MealSerializer < ActiveModel::Serializer
              :start,
              :end,
              :url,
-             :description
+             :description,
+             :color
 
   def id
     object.cache_key_with_version
@@ -87,5 +88,9 @@ class MealSerializer < ActiveModel::Serializer
 
   def url
     "/meals/#{object.id}/edit"
+  end
+
+  def color
+    "#444"
   end
 end

@@ -6,7 +6,8 @@ class ResidentBirthdaySerializer < ActiveModel::Serializer
              :title,
              :description,
              :start,
-             :end
+             :end,
+             :color
 
   def id
     object.cache_key_with_version
@@ -37,4 +38,9 @@ class ResidentBirthdaySerializer < ActiveModel::Serializer
   def end
     Date.new(Date.today.year, object.birthday.month, object.birthday.day)
   end
+
+  def color
+    "#7335bc"
+  end
+
 end

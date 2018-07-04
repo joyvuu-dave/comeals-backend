@@ -19,13 +19,60 @@ import RotationsShow from "../rotations/show";
 import WebcalLinks from "./webcal_links";
 import BigCalendar from "react-big-calendar";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
 const styles = {
   main: {
     display: "flex",
     justifyContent: "space-between"
+  },
+  chevron: {
+    backgroundColor: "#444",
+    border: "none",
+    opacity: "0.75"
   }
+};
+
+class MyToolbar extends Component {
+  render() {
+    return (
+      <div style={styles.main}>
+        <h2>{moment(this.props.date).format("MMMM YYYY")}</h2>
+        <span>
+          <button
+            className="mar-sm"
+            onClick={this.navigate.bind(null, "TODAY")}
+          >
+            today
+          </button>
+          <button
+            style={styles.chevron}
+            onClick={this.navigate.bind(null, "PREVIOUS")}
+          >
+            <FontAwesomeIcon icon={faChevronLeft} />
+          </button>
+          <button
+            style={styles.chevron}
+            onClick={this.navigate.bind(null, "NEXT")}
+          >
+            <FontAwesomeIcon icon={faChevronRight} />
+          </button>
+        </span>
+      </div>
+    );
+  }
+
+  navigate = action => {
+    this.props.onNavigate(action);
+  };
+}
+
+let components = {
+  toolbar: MyToolbar
 };
 
 Modal.setAppElement("#main");
@@ -41,6 +88,7 @@ const Calendar = inject("store")(
           this.handleNavigate = this.handleNavigate.bind(this);
           this.handleSelectEvent = this.handleSelectEvent.bind(this);
           this.filterEvents = this.filterEvents.bind(this);
+          this.formatEvent = this.formatEvent.bind(this);
         }
 
         componentDidMount() {
@@ -160,6 +208,23 @@ const Calendar = inject("store")(
           );
         }
 
+        formatEvent(event) {
+          var styles = { style: {} };
+
+          const startString = moment(event.start).format();
+          const todayString = moment().format("YYYY-MM-DD");
+
+          if (
+            moment(startString).isBefore(todayString, "day") &&
+            typeof event.url !== "undefined"
+          ) {
+            styles.style["opacity"] = "0.5";
+          }
+
+          styles.style["backgroundColor"] = event.color;
+          return styles;
+        }
+
         render() {
           return (
             <div className="offwhite">
@@ -180,7 +245,9 @@ const Calendar = inject("store")(
                 </span>
               </header>
               <h2 className="flex center">
-                <u>{this.props.store.calendarName}</u>
+                <u>
+                  {this.props.match.params.type.toUpperCase().replace("-", " ")}
+                </u>
               </h2>
               <div style={styles.main} className="responsive-calendar">
                 <SideBar
@@ -192,11 +259,13 @@ const Calendar = inject("store")(
                   <BigCalendar
                     defaultDate={moment(this.props.match.params.date).toDate()}
                     defaultView="month"
+                    eventPropGetter={this.formatEvent.bind(this)}
                     events={this.filterEvents()}
                     className="calendar"
                     onNavigate={this.handleNavigate}
                     onSelectEvent={this.handleSelectEvent}
                     views={["month"]}
+                    components={components}
                   />
                   <WebcalLinks />
                 </div>

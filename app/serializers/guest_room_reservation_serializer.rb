@@ -29,7 +29,8 @@ class GuestRoomReservationSerializer < ActiveModel::Serializer
              :start,
              :end,
              :url,
-             :description
+             :description,
+             :color
 
   def id
     object.cache_key_with_version
@@ -58,4 +59,9 @@ class GuestRoomReservationSerializer < ActiveModel::Serializer
   def url
     "guest-room-reservations/edit/#{object.id}"
   end
+
+  def color
+    "#bc7335"
+  end
+
 end

@@ -29,7 +29,8 @@ class EventSerializer < ActiveModel::Serializer
              :start,
              :end,
              :url,
-             :allDay
+             :allDay,
+             :color
 
   def id
     object.cache_key_with_version
@@ -66,4 +67,9 @@ class EventSerializer < ActiveModel::Serializer
   def allDay
     object.allday
   end
+
+  def color
+    "#7ebc35"
+  end
+
 end

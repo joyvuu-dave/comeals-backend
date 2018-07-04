@@ -31,7 +31,8 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
              :start,
              :end,
              :url,
-             :description
+             :description,
+             :color
 
   def id
     object.cache_key_with_version
@@ -60,4 +61,9 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   def url
     "common-house-reservations/edit/#{object.id}"
   end
+
+  def color
+    "#bc357e"
+  end
+
 end
