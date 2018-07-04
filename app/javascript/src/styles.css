@@ -29,7 +29,6 @@
 
 body {
   background-color: var(--livid);
-  min-width: 30rem;
 }
 
 .monospace {
@@ -116,7 +115,11 @@ body {
   width: 100%;
 }
 
-@media all and (max-width: 746px) {
+@media all and (max-width: 825px) {
+  body {
+    min-width: 510px;
+  }
+
   .calendar {
     width: 95vw;
     min-width: 480px;
@@ -158,9 +161,13 @@ body {
   }
 }
 
-@media all and (min-width: 746px) {
+@media all and (min-width: 825px) {
+  body {
+    min-width: 825px;
+  }
+
   .calendar {
-    width: 85vw;
+    width: 635px;
     margin-left: auto;
     margin-right: auto;
     transition: width 0.5s;

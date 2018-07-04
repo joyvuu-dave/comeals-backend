@@ -7,6 +7,9 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start"
+  },
+  button: {
+    maxWidth: "95vw"
   }
 };
 
@@ -77,12 +80,14 @@ const SideBar = inject("store")(
           <button
             onClick={this.openNewGuestRoomReservation.bind(this)}
             className="mar-sm"
+            style={styles.button}
           >
             Guest Room
           </button>
           <button
             onClick={this.openNewCommonHouseReservation.bind(this)}
             className="mar-sm"
+            style={styles.button}
           >
             Common House
           </button>
@@ -91,6 +96,7 @@ const SideBar = inject("store")(
           <button
             onClick={this.openAllCalendars.bind(this)}
             className="button-info mar-sm"
+            style={styles.button}
           >
             ALL
           </button>
@@ -98,18 +104,21 @@ const SideBar = inject("store")(
           <button
             onClick={this.openMealCalendar.bind(this)}
             className="button-info mar-sm"
+            style={styles.button}
           >
             Meals
           </button>
           <button
             onClick={this.openGuestRoomCalendar.bind(this)}
             className="button-info mar-sm"
+            style={styles.button}
           >
             Guest Room
           </button>
           <button
             onClick={this.openCommonHouseCalendar.bind(this)}
             className="button-info mar-sm"
+            style={styles.button}
           >
             Common House
           </button>
@@ -117,12 +126,14 @@ const SideBar = inject("store")(
           <button
             onClick={this.openEventsCalendar.bind(this)}
             className="button-info mar-sm"
+            style={styles.button}
           >
             Events
           </button>
           <button
             onClick={this.openBirthdaysCalendar.bind(this)}
             className="button-info mar-sm"
+            style={styles.button}
           >
             Birthdays
           </button>
@@ -131,6 +142,7 @@ const SideBar = inject("store")(
           <button
             onClick={this.openNewEvent.bind(this)}
             className="mar-sm button-secondary"
+            style={styles.button}
           >
             Event
           </button>

@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import "../src/styles.css";
 import React from "react";
 import { render } from "react-dom";
