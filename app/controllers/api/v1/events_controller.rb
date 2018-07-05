@@ -68,12 +68,16 @@ module Api
           allday = false
         end
 
-        if allday
-          start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, 0, 0)
-          end_date = nil
-        else
-          start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
-          end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
+        begin
+          if allday
+            start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, 0, 0)
+            end_date = nil
+          else
+            start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
+            end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
+          end
+        rescue
+          render json: {message: 'Error: Invalid date'}, status: :bad_request and return
         end
 
         event = Event.new(start_date: start_date, end_date: end_date, title: params[:title], description: params[:description], community_id: params[:community_id], allday: allday)

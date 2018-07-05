@@ -51,8 +51,12 @@ module Api
 
       # POST /api/v1/common-house-reservations { resident_id, start_year, start_month, start_day, start_hours, start_minutes, end_hours, end_minutes, title }
       def create
-        start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
-        end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
+        begin
+          start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
+          end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
+        rescue
+          render json: {message: 'Error: Invalid date'}, status: :bad_request and return
+        end
 
         chr = CommonHouseReservation.new(resident_id: params[:resident_id], start_date: start_date, end_date: end_date, community_id: params[:community_id], title: params[:title])
         if chr.save
