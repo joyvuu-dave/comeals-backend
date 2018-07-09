@@ -25,7 +25,6 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem 'webpacker', '>= 4.0.x'
 gem 'annotate'
 gem 'rack-cors', :require => 'rack/cors'
 
