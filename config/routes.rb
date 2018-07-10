@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   # ActiveAdmin
   devise_for :admin_users, ActiveAdmin::Devise.config.merge(:path => '')
   ActiveAdmin.routes(self)
+  get '/admin-logout', to: 'application#admin_logout'
 
   # API
   namespace :api do
