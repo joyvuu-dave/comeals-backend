@@ -20,4 +20,11 @@ ActiveAdmin.register GuestRoomReservation do
     f.actions
     f.semantic_errors
   end
+
+  # CSV
+  csv do
+    column :id
+    column(:name) { |grr| grr.resident.name }
+    column :date
+  end
 end
