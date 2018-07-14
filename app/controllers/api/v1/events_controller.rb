@@ -80,7 +80,7 @@ module Api
           render json: {message: 'Error: Invalid date'}, status: :bad_request and return
         end
 
-        event = Event.new(start_date: start_date, end_date: end_date, title: params[:title], description: params[:description], community_id: params[:community_id], allday: allday)
+        event = Event.new(start_date: start_date, end_date: end_date, title: params[:title], description: params[:description] || "", community_id: params[:community_id], allday: allday)
         if event.save
           render json: {message: 'Event has been created'}
         else
