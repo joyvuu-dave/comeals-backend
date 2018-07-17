@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # www
+  constraints subdomain: 'www' do
+    match '(*path)', to: redirect(subdomain: ''), via: :all
+  end
+
   # ActiveAdmin
   devise_for :admin_users, ActiveAdmin::Devise.config.merge(:path => '')
   ActiveAdmin.routes(self)
