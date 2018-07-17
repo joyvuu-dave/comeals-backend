@@ -2,9 +2,11 @@ Rails.application.routes.draw do
   match '(*any)', to: redirect(subdomain: ''), via: :all, constraints: {subdomain: 'www'}
 
   # ActiveAdmin
-  devise_for :admin_users, ActiveAdmin::Devise.config.merge(:path => '')
-  ActiveAdmin.routes(self)
-  get '/admin-logout', to: 'application#admin_logout'
+  constraints subdomain: 'admin' do
+    devise_for :admin_users, ActiveAdmin::Devise.config.merge(:path => '')
+    ActiveAdmin.routes(self)
+    get '/admin-logout', to: 'application#admin_logout'
+  end
 
   # API
   namespace :api do
