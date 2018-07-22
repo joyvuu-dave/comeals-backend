@@ -36,6 +36,7 @@ class MealResident < ApplicationRecord
   before_validation :set_multiplier
   before_validation :set_community_id
 
+  counter_culture :meal
   counter_culture :meal, column_name: 'meal_residents_multiplier', delta_column: 'multiplier'
 
   validates :meal, presence: true
