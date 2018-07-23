@@ -49,40 +49,7 @@ class CommonHouseReservation < ApplicationRecord
   end
 
   def trigger_pusher
-    Pusher.trigger(
-      "community-#{community.id}-calendar-#{start_date.year}-#{start_date.month}",
-      'update',
-      { message: 'current calendar month updated' }
-    )
-
-    # Should we notify next month?
-    if start_date.end_of_week.month != start_date.month
-      Rails.logger.info "!!! Next month notified !!!"
-
-      Pusher.trigger(
-        "community-#{community.id}-calendar-#{start_date.end_of_week.year}-#{start_date.end_of_week.month}",
-        'update',
-        { message: 'next calendar month updated' }
-      )
-    end
-
-    # Should we notify previous month?
-    range_start = ( (start_date.beginning_of_month - 1.day).beginning_of_month.beginning_of_week)
-    range = (range_start..range_start + 41.days)
-
-    if range.include?(start_date)
-      Rails.logger.info "!!! Previous month notified !!!"
-      key = "community-#{community.id}-calendar-#{(start_date.beginning_of_month - 1.day).year}-#{(start_date.beginning_of_month - 1.day).month}"
-      Rails.logger.info "key: #{key}"
-
-      Pusher.trigger(
-        key,
-        'update',
-        { message: 'previous calendar month updated' }
-      )
-    end
-
-    return true
+    community.trigger_pusher(self.start_date)
   end
 
 end
