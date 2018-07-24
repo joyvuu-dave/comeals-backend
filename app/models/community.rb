@@ -112,4 +112,42 @@ class Community < ApplicationRecord
 
     Rotation.create!(community_id: id, meals_attributes: rotation_meals)
   end
+
+  def trigger_pusher(date)
+    Pusher.trigger(
+      "community-#{id}-calendar-#{date.year}-#{date.month}",
+      'update',
+      { message: 'current calendar month updated' }
+    )
+
+    # Should we notify next month?
+    if date.end_of_week.month != date.month
+      Rails.logger.info "!!! Next month notified !!!"
+
+      Pusher.trigger(
+        "community-#{id}-calendar-#{date.end_of_week.year}-#{date.end_of_week.month}",
+        'update',
+        { message: 'next calendar month updated' }
+      )
+    end
+
+    # Should we notify previous month?
+    range_start = ( (date.beginning_of_month - 1.day).beginning_of_month.beginning_of_week)
+    range = (range_start..range_start + 41.days)
+
+    if range.include?(date)
+      Rails.logger.info "!!! Previous month notified !!!"
+      key = "community-#{id}-calendar-#{(date.beginning_of_month - 1.day).year}-#{(date.beginning_of_month - 1.day).month}"
+      Rails.logger.info "key: #{key}"
+
+      Pusher.trigger(
+        key,
+        'update',
+        { message: 'previous calendar month updated' }
+      )
+    end
+
+    return true
+  end
+
 end

@@ -27,4 +27,11 @@ class GuestRoomReservation < ApplicationRecord
   validates_presence_of :resident
   validates_presence_of :date
   validates_uniqueness_of :date, { scope: :community_id }
+
+  after_commit :trigger_pusher
+
+  def trigger_pusher
+    community.trigger_pusher(self.date)
+  end
+
 end

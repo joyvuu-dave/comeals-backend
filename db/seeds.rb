@@ -10,7 +10,7 @@ start = Time.now
 
 # Community
 community = Community.create!(name: "Patches Way", cap: 250)
-community.update_attribute(:slug, 'patches')
+community.update!(slug: 'patches')
 
 puts "#{Community.count} Community created"
 
@@ -35,11 +35,11 @@ end
 # Give 3 Residents the same First Name
 first_name = Faker::Name.first_name
 Resident.where(id: Resident.where(multiplier: 2).pluck(:id).shuffle.take(3)).each do |resident|
-  resident.update_attributes(name: "#{first_name} #{Faker::Name.last_name}")
+  resident.update!(name: "#{first_name} #{Faker::Name.last_name}")
 end
 
 # Make 1 (adult) Resident have a simple email address and matching name
-Resident.where(multiplier: 2).first.update_attributes(email: 'bowen@email.com', name: 'Bowen Riddle')
+Resident.where(multiplier: 2).first.update!(email: 'bowen@email.com', name: 'Bowen Riddle')
 
 puts "#{Unit.count} Units created"
 puts "#{Resident.count} Residents created"
@@ -186,7 +186,7 @@ puts "#{Bill.count} Bills created"
 # Set description
 Meal.all.each do |meal|
   next if meal.date > Date.today + 14
-  meal.update_attribute(:description, "#{Faker::Food.dish}, #{Faker::Food.ingredient}, and #{Faker::Dessert.flavor} #{Faker::Dessert.variety}")
+  meal.update!(description: "#{Faker::Food.dish}, #{Faker::Food.ingredient}, and #{Faker::Dessert.flavor} #{Faker::Dessert.variety}")
 end
 
 
@@ -195,8 +195,8 @@ end
 # Set Max
 Meal.all.each_with_index do |meal, index|
   if (meal.date < Date.today && index % 2 == 0) || (meal.date >= Date.today && meal.date <= Date.today + 3)
-    meal.update_attribute(:closed, true)
-    meal.update_attribute(:max, meal.attendees_count + rand(1..4))
+    meal.update!(closed: true)
+    meal.update!(max: meal.attendees_count + rand(1..4))
   end
 end
 

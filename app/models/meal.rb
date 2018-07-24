@@ -104,12 +104,17 @@ class Meal < ApplicationRecord
   end
 
   def trigger_pusher
+    # Update Meal
     Pusher.trigger(
       "meal-#{id}",
       'update',
       { message: 'meal updated' },
       { socket_id: socket_id }
     )
+
+    # Update Calendar
+    community.trigger_pusher(self.date)
+
     return true
   end
 
