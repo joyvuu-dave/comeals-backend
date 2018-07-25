@@ -3,7 +3,7 @@ class ResidentMailer < ApplicationMailer
 
   def password_reset_email(resident)
     @resident = resident
-    @url  = "https://www.comeals#{top_level}/reset-password/#{@resident.reset_password_token}"
+    @url  = "#{root_url}/reset-password/#{@resident.reset_password_token}"
     mail(to: @resident.email, subject: 'Reset your password')
   end
 
@@ -12,7 +12,7 @@ class ResidentMailer < ApplicationMailer
     @rotation  = rotation
     @community = community
     @open_meal_dates = open_meal_dates
-    @url  = "https://#{@community.slug}.comeals#{top_level}"
+    @url  = "#{root_url}"
     mail(to: @resident.email, subject: 'Sign up to Cook')
   end
 
@@ -20,7 +20,7 @@ class ResidentMailer < ApplicationMailer
     @rotation  = rotation
     @community = community
 
-    @url  = "https://#{community.slug}.comeals#{top_level}"
+    @url  = "#{root_url}"
     mail(to: resident.email, subject: 'New Rotation Posted')
   end
 end

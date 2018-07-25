@@ -52,7 +52,7 @@ Rails.application.configure do
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   # ActiveAdmin
-  config.action_mailer.default_url_options = { host: 'comeals.test' }
+  config.action_mailer.default_url_options = { host: 'admin.lvh.me:3000' }
 
   # Mailcatcher
   config.action_mailer.perform_caching = false

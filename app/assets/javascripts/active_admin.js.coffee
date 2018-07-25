@@ -51,5 +51,5 @@ $( ->
   # Let People Know This is the Admin Page
   if window.location.pathname == "/login"
     $("body").prepend("<h3 style='margin-left:auto;margin-right:auto;width:150px'>Admin Login</h3>")
-    $("body").prepend("<a href='#{window.location.protocol}//comeals.#{window.location.hostname.split(".")[2]}/'>User Login</a>")
+    $("body").prepend("<a href='https://comeals.com'>User Login</a>")
 )

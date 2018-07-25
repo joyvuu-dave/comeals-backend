@@ -1,6 +1,6 @@
 class ApiController < ActionController::API
-  def top_level
-    @top_level ||= Rails.env.production? ? ".com" : ".test"
+  def root_url
+    @root_url ||= Rails.env.production? ? "https://comeals.com" : "http://localhost:3001"
   end
 
   def current_resident_api
@@ -22,4 +22,5 @@ class ApiController < ActionController::API
   def not_found_api
     render json: {message: "The page you were looking for doesn't exist. You may have mistyped the address or the page may have moved."}, status: 404 and return
   end
+
 end

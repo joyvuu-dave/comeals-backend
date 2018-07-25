@@ -44,7 +44,7 @@ module Api
           event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
           event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
           event.summary = "Common Dinner"
-          event.description = "#{meal.description}\n\n\n\nSign up here: https://#{community.slug}.comeals#{top_level}/meals/#{meal.id}/edit"
+          event.description = "#{meal.description}\n\n\n\nSign up here: #{root_url}/meals/#{meal.id}/edit"
           cal.add_event(event)
         end
 

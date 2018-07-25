@@ -102,7 +102,7 @@ module Api
           event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
           event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
           event.summary = "Cook Common Dinner"
-          event.description = "#{bill.meal.description}\n\n\n\nView here: https://#{bill.community.slug}.comeals#{top_level}/meals/#{bill.meal.id}/edit"
+          event.description = "#{bill.meal.description}\n\n\n\nView here: #{root_url}/meals/#{bill.meal.id}/edit"
           cal.add_event(event)
         end
 
@@ -116,7 +116,7 @@ module Api
           event.dtstart = Icalendar::Values::DateTime.new meal_date_time_start, 'tzid' => tzid
           event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
           event.summary = "Attend Common Dinner"
-          event.description = "#{mr.meal.description}\n\n\n\nView here: https://#{mr.community.slug}.comeals#{top_level}/meals/#{mr.meal.id}/edit"
+          event.description = "#{mr.meal.description}\n\n\n\nView here: #{root_url}/meals/#{mr.meal.id}/edit"
           cal.add_event(event) unless Bill.joins(:meal).where(resident_id: resident.id).where("meals.date = ?", mr.meal.date).present?
         end
 
