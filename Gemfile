@@ -20,12 +20,9 @@ gem 'mini_racer', platforms: :ruby
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-gem 'annotate'
 gem 'rack-cors', :require => 'rack/cors'
 
 gem 'activeadmin'
@@ -38,8 +35,6 @@ gem 'counter_culture'
 gem 'active_model_serializers', '~> 0.10'
 gem 'pusher'
 gem 'audited'
-gem 'dalli'
-gem 'connection_pool'
 gem 'newrelic_rpm'
 gem 'sendgrid-ruby'
 gem 'icalendar'
@@ -76,6 +71,7 @@ group :development do
   gem 'binding_of_caller'
   gem 'xipio'
   gem 'bullet'
+  gem 'annotate'
 end
 
 group :test do
