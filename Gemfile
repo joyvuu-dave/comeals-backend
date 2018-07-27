@@ -46,6 +46,7 @@ gem 'icalendar'
 gem 'platform-api'
 gem 'skylight'
 gem 'goldiloader'
+gem 'redis'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'

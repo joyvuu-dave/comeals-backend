@@ -76,7 +76,22 @@ module Api
 
       # GET /api/v1/meals/:meal_id/cooks
       def show_cooks
-        render json: @meal, serializer: MealFormSerializer, scope: @meal
+        key = "meal-#{params[:meal_id]}"
+
+        cached_value = Rails.cache.read(key)
+
+        if cached_value.nil?
+          Rails.logger.info "*** NO CACHED MEAL VALUE FOUND: #{key} ***"
+
+          result = ActiveModelSerializers::SerializableResource.new(@meal, serializer: MealFormSerializer, scope: @meal).as_json
+          Rails.cache.write(key, result)
+        else
+          Rails.logger.info "*** CACHED MEAL VALUE USED: #{key} ***"
+
+          result = cached_value
+        end
+
+        render json: result
       end
 
       # PATCH /api/v1/meals/:meal_id/description { description }

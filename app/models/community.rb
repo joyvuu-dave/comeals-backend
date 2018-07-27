@@ -114,32 +114,53 @@ class Community < ApplicationRecord
   end
 
   def trigger_pusher(date)
+    ###############
+    # CURRENT MONTH
+    ###############
+    key = "community-#{id}-calendar-#{date.year}-#{date.month}"
+
+    # Delete Cache
+    Rails.cache.delete(key)
+
+    # Notify
     Pusher.trigger(
-      "community-#{id}-calendar-#{date.year}-#{date.month}",
+      key,
       'update',
       { message: 'current calendar month updated' }
     )
 
-    # Should we notify next month?
-    if date.end_of_week.month != date.month
-      Rails.logger.info "!!! Next month notified !!!"
 
+    ############
+    # NEXT MONTH
+    ############
+    if date.end_of_week.month != date.month
+      key = "community-#{id}-calendar-#{date.end_of_week.year}-#{date.end_of_week.month}"
+
+      # Delete Cache
+      Rails.cache.delete(key)
+
+      # Notify
       Pusher.trigger(
-        "community-#{id}-calendar-#{date.end_of_week.year}-#{date.end_of_week.month}",
+        key,
         'update',
         { message: 'next calendar month updated' }
       )
     end
 
-    # Should we notify previous month?
+
+    ################
+    # PREVIOUS MONTH
+    ################
     range_start = ( (date.beginning_of_month - 1.day).beginning_of_month.beginning_of_week)
     range = (range_start..range_start + 41.days)
 
     if range.include?(date)
-      Rails.logger.info "!!! Previous month notified !!!"
       key = "community-#{id}-calendar-#{(date.beginning_of_month - 1.day).year}-#{(date.beginning_of_month - 1.day).month}"
-      Rails.logger.info "key: #{key}"
 
+      # Delete Cache
+      Rails.cache.delete(key)
+
+      # Notify
       Pusher.trigger(
         key,
         'update',

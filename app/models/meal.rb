@@ -104,9 +104,14 @@ class Meal < ApplicationRecord
   end
 
   def trigger_pusher
-    # Update Meal
+    key = "meal-#{id}"
+
+    # Delete Cache
+    Rails.cache.delete(key)
+
+    # Notify
     Pusher.trigger(
-      "meal-#{id}",
+      key,
       'update',
       { message: 'meal updated' },
       { socket_id: socket_id }
