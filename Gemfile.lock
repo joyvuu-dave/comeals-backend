@@ -340,7 +340,7 @@ GEM
     tilt (2.0.8)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    uglifier (4.1.16)
+    uglifier (4.1.17)
       execjs (>= 0.3.0, < 3)
     uniform_notifier (1.11.0)
     warden (1.2.7)
@@ -365,7 +365,7 @@ DEPENDENCIES
   active_model_serializers (~> 0.10)
   activeadmin
   annotate
-  audited
+  audited (~> 4.7)
   better_errors
   binding_of_caller
   bootsnap (>= 1.1.0)
