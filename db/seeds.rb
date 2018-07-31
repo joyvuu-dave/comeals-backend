@@ -12,12 +12,12 @@ start = Time.now
 community = Community.create!(name: "Patches Way", cap: 250)
 community.update!(slug: 'patches')
 
-puts "#{Community.count} Community created"
+puts "1 Community created"
 
 # AdminUser
 admin_user = AdminUser.create!(email: 'joslyn@email.com', password: 'password', password_confirmation: 'password', community_id: community.id)
 
-puts "#{AdminUser.count} AdminUser created"
+puts "#{community.admin_users.count} AdminUser created"
 
 # Units / Residents
 ('A'..'Z').to_a.each_with_index do |letter, index|
@@ -41,13 +41,13 @@ end
 # Make 1 (adult) Resident have a simple email address and matching name
 Resident.where(multiplier: 2).first.update!(email: 'bowen@email.com', name: 'Bowen Riddle')
 
-puts "#{Unit.count} Units created"
-puts "#{Resident.count} Residents created"
+puts "#{community.units.count} Units created"
+puts "#{community.residents.count} Residents created"
 
 # Meals (will be reconciled)
 Meal.create_templates(community.id, 26.weeks.ago.to_date, 8.weeks.ago.to_date, 0)
 
-puts "#{Meal.count} Meals created"
+puts "#{community.meals.count} Meals created"
 
 # MealResidents & Guests
 Meal.all.each do |meal|
@@ -85,8 +85,8 @@ Meal.all.each do |meal|
   end
 end
 
-puts "#{Guest.count} Guests created"
-puts "#{MealResident.count} MealResidents created"
+puts "#{community.guests.count} Guests created"
+puts "#{community.meal_residents.count} MealResidents created"
 
 # Bills
 Meal.all.each_with_index do |meal, index|
@@ -110,11 +110,11 @@ Meal.all.each_with_index do |meal, index|
   end
 end
 
-puts "#{Bill.count} Bills created"
+puts "#{community.bills.count} Bills created"
 
 # Reconciliation
 Reconciliation.create!(community_id: community.id)
-puts "#{Reconciliation.count} Reconciliation created"
+puts "#{community.reconciliations.count} Reconciliation created"
 
 
 # Meals (will not be reconciled)
@@ -156,8 +156,8 @@ Meal.all.each do |meal|
   end
 end
 
-puts "#{Guest.count} Guests created"
-puts "#{MealResident.count} MealResidents created"
+puts "#{community.guests.count} Guests created"
+puts "#{community.meal_residents.count} MealResidents created"
 
 # Bills
 Meal.all.each_with_index do |meal, index|
@@ -181,7 +181,7 @@ Meal.all.each_with_index do |meal, index|
   end
 end
 
-puts "#{Bill.count} Bills created"
+puts "#{community.bills.count} Bills created"
 
 # Set description
 Meal.all.each do |meal|
@@ -200,13 +200,13 @@ Meal.all.each_with_index do |meal, index|
   end
 end
 
-puts "#{Meal.count} Meals created (#{Meal.unreconciled.count} unreconciled)"
+puts "#{community.meals.count} Meals created (#{community.meals.unreconciled.count} unreconciled)"
 
 
 # Create Rotations
 community.auto_create_rotations
 
-puts "#{Rotation.count} Rotations created"
+puts "#{community.rotations.count} Rotations created"
 
 
 # Event
@@ -214,14 +214,14 @@ Time.zone = community.timezone
 Event.create!(community_id: community.id, title: "HOA Meeting", start_date: Time.new(Time.now.year, Time.now.month, Time.now.day, 20, 0, 0), end_date: Time.new(Time.now.year, Time.now.month, Time.now.day, 21, 30, 0))
 Event.create!(community_id: community.id, title: "Swan's Anniversary", start_date: Time.new(Time.now.year, Time.now.month, 15, 1, 0, 0), allday: true)
 
-puts "#{Event.count} Event#{'s' unless Event.count == 1} created"
+puts "#{community.events.count} Event#{'s' unless Event.count == 1} created"
 
 
 # GuestRoomReservation
 Time.zone = community.timezone
 GuestRoomReservation.create!(community_id: community.id, resident_id: Resident.adult.where(community_id: community.id).pluck(:id).shuffle.first, date: Date.today)
 
-puts "#{GuestRoomReservation.count} GuestRoomReservation#{'s' unless GuestRoomReservation.count == 1} created"
+puts "#{community.guest_room_reservations.count} GuestRoomReservation#{'s' unless GuestRoomReservation.count == 1} created"
 
 
 # CommonHouseReservation
@@ -231,7 +231,7 @@ CommonHouseReservation.create!(community_id: community.id, resident_id: Resident
   end_date:   Time.new(Date.tomorrow.year, Date.tomorrow.month, Date.tomorrow.day, 14,  0, 0)
 )
 
-puts "#{CommonHouseReservation.count} CommonHouseReservation#{'s' unless CommonHouseReservation.count == 1} created"
+puts "#{community.common_house_reservations.count} CommonHouseReservation#{'s' unless CommonHouseReservation.count == 1} created"
 
 
 # Analytics
