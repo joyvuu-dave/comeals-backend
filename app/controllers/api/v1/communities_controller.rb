@@ -86,13 +86,9 @@ module Api
         cached_value = Rails.cache.read(key)
 
         if cached_value.nil?
-          Rails.logger.info "*** NO CACHED CALENDAR VALUE FOUND: #{key} ***"
-
           result = ActiveModelSerializers::SerializableResource.new(@community, month: month, year: year, start_date: start_date, end_date: end_date, month_int_array: month_int_array, serializer: CalendarSerializer).as_json
           Rails.cache.write(key, result)
         else
-          Rails.logger.info "*** CACHED CALENDAR VALUE USED: #{key} ***"
-
           result = cached_value
         end
 
