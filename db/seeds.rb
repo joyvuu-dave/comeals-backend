@@ -32,6 +32,8 @@ puts "#{community.admin_users.count} AdminUser created"
   end
 end
 
+puts "#{community.units.count} Units created"
+
 # Give 3 Residents the same First Name
 first_name = Faker::Name.first_name
 Resident.where(id: Resident.where(multiplier: 2).pluck(:id).shuffle.take(3)).each do |resident|
@@ -41,7 +43,6 @@ end
 # Make 1 (adult) Resident have a simple email address and matching name
 Resident.where(multiplier: 2).first.update!(email: 'bowen@email.com', name: 'Bowen Riddle')
 
-puts "#{community.units.count} Units created"
 puts "#{community.residents.count} Residents created"
 
 # Meals (will be reconciled)
