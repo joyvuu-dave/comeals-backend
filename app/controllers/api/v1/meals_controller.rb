@@ -27,7 +27,10 @@ module Api
 
       # GET /api/v1/meal/:meal_id/history
       def history
-        render json: @meal.total_audits, each_serializer: AuditSerializer
+        render json: {
+          date: @meal.date,
+          items: ActiveModelSerializers::SerializableResource.new(@meal.total_audits, each_serializer: AuditSerializer).as_json
+        }
       end
 
       # POST /api/v1/meals/:meal_id/residents/:resident_id { late, vegetarian }
