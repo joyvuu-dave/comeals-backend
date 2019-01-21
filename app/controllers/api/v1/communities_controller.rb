@@ -87,7 +87,8 @@ module Api
 
         if cached_value.nil?
           result = ActiveModelSerializers::SerializableResource.new(@community, month: month, year: year, start_date: start_date, end_date: end_date, month_int_array: month_int_array, serializer: CalendarSerializer).as_json
-          Rails.cache.write(key, result)
+          # FIXME: cache not getting properly deleted
+          #Rails.cache.write(key, result)
         else
           result = cached_value
         end

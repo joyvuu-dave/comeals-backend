@@ -194,7 +194,12 @@ class Meal < ApplicationRecord
   end
 
   def self.is_holiday?(date)
-    return true if Meal.is_thanksgiving(date) || Meal.is_christmas(date) || Meal.is_newyears(date) || Meal.is_mothers_day(date) || Meal.is_easter(date)
+    return true if  Meal.is_thanksgiving(date)  || 
+                    Meal.is_christmas(date)     || 
+                    Meal.is_newyears(date)      || 
+                    Meal.is_mothers_day(date)   || 
+                    Meal.is_easter(date)        ||
+                    Meal.is_july_fourth(date)    
     false
   end
 
@@ -244,6 +249,10 @@ class Meal < ApplicationRecord
 
     return true if date.month == month && date.day == day
     false
+  end
+
+  def self.is_july_fourth(date)
+    return true if date.month == 7 && date.day == 4
   end
 
 end
