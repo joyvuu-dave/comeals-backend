@@ -18,6 +18,6 @@
 
 FactoryBot.define do
   factory :community do
-    name { Faker::Company.name }
+    name { Faker::Company.unique.name }
   end
 end

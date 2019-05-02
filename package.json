@@ -5,11 +5,11 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "11.7.0",
-    "yarn": "1.13.0",
-    "npm": "6.5.0"
+    "node": "12.1.0",
+    "yarn": "1.15.2",
+    "npm": "6.9.0"
   },
   "dependencies": {
-    "moment": "2.23.0"
+    "moment": "2.24.0"
   }
 }

@@ -24,9 +24,9 @@
 
 FactoryBot.define do
   factory :common_house_reservation do
-    community nil
-    resident nil
-    start_date "2018-03-13 10:25:09"
-    end_date "2018-03-13 10:25:09"
+    community 
+    resident 
+    start_date { 72.hours.ago }
+    end_date { 71.hours.ago }
   end
 end

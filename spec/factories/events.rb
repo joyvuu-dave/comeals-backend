@@ -23,10 +23,10 @@
 
 FactoryBot.define do
   factory :event do
-    title "Maintenance Committee Meeting"
-    start_date "2017-09-13 20:00:00"
-    end_date "2017-09-13 21:00:00"
-    allday false
+    title { "Maintenance Committee Meeting" }
+    start_date { 49.hours.ago }
+    end_date { 48.hours.ago }
+    allday { false }
     community
   end
 end

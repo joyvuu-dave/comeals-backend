@@ -22,8 +22,8 @@
 
 FactoryBot.define do
   factory :guest_room_reservation do
-    community nil
-    resident nil
-    date "2018-03-13"
+    community
+    resident
+    date { 7.days.ago }
   end
 end
