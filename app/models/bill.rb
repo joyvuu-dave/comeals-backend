@@ -32,9 +32,9 @@ class Bill < ApplicationRecord
 
   audited associated_with: :meal
 
-  counter_culture :meal
+  counter_culture :meal, column_name: 'bills_count'
   counter_culture :meal, column_name: 'cost', delta_column: 'amount_cents'
-  counter_culture :resident
+  counter_culture :resident, column_name: 'bills_count'
   counter_culture :resident, column_name: 'bill_costs', delta_column: 'amount_cents'
 
   delegate :multiplier, to: :meal
