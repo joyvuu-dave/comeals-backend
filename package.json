@@ -5,9 +5,9 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "12.1.0",
-    "yarn": "1.15.2",
-    "npm": "6.9.0"
+    "node": "13.0.1",
+    "yarn": "1.19.1",
+    "npm": "6.12.1"
   },
   "dependencies": {
     "moment": "2.24.0"
