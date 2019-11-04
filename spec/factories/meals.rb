@@ -39,6 +39,6 @@
 FactoryBot.define do
   factory :meal do
     community
-    date  { Faker::Date.backward(365) }
+    date  { Faker::Date.backward(days: 365) }
   end
 end
