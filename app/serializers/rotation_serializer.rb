@@ -38,11 +38,11 @@ class RotationSerializer < ActiveModel::Serializer
   end
 
   def start
-    object.meals.order(:date).first.date
+    object.meals.order(:date).first.date + 1.minute
   end
 
   def end
-    object.meals.order(:date).last.date + 1.day # b/c ReactBigCalendar date ranges are exclusive
+    object.meals.order(:date).last.date + 1.day - 1.minute # b/c ReactBigCalendar date ranges are exclusive
   end
 
   def title

@@ -13,6 +13,7 @@ ActiveAdmin.register Rotation do
 
   # INDEX
   index do
+    column :id
     column 'Period', :description
     column :meals_count
     column :color
@@ -23,6 +24,7 @@ ActiveAdmin.register Rotation do
   # SHOW
   show do
     attributes_table do
+      row :id
       row('Period') { |r| r.description }
       row :meals_count
       row :color
