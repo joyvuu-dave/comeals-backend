@@ -10,6 +10,7 @@ ActiveAdmin.register Event do
 
   # INDEX
   index do
+    column :created_at
     column :title
     column :description
     column :start_date
@@ -22,6 +23,7 @@ ActiveAdmin.register Event do
   # SHOW
   show do
     attributes_table do
+      row :created_at
       row :title
       row :description
       row :start_date
