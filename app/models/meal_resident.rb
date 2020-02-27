@@ -68,7 +68,7 @@ class MealResident < ApplicationRecord
     # Scenario: Meal is closed, resident signed up after meal was closed (there were extras)
     return true if meal.closed == true && created_at > meal.closed_at
 
-    # Scenario: Meal is closed, resident signed up before meal was closed (there were extras)
+    # Scenario: Meal is closed, resident signed up before meal was closed
     errors.add(:base, "Meal has been closed.") if meal.closed == true && created_at <= meal.closed_at
     false
     throw(:abort)

@@ -24,8 +24,8 @@ class Reconciliation < ApplicationRecord
   before_create :set_date
   after_commit :update_meals, on: :create
 
-  def set_date
-    self.date = Time.now
+  def set_date(day=Time.now)
+    self.date = day
   end
 
   # Add reconciliation_id to meals without a

@@ -92,6 +92,9 @@ ActiveAdmin.register Resident do
         column 'Amount' do |bill|
           number_to_currency(bill.amount_cents.to_f / 100) unless bill.amount == 0
         end
+        column 'Reimburseable Amount' do |bill| 
+          number_to_currency(bill.reimburseable_amount.to_f / 100) unless bill.reimburseable_amount == 0
+        end
       end
       table_for resident.guests.all do
         column 'Guest Name' do |guest|

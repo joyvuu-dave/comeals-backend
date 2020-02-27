@@ -17,6 +17,7 @@ ActiveAdmin.register Meal do
 
   # INDEX
   index do
+    column :id
     column :date
     column :attendees_count, sortable: false
     column :closed
