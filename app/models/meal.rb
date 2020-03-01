@@ -2,25 +2,25 @@
 #
 # Table name: meals
 #
-#  id                        :bigint(8)        not null, primary key
-#  date                      :date             not null
+#  id                        :bigint           not null, primary key
+#  bills_count               :integer          default("0"), not null
 #  cap                       :integer
-#  meal_residents_count      :integer          default(0), not null
-#  guests_count              :integer          default(0), not null
-#  bills_count               :integer          default(0), not null
-#  cost                      :integer          default(0), not null
-#  meal_residents_multiplier :integer          default(0), not null
-#  guests_multiplier         :integer          default(0), not null
-#  description               :text             default(""), not null
-#  max                       :integer
-#  closed                    :boolean          default(FALSE), not null
-#  community_id              :bigint(8)        not null
-#  reconciliation_id         :bigint(8)
-#  rotation_id               :bigint(8)
+#  closed                    :boolean          default("false"), not null
 #  closed_at                 :datetime
+#  cost                      :integer          default("0"), not null
+#  date                      :date             not null
+#  description               :text             default(""), not null
+#  guests_count              :integer          default("0"), not null
+#  guests_multiplier         :integer          default("0"), not null
+#  max                       :integer
+#  meal_residents_count      :integer          default("0"), not null
+#  meal_residents_multiplier :integer          default("0"), not null
+#  start_time                :datetime         not null
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
-#  start_time                :datetime         not null
+#  community_id              :bigint           not null
+#  reconciliation_id         :bigint
+#  rotation_id               :bigint
 #
 # Indexes
 #

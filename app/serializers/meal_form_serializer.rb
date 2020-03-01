@@ -45,7 +45,8 @@ class MealFormSerializer < ActiveModel::Serializer
 
   class BillSerializer < ActiveModel::Serializer
     attributes :resident_id,
-               :amount_cents
+               :amount_cents,
+               :no_cost
   end
 
   class ResidentSerializer < ActiveModel::Serializer

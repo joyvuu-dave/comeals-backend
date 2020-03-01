@@ -2,14 +2,14 @@
 #
 # Table name: common_house_reservations
 #
-#  id           :bigint(8)        not null, primary key
-#  community_id :bigint(8)        not null
-#  resident_id  :bigint(8)        not null
-#  start_date   :datetime         not null
+#  id           :bigint           not null, primary key
 #  end_date     :datetime         not null
+#  start_date   :datetime         not null
+#  title        :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  title        :string
+#  community_id :bigint           not null
+#  resident_id  :bigint           not null
 #
 # Indexes
 #

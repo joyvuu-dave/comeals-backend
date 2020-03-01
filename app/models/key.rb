@@ -2,12 +2,12 @@
 #
 # Table name: keys
 #
-#  id            :bigint(8)        not null, primary key
-#  token         :string           not null
+#  id            :bigint           not null, primary key
 #  identity_type :string           not null
-#  identity_id   :bigint(8)        not null
+#  token         :string           not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  identity_id   :bigint           not null
 #
 # Indexes
 #

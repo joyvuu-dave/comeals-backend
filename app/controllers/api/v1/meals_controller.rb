@@ -112,7 +112,7 @@ module Api
       end
 
       # PATCH /meals/:meal_id/bills
-      # PAYLOAD {id: 1, bills: [{resident_id: 3, amount_cents: 0}, {resident_id: "4", amount_cents: 0}]}
+      # PAYLOAD {id: 1, bills: [{resident_id: 3, amount_cents: 0, no_cost: true}, {resident_id: "4", amount_cents: 0, no_cost: true}]}
       def update_bills
         message = 'Form submitted.'
         request_symbol = :ok
@@ -150,7 +150,7 @@ module Api
 
         # Bill Cost
         params[:bills].each do |bill|
-          @meal.bills.find_by(resident_id: bill['resident_id']).update(amount_cents: bill['amount_cents'])
+          @meal.bills.find_by(resident_id: bill['resident_id']).update({amount_cents: bill['amount_cents'], no_cost: bill['no_cost']})
         end
 
         render json: { message: message }, status: request_symbol

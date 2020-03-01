@@ -2,11 +2,11 @@
 #
 # Table name: resident_balances
 #
-#  id          :bigint(8)        not null, primary key
-#  resident_id :bigint(8)        not null
-#  amount      :integer          default(0), not null
+#  id          :bigint           not null, primary key
+#  amount      :integer          default("0"), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  resident_id :bigint           not null
 #
 # Indexes
 #

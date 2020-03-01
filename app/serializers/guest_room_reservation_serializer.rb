@@ -2,12 +2,12 @@
 #
 # Table name: guest_room_reservations
 #
-#  id           :bigint(8)        not null, primary key
-#  community_id :bigint(8)        not null
-#  resident_id  :bigint(8)        not null
+#  id           :bigint           not null, primary key
 #  date         :date             not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  community_id :bigint           not null
+#  resident_id  :bigint           not null
 #
 # Indexes
 #

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_29_204215) do
+ActiveRecord::Schema.define(version: 2020_02_29_234138) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 2018_07_29_204215) do
     t.string "amount_currency", default: "USD", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "no_cost", default: false, null: false
     t.index ["community_id"], name: "index_bills_on_community_id"
     t.index ["meal_id", "resident_id"], name: "index_bills_on_meal_id_and_resident_id", unique: true
     t.index ["meal_id"], name: "index_bills_on_meal_id"

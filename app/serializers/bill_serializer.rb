@@ -2,14 +2,15 @@
 #
 # Table name: bills
 #
-#  id              :bigint(8)        not null, primary key
-#  meal_id         :bigint(8)        not null
-#  resident_id     :bigint(8)        not null
-#  community_id    :bigint(8)        not null
-#  amount_cents    :integer          default(0), not null
+#  id              :bigint           not null, primary key
+#  amount_cents    :integer          default("0"), not null
 #  amount_currency :string           default("USD"), not null
+#  no_cost         :boolean          default("false"), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  community_id    :bigint           not null
+#  meal_id         :bigint           not null
+#  resident_id     :bigint           not null
 #
 # Indexes
 #

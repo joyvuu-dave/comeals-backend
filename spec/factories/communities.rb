@@ -2,13 +2,13 @@
 #
 # Table name: communities
 #
-#  id         :bigint(8)        not null, primary key
-#  name       :string           not null
+#  id         :bigint           not null, primary key
 #  cap        :integer
+#  name       :string           not null
 #  slug       :string           not null
+#  timezone   :string           default("America/Los_Angeles"), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  timezone   :string           default("America/Los_Angeles"), not null
 #
 # Indexes
 #

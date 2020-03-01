@@ -2,23 +2,23 @@
 #
 # Table name: residents
 #
-#  id                   :bigint(8)        not null, primary key
-#  name                 :string           not null
+#  id                   :bigint           not null, primary key
+#  active               :boolean          default("true"), not null
+#  balance_is_dirty     :boolean          default("true"), not null
+#  bill_costs           :integer          default("0"), not null
+#  bills_count          :integer          default("0"), not null
+#  birthday             :date             default("1900-01-01"), not null
+#  can_cook             :boolean          default("true"), not null
 #  email                :string
-#  community_id         :bigint(8)        not null
-#  unit_id              :bigint(8)        not null
-#  vegetarian           :boolean          default(FALSE), not null
-#  bill_costs           :integer          default(0), not null
-#  bills_count          :integer          default(0), not null
-#  multiplier           :integer          default(2), not null
+#  multiplier           :integer          default("2"), not null
+#  name                 :string           not null
 #  password_digest      :string           not null
 #  reset_password_token :string
-#  balance_is_dirty     :boolean          default(TRUE), not null
-#  can_cook             :boolean          default(TRUE), not null
+#  vegetarian           :boolean          default("false"), not null
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
-#  active               :boolean          default(TRUE), not null
-#  birthday             :date             default(Mon, 01 Jan 1900), not null
+#  community_id         :bigint           not null
+#  unit_id              :bigint           not null
 #
 # Indexes
 #
