@@ -3,11 +3,11 @@ module Api
     class MealsController < ApiController
       before_action :authenticate
       before_action :authorize, only: [:index]
-      before_action :set_meal, except: [:index]
-      before_action :authorize_one, except: [:index]
+      before_action :set_meal, except: [:index, :next]
+      before_action :authorize_one, except: [:index, :next]
       before_action :set_guest, only: [:destroy_guest]
       before_action :set_meal_resident, only: [:destroy_meal_resident, :update_meal_resident]
-      after_action :trigger_pusher, except: [:index, :show, :history, :show_cooks]
+      after_action :trigger_pusher, except: [:index, :next, :show, :history, :show_cooks]
 
       # GET /api/v1/meals
       def index
@@ -18,6 +18,17 @@ module Api
         end
 
         render json: meals
+      end
+
+      # GET /api/v1/meals/next
+      def next
+        next_meal = Meal.where("date >= ?", Time.now.to_date).first
+
+        if next_meal.nil?
+          render json: { meal_id: nil }, status: :bad_request
+        else
+          render json: { meal_id: next_meal.id }
+        end
       end
 
       # GET /api/v1/meal/:meal_id
