@@ -1,24 +1,9 @@
 module Api
   module V1
     class CommunitiesController < ApiController
-      before_action :authenticate, except: [:create, :ical]
-      before_action :authorize, except: [:create, :ical]
+      before_action :authenticate, except: [:ical]
+      before_action :authorize, except: [:ical]
       before_action :set_community, only: [:birthdays, :calendar]
-
-      # POST /api/v1/communities
-      def create
-        community = Community.new(name: params[:name], admin_users_attributes: [{ email: params[:email], password: params[:password], password_confirmation: params[:password_confirmation]}])
-        if community.save
-          render json: { message: "#{community.name} has been created." } and return
-        else
-          # Clean up message
-          error_message = community.errors.full_messages.join("\n")
-          error_message = error_message.sub("Slug", "Name")
-          error_message = error_message.sub("Admin users email", "Email")
-          error_message = error_message.sub("Admin users password", "Password")
-          render json: { message: error_message }, status: :bad_request and return
-        end
-      end
 
       # GET /api/v1/communities/:id/ical
       def ical

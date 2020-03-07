@@ -16,7 +16,6 @@ Rails.application.routes.draw do
       get '/residents/name/:token', to: 'residents#show_name'
       post '/residents/password-reset', to: 'residents#password_reset'
       post '/residents/password-reset/:token', to: 'residents#password_new'
-      post '/communities', to: 'communities#create'
       get '/communities/:id/birthdays', to: 'communities#birthdays'
       get '/communities/:id/hosts', to: 'communities#hosts'
       get '/communities/:id/calendar/:date', to: 'communities#calendar'
