@@ -5,6 +5,7 @@
 #  id                 :bigint           not null, primary key
 #  color              :string           not null
 #  description        :string           default(""), not null
+#  place_value        :integer
 #  residents_notified :boolean          default("false"), not null
 #  start_date         :date
 #  created_at         :datetime         not null
@@ -46,7 +47,7 @@ class RotationSerializer < ActiveModel::Serializer
   end
 
   def title
-    "Rotation #{object.id}"
+    "Rotation #{object.place_value}"
   end
 
   def url

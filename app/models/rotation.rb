@@ -5,6 +5,7 @@
 #  id                 :bigint           not null, primary key
 #  color              :string           not null
 #  description        :string           default(""), not null
+#  place_value        :integer
 #  residents_notified :boolean          default("false"), not null
 #  start_date         :date
 #  created_at         :datetime         not null
@@ -32,6 +33,7 @@ class Rotation < ApplicationRecord
   before_validation :set_color, on: :create
   after_save :set_description
   after_save :set_start_date
+  after_commit :set_place_value
   after_create_commit :notify_residents
   validates_presence_of :color
 
@@ -61,6 +63,12 @@ class Rotation < ApplicationRecord
     meals.count
   end
 
+  def set_place_value
+    Rotation.order('start_date ASC').pluck(:id).each_with_index do |id, index|
+      Rotation.find(id).update_columns(place_value: index + 1)
+    end
+  end
+
   def notify_residents
     return if no_email
 
@@ -69,5 +77,6 @@ class Rotation < ApplicationRecord
       ResidentMailer.new_rotation_email(resident, self, community).deliver_now
     end
   end
+
 
 end
