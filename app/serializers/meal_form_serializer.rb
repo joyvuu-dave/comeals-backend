@@ -10,7 +10,9 @@ class MealFormSerializer < ActiveModel::Serializer
              :prev_id
 
   def reconciled
-    scope.reconciled?
+    # TODO: remove temporary override to allow editing
+    #scope.reconciled?
+    false
   end
 
   def next_id
