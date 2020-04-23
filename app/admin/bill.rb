@@ -6,11 +6,17 @@ ActiveAdmin.register Bill do
   scope_to :current_admin_user
 
   # CONFIG
-  filter :meal_reconciliation_id_null, as: :select, collection: [['Yes', false], ['No', true]], include_blank: false, default: false, label: 'Reconciled?'
+  filter :resident, as: :select, collection: Resident.order(:name).all.pluck([:name, :id]), include_blank: true
+  filter :meal_reconciliation_id, as: :select, collection: Reconciliation.all.pluck([:date, :id]), include_blank: true
   config.current_filters = false
   config.sort_order = 'date'
 
+  # Turn off show
+  actions  :index, :edit, :update, :new, :destroy
+
   controller do
+    before_action { @page_title = "Cooking Slots" }
+
     def scoped_collection
       end_of_association_chain.includes(:meal, :resident, resident: :unit)
     end
@@ -19,26 +25,14 @@ ActiveAdmin.register Bill do
   # INDEX
   index do
     column Meal.model_name.human, :date, sortable: 'meals.date'
-    column :reconciled?
-    column :resident, sortable: 'residents.name'
-    column :unit, sortable: 'units.name'
-    column :amount do |bill|
+    column "Attendees", :attendees_count
+    column "$", :amount do |bill|
       number_to_currency(bill.amount) unless bill.amount == 0
     end
+    column :resident, sortable: 'residents.name'
+    column :unit, sortable: 'units.name'
 
     actions
-  end
-
-  # SHOW
-  show do
-    attributes_table do
-      row :date
-      row :resident
-      row :unit
-      row :amount do |bill|
-        number_to_currency(bill.amount) unless bill.amount == 0
-      end
-    end
   end
 
   # FORM

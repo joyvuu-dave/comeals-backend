@@ -41,6 +41,7 @@ class Bill < ApplicationRecord
   delegate :multiplier, to: :meal
   delegate :date, to: :meal
   delegate :unit, to: :resident
+  delegate :attendees_count, to: :meal
 
   before_validation :set_community_id
 

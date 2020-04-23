@@ -13,6 +13,7 @@
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
 #  sign_in_count          :integer          default("0"), not null
+#  superuser              :boolean          default("false"), not null
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #  community_id           :bigint           not null
@@ -53,5 +54,9 @@ class AdminUser < ApplicationRecord
 
   def communities
     Community.where(id: community_id)
+  end
+
+  def superuser?
+    superuser
   end
 end
