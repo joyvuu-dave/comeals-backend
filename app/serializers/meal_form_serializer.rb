@@ -10,8 +10,7 @@ class MealFormSerializer < ActiveModel::Serializer
              :prev_id
 
   def reconciled
-    # TODO: remove temporary override to allow editing
-    #scope.reconciled?
+    return true if scope.reconciled? && Reconciliation.last.id != scope.reconciliation.id
     false
   end
 
