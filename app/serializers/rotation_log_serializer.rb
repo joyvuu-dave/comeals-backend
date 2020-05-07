@@ -2,6 +2,10 @@ class RotationLogSerializer < ActiveModel::Serializer
   attributes :id,
              :description
 
+  def id
+    object.place_value
+  end
+
   has_many :residents
 
   class ResidentSerializer < ActiveModel::Serializer
