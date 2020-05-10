@@ -18,7 +18,6 @@ ActiveAdmin.register Unit do
     column :balance do |unit|
       number_to_currency(unit.balance.to_f / 100) unless unit.balance == 0
     end
-    column '# of occupants', :number_of_occupants, sortable: false
 
     actions
   end
