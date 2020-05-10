@@ -11,8 +11,9 @@ ActiveAdmin.register Bill do
   config.current_filters = false
   config.sort_order = 'date'
 
+  # FIXME: show should link to Comeals
   # Turn off show
-  actions  :index, :edit, :update, :new, :destroy
+  # actions  :index, :edit, :update, :new, :destroy
 
   controller do
     before_action { @page_title = "Cooking Slots" }

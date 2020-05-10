@@ -106,22 +106,30 @@ class Resident < ApplicationRecord
 
   # DERIVED DATA
   def bill_reimbursements
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
-    bills.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).reduce(0) { |sum, bill| sum + bill.reimburseable_amount }
+    # return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # FIXME: temp hack
+    return 0 if Meal.where(community_id: community_id).where(reconciliation_id: 3).count == 0
+    bills.joins(:meal).where({:meals => {:reconciliation_id =>  3}}).reduce(0) { |sum, bill| sum + bill.reimburseable_amount }
   end
 
   def meal_resident_costs
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
-    meal_residents.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).reduce(0) { |sum, meal_resident| sum + meal_resident.cost }
+    # return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # FIXME: temp hack
+    return 0 if Meal.where(community_id: community_id).where(reconciliation_id: 3).count == 0
+    meal_residents.joins(:meal).where({:meals => {:reconciliation_id =>  3}}).reduce(0) { |sum, meal_resident| sum + meal_resident.cost }
   end
 
   def guest_costs
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
-    guests.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).reduce(0) { |sum, guest| sum + guest.cost }
+    # return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # FIXME: temp hack
+    return 0 if Meal.where(community_id: community_id).where(reconciliation_id: 3).count == 0
+    guests.joins(:meal).where({:meals => {:reconciliation_id =>  3}}).reduce(0) { |sum, guest| sum + guest.cost }
   end
 
   def calc_balance
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # FIXME: temp hack
+    return 0 if Meal.where(community_id: community_id).where(reconciliation_id: 3).count == 0
     bill_reimbursements - meal_resident_costs - guest_costs
   end
 

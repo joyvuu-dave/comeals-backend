@@ -27,13 +27,17 @@ class Unit < ApplicationRecord
 
   # DERIVED DATA
   def balance
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # FIXME: temp hack
+    return 0 if Meal.where(community_id: community_id).where(reconciliation_id: 3).count == 0
     residents.reduce(0) { |sum, resident| sum + resident.balance }
   end
 
   def meals_cooked
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
-    residents.reduce(0) { |sum, resident| sum + resident.bills.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).count }
+    # return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    # FIXME: temp hack
+    return 0 if Meal.where(community_id: community_id).where(reconciliation_id: 3).count == 0
+    residents.reduce(0) { |sum, resident| sum + resident.bills.joins(:meal).where({:meals => {:reconciliation_id =>  3}}).count }
   end
 
   def number_of_occupants
