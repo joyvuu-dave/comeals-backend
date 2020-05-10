@@ -6,7 +6,7 @@ ActiveAdmin.register Resident do
   scope_to :current_admin_user
 
   # CONFIG
-  config.filters = false
+  filter :active
   config.sort_order = 'name_asc'
 
   # ACTIONS
