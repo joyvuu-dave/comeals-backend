@@ -12,34 +12,35 @@ ActiveAdmin.register Resident do
   # ACTIONS
   actions :all, except: [:destroy]
 
-  controller do
-    def scoped_collection
-      end_of_association_chain.includes(
-        { :bills => :meal },
-        { :bills => :resident },
-        { :bills => :community },
-        { :unit => :residents },
-        { :meal_residents => :meal },
-        { :meal_residents => :resident },
-        { :meal_residents => :community },
-        { :meals => :reconciliation },
-        { :meals => :community },
-        { :meals => :bills },
-        { :meals => :meal_residents },
-        { :meals => :guests },
-        { :meals => :residents },
-        { :guests => :meal },
-        { :guests => :resident },
-        { :community => :bills },
-        { :community => :meals },
-        { :community => :meal_residents },
-        { :community => :reconciliations },
-        { :community => :residents },
-        { :community => :guests },
-        { :community => :units }
-      )
-    end
-  end
+  # FIXME: this was slowing query down
+  # controller do
+  #   def scoped_collection
+  #     end_of_association_chain.includes(
+  #       { :bills => :meal },
+  #       { :bills => :resident },
+  #       { :bills => :community },
+  #       { :unit => :residents },
+  #       { :meal_residents => :meal },
+  #       { :meal_residents => :resident },
+  #       { :meal_residents => :community },
+  #       { :meals => :reconciliation },
+  #       { :meals => :community },
+  #       { :meals => :bills },
+  #       { :meals => :meal_residents },
+  #       { :meals => :guests },
+  #       { :meals => :residents },
+  #       { :guests => :meal },
+  #       { :guests => :resident },
+  #       { :community => :bills },
+  #       { :community => :meals },
+  #       { :community => :meal_residents },
+  #       { :community => :reconciliations },
+  #       { :community => :residents },
+  #       { :community => :guests },
+  #       { :community => :units }
+  #     )
+  #   end
+  # end
 
   # INDEX
   index do
