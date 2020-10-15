@@ -126,7 +126,7 @@ module Api
       # PAYLOAD {id: 1, bills: [{resident_id: 3, amount_cents: 0, no_cost: true}, {resident_id: "4", amount_cents: 0, no_cost: true}]}
       def update_bills
         # FIXME: temp hack
-        if @meal.reconciliation_id <= 3 then
+        if @meal.reconciliation_id.present? && @meal.reconciliation_id <= 3 then
           render json: { message: 'Cost change not permitted. Meal has already been reconciled.' }, status: :bad_request and return
         end
 
