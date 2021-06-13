@@ -3,18 +3,18 @@
 # Table name: meals
 #
 #  id                        :bigint           not null, primary key
-#  bills_count               :integer          default("0"), not null
+#  bills_count               :integer          default(0), not null
 #  cap                       :integer
-#  closed                    :boolean          default("false"), not null
+#  closed                    :boolean          default(FALSE), not null
 #  closed_at                 :datetime
-#  cost                      :integer          default("0"), not null
+#  cost                      :integer          default(0), not null
 #  date                      :date             not null
 #  description               :text             default(""), not null
-#  guests_count              :integer          default("0"), not null
-#  guests_multiplier         :integer          default("0"), not null
+#  guests_count              :integer          default(0), not null
+#  guests_multiplier         :integer          default(0), not null
 #  max                       :integer
-#  meal_residents_count      :integer          default("0"), not null
-#  meal_residents_multiplier :integer          default("0"), not null
+#  meal_residents_count      :integer          default(0), not null
+#  meal_residents_multiplier :integer          default(0), not null
 #  start_time                :datetime         not null
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null

@@ -6,7 +6,7 @@
 #  color              :string           not null
 #  description        :string           default(""), not null
 #  place_value        :integer
-#  residents_notified :boolean          default("false"), not null
+#  residents_notified :boolean          default(FALSE), not null
 #  start_date         :date
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null

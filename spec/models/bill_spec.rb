@@ -3,9 +3,9 @@
 # Table name: bills
 #
 #  id              :bigint           not null, primary key
-#  amount_cents    :integer          default("0"), not null
+#  amount_cents    :integer          default(0), not null
 #  amount_currency :string           default("USD"), not null
-#  no_cost         :boolean          default("false"), not null
+#  no_cost         :boolean          default(FALSE), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  community_id    :bigint           not null

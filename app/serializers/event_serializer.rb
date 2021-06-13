@@ -3,7 +3,7 @@
 # Table name: events
 #
 #  id           :bigint           not null, primary key
-#  allday       :boolean          default("false"), not null
+#  allday       :boolean          default(FALSE), not null
 #  description  :string           default(""), not null
 #  end_date     :datetime
 #  start_date   :datetime         not null
