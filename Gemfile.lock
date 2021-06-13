@@ -223,7 +223,8 @@ GEM
       moneta (~> 1.0.0)
       rate_throttle_client (~> 0.1.0)
     public_suffix (4.0.6)
-    puma (3.12.6)
+    puma (4.3.8)
+      nio4r (~> 2.0)
     pusher (2.0.1)
       httpclient (~> 2.8)
       multi_json (~> 1.15)
@@ -378,7 +379,7 @@ DEPENDENCIES
   newrelic_rpm
   pg (>= 1.0.0)
   platform-api
-  puma (~> 3.12)
+  puma (~> 4.3.8)
   pusher
   rack-cors
   rails (= 5.2.6)
