@@ -31,12 +31,12 @@ module Api
         end
       end
 
-      # GET /api/v1/meal/:meal_id
+      # GET /api/v1/meals/:meal_id
       def show
         render json: @meal
       end
 
-      # GET /api/v1/meal/:meal_id/history
+      # GET /api/v1/meals/:meal_id/history
       def history
         render json: {
           date: @meal.date,
