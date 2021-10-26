@@ -114,7 +114,7 @@ end
 puts "#{community.bills.count} Bills created"
 
 # Reconciliation
-Reconciliation.create!(community_id: community.id)
+Reconciliation.create!(community_id: community.id, date: Date.today + 1.day)
 puts "#{community.reconciliations.count} Reconciliation created"
 
 
