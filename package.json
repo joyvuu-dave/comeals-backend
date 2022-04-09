@@ -10,6 +10,6 @@
     "npm": "6.14.15"
   },
   "dependencies": {
-    "moment": "2.27.0"
+    "moment": "2.29.2"
   }
 }
