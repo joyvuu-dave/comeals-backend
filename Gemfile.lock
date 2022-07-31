@@ -183,7 +183,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    libv8-node (16.10.0.0)
+    libv8-node (16.10.0.0-x86_64-darwin)
     loofah (2.18.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -193,7 +193,6 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.0)
     mini_racer (0.6.2)
       libv8-node (~> 16.10.0.0)
     minitest (5.16.2)
@@ -211,8 +210,7 @@ GEM
     multi_json (1.15.0)
     newrelic_rpm (8.9.0)
     nio4r (2.5.8)
-    nokogiri (1.13.8)
-      mini_portile2 (~> 2.8.0)
+    nokogiri (1.13.8-x86_64-darwin)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     pg (1.4.2)
@@ -352,7 +350,7 @@ GEM
       nokogiri (~> 1.8)
 
 PLATFORMS
-  ruby
+  x86_64-darwin-21
 
 DEPENDENCIES
   active_model_serializers (~> 0.10)
@@ -398,7 +396,7 @@ DEPENDENCIES
   xipio
 
 RUBY VERSION
-   ruby 2.7.6p219
+   ruby 3.1.2p20
 
 BUNDLED WITH
-   2.1.4
+   2.3.10
