@@ -42,6 +42,7 @@ gem 'platform-api'
 gem 'skylight'
 gem 'goldiloader'
 gem 'dalli'
+gem 'psych', '< 4'
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
