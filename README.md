@@ -10,3 +10,5 @@ the cost of common meals.
 - `bundle install`
 - `yarn install`
 - `bundle exec rake db:setup`
+- `rails s`
+- `admin.lvh.me:3000`

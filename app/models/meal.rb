@@ -166,6 +166,8 @@ class Meal < ApplicationRecord
     cap * multiplier
   end
 
+  # *** This method only used during seed generation ***
+  # Typical 3x a week schedule with alternating Mon / Tues
   def self.create_templates(community_id, start_date, end_date, alternating_dinner_day)
     count = 0
     community = Community.find(community_id)
@@ -180,6 +182,32 @@ class Meal < ApplicationRecord
 
       # Flip the alternating dinner day
       alternating_dinner_day = [1, 2].find { |val| val != alternating_dinner_day } if date.wday == alternating_dinner_day
+
+      # Create the meal
+      meal = Meal.new(date: date, community_id: community_id)
+      if meal.save
+        count += 1
+      else
+        puts meal.errors.to_s
+      end
+    end
+
+    count
+  end
+
+  # *** This method only used during seed generation ***
+  # Modified twice a week schedule
+  def self.create_modified_templates(community_id, start_date, end_date)
+    count = 0
+    community = Community.find(community_id)
+    dates = (start_date..end_date).to_a
+
+    dates.each do |date|
+      # Skip holidays
+      next if Meal.is_holiday?(date)
+
+      # Skip days without dinner
+      next unless [0, 4].any? { |num| num == date.wday }
 
       # Create the meal
       meal = Meal.new(date: date, community_id: community_id)

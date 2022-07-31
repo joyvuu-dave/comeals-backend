@@ -87,14 +87,17 @@ Rails.application.configure do
   # ActiveAdmin
   config.action_mailer.default_url_options = { host: 'admin.comeals.com' }
 
-  # Sendgrid
+  # Gmail
+  config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    :user_name => ENV['SENDGRID_USERNAME'],
-    :password => ENV['SENDGRID_PASSWORD'],
-    :domain => 'comeals.com',
-    :address => 'smtp.sendgrid.net',
+    :address => 'smtp.gmail.com',
     :port => 587,
-    :authentication => :plain,
-    :enable_starttls_auto => true
+    :domain => 'comeals.com',
+    :user_name => ENV['GMAIL_USERNAME'],
+    :password => ENV['GMAIL_APP_PASSWORD'],
+    :authentication => 'plain',
+    :enable_starttls_auto => true,
+    open_timeout:         5,
+    read_timeout:         5
   }
 end
