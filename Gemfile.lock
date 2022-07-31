@@ -184,7 +184,6 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    libv8-node (16.10.0.0)
     loofah (2.18.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -195,8 +194,6 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
-    mini_racer (0.6.2)
-      libv8-node (~> 16.10.0.0)
     minitest (5.16.2)
     moneta (1.0.0)
     monetize (1.12.0)
@@ -376,7 +373,6 @@ DEPENDENCIES
   goldiloader
   heroku-deflater
   icalendar
-  mini_racer
   money-rails
   newrelic_rpm
   pg (>= 1.0.0)
