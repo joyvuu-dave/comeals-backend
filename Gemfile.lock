@@ -184,8 +184,7 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    libv8-node (16.10.0.0-x86_64-darwin)
-    libv8-node (16.10.0.0-x86_64-linux)
+    libv8-node (16.10.0.0)
     loofah (2.18.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -195,6 +194,7 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
+    mini_portile2 (2.8.0)
     mini_racer (0.6.2)
       libv8-node (~> 16.10.0.0)
     minitest (5.16.2)
@@ -212,7 +212,8 @@ GEM
     multi_json (1.15.0)
     newrelic_rpm (8.9.0)
     nio4r (2.5.8)
-    nokogiri (1.13.8-x86_64-darwin)
+    nokogiri (1.13.8)
+      mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     nokogiri (1.13.8-x86_64-linux)
       racc (~> 1.4)
@@ -222,7 +223,6 @@ GEM
       heroics (~> 0.1.1)
       moneta (~> 1.0.0)
       rate_throttle_client (~> 0.1.0)
-    psych (3.3.2)
     public_suffix (4.0.7)
     puma (4.3.12)
       nio4r (~> 2.0)
@@ -354,7 +354,7 @@ GEM
       nokogiri (~> 1.8)
 
 PLATFORMS
-  x86_64-darwin-21
+  ruby
   x86_64-linux
 
 DEPENDENCIES
@@ -364,7 +364,7 @@ DEPENDENCIES
   audited (~> 4.7)
   better_errors
   binding_of_caller
-  bootsnap (>= 1.1.0)
+  bootsnap
   bullet
   byebug
   capybara (>= 2.15, < 4.0)
@@ -384,7 +384,6 @@ DEPENDENCIES
   newrelic_rpm
   pg (>= 1.0.0)
   platform-api
-  psych (< 4)
   puma (~> 4.3.8)
   pusher
   rack-cors
@@ -402,7 +401,7 @@ DEPENDENCIES
   xipio
 
 RUBY VERSION
-   ruby 3.1.2p20
+   ruby 2.7.6p219
 
 BUNDLED WITH
-   2.3.10
+   2.1.4
