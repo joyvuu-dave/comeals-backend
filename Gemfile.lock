@@ -215,8 +215,6 @@ GEM
     nokogiri (1.13.8)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
-    nokogiri (1.13.8-x86_64-linux)
-      racc (~> 1.4)
     orm_adapter (0.5.0)
     pg (1.4.2)
     platform-api (3.3.0)
@@ -355,7 +353,6 @@ GEM
 
 PLATFORMS
   ruby
-  x86_64-linux
 
 DEPENDENCIES
   active_model_serializers (~> 0.10)
