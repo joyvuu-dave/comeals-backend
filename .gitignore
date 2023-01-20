@@ -16,8 +16,6 @@
 # Ignore uploaded files in development
 /storage/*
 
-/yarn-error.log
-
 /public/assets
 .byebug_history
 
@@ -30,9 +28,6 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
-
-yarn-debug.log*
-.yarn-integrity
 
 comeals.sublime-workspace
 

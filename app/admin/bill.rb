@@ -1,13 +1,13 @@
 ActiveAdmin.register Bill do
   # STRONG PARAMS
-  permit_params :meal_id, :resident_id, :community_id, :amount, :subdomain
+  permit_params :date, :id, :meal_id, :name, :resident_id, :community_id, :amount, :subdomain
 
   # SCOPE
   scope_to :current_admin_user
 
   # CONFIG
-  filter :resident, as: :select, collection: proc { Resident.order(:name).all.pluck([:name, :id]) }, include_blank: true
-  filter :meal_reconciliation_id, as: :select, collection: proc { Reconciliation.all.pluck([:date, :id]) }, include_blank: true
+  filter :resident, as: :select, collection: proc { Resident.order(:name).all.pluck('name', 'id') }, include_blank: true
+  filter :meal_reconciliation_id, as: :select, collection: proc { Reconciliation.all.pluck('date', 'id') }, include_blank: true
   config.current_filters = false
   config.sort_order = 'date'
 

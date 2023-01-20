@@ -8,7 +8,17 @@ the cost of common meals.
 
 - `git clone https://github.com/joyvuu-dave/comeals-backend.git`
 - `bundle install`
-- `yarn install`
 - `bundle exec rake db:setup`
-- `rails s`
+- `unset PORT && bin/rails server`
 - `admin.lvh.me:3000`
+
+
+## TODO
+- remove counter_culture
+- fix sendgrid
+- skylight?
+- newrelic?
+- goldiloader?
+- dalli?
+- fly.io?
+- railway.app?

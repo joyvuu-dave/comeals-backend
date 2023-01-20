@@ -152,9 +152,8 @@ class Community < ApplicationRecord
     # PREVIOUS MONTH
     ################
     range_start = ( (date.beginning_of_month - 1.day).beginning_of_month.beginning_of_week)
-    range = (range_start..range_start + 41.days)
 
-    if range.include?(date)
+    if date >= range_start && date <= (range_start + 41.days)
       key = "community-#{id}-calendar-#{(date.beginning_of_month - 1.day).year}-#{(date.beginning_of_month - 1.day).month}"
 
       # Delete Cache
