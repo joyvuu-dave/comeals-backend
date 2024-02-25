@@ -42,10 +42,6 @@ gem 'dalli'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
 
-group :production do
-  gem 'heroku-deflater'
-end
-
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:ruby, :mri, :mingw, :x64_mingw]
