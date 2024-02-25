@@ -166,7 +166,6 @@ GEM
       moneta
       multi_json (>= 1.9.2)
       webrick
-    heroku-deflater (0.7.0)
     httpclient (2.8.3)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
