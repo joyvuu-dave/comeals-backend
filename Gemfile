@@ -18,7 +18,7 @@ gem 'coffee-rails', '~> 5.0'
 
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'activeadmin', '2.14.0'
+gem 'activeadmin', '3.2.0'
 gem 'devise'
 gem 'friendly_id'
 gem 'scrypt'
