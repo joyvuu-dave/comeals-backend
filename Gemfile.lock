@@ -390,7 +390,6 @@ DEPENDENCIES
   faker
   friendly_id
   goldiloader
-  heroku-deflater
   icalendar
   money-rails
   newrelic_rpm
