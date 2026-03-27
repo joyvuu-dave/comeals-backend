@@ -4,6 +4,8 @@
 #
 #  id           :bigint           not null, primary key
 #  date         :date             not null
+#  end_date     :date             not null
+#  start_date   :date             not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  community_id :bigint           not null
@@ -31,7 +33,7 @@ RSpec.describe Reconciliation, type: :model do
 
       meal_without_bill = FactoryBot.create(:meal, community: community)
 
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
 
       meal_with_bill.reload
       meal_without_bill.reload
@@ -42,7 +44,7 @@ RSpec.describe Reconciliation, type: :model do
 
     it 'does not reassign already-reconciled meals' do
       cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-      old_reconciliation = Reconciliation.create!(community: community, date: Date.today - 30)
+      old_reconciliation = Reconciliation.create!(community: community, date: Date.today - 30, start_date: 3.years.ago.to_date, end_date: 2.years.ago.to_date)
 
       old_meal = FactoryBot.create(:meal, community: community, reconciliation: old_reconciliation)
       FactoryBot.create(:bill, meal: old_meal, resident: cook, community: community, amount: BigDecimal("40"))
@@ -50,7 +52,7 @@ RSpec.describe Reconciliation, type: :model do
       new_meal = FactoryBot.create(:meal, community: community)
       FactoryBot.create(:bill, meal: new_meal, resident: cook, community: community, amount: BigDecimal("60"))
 
-      new_reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      new_reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
 
       old_meal.reload
       new_meal.reload
@@ -70,7 +72,7 @@ RSpec.describe Reconciliation, type: :model do
       FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("50"))
       meal.reload
 
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
 
       balances = reconciliation.settlement_balances
 
@@ -94,7 +96,7 @@ RSpec.describe Reconciliation, type: :model do
       # eater_1 cost = 3.33333... * 2 = 6.66666...
       # eater_2 cost = 3.33333... * 1 = 3.33333...
 
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
       balances = reconciliation.settlement_balances
 
       # Banker's rounding: 6.66666... rounds to 6.67, 3.33333... rounds to 3.33
@@ -134,6 +136,184 @@ RSpec.describe Reconciliation, type: :model do
       expect(BigDecimal("0.035").round(2, BigDecimal::ROUND_HALF_EVEN)).to eq(BigDecimal("0.04"))
       expect(BigDecimal("0.045").round(2, BigDecimal::ROUND_HALF_EVEN)).to eq(BigDecimal("0.04"))
       expect(BigDecimal("0.055").round(2, BigDecimal::ROUND_HALF_EVEN)).to eq(BigDecimal("0.06"))
+    end
+  end
+
+  describe '#assign_meals with date boundaries' do
+    it 'only assigns meals within the date range' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      in_range = FactoryBot.create(:meal, community: community, date: Date.new(2025, 3, 1))
+      FactoryBot.create(:bill, meal: in_range, resident: cook, community: community, amount: BigDecimal("50"))
+
+      out_of_range = FactoryBot.create(:meal, community: community, date: Date.new(2025, 7, 1))
+      FactoryBot.create(:bill, meal: out_of_range, resident: cook, community: community, amount: BigDecimal("30"))
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: Date.new(2025, 1, 1), end_date: Date.new(2025, 6, 30)
+      )
+
+      in_range.reload
+      out_of_range.reload
+
+      expect(in_range.reconciliation_id).to eq(reconciliation.id)
+      expect(out_of_range.reconciliation_id).to be_nil
+    end
+
+    it 'includes all meals within the date range regardless of past or future' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      past_meal = FactoryBot.create(:meal, community: community, date: Date.yesterday)
+      FactoryBot.create(:bill, meal: past_meal, resident: cook, community: community, amount: BigDecimal("40"))
+
+      future_meal = FactoryBot.create(:meal, community: community, date: Date.today + 30)
+      FactoryBot.create(:bill, meal: future_meal, resident: cook, community: community, amount: BigDecimal("20"))
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: Date.yesterday, end_date: Date.today + 30
+      )
+
+      past_meal.reload
+      future_meal.reload
+
+      expect(past_meal.reconciliation_id).to eq(reconciliation.id)
+      expect(future_meal.reconciliation_id).to eq(reconciliation.id)
+    end
+  end
+
+  describe '#persist_balances!' do
+    it 'persists settlement balances to reconciliation_balances table' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      eater = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:meal_resident, meal: meal, resident: eater, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("80"))
+      meal.reload
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: 2.years.ago.to_date, end_date: Date.today
+      )
+
+      # finalize callback runs assign_meals + persist_balances!
+      expect(reconciliation.reconciliation_balances.count).to be > 0
+
+      cook_balance = reconciliation.reconciliation_balances.find_by(resident: cook)
+      eater_balance = reconciliation.reconciliation_balances.find_by(resident: eater)
+
+      expect(cook_balance.amount).to eq(BigDecimal("80"))
+      expect(eater_balance.amount).to eq(BigDecimal("-80"))
+    end
+
+    it 'skips zero-balance residents' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      bystander = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("50"))
+      meal.reload
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: 2.years.ago.to_date, end_date: Date.today
+      )
+
+      # Cook has a balance (credit with no debit), bystander has zero
+      expect(reconciliation.reconciliation_balances.find_by(resident: bystander)).to be_nil
+      expect(reconciliation.reconciliation_balances.find_by(resident: cook)).to be_present
+    end
+  end
+
+  describe '#balance_for' do
+    it 'returns the persisted balance for a resident' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      eater = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:meal_resident, meal: meal, resident: eater, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("60"))
+      meal.reload
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: 2.years.ago.to_date, end_date: Date.today
+      )
+
+      expect(reconciliation.balance_for(cook)).to eq(BigDecimal("60"))
+      expect(reconciliation.balance_for(eater)).to eq(BigDecimal("-60"))
+    end
+
+    it 'returns 0 for residents not in the reconciliation' do
+      uninvolved = FactoryBot.create(:resident, community: community, unit: unit)
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: 2.years.ago.to_date, end_date: Date.today
+      )
+
+      expect(reconciliation.balance_for(uninvolved)).to eq(BigDecimal("0"))
+    end
+  end
+
+  describe 'transaction safety' do
+    it 'rolls back meal assignments if persist_balances! fails' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("50"))
+
+      allow_any_instance_of(Reconciliation).to receive(:persist_balances!).and_raise(RuntimeError, "simulated failure")
+
+      expect {
+        Reconciliation.create!(
+          community: community, start_date: 2.years.ago.to_date, end_date: Date.today
+        )
+      }.to raise_error(RuntimeError, "simulated failure")
+
+      meal.reload
+      expect(meal.reconciliation_id).to be_nil
+      expect(Reconciliation.count).to eq(0)
+    end
+  end
+
+  describe 'date default' do
+    it 'defaults date to today when not provided' do
+      recon = Reconciliation.create!(
+        community: community,
+        start_date: Date.today, end_date: Date.today
+      )
+      expect(recon.date).to eq(Date.today)
+    end
+
+    it 'preserves an explicitly set date' do
+      explicit_date = Date.new(2025, 6, 15)
+      recon = Reconciliation.create!(
+        community: community, date: explicit_date,
+        start_date: Date.today, end_date: Date.today
+      )
+      expect(recon.date).to eq(explicit_date)
+    end
+  end
+
+  describe 'validations' do
+    it 'rejects start_date after end_date' do
+      recon = Reconciliation.new(
+        community: community, date: Date.today,
+        start_date: Date.today, end_date: Date.yesterday
+      )
+      expect(recon).not_to be_valid
+      expect(recon.errors[:start_date]).to include("must be on or before end date")
+    end
+
+    it 'accepts start_date equal to end_date' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      recon = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: Date.today, end_date: Date.today
+      )
+      expect(recon).to be_persisted
     end
   end
 end

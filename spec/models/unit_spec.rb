@@ -41,7 +41,7 @@ RSpec.describe Unit, type: :model do
     end
 
     it 'returns 0 when all meals are reconciled' do
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
       meal = FactoryBot.create(:meal, community: community)
       resident = FactoryBot.create(:resident, community: community, unit: unit)
       FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("50"))
@@ -71,7 +71,7 @@ RSpec.describe Unit, type: :model do
     end
 
     it 'does not count bills for reconciled meals' do
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
       reconciled_meal = FactoryBot.create(:meal, community: community)
       unreconciled_meal = FactoryBot.create(:meal, community: community)
       resident = FactoryBot.create(:resident, community: community, unit: unit)

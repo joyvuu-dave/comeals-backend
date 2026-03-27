@@ -11,9 +11,14 @@ namespace :reconciliations do
         next
       end
 
+      period_start = community.meals.unreconciled.joins(:bills).minimum(:date)
+      period_end = Date.today
+
       reconciliation = Reconciliation.create!(
         community: community,
-        date: Date.today
+        date: Date.today,
+        start_date: period_start,
+        end_date: period_end
       )
 
       Rails.logger.info(

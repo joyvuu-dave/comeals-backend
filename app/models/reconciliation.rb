@@ -4,6 +4,8 @@
 #
 #  id           :bigint           not null, primary key
 #  date         :date             not null
+#  end_date     :date             not null
+#  start_date   :date             not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  community_id :bigint           not null
@@ -20,9 +22,15 @@ class Reconciliation < ApplicationRecord
   has_many :meals, dependent: :nullify
   has_many :bills, through: :meals
   has_many :cooks, through: :bills, source: :resident
+  has_many :reconciliation_balances, dependent: :destroy
   belongs_to :community
 
-  after_commit :assign_meals, on: :create
+  validates :start_date, presence: true
+  validates :end_date, presence: true
+  validate :start_date_not_after_end_date
+
+  before_validation :set_date
+  after_create :finalize
 
   def number_of_meals
     meals.count
@@ -32,17 +40,18 @@ class Reconciliation < ApplicationRecord
     cooks.uniq
   end
 
-  # Assigns all unreconciled meals (that have at least one bill) to this reconciliation.
+  # Assigns unreconciled meals (with at least one bill) within the date range.
   def assign_meals
     Meal.where(community_id: community_id)
         .unreconciled
         .joins(:bills)
         .distinct
+        .where(date: start_date..end_date)
         .update_all(reconciliation_id: id)
   end
 
   # Compute final settlement balances for this reconciliation period.
-  # Returns a hash of { resident_id => rounded_balance_in_cents }.
+  # Returns a hash of { resident_id => rounded_balance }.
   # Uses banker's rounding (ROUND_HALF_EVEN) per financial standards.
   def settlement_balances
     balances = {}
@@ -73,5 +82,35 @@ class Reconciliation < ApplicationRecord
     end
 
     balances
+  end
+
+  # Persist settlement balances to reconciliation_balances table.
+  # Only stores non-zero balances to keep the table lean.
+  def persist_balances!
+    balances = settlement_balances
+    balances.each do |resident_id, amount|
+      next if amount.zero?
+      reconciliation_balances.create!(resident_id: resident_id, amount: amount)
+    end
+  end
+
+  def balance_for(resident)
+    reconciliation_balances.find_by(resident_id: resident.id)&.amount || BigDecimal("0")
+  end
+
+  private
+
+  def finalize
+    assign_meals
+    persist_balances!
+  end
+
+  def set_date
+    self.date ||= Date.today
+  end
+
+  def start_date_not_after_end_date
+    return unless start_date.present? && end_date.present?
+    errors.add(:start_date, "must be on or before end date") if start_date > end_date
   end
 end
