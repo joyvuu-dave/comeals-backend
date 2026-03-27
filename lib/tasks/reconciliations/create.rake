@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 namespace :reconciliations do
-  desc "Create a new reconciliation, assign unreconciled meals, recompute balances."
+  desc 'Create a new reconciliation, assign unreconciled meals, recompute balances.'
   task create: :environment do
     start_time = Time.current
 
     Community.find_each do |community|
-      # Skip if no unreconciled meals with bills
       unless community.meals.unreconciled.joins(:bills).exists?
         Rails.logger.info("reconciliations:create skipping #{community.name} — no unreconciled meals with bills")
         next
@@ -14,15 +15,14 @@ namespace :reconciliations do
         community: community,
         date: Date.today
       )
-      # assign_meals runs via after_commit
 
-      Rails.logger.info("Reconciliation ##{reconciliation.id} created for #{community.name}: #{reconciliation.number_of_meals} meals")
+      Rails.logger.info(
+        "Reconciliation ##{reconciliation.id} created for #{community.name}: #{reconciliation.number_of_meals} meals"
+      )
 
-      # Recompute balances (reconciled meals are now excluded from future balance)
       Rake::Task['billing:recalculate'].invoke
       Rake::Task['billing:recalculate'].reenable
 
-      # Send notification emails to cooks
       reconciliation.unique_cooks.each do |cook|
         ReconciliationMailer.reconciliation_notify_email(cook, reconciliation).deliver_now
       end

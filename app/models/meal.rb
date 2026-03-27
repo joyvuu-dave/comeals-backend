@@ -3,23 +3,36 @@
 # Table name: meals
 #
 #  id                        :bigint           not null, primary key
-#  date                      :date             not null
-#  cap                       :decimal(12, 8)
-#  meal_residents_count      :integer          default(0), not null
-#  guests_count              :integer          default(0), not null
 #  bills_count               :integer          default(0), not null
-#  meal_residents_multiplier :integer          default(0), not null
-#  guests_multiplier         :integer          default(0), not null
-#  description               :text             default(""), not null
-#  max                       :integer
+#  cap                       :decimal(12, 8)
 #  closed                    :boolean          default(FALSE), not null
+#  closed_at                 :datetime
+#  date                      :date             not null
+#  description               :text             default(""), not null
+#  guests_count              :integer          default(0), not null
+#  guests_multiplier         :integer          default(0), not null
+#  max                       :integer
+#  meal_residents_count      :integer          default(0), not null
+#  meal_residents_multiplier :integer          default(0), not null
+#  start_time                :datetime         not null
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
 #  community_id              :bigint           not null
 #  reconciliation_id         :bigint
 #  rotation_id               :bigint
-#  closed_at                 :datetime
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  start_time                :datetime         not null
+#
+# Indexes
+#
+#  index_meals_on_community_id           (community_id)
+#  index_meals_on_date_and_community_id  (date,community_id) UNIQUE
+#  index_meals_on_reconciliation_id      (reconciliation_id)
+#  index_meals_on_rotation_id            (rotation_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (community_id => communities.id)
+#  fk_rails_...  (reconciliation_id => reconciliations.id)
+#  fk_rails_...  (rotation_id => rotations.id)
 #
 class Meal < ApplicationRecord
   audited
@@ -116,9 +129,11 @@ class Meal < ApplicationRecord
     meal_residents_count + guests_count
   end
 
-  # Total cost computed from source bills via SQL SUM. Memoized per instance.
+  # Total cost computed from source bills via SQL SUM.
+  # No memoization — bills can change within a request, and stale data
+  # in financial calculations is worse than one cheap indexed query.
   def total_cost
-    @total_cost ||= bills.where(no_cost: false).sum(:amount)
+    bills.where(no_cost: false).sum(:amount)
   end
 
   # The cost used for splitting after applying the cap.

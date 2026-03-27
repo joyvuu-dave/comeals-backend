@@ -3,14 +3,22 @@
 # Table name: rotations
 #
 #  id                 :bigint           not null, primary key
-#  community_id       :bigint           not null
-#  description        :string           default(""), not null
 #  color              :string           not null
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
+#  description        :string           default(""), not null
+#  place_value        :integer
 #  residents_notified :boolean          default(FALSE), not null
 #  start_date         :date
-#  place_value        :integer
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  community_id       :bigint           not null
+#
+# Indexes
+#
+#  index_rotations_on_community_id  (community_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (community_id => communities.id)
 #
 
 class Rotation < ApplicationRecord
