@@ -67,11 +67,10 @@ Rails.application.configure do
   # ActiveAdmin
   config.action_mailer.default_url_options = { host: 'admin.lvh.me:3000' }
 
-  # Mailcatcher
+  # Email: letter_opener opens emails in the browser
   config.action_mailer.perform_caching = false
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = { address: '127.0.0.1', port: 1025 }
+  config.action_mailer.delivery_method = :letter_opener
 
   config.after_initialize do
     Bullet.enable = true

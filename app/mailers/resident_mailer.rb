@@ -1,5 +1,4 @@
 class ResidentMailer < ApplicationMailer
-  default from: 'webmaster@comeals.com'
 
   def password_reset_email(resident)
     @resident = resident
