@@ -2,24 +2,19 @@
 #
 # Table name: meals
 #
-#  id                        :bigint           not null, primary key
-#  bills_count               :integer          default(0), not null
-#  cap                       :decimal(12, 8)
-#  closed                    :boolean          default(FALSE), not null
-#  closed_at                 :datetime
-#  date                      :date             not null
-#  description               :text             default(""), not null
-#  guests_count              :integer          default(0), not null
-#  guests_multiplier         :integer          default(0), not null
-#  max                       :integer
-#  meal_residents_count      :integer          default(0), not null
-#  meal_residents_multiplier :integer          default(0), not null
-#  start_time                :datetime         not null
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  community_id              :bigint           not null
-#  reconciliation_id         :bigint
-#  rotation_id               :bigint
+#  id                :bigint           not null, primary key
+#  cap               :decimal(12, 8)
+#  closed            :boolean          default(FALSE), not null
+#  closed_at         :datetime
+#  date              :date             not null
+#  description       :text             default(""), not null
+#  max               :integer
+#  start_time        :datetime         not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  community_id      :bigint           not null
+#  reconciliation_id :bigint
+#  rotation_id       :bigint
 #
 # Indexes
 #

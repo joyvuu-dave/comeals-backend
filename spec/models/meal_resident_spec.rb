@@ -90,7 +90,7 @@ RSpec.describe MealResident, type: :model do
     end
 
     it 'allows signup when meal is closed with max set and spots available' do
-      meal.update_columns(closed: true, closed_at: 1.hour.ago, max: 5, meal_residents_count: 1, guests_count: 0)
+      meal.update_columns(closed: true, closed_at: 1.hour.ago, max: 5)
 
       mr = MealResident.new(meal: meal, resident: resident)
       mr.valid?
@@ -108,7 +108,13 @@ RSpec.describe MealResident, type: :model do
     end
 
     it 'rejects signup when meal is closed with max and no spots available' do
-      meal.update_columns(closed: true, closed_at: 1.hour.ago, max: 2, meal_residents_count: 1, guests_count: 1)
+      # Create 2 attendees to fill the meal
+      other_unit = FactoryBot.create(:unit, community: community)
+      attendee_1 = FactoryBot.create(:resident, community: community, unit: other_unit, multiplier: 2)
+      attendee_2 = FactoryBot.create(:resident, community: community, unit: other_unit, multiplier: 2)
+      FactoryBot.create(:meal_resident, meal: meal, resident: attendee_1, community: community)
+      FactoryBot.create(:guest, meal: meal, resident: attendee_2, multiplier: 2)
+      meal.update_columns(closed: true, closed_at: 1.hour.ago, max: 2)
 
       mr = MealResident.new(meal: meal, resident: resident)
       mr.valid?
@@ -125,9 +131,8 @@ RSpec.describe MealResident, type: :model do
     end
 
     it 'allows removal when resident signed up after meal was closed' do
-      meal.update_columns(closed: true, closed_at: 1.hour.ago, max: 5, meal_residents_count: 0, guests_count: 0)
+      meal.update_columns(closed: true, closed_at: 1.hour.ago, max: 5)
       mr = FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: community)
-      # created_at is set to now, which is after closed_at (1 hour ago)
 
       expect { mr.destroy }.to change(MealResident, :count).by(-1)
     end

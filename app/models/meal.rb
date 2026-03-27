@@ -2,24 +2,19 @@
 #
 # Table name: meals
 #
-#  id                        :bigint           not null, primary key
-#  bills_count               :integer          default(0), not null
-#  cap                       :decimal(12, 8)
-#  closed                    :boolean          default(FALSE), not null
-#  closed_at                 :datetime
-#  date                      :date             not null
-#  description               :text             default(""), not null
-#  guests_count              :integer          default(0), not null
-#  guests_multiplier         :integer          default(0), not null
-#  max                       :integer
-#  meal_residents_count      :integer          default(0), not null
-#  meal_residents_multiplier :integer          default(0), not null
-#  start_time                :datetime         not null
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  community_id              :bigint           not null
-#  reconciliation_id         :bigint
-#  rotation_id               :bigint
+#  id                :bigint           not null, primary key
+#  cap               :decimal(12, 8)
+#  closed            :boolean          default(FALSE), not null
+#  closed_at         :datetime
+#  date              :date             not null
+#  description       :text             default(""), not null
+#  max               :integer
+#  start_time        :datetime         not null
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  community_id      :bigint           not null
+#  reconciliation_id :bigint
+#  rotation_id       :bigint
 #
 # Indexes
 #
@@ -119,14 +114,18 @@ class Meal < ApplicationRecord
     return true
   end
 
-  # DERIVED DATA
+  # DERIVED DATA — all computed from source, no cached columns.
 
   def multiplier
-    meal_residents_multiplier + guests_multiplier
+    meal_residents.sum(:multiplier) + guests.sum(:multiplier)
   end
 
   def attendees_count
-    meal_residents_count + guests_count
+    meal_residents.count + guests.count
+  end
+
+  def bills_count
+    bills.count
   end
 
   # Total cost computed from source bills via SQL SUM.
@@ -180,7 +179,7 @@ class Meal < ApplicationRecord
 
   # HELPERS
   def another_meal_in_this_rotation_has_less_than_two_cooks?
-    Meal.where(rotation_id: rotation_id).where.not(id: id).pluck(:bills_count).any? { |num| num < 2 }
+    Meal.where(rotation_id: rotation_id).where.not(id: id).any? { |meal| meal.bills_count < 2 }
   end
 
   # *** This method only used during seed generation ***

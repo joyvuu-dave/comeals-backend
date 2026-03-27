@@ -62,7 +62,7 @@ RSpec.describe Guest, type: :model do
     end
 
     it 'allows guest when max is set and spots are available' do
-      meal.update_columns(max: 10, meal_residents_count: 1, guests_count: 1)
+      meal.update_columns(max: 10)
 
       guest = Guest.new(meal: meal, resident: resident)
       guest.valid?
@@ -71,7 +71,13 @@ RSpec.describe Guest, type: :model do
     end
 
     it 'errors when max is set and no spots are available' do
-      meal.update_columns(max: 2, meal_residents_count: 1, guests_count: 1)
+      # Create 2 attendees to fill the meal
+      other_unit = FactoryBot.create(:unit, community: community)
+      filler_1 = FactoryBot.create(:resident, community: community, unit: other_unit, multiplier: 2)
+      filler_2 = FactoryBot.create(:resident, community: community, unit: other_unit, multiplier: 2)
+      FactoryBot.create(:meal_resident, meal: meal, resident: filler_1, community: community)
+      FactoryBot.create(:guest, meal: meal, resident: filler_2, multiplier: 2)
+      meal.update_columns(max: 2)
 
       guest = Guest.new(meal: meal, resident: resident)
       guest.valid?

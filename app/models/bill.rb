@@ -31,9 +31,6 @@ class Bill < ApplicationRecord
 
   audited associated_with: :meal
 
-  counter_culture :meal, column_name: 'bills_count'
-  counter_culture :resident, column_name: 'bills_count'
-
   delegate :date, to: :meal
   delegate :unit, to: :resident
   delegate :attendees_count, to: :meal
