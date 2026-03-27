@@ -123,10 +123,9 @@ module Api
       end
 
       # PATCH /meals/:meal_id/bills
-      # PAYLOAD {id: 1, bills: [{resident_id: 3, amount_cents: 0, no_cost: true}, {resident_id: "4", amount_cents: 0, no_cost: true}]}
+      # PAYLOAD {id: 1, bills: [{resident_id: 3, amount: "0.00", no_cost: true}, {resident_id: "4", amount: "0.00", no_cost: true}]}
       def update_bills
-        # FIXME: temp hack
-        if @meal.reconciliation_id.present? && @meal.reconciliation_id <= 3 then
+        if @meal.reconciliation_id.present?
           render json: { message: 'Cost change not permitted. Meal has already been reconciled.' }, status: :bad_request and return
         end
 
@@ -166,7 +165,8 @@ module Api
 
         # Bill Cost
         params[:bills].each do |bill|
-          @meal.bills.find_by(resident_id: bill['resident_id']).update({amount_cents: bill['amount_cents'], no_cost: bill['no_cost']})
+          amount_value = BigDecimal(bill['amount'].to_s)
+          @meal.bills.find_by(resident_id: bill['resident_id']).update({amount: amount_value, no_cost: bill['no_cost']})
         end
 
         render json: { message: message }, status: request_symbol

@@ -24,7 +24,7 @@ ActiveAdmin.register Community do
   index do
     column :name
     column :cap do |community|
-      number_to_currency(community.cap.to_f / 100) unless community.cap == Float::INFINITY
+      number_to_currency(community.cap) if community.capped?
     end
     column :slug
 
@@ -37,7 +37,7 @@ ActiveAdmin.register Community do
       row :id
       row :name
       row :cap do |community|
-        number_to_currency(community.cap.to_f / 100) unless community.cap == Float::INFINITY
+        number_to_currency(community.cap) if community.capped?
       end
       row :slug
     end
@@ -47,7 +47,7 @@ ActiveAdmin.register Community do
   form do |f|
     f.inputs do
       f.input :name
-      f.input :cap, label: 'Cap (cents)'
+      f.input :cap, label: 'Cap ($)'
       if f.object.persisted?
         f.input :slug
       end

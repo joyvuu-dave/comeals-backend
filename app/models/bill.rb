@@ -2,30 +2,15 @@
 #
 # Table name: bills
 #
-#  id              :bigint           not null, primary key
-#  amount_cents    :integer          default(0), not null
-#  amount_currency :string           default("USD"), not null
-#  no_cost         :boolean          default(FALSE), not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  community_id    :bigint           not null
-#  meal_id         :bigint           not null
-#  resident_id     :bigint           not null
+#  id           :bigint           not null, primary key
+#  meal_id      :bigint           not null
+#  resident_id  :bigint           not null
+#  community_id :bigint           not null
+#  amount       :decimal(12, 8)   default(0.0), not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  no_cost      :boolean          default(FALSE), not null
 #
-# Indexes
-#
-#  index_bills_on_community_id             (community_id)
-#  index_bills_on_meal_id                  (meal_id)
-#  index_bills_on_meal_id_and_resident_id  (meal_id,resident_id) UNIQUE
-#  index_bills_on_resident_id              (resident_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (community_id => communities.id)
-#  fk_rails_...  (meal_id => meals.id)
-#  fk_rails_...  (resident_id => residents.id)
-#
-
 class Bill < ApplicationRecord
   belongs_to :meal, inverse_of: :bills, touch: true
   belongs_to :resident
@@ -34,11 +19,8 @@ class Bill < ApplicationRecord
   audited associated_with: :meal
 
   counter_culture :meal, column_name: 'bills_count'
-  counter_culture :meal, column_name: 'cost', delta_column: 'amount_cents'
   counter_culture :resident, column_name: 'bills_count'
-  counter_culture :resident, column_name: 'bill_costs', delta_column: 'amount_cents'
 
-  delegate :multiplier, to: :meal
   delegate :date, to: :meal
   delegate :unit, to: :resident
   delegate :attendees_count, to: :meal
@@ -48,39 +30,41 @@ class Bill < ApplicationRecord
   validates :meal, presence: true
   validates :resident, presence: true
   validates :community, presence: true
-  validates :amount_cents, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :amount, numericality: { greater_than_or_equal_to: 0 }
   validates_uniqueness_of :resident_id, scope: :meal_id
-
-  monetize :amount_cents
 
   def set_community_id
     self.community_id = meal&.community_id
   end
 
-  # DERIVED DATA
-  def reimburseable_amount
-    return 0 if amount_cents == 0
-    return 0 if multiplier == 0
-
-    value = max_amount
-    until value % multiplier == 0 do
-      value += 1
-    end
-    value
+  # The amount used for cost-splitting purposes.
+  # If no_cost is true, this cook's bill does not contribute to the meal cost.
+  def effective_amount
+    no_cost? ? BigDecimal("0") : amount
   end
 
+  # Per-multiplier-unit cost for this bill.
+  # Uses effective_amount so no_cost bills contribute 0.
   def unit_cost
-    return 0 if multiplier == 0
-    reimburseable_amount / multiplier
+    return BigDecimal("0") if meal.multiplier == 0
+    capped_amount / meal.multiplier
   end
 
-  # HELPERS
-  def max_amount
-    return amount_cents unless persisted?
-    return amount_cents if meal.cost == 0
-    return amount_cents if meal.cap == Float::INFINITY
+  # The bill amount after applying the community cost cap.
+  # If the meal is uncapped, returns the full effective_amount.
+  # If capped, returns this bill's proportional share of the max cost.
+  def capped_amount
+    amt = effective_amount
+    return amt unless persisted?
+    return amt unless meal.capped?
 
-    ((amount_cents.to_f / meal.cost) * meal.max_cost).round
+    total = meal.total_cost
+    return amt if total == 0
+
+    max = meal.max_cost
+    return amt if total <= max
+
+    (amt / total) * max
   end
 
   def reconciled?

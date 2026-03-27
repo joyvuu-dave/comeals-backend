@@ -24,13 +24,13 @@ ActiveAdmin.register Meal do
     column :max
     column :subsidized?
     column :max_cost do |meal|
-      number_to_currency(meal.max_cost.to_f / 100) unless meal.max_cost.to_f.nan?
+      number_to_currency(meal.max_cost) if meal.capped?
     end
-    column :modified_cost do |meal|
-      number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
+    column :total_cost do |meal|
+      number_to_currency(meal.total_cost) unless meal.total_cost == 0
     end
     column :unit_cost do |meal|
-      number_to_currency(meal.unit_cost.to_f / 100) unless meal.unit_cost == 0
+      number_to_currency(meal.unit_cost) unless meal.unit_cost == 0
     end
     column 'Number of Bills', :bills_count
     column :reconciled?, sortable: false
@@ -46,11 +46,11 @@ ActiveAdmin.register Meal do
       row :closed
       row :max
       row :subsidized?
-      row :modified_cost do |meal|
-        number_to_currency(meal.modified_cost.to_f / 100) unless meal.modified_cost == 0
+      row :total_cost do |meal|
+        number_to_currency(meal.total_cost) unless meal.total_cost == 0
       end
       row :unit_cost do |meal|
-        number_to_currency(meal.unit_cost.to_f / 100) unless meal.unit_cost == 0
+        number_to_currency(meal.unit_cost) unless meal.unit_cost == 0
       end
       table_for meal.attendees.order('name ASC') do
         column 'Residents Attendance' do |resident|

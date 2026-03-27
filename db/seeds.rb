@@ -9,7 +9,7 @@
 start = Time.now
 
 # Community
-community = Community.create!(name: "Patches Way", cap: 250)
+community = Community.create!(name: "Patches Way", cap: BigDecimal("2.50"))
 community.update!(slug: 'patches')
 
 puts "1 Community created"
@@ -95,19 +95,19 @@ Meal.all.each_with_index do |meal, index|
   ids = Resident.pluck(:id).shuffle[0..1]
   if index % 2 == 0 && index % 3 == 0
     Bill.create(meal_id: meal.id, resident_id: ids[0],
-                amount_cents: (3500..6500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((35..65).to_a.shuffle[0].to_s), community_id: community.id)
     Bill.create(meal_id: meal.id, resident_id: ids[1],
-                amount_cents: 0, community_id: community.id)
+                amount: BigDecimal("0"), community_id: community.id)
   elsif index % 2 == 0
     Bill.create(meal_id: meal.id, resident_id: ids[0],
-                amount_cents: (2500..3500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((25..35).to_a.shuffle[0].to_s), community_id: community.id)
     Bill.create(meal_id: meal.id, resident_id: ids[1],
-                amount_cents: (3500..4500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((35..45).to_a.shuffle[0].to_s), community_id: community.id)
   else
     Bill.create(meal_id: meal.id, resident_id: ids[0],
-                amount_cents: (5500..6500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((55..65).to_a.shuffle[0].to_s), community_id: community.id)
     Bill.create(meal_id: meal.id, resident_id: ids[1],
-                amount_cents: (6500..7500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((65..75).to_a.shuffle[0].to_s), community_id: community.id)
   end
 end
 
@@ -166,19 +166,19 @@ Meal.all.each_with_index do |meal, index|
   ids = Resident.pluck(:id).shuffle[0..1]
   if index % 3 == 0 && index % 4 == 0
     Bill.create(meal_id: meal.id, resident_id: ids[0],
-                amount_cents: (3500..6500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((35..65).to_a.shuffle[0].to_s), community_id: community.id)
     Bill.create(meal_id: meal.id, resident_id: ids[1],
-                amount_cents: 0, community_id: community.id)
+                amount: BigDecimal("0"), community_id: community.id)
   elsif index % 3 == 0
     Bill.create(meal_id: meal.id, resident_id: ids[0],
-                amount_cents: (2500..3500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((25..35).to_a.shuffle[0].to_s), community_id: community.id)
     Bill.create(meal_id: meal.id, resident_id: ids[1],
-                amount_cents: (3500..4500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((35..45).to_a.shuffle[0].to_s), community_id: community.id)
   elsif index % 4 == 0
     Bill.create(meal_id: meal.id, resident_id: ids[0],
-                amount_cents: (5500..6500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((55..65).to_a.shuffle[0].to_s), community_id: community.id)
     Bill.create(meal_id: meal.id, resident_id: ids[1],
-                amount_cents: (6500..7500).to_a.shuffle[0], community_id: community.id)
+                amount: BigDecimal((65..75).to_a.shuffle[0].to_s), community_id: community.id)
   end
 end
 

@@ -3,17 +3,12 @@
 # Table name: communities
 #
 #  id         :bigint           not null, primary key
-#  cap        :integer
 #  name       :string           not null
+#  cap        :decimal(12, 8)
 #  slug       :string           not null
-#  timezone   :string           default("America/Los_Angeles"), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#
-# Indexes
-#
-#  index_communities_on_name  (name) UNIQUE
-#  index_communities_on_slug  (slug) UNIQUE
+#  timezone   :string           default("America/Los_Angeles"), not null
 #
 
 class Community < ApplicationRecord
@@ -37,14 +32,22 @@ class Community < ApplicationRecord
 
   accepts_nested_attributes_for :admin_users
 
+  # NULL cap means "no cap"
   def cap
-    read_attribute(:cap) || Float::INFINITY
+    read_attribute(:cap)
+  end
+
+  def capped?
+    cap.present?
   end
 
   # Report Methods
   def unreconciled_ave_cost
-    val = 2 * ((meals.unreconciled.pluck(:cost).reduce(&:+).to_i / meals.unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }.to_f) / 100.to_f)
-    val.to_f.nan? ? '--' : "$#{sprintf('%0.02f', val)}/adult"
+    total_multiplier = meals.unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }
+    return '--' if total_multiplier == 0
+    total_cost = meals.unreconciled.pluck(:cost).reduce(BigDecimal("0"), :+)
+    val = 2 * (total_cost / total_multiplier)
+    "$#{sprintf('%0.02f', val)}/adult"
   end
 
   def unreconciled_ave_number_of_attendees

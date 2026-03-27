@@ -3,39 +3,24 @@
 # Table name: meals
 #
 #  id                        :bigint           not null, primary key
-#  bills_count               :integer          default(0), not null
-#  cap                       :integer
-#  closed                    :boolean          default(FALSE), not null
-#  closed_at                 :datetime
-#  cost                      :integer          default(0), not null
 #  date                      :date             not null
-#  description               :text             default(""), not null
-#  guests_count              :integer          default(0), not null
-#  guests_multiplier         :integer          default(0), not null
-#  max                       :integer
+#  cap                       :decimal(12, 8)
 #  meal_residents_count      :integer          default(0), not null
+#  guests_count              :integer          default(0), not null
+#  bills_count               :integer          default(0), not null
 #  meal_residents_multiplier :integer          default(0), not null
-#  start_time                :datetime         not null
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
+#  guests_multiplier         :integer          default(0), not null
+#  description               :text             default(""), not null
+#  max                       :integer
+#  closed                    :boolean          default(FALSE), not null
 #  community_id              :bigint           not null
 #  reconciliation_id         :bigint
 #  rotation_id               :bigint
+#  closed_at                 :datetime
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  start_time                :datetime         not null
 #
-# Indexes
-#
-#  index_meals_on_community_id           (community_id)
-#  index_meals_on_date_and_community_id  (date,community_id) UNIQUE
-#  index_meals_on_reconciliation_id      (reconciliation_id)
-#  index_meals_on_rotation_id            (rotation_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (community_id => communities.id)
-#  fk_rails_...  (reconciliation_id => reconciliations.id)
-#  fk_rails_...  (rotation_id => rotations.id)
-#
-
 class Meal < ApplicationRecord
   audited
   has_associated_audits
@@ -67,7 +52,6 @@ class Meal < ApplicationRecord
   before_create :set_cap
   before_save :conditionally_set_max
   before_save :conditionally_set_closed_at
-  after_touch :mark_related_residents_dirty
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
   accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
@@ -76,8 +60,13 @@ class Meal < ApplicationRecord
     self.start_time.in_time_zone(community.timezone)
   end
 
+  # NULL cap means "no cap". No more Float::INFINITY.
   def cap
-    read_attribute(:cap) || Float::INFINITY
+    read_attribute(:cap)
+  end
+
+  def capped?
+    cap.present?
   end
 
   def set_cap
@@ -95,12 +84,6 @@ class Meal < ApplicationRecord
   def conditionally_set_closed_at
     self.closed_at = DateTime.now if closed == true && closed_was == false
     self.closed_at = nil if closed == false && closed_was == true
-  end
-
-  def mark_related_residents_dirty
-    cooks.update_all(balance_is_dirty: true)
-    attendees.update_all(balance_is_dirty: true)
-    hosts.update_all(balance_is_dirty: true)
   end
 
   def trigger_pusher
@@ -124,6 +107,7 @@ class Meal < ApplicationRecord
   end
 
   # DERIVED DATA
+
   def multiplier
     meal_residents_multiplier + guests_multiplier
   end
@@ -132,21 +116,43 @@ class Meal < ApplicationRecord
     meal_residents_count + guests_count
   end
 
-  def modified_cost
-    bills.map(&:reimburseable_amount).inject(0, :+)
+  # Total cost computed from source bills via SQL SUM. Memoized per instance.
+  def total_cost
+    @total_cost ||= bills.where(no_cost: false).sum(:amount)
   end
 
+  # The cost used for splitting after applying the cap.
+  # If uncapped or under cap, this equals total_cost.
+  # If over cap, this equals max_cost.
+  def effective_total_cost
+    tc = total_cost
+    return tc unless capped?
+    mc = max_cost
+    tc > mc ? mc : tc
+  end
+
+  # Per-multiplier-unit cost. Single division, no per-bill iteration.
   def unit_cost
-    bills.map(&:unit_cost).inject(0, :+)
+    return BigDecimal("0") if multiplier == 0
+    effective_total_cost / multiplier
   end
 
+  # Total amount that would be collected from all attendees.
   def collected
     unit_cost * multiplier
   end
 
+  # Maximum total cost for this meal based on the community cap.
+  # Returns nil if uncapped.
+  def max_cost
+    return nil unless capped?
+    cap * multiplier
+  end
+
   def subsidized?
     return false if multiplier == 0
-    cost > max_cost
+    return false unless capped?
+    total_cost > max_cost
   end
 
   def reconciled?
@@ -160,10 +166,6 @@ class Meal < ApplicationRecord
   # HELPERS
   def another_meal_in_this_rotation_has_less_than_two_cooks?
     Meal.where(rotation_id: rotation_id).where.not(id: id).pluck(:bills_count).any? { |num| num < 2 }
-  end
-
-  def max_cost
-    cap * multiplier
   end
 
   # *** This method only used during seed generation ***
@@ -222,12 +224,12 @@ class Meal < ApplicationRecord
   end
 
   def self.is_holiday?(date)
-    return true if  Meal.is_thanksgiving(date)  || 
-                    Meal.is_christmas(date)     || 
-                    Meal.is_newyears(date)      || 
-                    Meal.is_mothers_day(date)   || 
+    return true if  Meal.is_thanksgiving(date)  ||
+                    Meal.is_christmas(date)     ||
+                    Meal.is_newyears(date)      ||
+                    Meal.is_mothers_day(date)   ||
                     Meal.is_easter(date)        ||
-                    Meal.is_july_fourth(date)    
+                    Meal.is_july_fourth(date)
     false
   end
 

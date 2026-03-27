@@ -91,8 +91,8 @@ module ApplicationHelper
     return "#{name} added as cook" if audit.action == 'create'
     return "#{name} removed as cook" if audit.action == 'destroy'
 
-    return "unknown bill changed" if changes["amount_cents"].nil?
-    return "Bill for #{resident_name_helper(bill.resident.name)} changed from #{number_to_currency(changes["amount_cents"][0].to_f / 100)} to #{number_to_currency(changes["amount_cents"][1].to_f / 100)}" if audit.action == 'update'
+    return "unknown bill changed" if changes["amount"].nil?
+    return "Bill for #{resident_name_helper(bill.resident.name)} changed from #{number_to_currency(changes["amount"][0])} to #{number_to_currency(changes["amount"][1])}" if audit.action == 'update'
     return "#{audit.auditable_type}, #{audit.action}"
   end
 
