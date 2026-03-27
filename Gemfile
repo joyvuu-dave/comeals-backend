@@ -56,7 +56,7 @@ group :development do
   gem 'binding_of_caller'
   gem 'xipio'
   gem 'bullet'
-  gem 'annotate'
+  gem 'annotaterb'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 namespace :billing do
-  desc "Recalculate all financial data from source records. Safe to run at any time."
+  desc 'Recalculate all financial data from source records. Safe to run at any time.'
   task recalculate: :environment do
     start_time = Time.current
 
@@ -11,7 +13,9 @@ namespace :billing do
         corrections = {}
 
         correct_mr_multiplier = meal.meal_residents.sum(:multiplier)
-        corrections[:meal_residents_multiplier] = correct_mr_multiplier if meal.meal_residents_multiplier != correct_mr_multiplier
+        if meal.meal_residents_multiplier != correct_mr_multiplier
+          corrections[:meal_residents_multiplier] = correct_mr_multiplier
+        end
 
         correct_g_multiplier = meal.guests.sum(:multiplier)
         corrections[:guests_multiplier] = correct_g_multiplier if meal.guests_multiplier != correct_g_multiplier
@@ -25,16 +29,13 @@ namespace :billing do
         correct_bills_count = Bill.where(meal_id: meal.id).count
         corrections[:bills_count] = correct_bills_count if meal.bills_count != correct_bills_count
 
-        if corrections.any?
-          meal.update_columns(corrections)
-          Rails.logger.info("billing:recalculate corrected meal #{meal.id}: #{corrections.keys.join(', ')}")
-        end
+        next unless corrections.any?
+
+        meal.update_columns(corrections)
+        Rails.logger.info("billing:recalculate corrected meal #{meal.id}: #{corrections.keys.join(', ')}")
       end
 
       # Phase 2: Recalculate resident balances from source data.
-      # Credits = sum of bill amounts for unreconciled meals the resident cooked.
-      # Debits = sum of (meal.unit_cost * multiplier) for unreconciled meals attended.
-      # Guest debits = sum of (meal.unit_cost * guest.multiplier) for guests the resident hosted.
       community.residents.find_each do |resident|
         balance = resident.calc_balance
 

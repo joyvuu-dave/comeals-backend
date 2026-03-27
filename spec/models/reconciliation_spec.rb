@@ -4,9 +4,17 @@
 #
 #  id           :bigint           not null, primary key
 #  date         :date             not null
-#  community_id :bigint           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  community_id :bigint           not null
+#
+# Indexes
+#
+#  index_reconciliations_on_community_id  (community_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (community_id => communities.id)
 #
 require 'rails_helper'
 
