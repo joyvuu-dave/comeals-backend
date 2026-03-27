@@ -48,9 +48,10 @@ class Community < ApplicationRecord
 
   # Report Methods
   def unreconciled_ave_cost
-    total_multiplier = meals.unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }
+    unreconciled = meals.unreconciled.includes(:bills)
+    total_multiplier = unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }
     return '--' if total_multiplier == 0
-    total_cost = meals.unreconciled.pluck(:cost).reduce(BigDecimal("0"), :+)
+    total_cost = unreconciled.reduce(BigDecimal("0")) { |sum, meal| sum + meal.total_cost }
     val = 2 * (total_cost / total_multiplier)
     "$#{sprintf('%0.02f', val)}/adult"
   end
