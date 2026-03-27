@@ -471,7 +471,7 @@ RSpec.describe Meal, type: :model do
       resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
       FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("10"))
 
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
       meal.reload
 
       expect(meal.reconciliation_id).to eq(reconciliation.id)
@@ -495,7 +495,7 @@ RSpec.describe Meal, type: :model do
       resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
       FactoryBot.create(:bill, meal: reconciled_meal, resident: resident, community: community, amount: BigDecimal("10"))
 
-      Reconciliation.create!(community: community, date: Date.today)
+      Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
       reconciled_meal.reload
 
       results = community.meals.unreconciled

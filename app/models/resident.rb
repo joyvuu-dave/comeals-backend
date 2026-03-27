@@ -46,6 +46,7 @@ class Resident < ApplicationRecord
   has_many :meal_residents, dependent: :destroy
   has_many :meals, through: :meal_residents
   has_many :guests, dependent: :destroy
+  has_many :reconciliation_balances, dependent: :destroy
   has_many :guest_room_reservations, dependent: :destroy
   has_many :common_house_reservations, dependent: :destroy
 
@@ -118,10 +119,15 @@ class Resident < ApplicationRecord
     guests.joins(:meal).merge(Meal.unreconciled).sum(&:cost)
   end
 
-  # Balance is read from the cached resident_balances table.
+  # Balance is read from the cached resident_balances table (unreconciled preview).
   # The daily billing:recalculate rake task refreshes this value.
   def balance
     resident_balance&.amount || BigDecimal("0")
+  end
+
+  # Historical balance for a specific reconciliation period.
+  def balance_for_reconciliation(reconciliation)
+    reconciliation_balances.find_by(reconciliation_id: reconciliation.id)&.amount || BigDecimal("0")
   end
 
   def meals_attended

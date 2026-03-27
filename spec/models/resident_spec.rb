@@ -99,7 +99,7 @@ RSpec.describe Resident, type: :model do
     end
 
     it 'excludes reconciled meals from balance' do
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
       resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
 
       # Reconciled meal — should be excluded
@@ -227,7 +227,7 @@ RSpec.describe Resident, type: :model do
   describe '#meals_attended' do
     it 'counts only unreconciled meals' do
       resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-      reconciliation = Reconciliation.create!(community: community, date: Date.today)
+      reconciliation = Reconciliation.create!(community: community, date: Date.today, start_date: 2.years.ago.to_date, end_date: Date.today)
 
       reconciled_meal = FactoryBot.create(:meal, community: community, reconciliation: reconciliation)
       FactoryBot.create(:meal_resident, meal: reconciled_meal, resident: resident, community: community)
@@ -236,6 +236,32 @@ RSpec.describe Resident, type: :model do
       FactoryBot.create(:meal_resident, meal: unreconciled_meal, resident: resident, community: community)
 
       expect(resident.meals_attended).to eq(1)
+    end
+  end
+
+  describe '#balance_for_reconciliation' do
+    it 'returns the historical balance for a specific reconciliation' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      eater = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:meal_resident, meal: meal, resident: eater, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("100"))
+      meal.reload
+
+      reconciliation = Reconciliation.create!(
+        community: community, start_date: 2.years.ago.to_date, end_date: Date.today
+      )
+
+      expect(cook.balance_for_reconciliation(reconciliation)).to eq(BigDecimal("100"))
+      expect(eater.balance_for_reconciliation(reconciliation)).to eq(BigDecimal("-100"))
+    end
+
+    it 'returns 0 for a reconciliation the resident was not involved in' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      reconciliation = FactoryBot.create(:reconciliation, community: community)
+
+      expect(resident.balance_for_reconciliation(reconciliation)).to eq(BigDecimal("0"))
     end
   end
 end

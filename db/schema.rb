@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_27_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pgcrypto"
@@ -187,12 +187,26 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.index ["rotation_id"], name: "index_meals_on_rotation_id"
   end
 
+  create_table "reconciliation_balances", force: :cascade do |t|
+    t.bigint "reconciliation_id", null: false
+    t.bigint "resident_id", null: false
+    t.decimal "amount", precision: 12, scale: 8, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reconciliation_id", "resident_id"], name: "index_recon_balances_on_recon_id_and_resident_id", unique: true
+    t.index ["reconciliation_id"], name: "index_reconciliation_balances_on_reconciliation_id"
+    t.index ["resident_id"], name: "index_reconciliation_balances_on_resident_id"
+  end
+
   create_table "reconciliations", force: :cascade do |t|
     t.date "date", null: false
     t.bigint "community_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.date "start_date", null: false
+    t.date "end_date", null: false
     t.index ["community_id"], name: "index_reconciliations_on_community_id"
+    t.check_constraint "start_date <= end_date", name: "reconciliations_date_range_valid"
   end
 
   create_table "resident_balances", force: :cascade do |t|
@@ -262,6 +276,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
   add_foreign_key "meals", "communities"
   add_foreign_key "meals", "reconciliations"
   add_foreign_key "meals", "rotations"
+  add_foreign_key "reconciliation_balances", "reconciliations"
+  add_foreign_key "reconciliation_balances", "residents"
   add_foreign_key "reconciliations", "communities"
   add_foreign_key "resident_balances", "residents"
   add_foreign_key "residents", "communities"
