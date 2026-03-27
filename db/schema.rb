@@ -12,22 +12,24 @@
 
 ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "admin_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.bigint "community_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "superuser", default: false, null: false
     t.index ["community_id"], name: "index_admin_users_on_community_id"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
@@ -48,7 +50,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.string "comment"
     t.string "remote_address"
     t.string "request_uuid"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["associated_type", "associated_id"], name: "associated_index"
     t.index ["auditable_type", "auditable_id"], name: "auditable_index"
     t.index ["created_at"], name: "index_audits_on_created_at"
@@ -61,8 +63,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.bigint "resident_id", null: false
     t.bigint "community_id", null: false
     t.decimal "amount", precision: 12, scale: 8, default: "0.0", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "no_cost", default: false, null: false
     t.index ["community_id"], name: "index_bills_on_community_id"
     t.index ["meal_id", "resident_id"], name: "index_bills_on_meal_id_and_resident_id", unique: true
@@ -74,10 +76,10 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
   create_table "common_house_reservations", force: :cascade do |t|
     t.bigint "community_id", null: false
     t.bigint "resident_id", null: false
-    t.datetime "start_date", null: false
-    t.datetime "end_date", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "start_date", precision: nil, null: false
+    t.datetime "end_date", precision: nil, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "title"
     t.index ["community_id"], name: "index_common_house_reservations_on_community_id"
     t.index ["resident_id"], name: "index_common_house_reservations_on_resident_id"
@@ -87,8 +89,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.string "name", null: false
     t.decimal "cap", precision: 12, scale: 8
     t.string "slug", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "timezone", default: "America/Los_Angeles", null: false
     t.index ["name"], name: "index_communities_on_name", unique: true
     t.index ["slug"], name: "index_communities_on_slug", unique: true
@@ -97,12 +99,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
   create_table "events", force: :cascade do |t|
     t.string "title", null: false
     t.string "description", default: "", null: false
-    t.datetime "start_date", null: false
-    t.datetime "end_date"
+    t.datetime "start_date", precision: nil, null: false
+    t.datetime "end_date", precision: nil
     t.boolean "allday", default: false, null: false
     t.bigint "community_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id"], name: "index_events_on_community_id"
   end
 
@@ -111,7 +113,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.string "scope"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
@@ -122,8 +124,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.bigint "community_id", null: false
     t.bigint "resident_id", null: false
     t.date "date", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id"], name: "index_guest_room_reservations_on_community_id"
     t.index ["resident_id"], name: "index_guest_room_reservations_on_resident_id"
   end
@@ -135,8 +137,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.string "name", default: "", null: false
     t.boolean "vegetarian", default: false, null: false
     t.boolean "late", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["meal_id"], name: "index_guests_on_meal_id"
     t.index ["resident_id"], name: "index_guests_on_resident_id"
   end
@@ -145,8 +147,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.string "token", null: false
     t.string "identity_type", null: false
     t.bigint "identity_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["identity_type", "identity_id"], name: "index_keys_on_identity_type_and_identity_id", unique: true
     t.index ["token"], name: "index_keys_on_token", unique: true
   end
@@ -158,8 +160,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.integer "multiplier", null: false
     t.boolean "vegetarian", default: false, null: false
     t.boolean "late", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id"], name: "index_meal_residents_on_community_id"
     t.index ["meal_id", "resident_id"], name: "index_meal_residents_on_meal_id_and_resident_id", unique: true
     t.index ["meal_id"], name: "index_meal_residents_on_meal_id"
@@ -175,10 +177,10 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.bigint "community_id", null: false
     t.bigint "reconciliation_id"
     t.bigint "rotation_id"
-    t.datetime "closed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.datetime "start_time", null: false
+    t.datetime "closed_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "start_time", precision: nil, null: false
     t.index ["community_id"], name: "index_meals_on_community_id"
     t.index ["date", "community_id"], name: "index_meals_on_date_and_community_id", unique: true
     t.index ["reconciliation_id"], name: "index_meals_on_reconciliation_id"
@@ -188,16 +190,16 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
   create_table "reconciliations", force: :cascade do |t|
     t.date "date", null: false
     t.bigint "community_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id"], name: "index_reconciliations_on_community_id"
   end
 
   create_table "resident_balances", force: :cascade do |t|
     t.bigint "resident_id", null: false
     t.decimal "amount", precision: 12, scale: 8, default: "0.0", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["resident_id"], name: "index_resident_balances_on_resident_id"
   end
 
@@ -211,8 +213,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.string "password_digest", null: false
     t.string "reset_password_token"
     t.boolean "can_cook", default: true, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "active", default: true, null: false
     t.date "birthday", default: "1900-01-01", null: false
     t.index ["community_id"], name: "index_residents_on_community_id"
@@ -226,8 +228,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
     t.bigint "community_id", null: false
     t.string "description", default: "", null: false
     t.string "color", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "residents_notified", default: false, null: false
     t.date "start_date"
     t.integer "place_value"
@@ -237,8 +239,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
   create_table "units", force: :cascade do |t|
     t.string "name", null: false
     t.bigint "community_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["community_id", "name"], name: "index_units_on_community_id_and_name", unique: true
     t.index ["community_id"], name: "index_units_on_community_id"
   end

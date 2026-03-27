@@ -44,7 +44,7 @@ This is the most critical section. Financial calculations in this codebase must 
 
 7. **Financial records are append-only / immutable where possible.** Once a meal is reconciled, its bills and attendance cannot change. This is an accounting principle: you don't edit the ledger, you add correcting entries.
 
-8. **No counter_culture for financial fields.** Denormalized counters drift. Financial values must be computed from source data. Counter culture may be kept for non-financial display counters (attendee counts, etc.) but never for money.
+8. **No denormalized counters or caches for financial data.** The `counter_culture` gem has been removed entirely. All derived values (costs, counts, multiplier sums) are computed from source data via SQL queries or Ruby enumeration. The only cache is `resident_balances`, refreshed daily by the rake task.
 
 9. **Prevent race conditions by design.** The daily balance computation is a batch job that reads immutable source data and writes results. There's no concurrent write contention. For real-time operations (adding attendees, submitting bills), use database transactions.
 
@@ -53,11 +53,11 @@ This is the most critical section. Financial calculations in this codebase must 
 ### The Money Model
 
 ```
-INPUT (cook's receipt):     Integer cents — $50.00 = 5000 cents
-                            (Stored as DECIMAL(12,8) for type consistency: 5000.00000000)
+INPUT (cook's receipt):     Dollars — $50.00 stored as 50.00000000
+                            (User enters whole dollars/cents; stored as DECIMAL(12,8))
 
 INTERMEDIATE (per-unit):    Full precision DECIMAL
-                            e.g., 5000 / 7 = 714.28571428...
+                            e.g., 50.00 / 7 = 7.14285714...
 
 STORED (charges/credits):   Full precision DECIMAL(12,8)
                             Each resident's charge for each meal stored at full precision
@@ -69,8 +69,8 @@ SETTLEMENT (reconciliation): Rounded to cents using banker's rounding
 ## Code Standards
 
 - **No FIXME/TODO hacks in financial code.** If something needs to change, change it or create a tracked issue.
-- **No hardcoded IDs.** The codebase currently has `reconciliation_id == 3` scattered through it. This is a bug, not a feature. All queries must use proper scopes.
-- **Explicit over implicit.** Name things clearly. `reimburseable_amount` should mean exactly what the cook gets back — their actual cost, nothing more.
+- **No hardcoded IDs.** All queries must use proper scopes (e.g., `Meal.unreconciled`), never hardcoded record IDs.
+- **Explicit over implicit.** Name things clearly. `bill.amount` is the cook's actual cost. `bill.effective_amount` accounts for `no_cost` flag.
 - **Test edge cases.** Zero multiplier, zero cost, single attendee, no attendees, meal with only children, meal with only guests, etc.
 - **Database constraints.** Use NOT NULL, CHECK constraints, and foreign keys. Don't rely on Rails validations alone — the database is the last line of defense.
 
@@ -83,13 +83,17 @@ SETTLEMENT (reconciliation): Rounded to cents using banker's rounding
 
 ## Current State
 
-The billing system remediation (Steps 1-4) is complete. See `BILLING_ANALYSIS.md` for the full bug list and history. What was done:
+The billing system remediation is complete and validated against production data. See `BILLING_ANALYSIS.md` for the full bug list and history. What was done:
 
-- Step 1: Fixed hardcoded `reconciliation_id == 3` → uses `Meal.unreconciled` scope
-- Step 2: Migrated to `DECIMAL(12,8)` + `BigDecimal`, removed `money-rails`, removed rounding-up
-- Step 3: Removed financial `counter_culture`, added `billing:recalculate` daily rake task
-- Step 4: Automated reconciliation lifecycle with `assign_meals` + `settlement_balances` (banker's rounding)
+- Fixed hardcoded `reconciliation_id == 3` → uses `Meal.unreconciled` scope
+- Migrated to `DECIMAL(12,8)` + `BigDecimal`, removed `money-rails`, removed reimbursement rounding
+- Removed `counter_culture` gem entirely — all derived values computed from source data
+- Automated reconciliation lifecycle with `assign_meals` + `settlement_balances` (banker's rounding)
+- Added input validation for malformed bill amounts in `update_bills` controller action
+- Fixed `set_meal` before_action to properly return on 404 instead of crashing
 
 **Rake tasks:**
-- `rake billing:recalculate` — run daily to refresh balances and verify counter caches
+- `rake billing:recalculate` — run daily to refresh resident balances from source data
 - `rake reconciliations:create` — manual trigger to close a billing period
+
+**Test coverage:** 138 tests (124 model + 14 request specs), 0 failures.

@@ -165,7 +165,11 @@ module Api
 
         # Bill Cost
         params[:bills].each do |bill|
-          amount_value = BigDecimal(bill['amount'].to_s)
+          begin
+            amount_value = BigDecimal(bill['amount'].to_s)
+          rescue ArgumentError
+            render json: { message: "Invalid amount: #{bill['amount']}" }, status: :bad_request and return
+          end
           @meal.bills.find_by(resident_id: bill['resident_id']).update({amount: amount_value, no_cost: bill['no_cost']})
         end
 
@@ -189,7 +193,7 @@ module Api
       def set_meal
         @meal ||= Meal.includes(:bills, :meal_residents, :guests).find_by(id: params[:meal_id])
 
-        not_found_api unless @meal.present?
+        return not_found_api unless @meal.present?
 
         @meal.socket_id = params[:socket_id]
       end

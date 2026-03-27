@@ -67,7 +67,6 @@ Unit ---< Resident
 
 **Key fields:**
 - `name` (unique per community) -- "A", "B", etc.
-- `residents_count` -- counter cache
 
 **Behavior:**
 - `balance` -- sum of all residents' cached balances
@@ -99,8 +98,6 @@ Resident
 - `active` -- false for residents who moved/died
 - `can_cook` -- eligible for cooking rotation
 - `birthday` -- used for age-based multiplier auto-setting
-- `bills_count` -- counter cache
-
 **Scopes:**
 - `adult` -- multiplier >= 2
 - `active` -- active = true
@@ -161,10 +158,6 @@ Bill ----> Community
 - `unit_cost` -- capped_amount / meal.multiplier
 - `capped_amount` -- proportionally reduced when meal exceeds community cap
 
-**Counter culture:**
-- Increments `meal.bills_count`
-- Increments `resident.bills_count`
-
 ---
 
 ### Meal
@@ -187,10 +180,9 @@ Meal ----< Guest (0-5 visitors typically)
 - `closed` / `closed_at` -- locks attendance
 - `max` -- attendance cap when closed (NULL until closed)
 - `start_time` -- 6pm Sundays, 7pm other days
-- Counter caches: `bills_count`, `meal_residents_count`, `guests_count`, `meal_residents_multiplier`, `guests_multiplier`
 
-**Financial methods:**
-- `multiplier` -- meal_residents_multiplier + guests_multiplier
+**Financial methods (all computed from source data, no cached columns):**
+- `multiplier` -- SUM of meal_residents.multiplier + guests.multiplier
 - `total_cost` -- SQL SUM of bill amounts (excludes no_cost bills)
 - `effective_total_cost` -- min(total_cost, max_cost) when capped
 - `unit_cost` -- effective_total_cost / multiplier
@@ -228,10 +220,6 @@ MealResident ----> Community
 - Cannot join closed meals if max is not set or is full
 - Can only be removed from closed meals if signed up after close
 
-**Counter culture:**
-- Increments `meal.meal_residents_count`
-- Adds to `meal.meal_residents_multiplier`
-
 ---
 
 ### Guest
@@ -250,10 +238,6 @@ Guest ----> Resident (the host)
 
 **Financial methods:**
 - `cost` -- meal.unit_cost * multiplier (charged to the hosting resident)
-
-**Counter culture:**
-- Increments `meal.guests_count`
-- Adds to `meal.guests_multiplier`
 
 ---
 
@@ -400,16 +384,6 @@ Full precision is maintained during the billing period. At reconciliation, balan
 
 ---
 
-## Counter Culture Summary
+## Derived vs. Stored Data
 
-These fields are automatically maintained by the `counter_culture` gem for real-time display. The daily `billing:recalculate` rake task verifies and corrects any drift.
-
-| Parent | Field | Child | Source |
-|--------|-------|-------|--------|
-| Meal | bills_count | Bill | count |
-| Meal | meal_residents_count | MealResident | count |
-| Meal | guests_count | Guest | count |
-| Meal | meal_residents_multiplier | MealResident | multiplier |
-| Meal | guests_multiplier | Guest | multiplier |
-| Resident | bills_count | Bill | count |
-| Unit | residents_count | Resident | count |
+All financial values (costs, balances, counts) are **computed from source data** — there are no cached counter columns. The only materialized cache is `resident_balances.amount`, refreshed daily by `rake billing:recalculate`. It can be rebuilt from scratch at any time.
