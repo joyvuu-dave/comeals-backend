@@ -34,20 +34,6 @@ RSpec.describe 'billing:recalculate' do
     expect(eater_balance.amount).to eq(BigDecimal("-60"))
   end
 
-  it 'corrects drifted multiplier sums' do
-    meal = FactoryBot.create(:meal, community: community)
-    resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-    FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: community)
-
-    # Simulate drift
-    meal.update_column(:meal_residents_multiplier, 99)
-
-    Rake::Task['billing:recalculate'].invoke
-
-    meal.reload
-    expect(meal.meal_residents_multiplier).to eq(2)
-  end
-
   it 'excludes reconciled meals from balance calculations' do
     reconciliation = Reconciliation.create!(community: community, date: Date.today)
     resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)

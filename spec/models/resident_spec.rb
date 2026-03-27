@@ -4,7 +4,6 @@
 #
 #  id                   :bigint           not null, primary key
 #  active               :boolean          default(TRUE), not null
-#  bills_count          :integer          default(0), not null
 #  birthday             :date             default(Mon, 01 Jan 1900), not null
 #  can_cook             :boolean          default(TRUE), not null
 #  email                :string

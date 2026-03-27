@@ -4,7 +4,6 @@
 #
 #  id                   :bigint           not null, primary key
 #  active               :boolean          default(TRUE), not null
-#  bills_count          :integer          default(0), not null
 #  birthday             :date             default(Mon, 01 Jan 1900), not null
 #  can_cook             :boolean          default(TRUE), not null
 #  email                :string
@@ -49,8 +48,6 @@ class Resident < ApplicationRecord
   has_many :guests, dependent: :destroy
   has_many :guest_room_reservations, dependent: :destroy
   has_many :common_house_reservations, dependent: :destroy
-
-  counter_culture :unit
 
   validates :multiplier, numericality: { only_integer: true }
   validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :community_id }

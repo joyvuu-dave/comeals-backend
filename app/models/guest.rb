@@ -29,9 +29,6 @@ class Guest < ApplicationRecord
 
   audited associated_with: :meal
 
-  counter_culture :meal
-  counter_culture :meal, column_name: 'guests_multiplier', delta_column: 'multiplier'
-
   validates :meal, presence: true
   validates :resident, presence: true
   validates :multiplier, numericality: { only_integer: true }

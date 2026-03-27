@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_26_000004) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_26_000005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -169,11 +169,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000004) do
   create_table "meals", force: :cascade do |t|
     t.date "date", null: false
     t.decimal "cap", precision: 12, scale: 8
-    t.integer "meal_residents_count", default: 0, null: false
-    t.integer "guests_count", default: 0, null: false
-    t.integer "bills_count", default: 0, null: false
-    t.integer "meal_residents_multiplier", default: 0, null: false
-    t.integer "guests_multiplier", default: 0, null: false
     t.text "description", default: "", null: false
     t.integer "max"
     t.boolean "closed", default: false, null: false
@@ -212,7 +207,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000004) do
     t.bigint "community_id", null: false
     t.bigint "unit_id", null: false
     t.boolean "vegetarian", default: false, null: false
-    t.integer "bills_count", default: 0, null: false
     t.integer "multiplier", default: 2, null: false
     t.string "password_digest", null: false
     t.string "reset_password_token"
@@ -243,7 +237,6 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_26_000004) do
   create_table "units", force: :cascade do |t|
     t.string "name", null: false
     t.bigint "community_id", null: false
-    t.integer "residents_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["community_id", "name"], name: "index_units_on_community_id_and_name", unique: true
