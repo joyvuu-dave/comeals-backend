@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.2.3"
+ruby "3.2.10"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 7.0"
@@ -23,7 +23,6 @@ gem 'devise'
 gem 'friendly_id'
 gem 'scrypt'
 gem 'faker'
-gem 'money-rails'
 gem 'counter_culture'
 gem 'active_model_serializers', '~> 0.10'
 gem 'pusher'

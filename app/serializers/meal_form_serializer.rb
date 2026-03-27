@@ -10,8 +10,7 @@ class MealFormSerializer < ActiveModel::Serializer
              :prev_id
 
   def reconciled
-    return true if scope.reconciled? && Reconciliation.last.id != scope.reconciliation.id
-    false
+    scope.reconciliation_id.present?
   end
 
   def next_id
@@ -46,7 +45,7 @@ class MealFormSerializer < ActiveModel::Serializer
 
   class BillSerializer < ActiveModel::Serializer
     attributes :resident_id,
-               :amount_cents,
+               :amount,
                :no_cost
   end
 

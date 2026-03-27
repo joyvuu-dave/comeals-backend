@@ -2,67 +2,121 @@
 #
 # Table name: bills
 #
-#  id              :bigint           not null, primary key
-#  amount_cents    :integer          default(0), not null
-#  amount_currency :string           default("USD"), not null
-#  no_cost         :boolean          default(FALSE), not null
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  community_id    :bigint           not null
-#  meal_id         :bigint           not null
-#  resident_id     :bigint           not null
+#  id           :bigint           not null, primary key
+#  meal_id      :bigint           not null
+#  resident_id  :bigint           not null
+#  community_id :bigint           not null
+#  amount       :decimal(12, 8)   default(0.0), not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  no_cost      :boolean          default(FALSE), not null
 #
-# Indexes
-#
-#  index_bills_on_community_id             (community_id)
-#  index_bills_on_meal_id                  (meal_id)
-#  index_bills_on_meal_id_and_resident_id  (meal_id,resident_id) UNIQUE
-#  index_bills_on_resident_id              (resident_id)
-#
-# Foreign Keys
-#
-#  fk_rails_...  (community_id => communities.id)
-#  fk_rails_...  (meal_id => meals.id)
-#  fk_rails_...  (resident_id => residents.id)
-#
-
 require 'rails_helper'
 
 RSpec.describe Bill, type: :model do
-  it 'adjusts reimbursable amount correctly' do
-    # Scenario: Bill amount is not divisible by Meal multiplier
-    community = FactoryBot.create(:community)
-    meal = FactoryBot.create(:meal, community_id: community.id)
+  let(:community) { FactoryBot.create(:community) }
+  let(:unit) { FactoryBot.create(:unit, community: community) }
 
-    unit_a = FactoryBot.create(:unit, community_id: community.id)
-    resident = FactoryBot.create(:resident, community_id: community.id, multiplier: 3)
+  describe '#unit_cost' do
+    it 'divides amount by meal multiplier using BigDecimal' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident_a = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      resident_b = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 1)
 
-    meal_resident = FactoryBot.create(:meal_resident, meal_id: meal.id, resident_id: resident.id, community_id: community.id)
-    bill = FactoryBot.create(:bill, meal_id: meal.id, resident_id: resident.id, community_id: community.id, amount_cents: 500)
+      FactoryBot.create(:meal_resident, meal: meal, resident: resident_a, community: community)
+      FactoryBot.create(:meal_resident, meal: meal, resident: resident_b, community: community)
+      meal.reload
 
-    expect(bill.reimburseable_amount).to eq(501)
+      # multiplier = 2 + 1 = 3
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident_a, community: community, amount: BigDecimal("50"))
+      meal.reload
+
+      expect(meal.multiplier).to eq(3)
+      expect(bill.unit_cost).to be_a(BigDecimal)
+      expect(bill.unit_cost).to eq(BigDecimal("50") / 3)
+    end
+
+    it 'returns 0 when meal multiplier is 0' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("50"))
+
+      expect(bill.unit_cost).to eq(BigDecimal("0"))
+    end
   end
 
-  it 'has correct max_amount when cost is capped' do
-    # Scenario: Community has a capped per person cost
-    community = FactoryBot.create(:community, cap: 250)
-    meal = FactoryBot.create(:meal, community_id: community.id)
+  describe '#effective_amount' do
+    it 'returns the amount when no_cost is false' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("50"))
 
-    unit = FactoryBot.create(:unit, community_id: community.id)
-    resident_1 = FactoryBot.create(:resident, community_id: community.id)
-    resident_2 = FactoryBot.create(:resident, community_id: community.id)
+      expect(bill.effective_amount).to eq(BigDecimal("50"))
+    end
 
-    meal_resident = FactoryBot.create(:meal_resident, meal_id: meal.id, resident_id: resident_1.id, community_id: community.id)
-    meal.reload
+    it 'returns 0 when no_cost is true' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("50"), no_cost: true)
 
-    bill_1 = FactoryBot.create(:bill, meal_id: meal.id, resident_id: resident_1.id, community_id: community.id, amount_cents: 200)
-    bill_1.reload
+      expect(bill.effective_amount).to eq(BigDecimal("0"))
+    end
+  end
 
-    bill_2 = FactoryBot.create(:bill, meal_id: meal.id, resident_id: resident_2.id, community_id: community.id, amount_cents: 600)
-    bill_2.reload
+  describe '#capped_amount' do
+    it 'returns full amount when community has no cap' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: community)
+      meal.reload
 
-    meal.reload
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("75"))
+      meal.reload
 
-    expect(bill_1.max_amount).to eq(0.25 * meal.max_cost)
+      expect(bill.capped_amount).to eq(BigDecimal("75"))
+    end
+
+    it 'proportionally reduces amount when meal cost exceeds cap' do
+      capped_community = FactoryBot.create(:community, cap: BigDecimal("2.50"))
+      capped_unit = FactoryBot.create(:unit, community: capped_community)
+      meal = FactoryBot.create(:meal, community: capped_community)
+      resident_1 = FactoryBot.create(:resident, community: capped_community, unit: capped_unit, multiplier: 2)
+      resident_2 = FactoryBot.create(:resident, community: capped_community, unit: capped_unit, multiplier: 2)
+
+      FactoryBot.create(:meal_resident, meal: meal, resident: resident_1, community: capped_community)
+      meal.reload
+
+      # multiplier = 2, cap = 2.50, max_cost = 5.00
+      # Cook 1 submits $2.00, Cook 2 submits $6.00 = total $8.00 > $5.00 cap
+      FactoryBot.create(:bill, meal: meal, resident: resident_1, community: capped_community, amount: BigDecimal("2"))
+      FactoryBot.create(:bill, meal: meal, resident: resident_2, community: capped_community, amount: BigDecimal("6"))
+      meal.reload
+
+      # Fetch fresh bill instances so meal association isn't stale
+      bill_1 = meal.bills.find_by(resident: resident_1)
+      bill_2 = meal.bills.find_by(resident: resident_2)
+
+      # bill_1 proportion: 2/8 = 0.25, capped: 0.25 * 5.00 = 1.25
+      expect(bill_1.capped_amount).to eq(BigDecimal("2") / BigDecimal("8") * BigDecimal("5"))
+      # bill_2 proportion: 6/8 = 0.75, capped: 0.75 * 5.00 = 3.75
+      expect(bill_2.capped_amount).to eq(BigDecimal("6") / BigDecimal("8") * BigDecimal("5"))
+    end
+
+    it 'returns full amount when meal cost is under cap' do
+      capped_community = FactoryBot.create(:community, cap: BigDecimal("25.00"))
+      capped_unit = FactoryBot.create(:unit, community: capped_community)
+      meal = FactoryBot.create(:meal, community: capped_community)
+      resident = FactoryBot.create(:resident, community: capped_community, unit: capped_unit, multiplier: 2)
+
+      FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: capped_community)
+      meal.reload
+
+      # multiplier = 2, cap = 25.00, max_cost = 50.00
+      # Bill of $10 is well under cap
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: capped_community, amount: BigDecimal("10"))
+      meal.reload
+
+      expect(bill.capped_amount).to eq(BigDecimal("10"))
+    end
   end
 end

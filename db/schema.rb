@@ -2,16 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2020_04_18_183434) do
-
+ActiveRecord::Schema[7.0].define(version: 2026_03_26_000004) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,8 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2020_04_18_183434) do
     t.bigint "meal_id", null: false
     t.bigint "resident_id", null: false
     t.bigint "community_id", null: false
-    t.integer "amount_cents", default: 0, null: false
-    t.string "amount_currency", default: "USD", null: false
+    t.decimal "amount", precision: 12, scale: 8, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "no_cost", default: false, null: false
@@ -70,6 +68,7 @@ ActiveRecord::Schema[7.0].define(version: 2020_04_18_183434) do
     t.index ["meal_id", "resident_id"], name: "index_bills_on_meal_id_and_resident_id", unique: true
     t.index ["meal_id"], name: "index_bills_on_meal_id"
     t.index ["resident_id"], name: "index_bills_on_resident_id"
+    t.check_constraint "amount >= 0::numeric", name: "bills_amount_non_negative"
   end
 
   create_table "common_house_reservations", force: :cascade do |t|
@@ -86,7 +85,7 @@ ActiveRecord::Schema[7.0].define(version: 2020_04_18_183434) do
 
   create_table "communities", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "cap"
+    t.decimal "cap", precision: 12, scale: 8
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -169,11 +168,10 @@ ActiveRecord::Schema[7.0].define(version: 2020_04_18_183434) do
 
   create_table "meals", force: :cascade do |t|
     t.date "date", null: false
-    t.integer "cap"
+    t.decimal "cap", precision: 12, scale: 8
     t.integer "meal_residents_count", default: 0, null: false
     t.integer "guests_count", default: 0, null: false
     t.integer "bills_count", default: 0, null: false
-    t.integer "cost", default: 0, null: false
     t.integer "meal_residents_multiplier", default: 0, null: false
     t.integer "guests_multiplier", default: 0, null: false
     t.text "description", default: "", null: false
@@ -202,7 +200,7 @@ ActiveRecord::Schema[7.0].define(version: 2020_04_18_183434) do
 
   create_table "resident_balances", force: :cascade do |t|
     t.bigint "resident_id", null: false
-    t.integer "amount", default: 0, null: false
+    t.decimal "amount", precision: 12, scale: 8, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["resident_id"], name: "index_resident_balances_on_resident_id"
@@ -214,12 +212,10 @@ ActiveRecord::Schema[7.0].define(version: 2020_04_18_183434) do
     t.bigint "community_id", null: false
     t.bigint "unit_id", null: false
     t.boolean "vegetarian", default: false, null: false
-    t.integer "bill_costs", default: 0, null: false
     t.integer "bills_count", default: 0, null: false
     t.integer "multiplier", default: 2, null: false
     t.string "password_digest", null: false
     t.string "reset_password_token"
-    t.boolean "balance_is_dirty", default: true, null: false
     t.boolean "can_cook", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

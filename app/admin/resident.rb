@@ -12,36 +12,6 @@ ActiveAdmin.register Resident do
   # ACTIONS
   actions :all, except: [:destroy]
 
-  # FIXME: this was slowing query down
-  # controller do
-  #   def scoped_collection
-  #     end_of_association_chain.includes(
-  #       { :bills => :meal },
-  #       { :bills => :resident },
-  #       { :bills => :community },
-  #       { :unit => :residents },
-  #       { :meal_residents => :meal },
-  #       { :meal_residents => :resident },
-  #       { :meal_residents => :community },
-  #       { :meals => :reconciliation },
-  #       { :meals => :community },
-  #       { :meals => :bills },
-  #       { :meals => :meal_residents },
-  #       { :meals => :guests },
-  #       { :meals => :residents },
-  #       { :guests => :meal },
-  #       { :guests => :resident },
-  #       { :community => :bills },
-  #       { :community => :meals },
-  #       { :community => :meal_residents },
-  #       { :community => :reconciliations },
-  #       { :community => :residents },
-  #       { :community => :guests },
-  #       { :community => :units }
-  #     )
-  #   end
-  # end
-
   # INDEX
   index do
     column :name
@@ -52,7 +22,6 @@ ActiveAdmin.register Resident do
       elsif resident.multiplier == 1
         'Child'
       else
-        # Note: this would only be used if we allowed custom multiplier input
         "Adult x #{number_with_precision((resident.multiplier.to_f / 2), precision: 1, strip_insignificant_zeros: true)}"
       end
     end
@@ -60,7 +29,7 @@ ActiveAdmin.register Resident do
     column :can_cook
     column :active
     column 'Balance', :balance do |resident|
-      number_to_currency(resident.balance.to_f / 100) unless resident.balance == 0
+      number_to_currency(resident.balance) unless resident.balance == 0
     end
 
     actions
@@ -83,7 +52,7 @@ ActiveAdmin.register Resident do
           link_to meal.date, admin_meal_path(meal)
         end
         column 'Unit Cost' do |meal|
-          number_to_currency(meal.unit_cost.to_f / 100) unless meal.unit_cost == 0
+          number_to_currency(meal.unit_cost) unless meal.unit_cost == 0
         end
       end
       table_for resident.bills.all do
@@ -91,10 +60,7 @@ ActiveAdmin.register Resident do
           link_to bill.meal.date, admin_bill_path(bill)
         end
         column 'Amount' do |bill|
-          number_to_currency(bill.amount_cents.to_f / 100) unless bill.amount == 0
-        end
-        column 'Reimburseable Amount' do |bill| 
-          number_to_currency(bill.reimburseable_amount.to_f / 100) unless bill.reimburseable_amount == 0
+          number_to_currency(bill.amount) unless bill.amount == 0
         end
       end
       table_for resident.guests.all do
@@ -107,7 +73,6 @@ ActiveAdmin.register Resident do
           elsif guest.multiplier == 1
             'Child'
           else
-            # Note: this would only be used if we allowed custom multiplier input
             "Adult x #{number_with_precision((guest.multiplier.to_f / 2), precision: 1, strip_insignificant_zeros: true)}"
           end
         end
@@ -115,7 +80,7 @@ ActiveAdmin.register Resident do
           link_to guest.meal.date, admin_meal_path(guest.meal)
         end
         column 'Unit Cost' do |guest|
-          number_to_currency(guest.meal.unit_cost.to_f / 100) unless guest.meal.unit_cost == 0
+          number_to_currency(guest.meal.unit_cost) unless guest.meal.unit_cost == 0
         end
       end
     end
