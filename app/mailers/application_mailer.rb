@@ -1,5 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'webmaster@comeals.com'
+  default from: ENV.fetch('MAILER_FROM_ADDRESS', 'webmaster@comeals.com')
   layout 'mailer'
 
   def root_url
@@ -7,6 +7,6 @@ class ApplicationMailer < ActionMailer::Base
   end
 
   def root_admin_url
-    @root_admin_url ||= Rail.env.production? ? "https://admin.comeals.com" : "http://admin.lvh.me:3000"
+    @root_admin_url ||= Rails.env.production? ? "https://admin.comeals.com" : "http://admin.lvh.me:3000"
   end
 end

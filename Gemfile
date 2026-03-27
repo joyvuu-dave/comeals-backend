@@ -27,7 +27,7 @@ gem 'active_model_serializers', '~> 0.10'
 gem 'pusher'
 gem 'audited'
 gem 'newrelic_rpm'
-gem 'sendgrid-ruby'
+gem 'letter_opener', group: :development
 gem 'icalendar'
 gem 'platform-api'
 gem 'skylight'

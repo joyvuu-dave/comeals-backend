@@ -16,6 +16,12 @@ This is a Rails 7 API backend. The frontend lives at `../comeals-ui` (React/MobX
 # Rails console: bundle exec rails c
 ```
 
+### Local URLs
+
+- **Rails API**: `http://localhost:3000`
+- **Admin console**: `http://admin.lvh.me:3000/login` (ActiveAdmin, uses subdomain routing via `lvh.me` which resolves to 127.0.0.1)
+- **Frontend (comeals-ui)**: `http://localhost:3001` (start with `PORT=3001 npm start` from `../comeals-ui`, requires Node 20 via fnm)
+
 ## Collaboration Style
 
 **Be an opinionated pair programmer.** This is a personal project with one developer. There is no committee to appease. Push back on design choices that are wrong. Propose alternatives when something smells off. Don't hedge with "you could do X or Y" — say which one is right and why.
