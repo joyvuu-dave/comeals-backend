@@ -43,6 +43,18 @@ class MealFormSerializer < ActiveModel::Serializer
   has_many :residents
   has_many :guests
 
+  # Override residents to include inactive residents who attended this meal.
+  # Without this, deactivated residents (moved/deceased) vanish from old meals
+  # they actually attended. The union: all active community residents (for the
+  # signup dropdown) + any inactive residents with a meal_resident record.
+  def residents
+    community_residents = Resident.where(community_id: object.community_id)
+    community_residents
+      .where(active: true)
+      .or(community_residents.where(id: object.meal_residents.select(:resident_id)))
+      .includes(:unit)
+  end
+
   class BillSerializer < ActiveModel::Serializer
     attributes :resident_id,
                :amount,
