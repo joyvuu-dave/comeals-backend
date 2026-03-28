@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.3.11"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 7.0"
+gem "rails", "~> 7.1"
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 # Use postgresql as the database for Active Record
@@ -21,16 +21,14 @@ gem 'mutex_m'
 gem 'base64'
 gem 'drb'
 
-# Pin to avoid Logger removal issue in concurrent-ruby 1.3.5+
-# (safe to unpin after upgrading to Rails 7.1+)
-gem 'concurrent-ruby', '~> 1.2'
+gem 'concurrent-ruby'
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 5.0'
 
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'activeadmin', '2.14.0'
+gem 'activeadmin', '~> 3.0'
 gem 'devise'
 gem 'friendly_id'
 gem 'scrypt'
