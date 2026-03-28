@@ -17,9 +17,9 @@ ActiveAdmin.register_page 'Dashboard' do
       end
 
       column do
-        panel "Residents - #{current_admin_user.residents.count(true)}" do
+        panel "Active Residents - #{current_admin_user.residents.active.count}" do
           ul do
-            current_admin_user.residents.order('name').map do |resident|
+            current_admin_user.residents.active.order('name').map do |resident|
               li link_to(resident.name, admin_resident_path(resident))
             end
           end
@@ -27,9 +27,17 @@ ActiveAdmin.register_page 'Dashboard' do
       end
 
       column do
-        panel "Unreconciled Meals - #{current_admin_user.meals.unreconciled.count(true)}" do
+        panel "Upcoming Meals - #{current_admin_user.meals.unreconciled.open.where('date >= ?', Date.today).count}" do
           ul do
-            current_admin_user.meals.unreconciled.order('date DESC').map do |meal|
+            current_admin_user.meals.unreconciled.open.where('date >= ?', Date.today).order('date DESC').map do |meal|
+              li link_to(meal.date, admin_meal_path(meal))
+            end
+          end
+        end
+
+        panel "Closed Meals People Attended (unreconciled) - #{current_admin_user.meals.unreconciled.closed_with_bills.count}" do
+          ul do
+            current_admin_user.meals.unreconciled.closed_with_bills.order('date DESC').map do |meal|
               li link_to(meal.date, admin_meal_path(meal))
             end
           end

@@ -504,6 +504,51 @@ RSpec.describe Meal, type: :model do
     end
   end
 
+  describe '.open' do
+    it 'returns meals where closed is false' do
+      open_meal = FactoryBot.create(:meal, community: community)
+      closed_meal = FactoryBot.create(:meal, community: community)
+      closed_meal.update!(closed: true, max: 0)
+
+      results = community.meals.open
+      expect(results).to include(open_meal)
+      expect(results).not_to include(closed_meal)
+    end
+  end
+
+  describe '.closed_with_bills' do
+    it 'returns closed meals that have at least one bill' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      closed_with_bill = FactoryBot.create(:meal, community: community)
+      closed_with_bill.update!(closed: true, max: 0)
+      FactoryBot.create(:bill, meal: closed_with_bill, resident: resident, community: community, amount: BigDecimal("30"))
+
+      closed_no_bills = FactoryBot.create(:meal, community: community)
+      closed_no_bills.update!(closed: true, max: 0)
+
+      open_meal = FactoryBot.create(:meal, community: community)
+
+      results = community.meals.closed_with_bills
+      expect(results).to include(closed_with_bill)
+      expect(results).not_to include(closed_no_bills)
+      expect(results).not_to include(open_meal)
+    end
+
+    it 'does not duplicate meals with multiple bills' do
+      resident_a = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      resident_b = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      meal.update!(closed: true, max: 0)
+      FactoryBot.create(:bill, meal: meal, resident: resident_a, community: community, amount: BigDecimal("20"))
+      FactoryBot.create(:bill, meal: meal, resident: resident_b, community: community, amount: BigDecimal("15"))
+
+      results = community.meals.closed_with_bills
+      expect(results.count).to eq(1)
+    end
+  end
+
   describe '#another_meal_in_this_rotation_has_less_than_two_cooks?' do
     let(:rotation) { FactoryBot.create(:rotation, community: community, no_email: true) }
     let(:cook1) { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2) }

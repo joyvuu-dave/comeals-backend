@@ -36,6 +36,8 @@ class Meal < ApplicationRecord
   attr_accessor :socket_id
 
   scope :unreconciled, -> { where(reconciliation_id: nil) }
+  scope :open, -> { where(closed: false) }
+  scope :closed_with_bills, -> { where(closed: true).joins(:bills).distinct }
 
   belongs_to :community
   belongs_to :reconciliation, optional: true
