@@ -1,0 +1,143 @@
+require 'rails_helper'
+
+RSpec.describe "Events API", type: :request do
+  let(:community) { FactoryBot.create(:community) }
+  let(:unit) { FactoryBot.create(:unit, community: community) }
+  let(:resident) { FactoryBot.create(:resident, community: community, unit: unit) }
+  let(:token) { resident.key.token }
+
+  before do
+    allow(Pusher).to receive(:trigger)
+  end
+
+  describe "GET /api/v1/events" do
+    it "returns events for the community" do
+      FactoryBot.create(:event, community: community)
+
+      get "/api/v1/events", params: { community_id: community.id, token: token }
+
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body).length).to eq(1)
+    end
+
+    it "filters by date range" do
+      old = FactoryBot.create(:event, community: community, start_date: 1.year.ago, end_date: 1.year.ago + 1.hour)
+      recent = FactoryBot.create(:event, community: community, start_date: 1.day.ago, end_date: 1.day.ago + 1.hour)
+
+      get "/api/v1/events", params: {
+        community_id: community.id, token: token,
+        start: 1.week.ago.to_date.to_s, end: Date.today.to_s
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body).length).to eq(1)
+    end
+
+    it "returns 401 without a token" do
+      get "/api/v1/events", params: { community_id: community.id }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a resident from another community" do
+      other_community = FactoryBot.create(:community)
+      other_unit = FactoryBot.create(:unit, community: other_community)
+      other_resident = FactoryBot.create(:resident, community: other_community, unit: other_unit)
+
+      get "/api/v1/events", params: { community_id: community.id, token: other_resident.key.token }
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe "GET /api/v1/events/:id" do
+    it "returns the event" do
+      event = FactoryBot.create(:event, community: community)
+
+      get "/api/v1/events/#{event.id}", params: { token: token }
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns 404 for nonexistent event" do
+      get "/api/v1/events/999999", params: { token: token }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "returns 403 for event in another community" do
+      other_event = FactoryBot.create(:event, community: FactoryBot.create(:community))
+
+      get "/api/v1/events/#{other_event.id}", params: { token: token }
+      expect(response).to have_http_status(:forbidden)
+    end
+  end
+
+  describe "POST /api/v1/events" do
+    it "creates a timed event" do
+      post "/api/v1/events", params: {
+        community_id: community.id, token: token,
+        title: "Movie Night", description: "Bring popcorn",
+        all_day: false,
+        start_year: 2026, start_month: 4, start_day: 15,
+        start_hours: 19, start_minutes: 0,
+        end_hours: 21, end_minutes: 30
+      }
+
+      expect(response).to have_http_status(:ok)
+      event = Event.last
+      expect(event.title).to eq("Movie Night")
+      expect(event.allday).to eq(false)
+      expect(event.end_date).to be_present
+    end
+
+    it "creates an all-day event" do
+      post "/api/v1/events", params: {
+        community_id: community.id, token: token,
+        title: "Work Day", all_day: true,
+        start_year: 2026, start_month: 4, start_day: 20
+      }
+
+      expect(response).to have_http_status(:ok)
+      event = Event.last
+      expect(event.allday).to eq(true)
+      expect(event.end_date).to be_nil
+    end
+
+    it "returns 400 without a title" do
+      post "/api/v1/events", params: {
+        community_id: community.id, token: token,
+        title: "", all_day: true,
+        start_year: 2026, start_month: 5, start_day: 1
+      }
+
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
+
+  describe "PATCH /api/v1/events/:id/update" do
+    let!(:event) { FactoryBot.create(:event, community: community) }
+
+    it "updates the event" do
+      patch "/api/v1/events/#{event.id}/update", params: {
+        token: token, title: "Updated Title", description: "New desc",
+        all_day: false,
+        start_year: 2026, start_month: 5, start_day: 1,
+        start_hours: 18, start_minutes: 0,
+        end_hours: 20, end_minutes: 0
+      }
+
+      expect(response).to have_http_status(:ok)
+      expect(event.reload.title).to eq("Updated Title")
+    end
+  end
+
+  describe "DELETE /api/v1/events/:id/delete" do
+    let!(:event) { FactoryBot.create(:event, community: community) }
+
+    it "deletes the event" do
+      expect {
+        delete "/api/v1/events/#{event.id}/delete", params: { token: token }
+      }.to change(Event, :count).by(-1)
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+end
