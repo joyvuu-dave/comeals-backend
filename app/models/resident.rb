@@ -40,7 +40,7 @@ class Resident < ApplicationRecord
   belongs_to :community
   belongs_to :unit
 
-  has_one :key, as: :identity
+  has_one :key, as: :identity, autosave: true
   has_one :resident_balance, dependent: :destroy
   has_many :bills, dependent: :destroy
   has_many :meal_residents, dependent: :destroy
