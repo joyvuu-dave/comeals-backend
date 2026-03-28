@@ -35,6 +35,10 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Exclude benchmark specs from normal runs. Run with:
+  #   BENCHMARK=1 bundle exec rspec spec/benchmarks/
+  config.filter_run_excluding benchmark: true unless ENV["BENCHMARK"]
+
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.
