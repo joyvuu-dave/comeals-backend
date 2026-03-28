@@ -17,7 +17,7 @@ namespace :residents do
 
       community = rotation.community
 
-      eligible_cooks_ids = community.residents.where(can_cook: true, active: true).where("multiplier >= 2").ids
+      eligible_cooks_ids = community.residents.where(can_cook: true, active: true).where("multiplier >= 2").where.not(email: nil).ids
       eligible_cooks = Resident.joins(:unit).where(id: eligible_cooks_ids).order("units.name")
 
       # Meals with less than 2 cooks

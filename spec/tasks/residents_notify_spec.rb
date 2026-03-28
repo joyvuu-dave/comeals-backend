@@ -119,6 +119,24 @@ RSpec.describe 'residents:notify' do
     expect(rotation.reload.residents_notified).to be false
   end
 
+  it 'skips eligible cooks who have no email address' do
+    rotation = create_rotation_with_meals(community: community,
+                                          start_date: Date.today + 3.days)
+
+    with_email = FactoryBot.create(:resident, community: community, unit: unit,
+                                   can_cook: true, active: true, multiplier: 2)
+    without_email = FactoryBot.create(:resident, community: community, unit: unit,
+                                      can_cook: true, active: true, multiplier: 2)
+    without_email.update_column(:email, nil)
+
+    Rake::Task['residents:notify'].invoke
+
+    recipients = ActionMailer::Base.deliveries.flat_map(&:to)
+    expect(recipients).to include(with_email.email)
+    expect(recipients).not_to include(nil)
+    expect(rotation.reload.residents_notified).to be true
+  end
+
   it 'skips rotations already marked as notified' do
     rotation = create_rotation_with_meals(community: community,
                                           start_date: Date.today + 3.days,
