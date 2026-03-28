@@ -21,6 +21,6 @@
 FactoryBot.define do
   factory :unit do
     community
-    name { ("A".."Z").to_a.sample }
+    sequence(:name) { |n| "Unit #{n}" }
   end
 end
