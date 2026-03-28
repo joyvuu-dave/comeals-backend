@@ -11,7 +11,6 @@ RSpec.describe "PATCH /api/v1/meals/:meal_id/bills", type: :request do
 
   before do
     allow(Pusher).to receive(:trigger)
-    host! "example.com"
   end
 
   def update_bills(meal_id:, bills:, token: self.token)
