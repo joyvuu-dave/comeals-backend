@@ -1,0 +1,330 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ==============================================================================
+# Comeals Deploy Script
+#
+# Deploys both the backend (comeals-backend) and frontend (comeals-ui) to Heroku.
+# Runs pre-flight checks, enables maintenance mode, pushes code, runs migrations
+# and billing recalculation, then verifies both apps are healthy.
+# ==============================================================================
+
+BACKEND_PATH="/Users/tejo/workspace/comeals-backend"
+FRONTEND_PATH="/Users/tejo/workspace/comeals-ui"
+BACKEND_APP="comeals-backend"
+FRONTEND_APP="comeals-ui"
+FRONTEND_URL="https://comeals.com"
+BACKEND_URL="https://admin.comeals.com"
+
+MAINTENANCE_ENABLED=false
+DEPLOY_TIMESTAMP=""
+
+# --- Output helpers -----------------------------------------------------------
+
+red()    { printf "\033[0;31m%s\033[0m\n" "$*"; }
+green()  { printf "\033[0;32m%s\033[0m\n" "$*"; }
+yellow() { printf "\033[0;33m%s\033[0m\n" "$*"; }
+bold()   { printf "\033[1m%s\033[0m\n" "$*"; }
+
+step() { printf "\n"; bold "==> $*"; }
+info() { echo "    $*"; }
+ok()   { green "    ✓ $*"; }
+warn() { yellow "    ⚠ $*"; }
+fail() { red "    ✗ $*"; }
+
+# --- Cleanup trap -------------------------------------------------------------
+
+cleanup() {
+  local exit_code=$?
+  if [ $exit_code -ne 0 ] && [ "$MAINTENANCE_ENABLED" = true ]; then
+    echo
+    red "============================================"
+    red "  DEPLOY FAILED — MAINTENANCE MODE IS STILL ON"
+    red "============================================"
+    echo
+    yellow "Both apps may still be in maintenance mode."
+    yellow "Investigate the failure, then manually run:"
+    echo
+    echo "  heroku maintenance:off -a $BACKEND_APP"
+    echo "  heroku maintenance:off -a $FRONTEND_APP"
+    echo
+  fi
+}
+trap cleanup EXIT
+
+# --- Pre-flight checks --------------------------------------------------------
+
+preflight_environment() {
+  step "Pre-flight: environment"
+
+  # heroku CLI installed?
+  if ! command -v heroku &>/dev/null; then
+    fail "heroku CLI not found in PATH"
+    exit 1
+  fi
+  ok "heroku CLI found"
+
+  # heroku authenticated?
+  if ! heroku auth:whoami &>/dev/null; then
+    fail "Not logged into Heroku (run: heroku login)"
+    exit 1
+  fi
+  local user
+  user=$(heroku auth:whoami 2>/dev/null)
+  ok "Logged into Heroku as $user"
+
+  # heroku git remotes exist?
+  for pair in "$BACKEND_PATH:$BACKEND_APP" "$FRONTEND_PATH:$FRONTEND_APP"; do
+    local path="${pair%%:*}"
+    local app="${pair##*:}"
+    local remote_url
+    remote_url=$(git -C "$path" remote get-url heroku 2>/dev/null || true)
+    if [ -z "$remote_url" ]; then
+      fail "No 'heroku' git remote in $path"
+      info "Run: heroku git:remote -a $app  (from $path)"
+      exit 1
+    fi
+    ok "heroku remote in $path -> $remote_url"
+  done
+}
+
+preflight_check() {
+  local name="$1"
+  local path="$2"
+
+  step "Pre-flight: $name ($path)"
+  cd "$path"
+
+  # (a) On master branch?
+  local branch
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  if [ "$branch" != "master" ]; then
+    fail "On branch '$branch', expected 'master'"
+    exit 1
+  fi
+  ok "On master branch"
+
+  # (b) No uncommitted changes?
+  if [ -n "$(git status --porcelain)" ]; then
+    fail "Uncommitted changes detected:"
+    git status --short
+    exit 1
+  fi
+  ok "Working tree clean"
+
+  # (c + d) Fetch from origin, then check sync.
+  # Deliberately NOT --all: fetching from heroku is unnecessary and would
+  # fail the deploy if Heroku's git endpoint is temporarily unreachable.
+  info "Fetching from origin..."
+  git fetch origin -p -P --quiet
+
+  local ahead behind
+  ahead=$(git rev-list origin/master..HEAD --count)
+  behind=$(git rev-list HEAD..origin/master --count)
+
+  if [ "$ahead" -gt 0 ]; then
+    fail "$ahead unpushed commit(s) on master"
+    exit 1
+  fi
+  ok "No unpushed commits"
+
+  if [ "$behind" -gt 0 ]; then
+    info "Local is $behind commit(s) behind origin/master, pulling..."
+    git pull --ff-only --quiet
+    ok "Pulled $behind commit(s)"
+  else
+    ok "Up to date with origin/master"
+  fi
+}
+
+# --- Deploy functions ---------------------------------------------------------
+
+enable_maintenance() {
+  step "Enabling maintenance mode"
+  heroku maintenance:on -a "$BACKEND_APP"
+  ok "$BACKEND_APP maintenance ON"
+  heroku maintenance:on -a "$FRONTEND_APP"
+  ok "$FRONTEND_APP maintenance ON"
+  MAINTENANCE_ENABLED=true
+}
+
+deploy_backend() {
+  step "Deploying backend ($BACKEND_APP)"
+  cd "$BACKEND_PATH"
+
+  info "Scaling web dynos to 0..."
+  heroku ps:scale web=0 -a "$BACKEND_APP"
+  ok "Web dynos scaled to 0"
+
+  info "Pushing master:main to Heroku..."
+  git push heroku master:main --force
+  ok "Code pushed"
+
+  # The release phase (Procfile) runs db:migrate automatically.
+  # Run it explicitly as a safety net.
+  info "Running migrations (belt-and-suspenders — release phase also runs these)..."
+  heroku run bin/rake db:migrate -a "$BACKEND_APP"
+  ok "Migrations complete"
+
+  info "Running billing:recalculate..."
+  heroku run bin/rake billing:recalculate -a "$BACKEND_APP"
+  ok "Billing recalculated"
+
+  info "Scaling web dynos to 1..."
+  heroku ps:scale web=1 -a "$BACKEND_APP"
+  ok "Web dynos scaled to 1"
+}
+
+deploy_frontend() {
+  step "Deploying frontend ($FRONTEND_APP)"
+  cd "$FRONTEND_PATH"
+
+  info "Scaling web dynos to 0..."
+  heroku ps:scale web=0 -a "$FRONTEND_APP"
+  ok "Web dynos scaled to 0"
+
+  info "Pushing master:main to Heroku..."
+  git push heroku master:main --force
+  ok "Code pushed"
+
+  info "Scaling web dynos to 1..."
+  heroku ps:scale web=1 -a "$FRONTEND_APP"
+  ok "Web dynos scaled to 1"
+}
+
+disable_maintenance() {
+  step "Disabling maintenance mode"
+  heroku maintenance:off -a "$BACKEND_APP"
+  ok "$BACKEND_APP maintenance OFF"
+  heroku maintenance:off -a "$FRONTEND_APP"
+  ok "$FRONTEND_APP maintenance OFF"
+  MAINTENANCE_ENABLED=false
+}
+
+# --- Post-deploy checks ------------------------------------------------------
+
+check_logs() {
+  local app="$1"
+  step "Checking post-deploy logs for $app"
+
+  # Fetch recent logs. heroku logs doesn't support --since, so we fetch
+  # a generous window and filter to lines after the deploy timestamp.
+  local logs
+  logs=$(heroku logs -n 200 -s app -a "$app" 2>&1 || true)
+
+  # Filter to lines timestamped after the deploy started.
+  # Heroku log lines start with: 2026-03-28T10:00:00.000000+00:00
+  local app_logs
+  app_logs=$(echo "$logs" | awk -v ts="$DEPLOY_TIMESTAMP" '$1 >= ts' || true)
+
+  if [ -z "$app_logs" ]; then
+    ok "No application log output since deploy"
+    return 0
+  fi
+
+  local issues=""
+
+  # Tight patterns: look for log-level prefixes and stack trace indicators,
+  # not bare words like "error" which match normal log messages.
+  local errors
+  errors=$(echo "$app_logs" | grep -E "(ERROR|FATAL|RuntimeError|NoMethodError|NameError|TypeError|ArgumentError|PG::|Errno::)" || true)
+  if [ -n "$errors" ]; then
+    issues+="$errors"$'\n'
+  fi
+
+  local warnings
+  warnings=$(echo "$app_logs" | grep -i -E "(WARN|DEPRECAT)" || true)
+  if [ -n "$warnings" ]; then
+    issues+="$warnings"$'\n'
+  fi
+
+  if [ -n "$issues" ]; then
+    warn "Issues found in $app logs:"
+    echo "$issues" | head -30 | while IFS= read -r line; do
+      [ -n "$line" ] && echo "      $line"
+    done
+    local total
+    total=$(echo "$issues" | grep -c . || true)
+    if [ "$total" -gt 30 ]; then
+      warn "...and $((total - 30)) more (run: heroku logs -n 500 -a $app)"
+    fi
+  else
+    ok "No errors, warnings, or deprecations found"
+  fi
+}
+
+check_health() {
+  local name="$1"
+  local url="$2"
+
+  step "Health check: $name"
+  info "Curling $url ..."
+
+  local attempts=0
+  local max_attempts=12
+  local status
+
+  # Heroku dynos can take a moment to boot. Retry for up to 60 seconds.
+  while [ $attempts -lt $max_attempts ]; do
+    status=$(curl -sL -o /dev/null -w "%{http_code}" "$url" 2>/dev/null || echo "000")
+
+    if [ "$status" = "200" ] || [ "$status" = "302" ]; then
+      ok "$url returned HTTP $status"
+      return 0
+    fi
+
+    attempts=$((attempts + 1))
+    if [ $attempts -lt $max_attempts ]; then
+      info "Got HTTP $status, retrying in 5s... ($attempts/$max_attempts)"
+      sleep 5
+    fi
+  done
+
+  fail "$url returned HTTP $status after $max_attempts attempts"
+  exit 1
+}
+
+# --- Main ---------------------------------------------------------------------
+
+main() {
+  bold "============================================"
+  bold "  Comeals Deploy"
+  bold "============================================"
+
+  preflight_environment
+  preflight_check "Backend"  "$BACKEND_PATH"
+  preflight_check "Frontend" "$FRONTEND_PATH"
+
+  echo
+  bold "Ready to deploy both apps to production."
+  printf "Continue? (y/n) "
+  read -r confirm
+  if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
+    info "Aborted."
+    exit 0
+  fi
+
+  DEPLOY_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S")
+
+  enable_maintenance
+  deploy_backend
+  deploy_frontend
+  disable_maintenance
+
+  # Give dynos a moment to boot before checking
+  info "Waiting 10s for dynos to boot..."
+  sleep 10
+
+  check_logs "$BACKEND_APP"
+  check_logs "$FRONTEND_APP"
+
+  check_health "Frontend" "$FRONTEND_URL"
+  check_health "Backend"  "$BACKEND_URL"
+
+  echo
+  green "============================================"
+  green "  Deploy complete!"
+  green "============================================"
+}
+
+main "$@"
