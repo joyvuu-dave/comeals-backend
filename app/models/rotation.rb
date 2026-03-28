@@ -77,7 +77,11 @@ class Rotation < ApplicationRecord
 
     residents = community.residents.where(active: true).where.not(email: nil)
     residents.each do |resident|
-      ResidentMailer.new_rotation_email(resident, self, community).deliver_now
+      begin
+        ResidentMailer.new_rotation_email(resident, self, community).deliver_now
+      rescue *MAIL_DELIVERY_ERRORS => e
+        Rails.logger.error("new_rotation_email failed for #{resident.email}: #{e.class} - #{e.message}")
+      end
     end
   end
 

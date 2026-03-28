@@ -29,7 +29,11 @@ namespace :reconciliations do
       Rake::Task['billing:recalculate'].reenable
 
       reconciliation.unique_cooks.each do |cook|
-        ReconciliationMailer.reconciliation_notify_email(cook, reconciliation).deliver_now
+        begin
+          ReconciliationMailer.reconciliation_notify_email(cook, reconciliation).deliver_now
+        rescue *MAIL_DELIVERY_ERRORS => e
+          Rails.logger.error("reconciliation_notify_email failed for #{cook.email}: #{e.class} - #{e.message}")
+        end
       end
     end
 

@@ -54,8 +54,13 @@ module Api
 
         resident.reset_password_token = SecureRandom.urlsafe_base64
         if resident.save
-          ResidentMailer.password_reset_email(resident).deliver_now
-          render json: { message: 'Check your email.' } and return
+          begin
+            ResidentMailer.password_reset_email(resident).deliver_now
+            render json: { message: 'Check your email.' } and return
+          rescue *MAIL_DELIVERY_ERRORS => e
+            Rails.logger.error("Password reset email failed for #{resident.email}: #{e.class} - #{e.message}")
+            render json: { message: 'Password reset saved but email could not be sent. Please contact an administrator.' }, status: :service_unavailable and return
+          end
         else
           render json: { message: 'Error. Please try again.' }, status: :bad_request and return
         end

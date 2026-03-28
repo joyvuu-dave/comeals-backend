@@ -90,7 +90,7 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  # ActiveAdmin
+  # Devise (AdminUser password reset emails need admin subdomain host)
   config.action_mailer.default_url_options = { host: 'admin.comeals.com' }
 
   # Gmail
@@ -103,7 +103,7 @@ Rails.application.configure do
     :password => ENV['GMAIL_APP_PASSWORD'],
     :authentication => 'plain',
     :enable_starttls_auto => true,
-    open_timeout:         5,
-    read_timeout:         5
+    open_timeout:         30,
+    read_timeout:         30
   }
 end

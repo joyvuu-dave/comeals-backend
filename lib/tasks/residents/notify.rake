@@ -28,13 +28,26 @@ namespace :residents do
                             .having("COUNT(bills.id) < ?", 2)
                             .pluck(:date)
 
+      failures = 0
+      sent = 0
+
       eligible_cooks.each do |resident|
         if !signed_up_residents_ids.include?(resident.id)
-          ResidentMailer.rotation_signup_email(resident, rotation, open_meal_dates, community).deliver_now
+          begin
+            ResidentMailer.rotation_signup_email(resident, rotation, open_meal_dates, community).deliver_now
+            sent += 1
+          rescue *MAIL_DELIVERY_ERRORS => e
+            failures += 1
+            Rails.logger.error("rotation_signup_email failed for #{resident.email}: #{e.class} - #{e.message}")
+          end
         end
       end
 
-      rotation.update(residents_notified: true)
+      if failures > 0
+        Rails.logger.error("Rotation #{rotation.id}: #{failures} email(s) failed, #{sent} sent — not marking as notified")
+      else
+        rotation.update(residents_notified: true)
+      end
     end
 
     total_time = Time.current - start_time

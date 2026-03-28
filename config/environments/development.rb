@@ -64,7 +64,7 @@ Rails.application.configure do
 
   config.hosts << "admin.lvh.me"
 
-  # ActiveAdmin
+  # Devise (AdminUser password reset emails need admin subdomain host)
   config.action_mailer.default_url_options = { host: 'admin.lvh.me:3000' }
 
   # Email: letter_opener opens emails in the browser
