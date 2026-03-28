@@ -132,7 +132,8 @@ GEM
     concurrent-ruby (1.2.3)
     crass (1.0.6)
     csv (3.3.5)
-    dalli (3.2.8)
+    dalli (5.0.2)
+      logger
     date (3.3.4)
     debug_inspector (1.2.0)
     devise (4.9.4)
@@ -247,7 +248,8 @@ GEM
       timeout
     net-smtp (0.4.0.1)
       net-protocol
-    newrelic_rpm (9.7.1)
+    newrelic_rpm (10.2.0)
+      logger
     nio4r (2.7.5)
     nokogiri (1.16.8-arm64-darwin)
       racc (~> 1.4)
