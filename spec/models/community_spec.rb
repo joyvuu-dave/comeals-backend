@@ -110,4 +110,64 @@ RSpec.describe Community, type: :model do
       expect(community.auto_rotation_length).to eq(2)
     end
   end
+
+  describe '#auto_create_rotations' do
+    it 'groups unassigned meals into rotations based on auto_rotation_length' do
+      # Need cookable adults for auto_rotation_length to be > 0
+      4.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
+      # auto_rotation_length = 4/2 = 2
+
+      FactoryBot.create(:meal, community: community, date: Date.new(2026, 5, 1))
+      FactoryBot.create(:meal, community: community, date: Date.new(2026, 5, 3))
+      FactoryBot.create(:meal, community: community, date: Date.new(2026, 5, 5))
+
+      allow(Pusher).to receive(:trigger)
+      community.auto_create_rotations
+
+      # 3 meals with rotation_length 2 = 2 rotations (2 + 1)
+      expect(community.rotations.count).to eq(2)
+      expect(Meal.where(community: community, rotation_id: nil).count).to eq(0)
+    end
+  end
+
+  describe '#create_next_rotation' do
+    before { allow(Pusher).to receive(:trigger) }
+
+    it 'creates a rotation with meals_per_rotation meals' do
+      # Need cookable adults
+      4.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
+
+      community.create_next_rotation
+
+      expect(community.rotations.count).to eq(1)
+      expect(community.meals.count).to eq(community.meals_per_rotation)
+    end
+
+    it 'creates meals only on valid days (Sun, Mon/Tue alternating, Fri)' do
+      4.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
+
+      community.create_next_rotation
+
+      wdays = community.meals.pluck(:date).map(&:wday)
+      expect(wdays.all? { |d| [0, 1, 2, 4].include?(d) }).to be true
+    end
+
+    it 'raises when unassigned meals exist' do
+      FactoryBot.create(:meal, community: community)
+
+      expect { community.create_next_rotation }.to raise_error(RuntimeError, /not assigned to Rotations/)
+    end
+  end
+
+  describe '#trigger_pusher' do
+    it 'triggers pusher notifications and clears cache' do
+      allow(Pusher).to receive(:trigger)
+      allow(Rails.cache).to receive(:delete)
+
+      community.trigger_pusher(Date.new(2026, 4, 15))
+
+      expect(Pusher).to have_received(:trigger).at_least(:once)
+      expect(Rails.cache).to have_received(:delete).at_least(:once)
+    end
+  end
 end

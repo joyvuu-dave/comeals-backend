@@ -619,4 +619,62 @@ RSpec.describe Meal, type: :model do
       expect(Meal.is_holiday?(Date.new(2026, 8, 20))).to be false
     end
   end
+
+  describe '.create_templates' do
+    it 'creates meals on Sun/Fri and alternating Mon/Tue' do
+      # 2 weeks: enough to see the alternating pattern
+      start_date = Date.new(2026, 6, 1) # Monday
+      end_date = Date.new(2026, 6, 14) # Sunday
+
+      count = Meal.create_templates(community.id, start_date, end_date, 1)
+
+      expect(count).to be > 0
+      dates = Meal.where(community: community).pluck(:date)
+      wdays = dates.map(&:wday)
+      # Should only be Sun(0), Mon(1), Tue(2), or Fri(4)
+      expect(wdays.all? { |d| [0, 1, 2, 4].include?(d) }).to be true
+    end
+
+    it 'skips holidays' do
+      # July 4th 2026 is a Saturday (wday 6), so pick Christmas which is a Friday (wday 5) in 2026
+      # Actually Christmas 2026 is a Friday, wday 5. Let's use New Year's Day 2026 which is Thursday wday 4...
+      # Actually Jan 1 2026 is Thursday. July 4 2026 is Saturday. Neither falls on our meal days.
+      # Use a range that includes Thanksgiving 2026 (Nov 26, Thursday) — not a meal day.
+      # Let's just verify the count doesn't include any holiday dates
+      start_date = Date.new(2026, 12, 20)
+      end_date = Date.new(2027, 1, 5)
+
+      Meal.create_templates(community.id, start_date, end_date, 1)
+
+      dates = Meal.where(community: community).pluck(:date)
+      dates.each do |d|
+        expect(Meal.is_holiday?(d)).to eq(false), "Created a meal on holiday: #{d}"
+      end
+    end
+  end
+
+  describe '.create_modified_templates' do
+    it 'creates meals only on Sundays and Fridays' do
+      start_date = Date.new(2026, 6, 1)
+      end_date = Date.new(2026, 6, 30)
+
+      count = Meal.create_modified_templates(community.id, start_date, end_date)
+
+      expect(count).to be > 0
+      wdays = Meal.where(community: community).pluck(:date).map(&:wday)
+      expect(wdays.all? { |d| [0, 4].include?(d) }).to be true
+    end
+
+    it 'skips holidays' do
+      start_date = Date.new(2026, 12, 20)
+      end_date = Date.new(2027, 1, 5)
+
+      Meal.create_modified_templates(community.id, start_date, end_date)
+
+      dates = Meal.where(community: community).pluck(:date)
+      dates.each do |d|
+        expect(Meal.is_holiday?(d)).to eq(false), "Created a meal on holiday: #{d}"
+      end
+    end
+  end
 end

@@ -1,0 +1,111 @@
+require 'rails_helper'
+
+RSpec.describe ApplicationHelper, type: :helper do
+  let(:community) { FactoryBot.create(:community) }
+  let(:unit) { FactoryBot.create(:unit, community: community) }
+
+  describe '#resident_name_helper' do
+    it 'returns the full name when it has no last name' do
+      FactoryBot.create(:resident, community: community, unit: unit, name: "Cher")
+      expect(helper.resident_name_helper("Cher")).to eq("Cher")
+    end
+
+    it 'returns just the first name when it is unique' do
+      FactoryBot.create(:resident, community: community, unit: unit, name: "Alice Smith")
+      expect(helper.resident_name_helper("Alice Smith")).to eq("Alice")
+    end
+
+    it 'returns first name + last initial when first name is not unique' do
+      FactoryBot.create(:resident, community: community, unit: unit, name: "Alice Smith")
+      FactoryBot.create(:resident, community: community, unit: unit, name: "Alice Jones")
+      expect(helper.resident_name_helper("Alice Smith")).to eq("Alice S")
+    end
+
+    it 'returns empty string for blank name' do
+      expect(helper.resident_name_helper("")).to eq("")
+      expect(helper.resident_name_helper(nil)).to eq("")
+    end
+  end
+
+  describe '#category_helper' do
+    it 'returns "Child" for multiplier 1' do
+      expect(helper.category_helper(1)).to eq("Child")
+    end
+
+    it 'returns "Adult" for multiplier 2' do
+      expect(helper.category_helper(2)).to eq("Adult")
+    end
+
+    it 'returns fractional adult for other multipliers' do
+      expect(helper.category_helper(3)).to eq("1.5 Adult")
+    end
+  end
+
+  describe '#parse_audit' do
+    let(:resident) { FactoryBot.create(:resident, community: community, unit: unit) }
+    let(:meal) { FactoryBot.create(:meal, community: community) }
+
+    it 'parses meal create audit' do
+      audit = meal.audits.first
+      expect(helper.parse_audit(audit)).to eq("Meal record created")
+    end
+
+    it 'parses meal closed audit' do
+      meal.update!(closed: true)
+      audit = meal.audits.where(action: "update").last
+      expect(helper.parse_audit(audit)).to eq("Meal closed")
+    end
+
+    it 'parses meal opened audit' do
+      meal.update!(closed: true)
+      meal.update!(closed: false)
+      audit = meal.audits.where(action: "update").last
+      expect(helper.parse_audit(audit)).to eq("Meal opened")
+    end
+
+    it 'parses description update audit' do
+      meal.update!(description: "Pasta night")
+      audit = meal.audits.where(action: "update").last
+      expect(helper.parse_audit(audit)).to eq("Menu description updated")
+    end
+
+    it 'parses bill create audit' do
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("30"))
+      audit = bill.audits.first
+      result = helper.parse_audit(audit)
+      expect(result).to include("added as cook")
+    end
+
+    it 'parses bill amount change audit' do
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("30"))
+      bill.update!(amount: BigDecimal("50"))
+      audit = bill.audits.where(action: "update").last
+      result = helper.parse_audit(audit)
+      expect(result).to include("changed from")
+      expect(result).to include("$30.00")
+      expect(result).to include("$50.00")
+    end
+
+    it 'parses meal_resident create audit' do
+      mr = FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: community)
+      audit = mr.audits.first
+      result = helper.parse_audit(audit)
+      expect(result).to include("added")
+    end
+
+    it 'parses guest create audit' do
+      guest = FactoryBot.create(:guest, meal: meal, resident: resident, vegetarian: false)
+      audit = guest.audits.first
+      result = helper.parse_audit(audit)
+      expect(result).to include("Omnivore guest")
+      expect(result).to include("added")
+    end
+
+    it 'parses vegetarian guest create audit' do
+      guest = FactoryBot.create(:guest, meal: meal, resident: resident, vegetarian: true)
+      audit = guest.audits.first
+      result = helper.parse_audit(audit)
+      expect(result).to include("Veg guest")
+    end
+  end
+end
