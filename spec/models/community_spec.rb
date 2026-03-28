@@ -21,6 +21,16 @@ RSpec.describe Community, type: :model do
   let(:community) { FactoryBot.create(:community, cap: BigDecimal("4.50")) }
   let(:unit) { FactoryBot.create(:unit, community: community) }
 
+  describe 'validations' do
+    it 'enforces unique community names (case-insensitive)' do
+      FactoryBot.create(:community, name: "Swan's Way")
+      duplicate = FactoryBot.build(:community, name: "swan's way")
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:name]).to be_present
+    end
+  end
+
   describe '#unreconciled_ave_cost' do
     it 'returns average cost per adult for unreconciled meals' do
       cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)

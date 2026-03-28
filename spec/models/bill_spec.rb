@@ -30,6 +30,56 @@ RSpec.describe Bill, type: :model do
   let(:community) { FactoryBot.create(:community) }
   let(:unit) { FactoryBot.create(:unit, community: community) }
 
+  describe 'validations' do
+    it 'rejects negative amounts' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      bill = FactoryBot.build(:bill, meal: meal, resident: resident, community: community, amount: BigDecimal("-1"))
+
+      expect(bill).not_to be_valid
+      expect(bill.errors[:amount]).to be_present
+    end
+
+    it 'enforces one bill per resident per meal' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      FactoryBot.create(:bill, meal: meal, resident: resident, community: community)
+
+      duplicate = FactoryBot.build(:bill, meal: meal, resident: resident, community: community)
+      expect(duplicate).not_to be_valid
+    end
+  end
+
+  describe '#set_community_id' do
+    it 'copies community_id from the meal before validation' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      bill = Bill.new(meal: meal, resident: resident, amount: BigDecimal("10"))
+
+      bill.valid?
+      expect(bill.community_id).to eq(community.id)
+    end
+  end
+
+  describe '#reconciled?' do
+    it 'returns true when the meal is reconciled' do
+      reconciliation = FactoryBot.create(:reconciliation, community: community)
+      meal = FactoryBot.create(:meal, community: community, reconciliation: reconciliation)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community)
+
+      expect(bill.reconciled?).to be true
+    end
+
+    it 'returns false when the meal is not reconciled' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit)
+      bill = FactoryBot.create(:bill, meal: meal, resident: resident, community: community)
+
+      expect(bill.reconciled?).to be false
+    end
+  end
+
   describe '#unit_cost' do
     it 'divides amount by meal multiplier using BigDecimal' do
       meal = FactoryBot.create(:meal, community: community)
