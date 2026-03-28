@@ -71,6 +71,38 @@ RSpec.describe Rotation, type: :model do
     end
   end
 
+  describe '#set_description' do
+    it 'sets description to the date range of meals' do
+      rotation = FactoryBot.create(:rotation, community: community, no_email: true)
+      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 3, 1))
+      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 3, 15))
+
+      rotation.save!
+      expect(rotation.reload.description).to include("2026")
+    end
+  end
+
+  describe '#set_start_date' do
+    it 'sets start_date from the first meal date' do
+      rotation = FactoryBot.create(:rotation, community: community, no_email: true)
+      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 4, 1))
+      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 4, 15))
+
+      rotation.save!
+      expect(rotation.reload.start_date).to eq(Date.new(2026, 4, 1))
+    end
+  end
+
+  describe '#meals_count' do
+    it 'returns the number of meals in the rotation' do
+      rotation = FactoryBot.create(:rotation, community: community, no_email: true)
+      FactoryBot.create(:meal, community: community, rotation: rotation)
+      FactoryBot.create(:meal, community: community, rotation: rotation)
+
+      expect(rotation.meals_count).to eq(2)
+    end
+  end
+
   describe '#notify_residents' do
     let(:unit) { FactoryBot.create(:unit, community: community) }
 
