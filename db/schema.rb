@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_27_000003) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_28_045422) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "pgcrypto"
@@ -94,6 +94,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_000003) do
     t.string "timezone", default: "America/Los_Angeles", null: false
     t.index ["name"], name: "index_communities_on_name", unique: true
     t.index ["slug"], name: "index_communities_on_slug", unique: true
+    t.check_constraint "cap IS NULL OR cap > 0::numeric", name: "communities_cap_positive_or_null"
   end
 
   create_table "events", force: :cascade do |t|
@@ -141,6 +142,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_000003) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["meal_id"], name: "index_guests_on_meal_id"
     t.index ["resident_id"], name: "index_guests_on_resident_id"
+    t.check_constraint "multiplier >= 0", name: "guests_multiplier_non_negative"
   end
 
   create_table "keys", force: :cascade do |t|
@@ -166,6 +168,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_000003) do
     t.index ["meal_id", "resident_id"], name: "index_meal_residents_on_meal_id_and_resident_id", unique: true
     t.index ["meal_id"], name: "index_meal_residents_on_meal_id"
     t.index ["resident_id"], name: "index_meal_residents_on_resident_id"
+    t.check_constraint "multiplier >= 0", name: "meal_residents_multiplier_non_negative"
   end
 
   create_table "meals", force: :cascade do |t|
@@ -185,6 +188,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_000003) do
     t.index ["date", "community_id"], name: "index_meals_on_date_and_community_id", unique: true
     t.index ["reconciliation_id"], name: "index_meals_on_reconciliation_id"
     t.index ["rotation_id"], name: "index_meals_on_rotation_id"
+    t.check_constraint "cap IS NULL OR cap > 0::numeric", name: "meals_cap_positive_or_null"
   end
 
   create_table "reconciliation_balances", force: :cascade do |t|
@@ -236,6 +240,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_27_000003) do
     t.index ["name", "community_id"], name: "index_residents_on_name_and_community_id", unique: true
     t.index ["reset_password_token"], name: "index_residents_on_reset_password_token", unique: true
     t.index ["unit_id"], name: "index_residents_on_unit_id"
+    t.check_constraint "multiplier >= 0", name: "residents_multiplier_non_negative"
   end
 
   create_table "rotations", force: :cascade do |t|

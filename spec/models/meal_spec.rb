@@ -503,4 +503,39 @@ RSpec.describe Meal, type: :model do
       expect(results).not_to include(reconciled_meal)
     end
   end
+
+  describe '#another_meal_in_this_rotation_has_less_than_two_cooks?' do
+    let(:rotation) { FactoryBot.create(:rotation, community: community, no_email: true) }
+    let(:cook1) { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2) }
+    let(:cook2) { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2) }
+
+    it 'returns false when all other meals have 2+ cooks' do
+      meal = FactoryBot.create(:meal, community: community, rotation: rotation)
+      other_meal = FactoryBot.create(:meal, community: community, rotation: rotation)
+      FactoryBot.create(:bill, meal: other_meal, resident: cook1, community: community, amount: BigDecimal("30"))
+      FactoryBot.create(:bill, meal: other_meal, resident: cook2, community: community, amount: BigDecimal("20"))
+
+      expect(meal.another_meal_in_this_rotation_has_less_than_two_cooks?).to be false
+    end
+
+    it 'returns true when another meal has fewer than 2 cooks' do
+      meal = FactoryBot.create(:meal, community: community, rotation: rotation)
+      other_meal = FactoryBot.create(:meal, community: community, rotation: rotation)
+      FactoryBot.create(:bill, meal: other_meal, resident: cook1, community: community, amount: BigDecimal("30"))
+
+      expect(meal.another_meal_in_this_rotation_has_less_than_two_cooks?).to be true
+    end
+
+    it 'returns true when another meal has zero cooks' do
+      meal = FactoryBot.create(:meal, community: community, rotation: rotation)
+      FactoryBot.create(:meal, community: community, rotation: rotation) # no bills
+
+      expect(meal.another_meal_in_this_rotation_has_less_than_two_cooks?).to be true
+    end
+
+    it 'returns false when meal has no rotation' do
+      meal = FactoryBot.create(:meal, community: community, rotation: nil)
+      expect(meal.another_meal_in_this_rotation_has_less_than_two_cooks?).to be false
+    end
+  end
 end

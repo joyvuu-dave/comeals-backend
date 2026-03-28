@@ -45,12 +45,23 @@ module Api
       end
 
       # POST /api/v1/meals/:meal_id/residents/:resident_id { late, vegetarian }
+      # Uses pessimistic locking (SELECT ... FOR UPDATE) to prevent concurrent
+      # signups from exceeding meal.max. The lock serializes writes to the same
+      # meal row; other meals are unaffected.
+      #
+      # Uses find_or_initialize_by(resident_id:) rather than the previous
+      # find_or_create_by(resident_id:, late:, vegetarian:). This means
+      # re-signing up with different late/vegetarian values updates the
+      # existing signup instead of erroring on the unique index.
       def create_meal_resident
-        meal_resident = @meal.meal_residents.find_or_create_by(resident_id: params[:resident_id], late: params[:late], vegetarian: params[:vegetarian])
-        if meal_resident.save
-          render json: meal_resident
-        else
-          render json: { message: meal_resident.errors.full_messages.join("\n") }, status: :bad_request
+        @meal.with_lock do
+          meal_resident = @meal.meal_residents.find_or_initialize_by(resident_id: params[:resident_id])
+          meal_resident.assign_attributes(late: params[:late], vegetarian: params[:vegetarian])
+          if meal_resident.save
+            render json: meal_resident
+          else
+            render json: { message: meal_resident.errors.full_messages.join("\n") }, status: :bad_request
+          end
         end
       end
 
@@ -71,13 +82,16 @@ module Api
       end
 
       # POST /api/v1/meals/:meal_id/residents/:resident_id/guests { vegetarian }
+      # Uses pessimistic locking to prevent concurrent guest additions from
+      # exceeding meal.max.
       def create_guest
-        guest = Guest.new(meal_id: @meal.id, resident_id: params[:resident_id], vegetarian: params[:vegetarian])
-
-        if guest.save
-          render json: guest and return
-        else
-          render json: { message: guest.errors.full_messages.join("\n") }, status: :bad_request and return
+        @meal.with_lock do
+          guest = Guest.new(meal_id: @meal.id, resident_id: params[:resident_id], vegetarian: params[:vegetarian])
+          if guest.save
+            render json: guest
+          else
+            render json: { message: guest.errors.full_messages.join("\n") }, status: :bad_request
+          end
         end
       end
 

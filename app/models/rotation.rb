@@ -33,7 +33,7 @@ class Rotation < ApplicationRecord
   before_validation :set_color, on: :create
   after_save :set_description
   after_save :set_start_date
-  after_commit :set_place_value
+  after_commit :set_place_value, on: [:create, :destroy]
   after_create_commit :notify_residents
   validates_presence_of :color
 
@@ -64,8 +64,11 @@ class Rotation < ApplicationRecord
   end
 
   def set_place_value
-    Rotation.order('start_date ASC').pluck(:id).each_with_index do |id, index|
-      Rotation.find(id).update_columns(place_value: index + 1)
+    Rotation.where(community_id: community_id)
+            .order('start_date ASC')
+            .pluck(:id)
+            .each_with_index do |rot_id, index|
+      Rotation.where(id: rot_id).update_all(place_value: index + 1)
     end
   end
 

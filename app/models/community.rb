@@ -48,17 +48,25 @@ class Community < ApplicationRecord
 
   # Report Methods
   def unreconciled_ave_cost
-    unreconciled = meals.unreconciled.includes(:bills)
-    total_multiplier = unreconciled.reduce(0) { |sum, meal| sum + meal.multiplier }
+    unreconciled = meals.unreconciled.preload(:bills, :meal_residents, :guests).to_a
+    total_multiplier = unreconciled.sum { |meal|
+      meal.meal_residents.sum(&:multiplier) + meal.guests.sum(&:multiplier)
+    }
     return '--' if total_multiplier == 0
-    total_cost = unreconciled.reduce(BigDecimal("0")) { |sum, meal| sum + meal.total_cost }
+    total_cost = unreconciled.sum { |meal|
+      meal.bills.reject(&:no_cost).sum(BigDecimal("0"), &:amount)
+    }
     val = 2 * (total_cost / total_multiplier)
     "$#{sprintf('%0.02f', val)}/adult"
   end
 
   def unreconciled_ave_number_of_attendees
-    val = (meals.unreconciled.reduce(0) { |sum, meal| sum + meal.attendees_count } / meals.unreconciled.count.to_f).round(1)
-    val.to_f.nan? ? '--' : val
+    unreconciled = meals.unreconciled
+    meal_count = unreconciled.count
+    return '--' if meal_count == 0
+    mr_count = MealResident.where(meal_id: unreconciled.select(:id)).count
+    g_count = Guest.where(meal_id: unreconciled.select(:id)).count
+    ((mr_count + g_count).to_f / meal_count).round(1)
   end
 
   def meals_per_rotation

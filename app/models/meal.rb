@@ -179,7 +179,12 @@ class Meal < ApplicationRecord
 
   # HELPERS
   def another_meal_in_this_rotation_has_less_than_two_cooks?
-    Meal.where(rotation_id: rotation_id).where.not(id: id).any? { |meal| meal.bills_count < 2 }
+    return false if rotation_id.nil?
+    Meal.where(rotation_id: rotation_id).where.not(id: id)
+        .left_joins(:bills)
+        .group(:id)
+        .having('COUNT(bills.id) < 2')
+        .exists?
   end
 
   # *** This method only used during seed generation ***
@@ -297,6 +302,7 @@ class Meal < ApplicationRecord
 
   def self.is_july_fourth(date)
     return true if date.month == 7 && date.day == 4
+    false
   end
 
 end
