@@ -36,6 +36,159 @@ RSpec.describe Resident, type: :model do
   let(:community) { FactoryBot.create(:community) }
   let(:unit) { FactoryBot.create(:unit, community: community) }
 
+  # ---------------------------------------------------------------------------
+  # Authentication
+  # ---------------------------------------------------------------------------
+  describe '#authenticate' do
+    it 'returns the resident on correct password' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit, password: "secret123")
+      expect(resident.authenticate("secret123")).to eq(resident)
+    end
+
+    it 'returns false on incorrect password' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit, password: "secret123")
+      expect(resident.authenticate("wrong")).to be_falsey
+    end
+  end
+
+  describe '#password=' do
+    it 'sets password_digest via SCrypt' do
+      resident = FactoryBot.build(:resident, community: community, unit: unit)
+      resident.password = "newpassword"
+
+      expect(resident.password_digest).to be_present
+      expect(resident.password_digest).not_to eq("newpassword")
+      expect(SCrypt::Password.new(resident.password_digest).is_password?("newpassword")).to be true
+    end
+  end
+
+  describe '#update_token' do
+    it 'creates a key for a new resident' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit, password: "initial")
+      expect(resident.key).to be_present
+      expect(resident.key.token).to be_present
+    end
+
+    # BUG: update_token calls key.set_token but the has_one :key association
+    # lacks autosave: true, so the new token is never persisted for existing
+    # residents. The token only changes in memory. This means password changes
+    # do NOT invalidate existing API tokens.
+    it 'does not persist a new key token on password change (known bug)' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit, password: "initial")
+      original_token = resident.key.token
+
+      resident.password = "changed"
+      resident.save!
+
+      expect(resident.key.reload.token).to eq(original_token)
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # Validations
+  # ---------------------------------------------------------------------------
+  describe '#email_presence' do
+    it 'requires email for active, cookable adults' do
+      resident = FactoryBot.build(:resident, community: community, unit: unit,
+        active: true, can_cook: true, multiplier: 2, email: nil)
+
+      expect(resident).not_to be_valid
+      expect(resident.errors[:email]).to include('cannot be blank.')
+    end
+
+    it 'allows nil email for children (multiplier < 2)' do
+      resident = FactoryBot.build(:resident, community: community, unit: unit,
+        active: true, can_cook: true, multiplier: 1, email: nil)
+
+      expect(resident).to be_valid
+    end
+
+    it 'allows nil email for inactive residents' do
+      resident = FactoryBot.build(:resident, community: community, unit: unit,
+        active: false, can_cook: true, multiplier: 2, email: nil)
+
+      expect(resident).to be_valid
+    end
+
+    it 'allows nil email for residents who cannot cook' do
+      resident = FactoryBot.build(:resident, community: community, unit: unit,
+        active: true, can_cook: false, multiplier: 2, email: nil)
+
+      expect(resident).to be_valid
+    end
+  end
+
+  describe '#set_email' do
+    it 'converts empty string email to nil' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit,
+        active: true, can_cook: false, multiplier: 2, email: "")
+
+      expect(resident.email).to be_nil
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # Age
+  # ---------------------------------------------------------------------------
+  describe '#age' do
+    it 'returns correct age for a birthday in the past' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit,
+        birthday: Date.new(1990, 1, 1))
+
+      expected = Date.today.year - 1990 - (Date.today >= Date.new(Date.today.year, 1, 1) ? 0 : 1)
+      expect(resident.age).to eq(expected)
+    end
+
+    it 'returns age before birthday this year' do
+      # Birthday hasn't happened yet this year
+      future_birthday = Date.today + 30
+      resident = FactoryBot.create(:resident, community: community, unit: unit,
+        birthday: Date.new(2000, future_birthday.month, future_birthday.day))
+
+      expect(resident.age).to eq(Date.today.year - 2000 - 1)
+    end
+
+    it 'returns age on birthday' do
+      resident = FactoryBot.create(:resident, community: community, unit: unit,
+        birthday: Date.new(2000, Date.today.month, Date.today.day))
+
+      expect(resident.age).to eq(Date.today.year - 2000)
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # Scopes
+  # ---------------------------------------------------------------------------
+  describe 'scopes' do
+    describe '.adult' do
+      it 'returns residents with multiplier >= 2' do
+        adult = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+        child = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 1)
+        baby = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 0)
+
+        adults = Resident.adult
+        expect(adults).to include(adult)
+        expect(adults).not_to include(child)
+        expect(adults).not_to include(baby)
+      end
+    end
+
+    describe '.active' do
+      it 'returns only active residents' do
+        active = FactoryBot.create(:resident, community: community, unit: unit, active: true)
+        inactive = FactoryBot.create(:resident, community: community, unit: unit, active: false,
+          can_cook: false, email: nil)
+
+        actives = Resident.active
+        expect(actives).to include(active)
+        expect(actives).not_to include(inactive)
+      end
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # Derived data (financial)
+  # ---------------------------------------------------------------------------
   describe '#calc_balance' do
     it 'returns 0 when there are no unreconciled meals' do
       resident = FactoryBot.create(:resident, community: community, unit: unit)
