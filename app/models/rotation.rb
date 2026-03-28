@@ -65,7 +65,7 @@ class Rotation < ApplicationRecord
 
   def set_place_value
     Rotation.where(community_id: community_id)
-            .order('start_date ASC')
+            .order('start_date ASC', 'id ASC')
             .pluck(:id)
             .each_with_index do |rot_id, index|
       Rotation.where(id: rot_id).update_all(place_value: index + 1)
