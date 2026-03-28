@@ -69,18 +69,14 @@ RSpec.describe Resident, type: :model do
       expect(resident.key.token).to be_present
     end
 
-    # BUG: update_token calls key.set_token but the has_one :key association
-    # lacks autosave: true, so the new token is never persisted for existing
-    # residents. The token only changes in memory. This means password changes
-    # do NOT invalidate existing API tokens.
-    it 'does not persist a new key token on password change (known bug)' do
+    it 'regenerates the key token when password changes (forces re-login)' do
       resident = FactoryBot.create(:resident, community: community, unit: unit, password: "initial")
       original_token = resident.key.token
 
       resident.password = "changed"
       resident.save!
 
-      expect(resident.key.reload.token).to eq(original_token)
+      expect(resident.key.reload.token).not_to eq(original_token)
     end
   end
 
