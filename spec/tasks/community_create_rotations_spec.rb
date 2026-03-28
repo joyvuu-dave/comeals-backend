@@ -54,10 +54,15 @@ RSpec.describe 'community:create_rotations' do
     Rake::Task['community:create_rotations'].invoke
 
     meal_dates = community.meals.pluck(:date)
-    christmas_dates = meal_dates.select { |d| d.month == 12 && d.day == 25 }
-    new_years_dates = meal_dates.select { |d| d.month == 1 && d.day == 1 }
-
-    expect(christmas_dates).to be_empty
-    expect(new_years_dates).to be_empty
+    # Easter 2026 is April 5 (Sunday) and Mother's Day 2026 is May 10 (Sunday).
+    # Both are permanent meal days (Sunday = day 0) and within the 6-month window.
+    # If the holiday check is removed, meals WOULD be created on these dates.
+    easter = Date.new(2026, 4, 5)
+    mothers_day = Date.new(2026, 5, 10)
+    expect(meal_dates).not_to include(easter)
+    expect(meal_dates).not_to include(mothers_day)
+    # Verify meals exist on adjacent Sundays so the check isn't vacuous
+    expect(meal_dates.any? { |d| d.sunday? && d.month == 4 }).to be true
+    expect(meal_dates.any? { |d| d.sunday? && d.month == 5 }).to be true
   end
 end
