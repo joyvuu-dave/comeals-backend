@@ -21,7 +21,12 @@ namespace :residents do
       eligible_cooks = Resident.joins(:unit).where(id: eligible_cooks_ids).order("units.name")
 
       # Meals with less than 2 cooks
-      open_meal_dates = Meal.order(:date).where(community_id: community.id, rotation_id: rotation.id).where("bills_count < ?", 2).pluck(:date)
+      open_meal_dates = Meal.order(:date)
+                            .where(community_id: community.id, rotation_id: rotation.id)
+                            .left_joins(:bills)
+                            .group(:id)
+                            .having("COUNT(bills.id) < ?", 2)
+                            .pluck(:date)
 
       eligible_cooks.each do |resident|
         if !signed_up_residents_ids.include?(resident.id)
