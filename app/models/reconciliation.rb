@@ -42,12 +42,13 @@ class Reconciliation < ApplicationRecord
 
   # Assigns unreconciled meals (with at least one bill) within the date range.
   def assign_meals
-    Meal.where(community_id: community_id)
-        .unreconciled
-        .joins(:bills)
-        .distinct
-        .where(date: start_date..end_date)
-        .update_all(reconciliation_id: id)
+    meal_ids = Meal.where(community_id: community_id)
+                   .unreconciled
+                   .joins(:bills)
+                   .where(date: start_date..end_date)
+                   .distinct
+                   .pluck(:id)
+    Meal.where(id: meal_ids).update_all(reconciliation_id: id)
   end
 
   # Compute final settlement balances for this reconciliation period.
