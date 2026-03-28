@@ -57,8 +57,5 @@ module Comeals
 
     # Set Time Zone
     config.time_zone = "America/Los_Angeles"
-
-    # Opt in to Rails 8.1 timezone behavior (preserve full timezone, not just offset)
-    config.active_support.to_time_preserves_timezone = :zone
   end
 end
