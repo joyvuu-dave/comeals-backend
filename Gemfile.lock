@@ -91,11 +91,13 @@ GEM
     audited (5.4.3)
       activerecord (>= 5.0, < 7.2)
       request_store (~> 1.2)
+    base64 (0.3.0)
     bcrypt (3.1.20)
     better_errors (2.10.1)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
       rouge (>= 1.0.0)
+    bigdecimal (4.1.0)
     bindex (0.8.1)
     binding_of_caller (1.0.0)
       debug_inspector (>= 0.0.1)
@@ -119,6 +121,7 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.2.3)
     crass (1.0.6)
+    csv (3.3.5)
     dalli (3.2.8)
     date (3.3.4)
     debug_inspector (1.2.0)
@@ -133,6 +136,7 @@ GEM
     dotenv-rails (3.0.2)
       dotenv (= 3.0.2)
       railties (>= 6.1)
+    drb (2.2.3)
     erubi (1.12.0)
     erubis (2.7.0)
     excon (0.109.0)
@@ -217,6 +221,7 @@ GEM
     moneta (1.0.0)
     msgpack (1.7.2)
     multi_json (1.15.0)
+    mutex_m (0.3.0)
     net-imap (0.4.10)
       date
       net-protocol
@@ -228,17 +233,7 @@ GEM
       net-protocol
     newrelic_rpm (9.7.1)
     nio4r (2.7.0)
-    nokogiri (1.16.2-aarch64-linux)
-      racc (~> 1.4)
-    nokogiri (1.16.2-arm-linux)
-      racc (~> 1.4)
     nokogiri (1.16.2-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.16.2-x86-linux)
-      racc (~> 1.4)
-    nokogiri (1.16.2-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.16.2-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
     pg (1.5.5)
@@ -247,7 +242,7 @@ GEM
       moneta (~> 1.0.0)
       rate_throttle_client (~> 0.1.0)
     public_suffix (7.0.5)
-    puma (5.6.8)
+    puma (7.2.0)
       nio4r (~> 2.0)
     pusher (2.0.3)
       httpclient (~> 2.8)
@@ -359,38 +354,38 @@ GEM
     zeitwerk (2.6.13)
 
 PLATFORMS
-  aarch64-linux
-  arm-linux
-  arm64-darwin
-  arm64-darwin-22
-  x86-linux
-  x86_64-darwin
-  x86_64-linux
+  arm64-darwin-25
 
 DEPENDENCIES
   active_model_serializers (~> 0.10)
   activeadmin (= 2.14.0)
   annotaterb
   audited
+  base64
   better_errors
+  bigdecimal
   binding_of_caller
   bootsnap
   bullet
   byebug
   coffee-rails (~> 5.0)
+  concurrent-ruby (~> 1.2)
+  csv
   dalli
   devise
   dotenv-rails
+  drb
   factory_bot_rails
   faker
   friendly_id
   goldiloader
   icalendar
   letter_opener
+  mutex_m
   newrelic_rpm
   pg (~> 1.5)
   platform-api
-  puma (~> 5.0)
+  puma (~> 7.0)
   pusher
   rack-cors
   rails (~> 7.0)
@@ -404,7 +399,7 @@ DEPENDENCIES
   xipio
 
 RUBY VERSION
-   ruby 3.2.10p266
+   ruby 3.3.11p205
 
 BUNDLED WITH
    2.5.6

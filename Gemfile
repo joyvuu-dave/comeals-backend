@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.2.10"
+ruby "3.3.11"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 7.0"
@@ -10,8 +10,20 @@ gem "sprockets-rails"
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.5"
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 5.0"
+gem "puma", "~> 7.0"
 gem 'sassc-rails'
+
+# Gems transitioning from stdlib to bundled gems in Ruby 3.4+
+# (warnings in 3.3, required in 3.4)
+gem 'bigdecimal'
+gem 'csv'
+gem 'mutex_m'
+gem 'base64'
+gem 'drb'
+
+# Pin to avoid Logger removal issue in concurrent-ruby 1.3.5+
+# (safe to unpin after upgrading to Rails 7.1+)
+gem 'concurrent-ruby', '~> 1.2'
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 5.0'
