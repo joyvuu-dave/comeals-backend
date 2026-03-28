@@ -42,7 +42,7 @@ gem 'newrelic_rpm'
 gem 'letter_opener', group: :development
 gem 'icalendar'
 gem 'platform-api'
-gem 'skylight'
+gem 'skylight', group: :production
 gem 'goldiloader'
 gem 'dalli'
 
