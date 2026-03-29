@@ -13,18 +13,20 @@ module ApplicationHelper
     first = name.split(' ')[0]
     last = name.split(' ')[1]
 
-    @resident_first_names ||= Resident.pluck(:name).map { |n| n.split(' ')[0] }
+    @resident_names ||= Resident.pluck(:name)
+    first_names = @resident_names.map { |n| n.split(' ')[0] }
 
     # Scenario #1: Name is just a first name (already unique)
     return name if last.nil?
 
     # Scenario #2: first name is unique
-    return first if @resident_first_names.count(first) == 1
+    return first if first_names.count(first) == 1
 
-    # Scenario #3: first name is not unique
-    # NOTE: doesn't guarantee unique display names (e.g. "John Smith" and
-    # "John Springer" both render as "John S")
-    return "#{first} #{last[0]}"
+    # Scenario #3: first name is not unique — use last initial if
+    # unique, otherwise fall back to full last name
+    same_first = @resident_names.select { |n| n.split(' ')[0] == first }
+    initial_unique = same_first.count { |n| n != name && n.split(' ')[1]&.start_with?(last[0]) } == 0
+    initial_unique ? "#{first} #{last[0]}" : "#{first} #{last}"
   end
 
   def parse_audit(audit)
