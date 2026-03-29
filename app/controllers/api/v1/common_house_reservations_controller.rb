@@ -22,23 +22,20 @@ module Api
 
       # GET /api/v1/common-house-reservations/:id
       def show
-        chr = CommonHouseReservation.find(params[:id])
-        residents = chr.community&.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
+        residents = @chr.community&.residents&.adult&.active&.joins(:unit)&.order("units.name")&.pluck("residents.id", "residents.name", "units.name") || []
 
-        render json: {event: chr, residents: residents}
+        render json: {event: @chr, residents: residents}
       end
 
       # PATCH /api/v1/common-house-reservations/:id/update
       def update
-        chr = CommonHouseReservation.find(params[:id])
-
         start_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:start_hours].to_i, params[:start_minutes].to_i)
         end_date = Time.zone.local(params[:start_year].to_i, params[:start_month].to_i, params[:start_day].to_i, params[:end_hours].to_i, params[:end_minutes].to_i)
 
-        if chr.update(start_date: start_date, end_date: end_date, resident_id: params[:resident_id], title: params[:title])
+        if @chr.update(start_date: start_date, end_date: end_date, resident_id: params[:resident_id], title: params[:title])
           render json: {message: 'Common House Reservation has been updated'}
         else
-          render json: {message: chr.errors.full_messages.join("\n")}, status: :bad_request
+          render json: {message: @chr.errors.full_messages.join("\n")}, status: :bad_request
         end
       end
 

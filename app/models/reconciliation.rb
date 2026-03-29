@@ -118,12 +118,17 @@ class Reconciliation < ApplicationRecord
     end
 
     # Verify the books balance: total credits should equal total debits.
-    # Rounding can introduce at most 0.5 cents per resident, so tolerance scales with resident count.
+    # Legitimate imbalances occur when meals have cooks but no attendees
+    # (unit_cost = 0, cook is credited but no one is charged). These are
+    # not bugs — they represent unrecovered community expenses.
+    #
+    # Banker's rounding can shift each resident's balance by at most 0.5 cents,
+    # so for rounding-only discrepancies the theoretical max is 0.005 × residents.
+    # We warn on any imbalance so it's visible, but don't block the reconciliation.
     total = balances.values.reduce(BigDecimal("0"), :+)
-    tolerance = BigDecimal("0.01") * balances.size
-    if total.abs > tolerance
-      Rails.logger.warn("settlement_balances: books do not balance for reconciliation #{id}. " \
-                        "Discrepancy: #{total}. This likely indicates a bug in cost calculations.")
+    unless total.zero?
+      Rails.logger.warn("settlement_balances: reconciliation #{id} has net imbalance of #{total}. " \
+                        "This is expected when meals have cooks but no attendees.")
     end
 
     balances

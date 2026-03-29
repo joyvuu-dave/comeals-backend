@@ -93,6 +93,28 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(result).to include("added")
     end
 
+    it 'parses meal_resident marked late audit' do
+      mr = FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: community, late: false)
+      mr.update!(late: true)
+      audit = mr.audits.where(action: "update").last
+      result = helper.parse_audit(audit)
+      expect(result).to include("marked late")
+    end
+
+    it 'parses meal_resident vegetarian toggle audits' do
+      mr = FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: community, vegetarian: false)
+      mr.update!(vegetarian: true)
+      audit = mr.audits.where(action: "update").last
+      result = helper.parse_audit(audit)
+      expect(result).to include("marked veg")
+      expect(result).not_to include("not veg")
+
+      mr.update!(vegetarian: false)
+      audit = mr.audits.where(action: "update").last
+      result = helper.parse_audit(audit)
+      expect(result).to include("marked not veg")
+    end
+
     it 'parses guest create audit' do
       guest = FactoryBot.create(:guest, meal: meal, resident: resident, vegetarian: false)
       audit = guest.audits.first

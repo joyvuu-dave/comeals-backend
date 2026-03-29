@@ -22,7 +22,9 @@ module Api
 
       # GET /api/v1/meals/next
       def next
-        next_meal = Meal.where("date >= ?", Time.now.to_date).order(:date).first
+        next_meal = Meal.where(community_id: current_resident_api.community_id)
+                        .where("date >= ?", Time.now.to_date)
+                        .order(:date).first
 
         if next_meal.nil?
           render json: { meal_id: nil }, status: :bad_request

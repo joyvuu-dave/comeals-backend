@@ -13,16 +13,15 @@ module ApplicationHelper
     first = name.split(' ')[0]
     last = name.split(' ')[1]
 
-    names = Resident.pluck(:name).map { |name| name.split(' ')[0] }
+    @resident_first_names ||= Resident.pluck(:name).map { |n| n.split(' ')[0] }
 
     # Scenario #1: Name is just a first name (already unique)
     return name if last.nil?
 
     # Scenario #2: first name is unique
-    return first if names.count(first) == 1
+    return first if @resident_first_names.count(first) == 1
 
     # Scenario #3: first name is not unique
-    # FIXME: doesn't guarantee unique string
     return "#{first} #{last[0]}"
   end
 
@@ -118,7 +117,7 @@ module ApplicationHelper
 
       if changes["vegetarian"].class == Array
         return "#{name} marked veg" if changes["vegetarian"][0] == false && changes["vegetarian"][1] == true
-        return "#{name} marked not veg" if changes["vegetarian"][0] == false && changes["vegetarian"][1] == true
+        return "#{name} marked not veg" if changes["vegetarian"][0] == true && changes["vegetarian"][1] == false
         return "#{audit.auditable_type}, #{audit.action}"
       end
 

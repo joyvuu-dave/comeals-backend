@@ -32,7 +32,6 @@ gem 'activeadmin', '~> 3.0'
 gem 'devise'
 gem 'friendly_id'
 gem 'scrypt'
-gem 'faker'
 gem 'active_model_serializers', '~> 0.10'
 gem 'pusher'
 gem 'audited'
@@ -57,6 +56,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
+  gem 'faker'
 end
 
 group :development do
