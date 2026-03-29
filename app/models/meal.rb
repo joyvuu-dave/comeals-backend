@@ -39,6 +39,15 @@ class Meal < ApplicationRecord
   scope :open, -> { where(closed: false) }
   scope :closed_with_bills, -> { where(closed: true).joins(:bills).distinct }
 
+  # Meals where at least one person ate (meal_resident or guest).
+  # A bill on a meal with no attendees has zero financial impact —
+  # the cook absorbs the cost and is not reimbursed.
+  # Uses EXISTS (not JOIN) to avoid multiplying rows in SUM queries.
+  scope :with_attendees, -> {
+    where("EXISTS (SELECT 1 FROM meal_residents WHERE meal_residents.meal_id = meals.id)" \
+      " OR EXISTS (SELECT 1 FROM guests WHERE guests.meal_id = meals.id)")
+  }
+
   belongs_to :community
   belongs_to :reconciliation, optional: true
   belongs_to :rotation, optional: true
