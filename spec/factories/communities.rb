@@ -18,6 +18,6 @@
 
 FactoryBot.define do
   factory :community do
-    name { Faker::Company.unique.name }
+    sequence(:name) { |n| "Community #{n}" }
   end
 end
