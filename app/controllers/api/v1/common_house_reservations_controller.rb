@@ -22,7 +22,7 @@ module Api
 
       # GET /api/v1/common-house-reservations/:id
       def show
-        residents = @chr.community&.residents&.adult&.active&.joins(:unit)&.order("units.name")&.pluck("residents.id", "residents.name", "units.name") || []
+        residents = @chr.community.residents.adult.active.joins(:unit).order("units.name").pluck("residents.id", "residents.name", "units.name")
 
         render json: {event: @chr, residents: residents}
       end

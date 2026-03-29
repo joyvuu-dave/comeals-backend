@@ -22,6 +22,8 @@ module ApplicationHelper
     return first if @resident_first_names.count(first) == 1
 
     # Scenario #3: first name is not unique
+    # NOTE: doesn't guarantee unique display names (e.g. "John Smith" and
+    # "John Springer" both render as "John S")
     return "#{first} #{last[0]}"
   end
 
