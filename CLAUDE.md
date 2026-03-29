@@ -20,7 +20,7 @@ This is a Rails 7 API backend. The frontend lives at `../comeals-ui` (React/MobX
 
 - **Rails API**: `http://localhost:3000`
 - **Admin console**: `http://admin.lvh.me:3000/login` (ActiveAdmin, uses subdomain routing via `lvh.me` which resolves to 127.0.0.1)
-- **Frontend (comeals-ui)**: `http://localhost:3001` (start with `PORT=3001 npm start` from `../comeals-ui`, requires Node 20 via fnm)
+- **Frontend (comeals-ui)**: `http://localhost:3001` (dev: `npm start` from `../comeals-ui`; production-like: `npm run build && node server.js`; requires Node 22+)
 
 ## Collaboration Style
 
