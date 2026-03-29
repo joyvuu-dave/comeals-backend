@@ -21,12 +21,14 @@ RSpec.describe "Events API", type: :request do
     end
 
     it "filters by date range" do
-      old = FactoryBot.create(:event, community: community, start_date: 1.year.ago, end_date: 1.year.ago + 1.hour)
-      recent = FactoryBot.create(:event, community: community, start_date: 1.day.ago, end_date: 1.day.ago + 1.hour)
+      FactoryBot.create(:event, community: community,
+        start_date: Time.zone.local(2025, 1, 15, 18, 0), end_date: Time.zone.local(2025, 1, 15, 20, 0))
+      FactoryBot.create(:event, community: community,
+        start_date: Time.zone.local(2026, 4, 10, 18, 0), end_date: Time.zone.local(2026, 4, 10, 20, 0))
 
       get "/api/v1/events", params: {
         community_id: community.id, token: token,
-        start: 1.week.ago.to_date.to_s, end: Date.today.to_s
+        start: "2026-04-01", end: "2026-04-30"
       }
 
       expect(response).to have_http_status(:ok)
