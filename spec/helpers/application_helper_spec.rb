@@ -19,6 +19,14 @@ RSpec.describe ApplicationHelper, type: :helper do
       FactoryBot.create(:resident, community: community, unit: unit, name: "Alice Smith")
       FactoryBot.create(:resident, community: community, unit: unit, name: "Alice Jones")
       expect(helper.resident_name_helper("Alice Smith")).to eq("Alice S")
+      expect(helper.resident_name_helper("Alice Jones")).to eq("Alice J")
+    end
+
+    it 'uses full last name when initial is also ambiguous' do
+      FactoryBot.create(:resident, community: community, unit: unit, name: "Alice Smith")
+      FactoryBot.create(:resident, community: community, unit: unit, name: "Alice Springer")
+      expect(helper.resident_name_helper("Alice Smith")).to eq("Alice Smith")
+      expect(helper.resident_name_helper("Alice Springer")).to eq("Alice Springer")
     end
 
     it 'returns empty string for blank name' do

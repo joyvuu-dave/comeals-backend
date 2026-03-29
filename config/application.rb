@@ -48,7 +48,7 @@ module Comeals
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins(
-          /\Ahttps?:\/\/([\w-]+\.)?comeals\.com\z/,  # comeals.com and any subdomain
+          /\Ahttps?:\/\/([\w-]+\.)*comeals\.com\z/,  # comeals.com and any subdomain(s)
           /\Ahttps?:\/\/localhost(:\d+)?\z/,           # localhost (any port, for development)
           /\Ahttps?:\/\/([\w-]+\.)?lvh\.me(:\d+)?\z/  # lvh.me and subdomains (for development)
         )
