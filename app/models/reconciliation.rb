@@ -68,7 +68,7 @@ class Reconciliation < ApplicationRecord
     # Uses preload (not includes) to guarantee separate IN(?) queries — includes
     # can silently switch to LEFT JOIN if a .where is later chained on an
     # included table, which would produce a cartesian product across 3 associations.
-    reconciled_meals = meals.preload(:bills, :meal_residents, :guests).to_a
+    reconciled_meals = meals.with_attendees.preload(:bills, :meal_residents, :guests).to_a
 
     # Step 2: Precompute unit_cost per meal from in-memory data.
     # Uses block-form .sum(&:field) which invokes Enumerable#sum on the loaded
@@ -118,17 +118,15 @@ class Reconciliation < ApplicationRecord
     end
 
     # Verify the books balance: total credits should equal total debits.
-    # Legitimate imbalances occur when meals have cooks but no attendees
-    # (unit_cost = 0, cook is credited but no one is charged). These are
-    # not bugs — they represent unrecovered community expenses.
-    #
-    # Banker's rounding can shift each resident's balance by at most 0.5 cents,
-    # so for rounding-only discrepancies the theoretical max is 0.005 × residents.
-    # We warn on any imbalance so it's visible, but don't block the reconciliation.
+    # Zero-attendee meals are already excluded (with_attendees scope), so the
+    # only source of imbalance is banker's rounding — at most 0.5 cents per
+    # resident. Anything beyond that is a calculation bug.
     total = balances.values.reduce(BigDecimal("0"), :+)
-    unless total.zero?
-      Rails.logger.warn("settlement_balances: reconciliation #{id} has net imbalance of #{total}. " \
-                        "This is expected when meals have cooks but no attendees.")
+    theoretical_max = BigDecimal("0.005") * balances.size
+    if total.abs > theoretical_max
+      raise "settlement_balances: books do not balance for reconciliation #{id}. " \
+            "Discrepancy: #{total} exceeds theoretical rounding maximum of #{theoretical_max}. " \
+            "This indicates a bug in cost calculations."
     end
 
     balances

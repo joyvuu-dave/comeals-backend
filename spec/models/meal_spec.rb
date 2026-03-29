@@ -549,6 +549,40 @@ RSpec.describe Meal, type: :model do
     end
   end
 
+  describe '.with_attendees' do
+    it 'returns meals with meal_residents' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      FactoryBot.create(:meal_resident, meal: meal, resident: resident, community: community)
+
+      expect(Meal.with_attendees).to include(meal)
+    end
+
+    it 'returns meals with only guests (no meal_residents)' do
+      meal = FactoryBot.create(:meal, community: community)
+      resident = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      FactoryBot.create(:guest, meal: meal, resident: resident)
+
+      expect(Meal.with_attendees).to include(meal)
+    end
+
+    it 'excludes meals with no attendees' do
+      meal = FactoryBot.create(:meal, community: community)
+
+      expect(Meal.with_attendees).not_to include(meal)
+    end
+
+    it 'does not duplicate meals with multiple attendees' do
+      meal = FactoryBot.create(:meal, community: community)
+      r1 = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      r2 = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      FactoryBot.create(:meal_resident, meal: meal, resident: r1, community: community)
+      FactoryBot.create(:meal_resident, meal: meal, resident: r2, community: community)
+
+      expect(Meal.with_attendees.count).to eq(1)
+    end
+  end
+
   describe '#another_meal_in_this_rotation_has_less_than_two_cooks?' do
     let(:rotation) { FactoryBot.create(:rotation, community: community, no_email: true) }
     let(:cook1) { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2) }

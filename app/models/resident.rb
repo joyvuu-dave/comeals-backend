@@ -108,7 +108,7 @@ class Resident < ApplicationRecord
   end
 
   def bill_reimbursements
-    bills.joins(:meal).merge(Meal.unreconciled).where(no_cost: false).sum(:amount)
+    bills.joins(:meal).merge(Meal.unreconciled.with_attendees).where(no_cost: false).sum(:amount)
   end
 
   def meal_resident_costs

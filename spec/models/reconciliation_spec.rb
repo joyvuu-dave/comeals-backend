@@ -210,10 +210,12 @@ RSpec.describe Reconciliation, type: :model do
 
     it 'skips zero-balance residents' do
       cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      eater = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
       bystander = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
 
       meal = FactoryBot.create(:meal, community: community)
       FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("50"))
+      FactoryBot.create(:meal_resident, meal: meal, resident: eater, community: community)
       meal.reload
 
       reconciliation = Reconciliation.create!(
@@ -221,9 +223,52 @@ RSpec.describe Reconciliation, type: :model do
         start_date: 2.years.ago.to_date, end_date: Date.today
       )
 
-      # Cook has a balance (credit with no debit), bystander has zero
+      # Cook and eater have balances, bystander has zero and is skipped
       expect(reconciliation.reconciliation_balances.find_by(resident: bystander)).to be_nil
       expect(reconciliation.reconciliation_balances.find_by(resident: cook)).to be_present
+      expect(reconciliation.reconciliation_balances.find_by(resident: eater)).to be_present
+    end
+  end
+
+  describe 'zero-attendee meals' do
+    it 'excludes meals with no attendees from settlement balances (cook absorbs cost)' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("50"))
+      # No meal_residents or guests — nobody ate
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: 2.years.ago.to_date, end_date: Date.today
+      )
+
+      # Cook is NOT reimbursed — zero-attendee meal has no financial impact
+      expect(reconciliation.balance_for(cook)).to eq(BigDecimal("0"))
+    end
+
+    it 'still assigns zero-attendee meals to the reconciliation' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("50"))
+
+      reconciliation = Reconciliation.create!(
+        community: community, date: Date.today,
+        start_date: 2.years.ago.to_date, end_date: Date.today
+      )
+
+      # Meal is assigned so it doesn't pile up as unreconciled
+      expect(meal.reload.reconciliation).to eq(reconciliation)
+    end
+
+    it 'excludes zero-attendee meals from live balance (calc_balance)' do
+      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+
+      meal = FactoryBot.create(:meal, community: community)
+      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("50"))
+
+      expect(cook.calc_balance).to eq(BigDecimal("0"))
     end
   end
 

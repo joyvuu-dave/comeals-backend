@@ -10,7 +10,7 @@ namespace :billing do
       # Uses preload (not includes) to guarantee separate IN(?) queries.
       # The joins(:bills).distinct excludes meals without bills — their unit_cost
       # is 0, so they contribute nothing to any resident's balance.
-      unreconciled_meals = community.meals.unreconciled
+      unreconciled_meals = community.meals.unreconciled.with_attendees
                                     .joins(:bills).distinct
                                     .preload(:bills, :meal_residents, :guests).to_a
 
