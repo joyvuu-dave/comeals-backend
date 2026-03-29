@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :admin_user do
     community
-    email { Faker::Internet.email }
+    sequence(:email) { |n| "admin#{n}@example.com" }
     password { "password123" }
     password_confirmation { "password123" }
     superuser { false }
