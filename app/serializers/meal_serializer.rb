@@ -49,7 +49,7 @@ class MealSerializer < ActiveModel::Serializer
   end
 
   def title
-    message = "Dinner\n#{object.attendees_count}"
+    message = +"Dinner\n#{object.attendees_count}"
 
     if Time.zone.today > object.date
       message << " attended"
