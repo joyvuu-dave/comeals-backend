@@ -142,6 +142,30 @@ RSpec.describe "PATCH /api/v1/meals/:meal_id/bills", type: :request do
     end
   end
 
+  describe "blank amount" do
+    it "treats empty string amount as zero" do
+      update_bills(
+        meal_id: meal.id,
+        bills: [{ resident_id: cook.id, amount: "", no_cost: false }]
+      )
+
+      expect(response).to have_http_status(:ok)
+      bill.reload
+      expect(bill.amount).to eq(BigDecimal("0"))
+    end
+
+    it "treats nil amount as zero" do
+      update_bills(
+        meal_id: meal.id,
+        bills: [{ resident_id: cook.id, amount: nil, no_cost: false }]
+      )
+
+      expect(response).to have_http_status(:ok)
+      bill.reload
+      expect(bill.amount).to eq(BigDecimal("0"))
+    end
+  end
+
   describe "malformed amount" do
     it "returns 400 for non-numeric strings" do
       update_bills(

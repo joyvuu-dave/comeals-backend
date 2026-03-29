@@ -182,7 +182,9 @@ module Api
         # Bill Cost
         params[:bills].each do |bill|
           begin
-            amount_value = BigDecimal(bill['amount'].to_s)
+            amount_str = bill['amount'].to_s
+            amount_str = '0' if amount_str.blank?
+            amount_value = BigDecimal(amount_str)
           rescue ArgumentError
             render json: { message: "Invalid amount: #{bill['amount']}" }, status: :bad_request and return
           end
