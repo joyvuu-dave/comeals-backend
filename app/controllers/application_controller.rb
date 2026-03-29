@@ -12,20 +12,23 @@ class ApplicationController < ActionController::Base
     redirect_to '/401'
   end
 
+  # Allow read-only admin access via a shared token (used in reconciliation
+  # email links so cooks can view their bills without an admin account).
+  # When the token matches, we skip Devise authentication and return a
+  # designated read-only admin user instead.
   def authenticate_admin_user_custom!
-    if params[:token].present? && params[:token] == ENV['READ_ONLY_ADMIN_TOKEN'] then 
-      return false
-    else
-      send(:authenticate_admin_user!)
-    end
+    return if read_only_admin_token?
+    authenticate_admin_user!
   end
 
-
   def current_admin_user_custom
-    if params[:token].present? && params[:token] == ENV['READ_ONLY_ADMIN_TOKEN'] then 
-      return AdminUser.find(ENV['READ_ONLY_ADMIN_ID'])
-    else
-      send(:current_admin_user)
-    end
+    return AdminUser.find(ENV['READ_ONLY_ADMIN_ID']) if read_only_admin_token?
+    current_admin_user
+  end
+
+  private
+
+  def read_only_admin_token?
+    params[:token].present? && params[:token] == ENV['READ_ONLY_ADMIN_TOKEN']
   end
 end

@@ -60,4 +60,26 @@ RSpec.describe "Bills API", type: :request do
       expect(response).to have_http_status(:forbidden)
     end
   end
+
+  describe "GET /api/v1/bills/:id" do
+    it "returns the bill" do
+      cook = FactoryBot.create(:resident, community: community, unit: unit)
+      meal = FactoryBot.create(:meal, community: community)
+      bill = FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("30"))
+
+      get "/api/v1/bills/#{bill.id}", params: {
+        community_id: community.id, token: token
+      }
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns 404 for nonexistent bill" do
+      get "/api/v1/bills/999999", params: {
+        community_id: community.id, token: token
+      }
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

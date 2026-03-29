@@ -16,7 +16,9 @@ module Api
       end
 
       def show
-        render json: Bill.find_by(params[:id])
+        bill = Bill.find_by(id: params[:id])
+        return not_found_api unless bill.present?
+        render json: bill
       end
 
       private

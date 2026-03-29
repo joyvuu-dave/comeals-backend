@@ -26,8 +26,8 @@ class Unit < ApplicationRecord
 
   # DERIVED DATA
   def balance
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
-    residents.reduce(0) { |sum, resident| sum + resident.balance }
+    return BigDecimal("0") if Meal.where(community_id: community_id).unreconciled.count == 0
+    residents.reduce(BigDecimal("0")) { |sum, resident| sum + resident.balance }
   end
 
   def meals_cooked
