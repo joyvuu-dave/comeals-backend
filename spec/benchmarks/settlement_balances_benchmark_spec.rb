@@ -198,9 +198,9 @@ RSpec.describe 'Reconciliation#settlement_balances performance', :benchmark, typ
     reconciliation.assign_meals
 
     # Report dataset size
-    Bill.where(meal_id: meals.map(&:id)).count
-    MealResident.where(meal_id: meals.map(&:id)).count
-    Guest.where(meal_id: meals.map(&:id)).count
+    total_bills = Bill.where(meal_id: meals.map(&:id)).count
+    total_mrs = MealResident.where(meal_id: meals.map(&:id)).count
+    total_guests = Guest.where(meal_id: meals.map(&:id)).count
 
     # -- Run naive (N+1) implementation --
     naive = measure_all('Naive (N+1)') { naive_settlement_balances(reconciliation) }
@@ -236,17 +236,42 @@ RSpec.describe 'Reconciliation#settlement_balances performance', :benchmark, typ
                                        "Optimized: #{optimized[:query_count]}"
 
     # -----------------------------------------------------------------------
-    # Report
+    # Report — stdout output is intentional; this is a benchmark harness.
     # -----------------------------------------------------------------------
+    # rubocop:disable RSpec/Output, Style/FormatStringToken, Style/RedundantFormat
 
-    naive[:query_count].to_f
-    optimized[:query_count]
-    naive[:wall_time]
-    [optimized[:wall_time], 0.0001].max
-    naive[:allocations].to_f
-    [optimized[:allocations], 1].max
+    query_speedup = naive[:query_count].to_f / optimized[:query_count]
+    time_speedup = naive[:wall_time] / [optimized[:wall_time], 0.0001].max
+    alloc_ratio = naive[:allocations].to_f / [optimized[:allocations], 1].max
     naive_cpu = naive[:cpu_user] + naive[:cpu_system]
     opt_cpu = optimized[:cpu_user] + optimized[:cpu_system]
-    naive_cpu / [opt_cpu, 0.0001].max
+    cpu_speedup = naive_cpu / [opt_cpu, 0.0001].max
+
+    puts "\n"
+    puts '=' * 72
+    puts '  SETTLEMENT BALANCES BENCHMARK'
+    puts "  Dataset: #{residents.size} residents, #{meals.size} meals, " \
+         "#{total_bills} bills, #{total_mrs} attendees, #{total_guests} guests"
+    puts '  Note: Goldiloader is active — naive query count reflects batched meal loads'
+    puts '=' * 72
+    puts ''
+    puts format('  %-24s %18s %18s %10s', '', 'Naive (N+1)', 'Optimized', 'Speedup')
+    puts "  #{'-' * 70}"
+    puts format('  %-24s %17.3fs %17.3fs %9.0fx', 'Wall clock time',
+                naive[:wall_time], optimized[:wall_time], time_speedup)
+    puts format('  %-24s %18d %18d %9.0fx', 'SQL queries',
+                naive[:query_count], optimized[:query_count], query_speedup)
+    puts format('  %-24s %18s %18s %9.0fx', 'Objects allocated',
+                naive[:allocations].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse,
+                optimized[:allocations].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse,
+                alloc_ratio)
+    puts format('  %-24s %17.3fs %17.3fs %9.0fx', 'CPU time (user+sys)',
+                naive_cpu, opt_cpu, cpu_speedup)
+    puts ''
+    puts '  Correctness: PASS (both implementations produce identical balances)'
+    puts '=' * 72
+    puts ''
+
+    # rubocop:enable RSpec/Output, Style/FormatStringToken, Style/RedundantFormat
   end
 end
