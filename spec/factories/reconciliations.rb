@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reconciliations
@@ -21,8 +23,8 @@
 FactoryBot.define do
   factory :reconciliation do
     community
-    date { Date.today }
-    start_date { Date.today - 1.year }
-    end_date { Date.today }
+    date { Time.zone.today }
+    start_date { Time.zone.today - 1.year }
+    end_date { Time.zone.today }
   end
 end

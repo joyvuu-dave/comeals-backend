@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RotationLogSerializer < ActiveModel::Serializer
   attributes :id,
              :description
@@ -21,5 +23,4 @@ class RotationLogSerializer < ActiveModel::Serializer
       instance_options[:cook_ids].include?(object.id)
     end
   end
-
 end

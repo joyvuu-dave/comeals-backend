@@ -1,8 +1,9 @@
-Rails.application.routes.draw do
+# frozen_string_literal: true
 
+Rails.application.routes.draw do
   # ActiveAdmin
   constraints subdomain: 'admin' do
-    devise_for :admin_users, ActiveAdmin::Devise.config.merge(:path => '')
+    devise_for :admin_users, ActiveAdmin::Devise.config.merge(path: '')
     ActiveAdmin.routes(self)
     get '/admin-logout', to: 'application#admin_logout'
   end
@@ -56,5 +57,4 @@ Rails.application.routes.draw do
       post '/common-house-reservations', to: 'common_house_reservations#create'
     end
   end
-
 end

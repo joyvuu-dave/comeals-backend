@@ -1,12 +1,16 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Meal do
   # STRONG PARAMS
-  permit_params :date, :subdomain, :closed, :max, :community_id, guests_attributes: [:id, :name, :multiplier, :resident_id, :meal_id, :_destroy], resident_ids: []
+  permit_params :date, :subdomain, :closed, :max, :community_id,
+                guests_attributes: %i[id name multiplier resident_id meal_id _destroy], resident_ids: []
 
   # SCOPE
   scope_to :current_admin_user
 
   # CONFIG
-  filter :reconciliation_id_null, as: :select, collection: [['Yes', false], ['No', true]], include_blank: false, default: false, label: 'Reconciled?'
+  filter :reconciliation_id_null, as: :select, collection: [['Yes', false], ['No', true]], include_blank: false,
+                                  default: false, label: 'Reconciled?'
   config.sort_order = 'date_desc'
 
   controller do
@@ -27,10 +31,10 @@ ActiveAdmin.register Meal do
       number_to_currency(meal.max_cost) if meal.capped?
     end
     column :total_cost do |meal|
-      number_to_currency(meal.total_cost) unless meal.total_cost == 0
+      number_to_currency(meal.total_cost) unless meal.total_cost.zero?
     end
     column :unit_cost do |meal|
-      number_to_currency(meal.unit_cost) unless meal.unit_cost == 0
+      number_to_currency(meal.unit_cost) unless meal.unit_cost.zero?
     end
     column 'Number of Bills', :bills_count
     column :reconciled?, sortable: false
@@ -47,17 +51,17 @@ ActiveAdmin.register Meal do
       row :max
       row :subsidized?
       row :total_cost do |meal|
-        number_to_currency(meal.total_cost) unless meal.total_cost == 0
+        number_to_currency(meal.total_cost) unless meal.total_cost.zero?
       end
       row :unit_cost do |meal|
-        number_to_currency(meal.unit_cost) unless meal.unit_cost == 0
+        number_to_currency(meal.unit_cost) unless meal.unit_cost.zero?
       end
-      table_for meal.attendees.order('name ASC') do
+      table_for meal.attendees.order(:name) do
         column 'Residents Attendance' do |resident|
           link_to resident.name, admin_resident_path(resident)
         end
       end
-      table_for meal.guests.order('name ASC') do
+      table_for meal.guests.order(:name) do
         column 'Guests in Attendance' do |guest|
           li "#{guest.name} (host: #{guest.resident.name})"
         end
@@ -76,17 +80,19 @@ ActiveAdmin.register Meal do
       f.input :date, as: :datepicker
       f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden
       f.input :closed
-      if f.object.closed
-        f.input :max
-      end
-      f.input :attendees, as: :check_boxes, label: 'Attendees', collection: Resident.where(community_id: current_admin_user.community_id).includes(:unit).order('units.name ASC').map { |r| ["#{r.name} - #{r.unit.name}", r.id] }
+      f.input :max if f.object.closed
+      f.input :attendees, as: :check_boxes, label: 'Attendees', collection: Resident.where(community_id: current_admin_user.community_id).includes(:unit).order('units.name ASC').map { |r|
+        ["#{r.name} - #{r.unit.name}", r.id]
+      }
     end
     f.inputs do
       f.has_many :guests, allow_destroy: true, heading: 'Guests', new_record: true do |g|
         g.input :_destroy, as: :hidden
         g.input :name
-        g.input :multiplier, label: 'Price Category', as: :select, include_blank: false, collection: [['Adult', 2], ['Child', 1]]
-        g.input :resident, label: 'Host', collection: Resident.where(community_id: current_admin_user.community_id).order('name')
+        g.input :multiplier, label: 'Price Category', as: :select, include_blank: false,
+                             collection: [['Adult', 2], ['Child', 1]]
+        g.input :resident, label: 'Host',
+                           collection: Resident.where(community_id: current_admin_user.community_id).order(:name)
         g.input :meal_id, as: :hidden, input_html: { value: meal.id }
       end
     end

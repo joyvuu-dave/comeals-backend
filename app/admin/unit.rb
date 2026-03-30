@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Unit do
   # STRONG PARAMS
   permit_params :name, :community_id
@@ -16,7 +18,7 @@ ActiveAdmin.register Unit do
   index do
     column 'Unit', :name
     column :balance do |unit|
-      number_to_currency(unit.balance) unless unit.balance == 0
+      number_to_currency(unit.balance) unless unit.balance.zero?
     end
 
     actions
@@ -27,9 +29,9 @@ ActiveAdmin.register Unit do
     attributes_table do
       row :name
       row :balance do |unit|
-        number_to_currency(unit.balance) unless unit.balance == 0
+        number_to_currency(unit.balance) unless unit.balance.zero?
       end
-      table_for unit.residents.order('name ASC') do
+      table_for unit.residents.order(:name) do
         column 'Residents' do |resident|
           link_to resident.name, admin_resident_path(resident)
         end

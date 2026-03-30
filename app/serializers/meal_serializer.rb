@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: meals
@@ -49,27 +51,23 @@ class MealSerializer < ActiveModel::Serializer
   end
 
   def title
-    message = +"Dinner\n#{object.attendees_count}"
+    message = "Dinner\n#{object.attendees_count}"
 
     if Time.zone.today > object.date
-      message << " attended"
+      message << ' attended'
       return message
     end
 
-    if Time.zone.today == object.date
-      message << " attending"
-    end
+    message << ' attending' if Time.zone.today == object.date
 
-    if Time.zone.today < object.date
-      message << " signed up"
-    end
+    message << ' signed up' if Time.zone.today < object.date
 
     if object.max.present?
       count = object.max - object.attendees_count
-      message << "\n #{count} extra#{count == 1 ? '' : 's'}"
+      message << "\n #{count} extra#{'s' unless count == 1}"
     end
 
-    return message
+    message
   end
 
   def start
@@ -85,6 +83,6 @@ class MealSerializer < ActiveModel::Serializer
   end
 
   def color
-    "#444"
+    '#444'
   end
 end

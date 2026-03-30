@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'rake'
 
@@ -6,8 +8,8 @@ RSpec.describe 'residents:notify' do
     Rails.application.load_tasks
   end
 
-  let(:community) { FactoryBot.create(:community) }
-  let(:unit) { FactoryBot.create(:unit, community: community) }
+  let(:community) { create(:community) }
+  let(:unit) { create(:unit, community: community) }
 
   after do
     Rake::Task['residents:notify'].reenable
@@ -17,11 +19,11 @@ RSpec.describe 'residents:notify' do
   # start_date from the first meal's date. We must use update_columns
   # after creating meals to set it to the value we need for the query.
   def create_rotation_with_meals(community:, start_date:, residents_notified: false, meal_dates: nil)
-    rotation = FactoryBot.create(:rotation, community: community,
+    rotation = create(:rotation, community: community,
                                  residents_notified: residents_notified)
     dates = meal_dates || [start_date + 1.day]
     dates.each do |date|
-      FactoryBot.create(:meal, community: community, rotation: rotation, date: date)
+      create(:meal, community: community, rotation: rotation, date: date)
     end
     rotation.update_columns(start_date: start_date, residents_notified: residents_notified)
     rotation
@@ -29,9 +31,9 @@ RSpec.describe 'residents:notify' do
 
   it 'sends signup emails to eligible cooks who have not signed up' do
     rotation = create_rotation_with_meals(community: community,
-                                          start_date: Date.today + 3.days)
+                                          start_date: Time.zone.today + 3.days)
 
-    eligible = FactoryBot.create(:resident, community: community, unit: unit,
+    eligible = create(:resident, community: community, unit: unit,
                                  can_cook: true, active: true, multiplier: 2)
 
     Rake::Task['residents:notify'].invoke
@@ -44,14 +46,14 @@ RSpec.describe 'residents:notify' do
 
   it 'does not email residents who are already signed up to cook' do
     rotation = create_rotation_with_meals(community: community,
-                                          start_date: Date.today + 3.days)
+                                          start_date: Time.zone.today + 3.days)
     meal = rotation.meals.first
 
-    signed_up = FactoryBot.create(:resident, community: community, unit: unit,
+    signed_up = create(:resident, community: community, unit: unit,
                                   can_cook: true, active: true, multiplier: 2)
-    FactoryBot.create(:bill, meal: meal, resident: signed_up, community: community)
+    create(:bill, meal: meal, resident: signed_up, community: community)
 
-    not_signed_up = FactoryBot.create(:resident, community: community, unit: unit,
+    not_signed_up = create(:resident, community: community, unit: unit,
                                       can_cook: true, active: true, multiplier: 2)
 
     Rake::Task['residents:notify'].invoke
@@ -62,14 +64,14 @@ RSpec.describe 'residents:notify' do
   end
 
   it 'excludes residents who cannot cook or are inactive' do
-    rotation = create_rotation_with_meals(community: community,
-                                          start_date: Date.today + 3.days)
+    create_rotation_with_meals(community: community,
+                               start_date: Time.zone.today + 3.days)
 
-    cannot_cook = FactoryBot.create(:resident, community: community, unit: unit,
+    cannot_cook = create(:resident, community: community, unit: unit,
                                     can_cook: false, active: true, multiplier: 2)
-    inactive = FactoryBot.create(:resident, community: community, unit: unit,
+    inactive = create(:resident, community: community, unit: unit,
                                  can_cook: true, active: false, multiplier: 2)
-    child = FactoryBot.create(:resident, community: community, unit: unit,
+    child = create(:resident, community: community, unit: unit,
                               can_cook: true, active: true, multiplier: 1)
 
     Rake::Task['residents:notify'].invoke
@@ -81,24 +83,24 @@ RSpec.describe 'residents:notify' do
   end
 
   it 'correctly identifies open meals (fewer than 2 cooks)' do
-    open_date = Date.today + 4.days
-    full_date = Date.today + 5.days
+    open_date = Time.zone.today + 4.days
+    full_date = Time.zone.today + 5.days
     rotation = create_rotation_with_meals(community: community,
-                                          start_date: Date.today + 3.days,
+                                          start_date: Time.zone.today + 3.days,
                                           meal_dates: [open_date, full_date])
 
     open_meal = rotation.meals.find_by(date: open_date)
     full_meal = rotation.meals.find_by(date: full_date)
 
-    cook1 = FactoryBot.create(:resident, community: community, unit: unit)
-    FactoryBot.create(:bill, meal: open_meal, resident: cook1, community: community)
+    cook1 = create(:resident, community: community, unit: unit)
+    create(:bill, meal: open_meal, resident: cook1, community: community)
 
-    cook2 = FactoryBot.create(:resident, community: community, unit: unit)
-    cook3 = FactoryBot.create(:resident, community: community, unit: unit)
-    FactoryBot.create(:bill, meal: full_meal, resident: cook2, community: community)
-    FactoryBot.create(:bill, meal: full_meal, resident: cook3, community: community)
+    cook2 = create(:resident, community: community, unit: unit)
+    cook3 = create(:resident, community: community, unit: unit)
+    create(:bill, meal: full_meal, resident: cook2, community: community)
+    create(:bill, meal: full_meal, resident: cook3, community: community)
 
-    eligible = FactoryBot.create(:resident, community: community, unit: unit,
+    eligible = create(:resident, community: community, unit: unit,
                                  can_cook: true, active: true, multiplier: 2)
 
     Rake::Task['residents:notify'].invoke
@@ -109,8 +111,8 @@ RSpec.describe 'residents:notify' do
 
   it 'skips rotations that do not start within the next week' do
     rotation = create_rotation_with_meals(community: community,
-                                          start_date: Date.today + 2.weeks)
-    FactoryBot.create(:resident, community: community, unit: unit,
+                                          start_date: Time.zone.today + 2.weeks)
+    create(:resident, community: community, unit: unit,
                       can_cook: true, active: true, multiplier: 2)
 
     Rake::Task['residents:notify'].invoke
@@ -121,11 +123,11 @@ RSpec.describe 'residents:notify' do
 
   it 'skips eligible cooks who have no email address' do
     rotation = create_rotation_with_meals(community: community,
-                                          start_date: Date.today + 3.days)
+                                          start_date: Time.zone.today + 3.days)
 
-    with_email = FactoryBot.create(:resident, community: community, unit: unit,
+    with_email = create(:resident, community: community, unit: unit,
                                    can_cook: true, active: true, multiplier: 2)
-    without_email = FactoryBot.create(:resident, community: community, unit: unit,
+    without_email = create(:resident, community: community, unit: unit,
                                       can_cook: true, active: true, multiplier: 2)
     without_email.update_column(:email, nil)
 
@@ -138,10 +140,10 @@ RSpec.describe 'residents:notify' do
   end
 
   it 'skips rotations already marked as notified' do
-    rotation = create_rotation_with_meals(community: community,
-                                          start_date: Date.today + 3.days,
-                                          residents_notified: true)
-    FactoryBot.create(:resident, community: community, unit: unit,
+    create_rotation_with_meals(community: community,
+                               start_date: Time.zone.today + 3.days,
+                               residents_notified: true)
+    create(:resident, community: community, unit: unit,
                       can_cook: true, active: true, multiplier: 2)
 
     Rake::Task['residents:notify'].invoke

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: bills
@@ -45,10 +47,13 @@ class BillSerializer < ActiveModel::Serializer
   end
 
   def title
-    object.amount > 0 && object.meal.date < Date.today ?
-      "Cook\n#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}\n#{number_to_currency(object.amount)}" :
+    if object.amount.positive? && object.meal.date < Time.zone.today
+      name = resident_name_helper(object.resident.name)
+      unit_name = object.resident.unit.name
+      "Cook\n#{name} - Unit #{unit_name}\n#{number_to_currency(object.amount)}"
+    else
       "Cook\n#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
-
+    end
   end
 
   def start
@@ -64,9 +69,12 @@ class BillSerializer < ActiveModel::Serializer
   end
 
   def description
-    object.amount > 0 && object.meal.date < Date.today ?
-      "Cook:  #{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name} - #{number_to_currency(object.amount)}" :
+    if object.amount.positive? && object.meal.date < Time.zone.today
+      name = resident_name_helper(object.resident.name)
+      unit_name = object.resident.unit.name
+      "Cook:  #{name} - Unit #{unit_name} - #{number_to_currency(object.amount)}"
+    else
       "Cook:  #{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
-
+    end
   end
 end

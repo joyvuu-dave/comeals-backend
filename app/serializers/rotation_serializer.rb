@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: rotations
@@ -53,5 +55,4 @@ class RotationSerializer < ActiveModel::Serializer
   def url
     "rotations/show/#{object.id}"
   end
-
 end

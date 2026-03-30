@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddCheckConstraints < ActiveRecord::Migration[7.0]
   def up
     # Remediate any data that would violate the new constraints.
@@ -16,33 +18,33 @@ class AddCheckConstraints < ActiveRecord::Migration[7.0]
     # For unreconciled meals, the next billing:recalculate run will correct
     # any affected balances.
 
-    fix_count = Guest.where("multiplier < 0").update_all(multiplier: 0)
-    say "Fixed #{fix_count} guests with negative multiplier → 0" if fix_count > 0
+    fix_count = Guest.where('multiplier < 0').update_all(multiplier: 0)
+    say "Fixed #{fix_count} guests with negative multiplier → 0" if fix_count.positive?
 
-    fix_count = MealResident.where("multiplier < 0").update_all(multiplier: 0)
-    say "Fixed #{fix_count} meal_residents with negative multiplier → 0" if fix_count > 0
+    fix_count = MealResident.where('multiplier < 0').update_all(multiplier: 0)
+    say "Fixed #{fix_count} meal_residents with negative multiplier → 0" if fix_count.positive?
 
-    fix_count = Resident.where("multiplier < 0").update_all(multiplier: 0)
-    say "Fixed #{fix_count} residents with negative multiplier → 0" if fix_count > 0
+    fix_count = Resident.where('multiplier < 0').update_all(multiplier: 0)
+    say "Fixed #{fix_count} residents with negative multiplier → 0" if fix_count.positive?
 
-    fix_count = Meal.where("cap IS NOT NULL AND cap <= 0").update_all(cap: nil)
-    say "Fixed #{fix_count} meals with zero/negative cap → NULL (uncapped)" if fix_count > 0
+    fix_count = Meal.where('cap IS NOT NULL AND cap <= 0').update_all(cap: nil)
+    say "Fixed #{fix_count} meals with zero/negative cap → NULL (uncapped)" if fix_count.positive?
 
-    fix_count = Community.where("cap IS NOT NULL AND cap <= 0").update_all(cap: nil)
-    say "Fixed #{fix_count} communities with zero/negative cap → NULL (uncapped)" if fix_count > 0
+    fix_count = Community.where('cap IS NOT NULL AND cap <= 0').update_all(cap: nil)
+    say "Fixed #{fix_count} communities with zero/negative cap → NULL (uncapped)" if fix_count.positive?
 
-    add_check_constraint :guests, "multiplier >= 0", name: "guests_multiplier_non_negative"
-    add_check_constraint :meal_residents, "multiplier >= 0", name: "meal_residents_multiplier_non_negative"
-    add_check_constraint :residents, "multiplier >= 0", name: "residents_multiplier_non_negative"
-    add_check_constraint :meals, "cap IS NULL OR cap > 0", name: "meals_cap_positive_or_null"
-    add_check_constraint :communities, "cap IS NULL OR cap > 0", name: "communities_cap_positive_or_null"
+    add_check_constraint :guests, 'multiplier >= 0', name: 'guests_multiplier_non_negative'
+    add_check_constraint :meal_residents, 'multiplier >= 0', name: 'meal_residents_multiplier_non_negative'
+    add_check_constraint :residents, 'multiplier >= 0', name: 'residents_multiplier_non_negative'
+    add_check_constraint :meals, 'cap IS NULL OR cap > 0', name: 'meals_cap_positive_or_null'
+    add_check_constraint :communities, 'cap IS NULL OR cap > 0', name: 'communities_cap_positive_or_null'
   end
 
   def down
-    remove_check_constraint :guests, name: "guests_multiplier_non_negative"
-    remove_check_constraint :meal_residents, name: "meal_residents_multiplier_non_negative"
-    remove_check_constraint :residents, name: "residents_multiplier_non_negative"
-    remove_check_constraint :meals, name: "meals_cap_positive_or_null"
-    remove_check_constraint :communities, name: "communities_cap_positive_or_null"
+    remove_check_constraint :guests, name: 'guests_multiplier_non_negative'
+    remove_check_constraint :meal_residents, name: 'meal_residents_multiplier_non_negative'
+    remove_check_constraint :residents, name: 'residents_multiplier_non_negative'
+    remove_check_constraint :meals, name: 'meals_cap_positive_or_null'
+    remove_check_constraint :communities, name: 'communities_cap_positive_or_null'
   end
 end

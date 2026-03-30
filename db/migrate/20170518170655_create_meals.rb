@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateMeals < ActiveRecord::Migration[5.1]
   def change
     create_table :meals do |t|
@@ -9,7 +11,7 @@ class CreateMeals < ActiveRecord::Migration[5.1]
       t.integer :cost, null: false, default: 0
       t.integer :meal_residents_multiplier, null: false, default: 0
       t.integer :guests_multiplier, null: false, default: 0
-      t.text :description, null: false, default: ""
+      t.text :description, null: false, default: ''
       t.integer :max
       t.boolean :closed, null: false, default: false
       t.references :community, foreign_key: true, null: false
@@ -19,6 +21,5 @@ class CreateMeals < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
-
   end
 end

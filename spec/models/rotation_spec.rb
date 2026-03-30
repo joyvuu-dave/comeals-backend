@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: rotations
@@ -22,33 +24,33 @@
 #
 require 'rails_helper'
 
-RSpec.describe Rotation, type: :model do
-  let(:community) { FactoryBot.create(:community) }
+RSpec.describe Rotation do
+  let(:community) { create(:community) }
 
   describe '#set_place_value' do
     it 'assigns sequential place_values scoped to community' do
-      r1 = FactoryBot.create(:rotation, community: community, no_email: true)
-      r2 = FactoryBot.create(:rotation, community: community, no_email: true)
+      r1 = create(:rotation, community: community, no_email: true)
+      r2 = create(:rotation, community: community, no_email: true)
 
       expect(r1.reload.place_value).to eq(1)
       expect(r2.reload.place_value).to eq(2)
     end
 
     it 'does not renumber rotations in other communities' do
-      other_community = FactoryBot.create(:community)
-      other_rotation = FactoryBot.create(:rotation, community: other_community, no_email: true)
+      other_community = create(:community)
+      other_rotation = create(:rotation, community: other_community, no_email: true)
       original_place = other_rotation.reload.place_value
 
       # Creating a rotation in our community should not affect the other community
-      FactoryBot.create(:rotation, community: community, no_email: true)
+      create(:rotation, community: community, no_email: true)
 
       expect(other_rotation.reload.place_value).to eq(original_place)
     end
 
     it 'reorders on destroy' do
-      r1 = FactoryBot.create(:rotation, community: community, no_email: true)
-      r2 = FactoryBot.create(:rotation, community: community, no_email: true)
-      r3 = FactoryBot.create(:rotation, community: community, no_email: true)
+      r1 = create(:rotation, community: community, no_email: true)
+      r2 = create(:rotation, community: community, no_email: true)
+      r3 = create(:rotation, community: community, no_email: true)
 
       r2.destroy!
       expect(r1.reload.place_value).to eq(1)
@@ -60,7 +62,7 @@ RSpec.describe Rotation, type: :model do
     it 'cycles through colors without repeating recent ones' do
       colors = []
       6.times do
-        r = FactoryBot.create(:rotation, community: community, no_email: true)
+        r = create(:rotation, community: community, no_email: true)
         colors << r.color
       end
 
@@ -73,53 +75,67 @@ RSpec.describe Rotation, type: :model do
 
   describe '#set_description' do
     it 'sets description to the date range of meals' do
-      rotation = FactoryBot.create(:rotation, community: community, no_email: true)
-      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 3, 1))
-      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 3, 15))
+      rotation = create(:rotation, community: community, no_email: true)
+      create(:meal, community: community, rotation: rotation, date: Date.new(2026, 3, 1))
+      create(:meal, community: community, rotation: rotation, date: Date.new(2026, 3, 15))
 
       rotation.save!
-      expect(rotation.reload.description).to include("2026")
+      expect(rotation.reload.description).to include('2026')
+    end
+
+    it 'handles a rotation with no meals' do
+      rotation = create(:rotation, community: community, no_email: true)
+
+      rotation.save!
+      expect(rotation.reload.description).to eq(' to ')
     end
   end
 
   describe '#set_start_date' do
     it 'sets start_date from the first meal date' do
-      rotation = FactoryBot.create(:rotation, community: community, no_email: true)
-      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 4, 1))
-      FactoryBot.create(:meal, community: community, rotation: rotation, date: Date.new(2026, 4, 15))
+      rotation = create(:rotation, community: community, no_email: true)
+      create(:meal, community: community, rotation: rotation, date: Date.new(2026, 4, 1))
+      create(:meal, community: community, rotation: rotation, date: Date.new(2026, 4, 15))
 
       rotation.save!
       expect(rotation.reload.start_date).to eq(Date.new(2026, 4, 1))
+    end
+
+    it 'sets start_date to nil when rotation has no meals' do
+      rotation = create(:rotation, community: community, no_email: true)
+
+      rotation.save!
+      expect(rotation.reload.start_date).to be_nil
     end
   end
 
   describe '#meals_count' do
     it 'returns the number of meals in the rotation' do
-      rotation = FactoryBot.create(:rotation, community: community, no_email: true)
-      FactoryBot.create(:meal, community: community, rotation: rotation)
-      FactoryBot.create(:meal, community: community, rotation: rotation)
+      rotation = create(:rotation, community: community, no_email: true)
+      create(:meal, community: community, rotation: rotation)
+      create(:meal, community: community, rotation: rotation)
 
       expect(rotation.meals_count).to eq(2)
     end
   end
 
   describe '#notify_residents' do
-    let(:unit) { FactoryBot.create(:unit, community: community) }
+    let(:unit) { create(:unit, community: community) }
 
     it 'does not send emails when no_email is true' do
-      FactoryBot.create(:resident, community: community, unit: unit, email: 'test@example.com')
-      expect {
-        FactoryBot.create(:rotation, community: community, no_email: true)
-      }.not_to change { ActionMailer::Base.deliveries.count }
+      create(:resident, community: community, unit: unit, email: 'test@example.com')
+      expect do
+        create(:rotation, community: community, no_email: true)
+      end.not_to(change { ActionMailer::Base.deliveries.count })
     end
 
     it 'skips inactive residents' do
-      FactoryBot.create(:resident, community: community, unit: unit, active: false)
-      FactoryBot.create(:resident, community: community, unit: unit, active: true)
+      create(:resident, community: community, unit: unit, active: false)
+      create(:resident, community: community, unit: unit, active: true)
 
-      expect {
-        FactoryBot.create(:rotation, community: community, no_email: false)
-      }.to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect do
+        create(:rotation, community: community, no_email: false)
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
   end
 end

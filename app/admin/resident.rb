@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Resident do
   # STRONG PARAMS
-  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian, :can_cook, :active, :birthday
+  permit_params :name, :multiplier, :unit_id, :community_id, :email, :password, :vegetarian, :can_cook, :active,
+                :birthday
 
   # SCOPE
   scope_to :current_admin_user
@@ -22,14 +25,15 @@ ActiveAdmin.register Resident do
       elsif resident.multiplier == 1
         'Child'
       else
-        "Adult x #{number_with_precision((resident.multiplier.to_f / 2), precision: 1, strip_insignificant_zeros: true)}"
+        "Adult x #{number_with_precision(resident.multiplier.to_f / 2, precision: 1,
+                                                                       strip_insignificant_zeros: true)}"
       end
     end
     column :unit
     column :can_cook
     column :active
     column 'Balance', :balance do |resident|
-      number_to_currency(resident.balance) unless resident.balance == 0
+      number_to_currency(resident.balance) unless resident.balance.zero?
     end
 
     actions
@@ -41,18 +45,18 @@ ActiveAdmin.register Resident do
       row :id
       row :name
       row :birthday
-      row('Category') { |r| r.multiplier < 2 ? "Child" : "Adult" }
+      row('Category') { |r| r.multiplier < 2 ? 'Child' : 'Adult' }
       row :unit
       row :can_cook
       row :active
       row :email
       row :vegetarian
-      table_for resident.meals.order('date') do
+      table_for resident.meals.order(:date) do
         column 'Meals Attended' do |meal|
           link_to meal.date, admin_meal_path(meal)
         end
         column 'Unit Cost' do |meal|
-          number_to_currency(meal.unit_cost) unless meal.unit_cost == 0
+          number_to_currency(meal.unit_cost) unless meal.unit_cost.zero?
         end
       end
       table_for resident.bills.all do
@@ -60,7 +64,7 @@ ActiveAdmin.register Resident do
           link_to bill.meal.date, admin_bill_path(bill)
         end
         column 'Amount' do |bill|
-          number_to_currency(bill.amount) unless bill.amount == 0
+          number_to_currency(bill.amount) unless bill.amount.zero?
         end
       end
       table_for resident.guests.all do
@@ -73,14 +77,15 @@ ActiveAdmin.register Resident do
           elsif guest.multiplier == 1
             'Child'
           else
-            "Adult x #{number_with_precision((guest.multiplier.to_f / 2), precision: 1, strip_insignificant_zeros: true)}"
+            "Adult x #{number_with_precision(guest.multiplier.to_f / 2, precision: 1,
+                                                                        strip_insignificant_zeros: true)}"
           end
         end
         column 'Meal Date' do |guest|
           link_to guest.meal.date, admin_meal_path(guest.meal)
         end
         column 'Unit Cost' do |guest|
-          number_to_currency(guest.meal.unit_cost) unless guest.meal.unit_cost == 0
+          number_to_currency(guest.meal.unit_cost) unless guest.meal.unit_cost.zero?
         end
       end
     end
@@ -91,18 +96,16 @@ ActiveAdmin.register Resident do
     f.inputs do
       f.input :name
       f.input :birthday, as: :datepicker,
-        datepicker_options: {
-          change_month: true,
-          change_year: true,
-          year_range: "1900:#{Time.now.year}"
-      }
+                         datepicker_options: {
+                           change_month: true,
+                           change_year: true,
+                           year_range: "1900:#{Time.zone.now.year}"
+                         }
       f.input :email
-      if f.object.new_record?
-        f.input :password
-      end
+      f.input :password if f.object.new_record?
       f.input :vegetarian
       f.input :multiplier, label: 'Price Category', as: :radio, collection: [['Adult', 2], ['Child', 1]]
-      f.input :unit, collection: Unit.where(community_id: current_admin_user.community_id).order('name')
+      f.input :unit, collection: Unit.where(community_id: current_admin_user.community_id).order(:name)
       f.input :can_cook
       f.input :active
       f.input :community_id, input_html: { value: current_admin_user.community_id }, as: :hidden

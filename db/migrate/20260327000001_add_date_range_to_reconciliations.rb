@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class AddDateRangeToReconciliations < ActiveRecord::Migration[7.0]
   def up
     add_column :reconciliations, :start_date, :date
     add_column :reconciliations, :end_date, :date
 
     # Backfill from actual meal dates for existing reconciliations
-    execute <<-SQL
+    execute <<~SQL.squish
       UPDATE reconciliations
       SET start_date = sub.min_date,
           end_date = sub.max_date
@@ -20,7 +22,7 @@ class AddDateRangeToReconciliations < ActiveRecord::Migration[7.0]
     SQL
 
     # Fallback for any reconciliation with no meals
-    execute <<-SQL
+    execute <<~SQL.squish
       UPDATE reconciliations
       SET start_date = date, end_date = date
       WHERE start_date IS NULL
@@ -29,14 +31,14 @@ class AddDateRangeToReconciliations < ActiveRecord::Migration[7.0]
     change_column_null :reconciliations, :start_date, false
     change_column_null :reconciliations, :end_date, false
 
-    execute <<-SQL
+    execute <<~SQL.squish
       ALTER TABLE reconciliations
         ADD CONSTRAINT reconciliations_date_range_valid CHECK (start_date <= end_date)
     SQL
   end
 
   def down
-    execute <<-SQL
+    execute <<~SQL.squish
       ALTER TABLE reconciliations
         DROP CONSTRAINT reconciliations_date_range_valid
     SQL

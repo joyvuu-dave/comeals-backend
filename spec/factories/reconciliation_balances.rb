@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reconciliation_balances
@@ -24,6 +26,6 @@ FactoryBot.define do
   factory :reconciliation_balance do
     reconciliation
     resident
-    amount { BigDecimal("0") }
+    amount { BigDecimal('0') }
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateResidentBalances < ActiveRecord::Migration[5.1]
   def change
     create_table :resident_balances do |t|

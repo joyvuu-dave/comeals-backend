@@ -1,21 +1,25 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class MealsController < ApiController
       before_action :authenticate
       before_action :authorize, only: [:index]
-      before_action :set_meal, except: [:index, :next]
-      before_action :authorize_one, except: [:index, :next]
+      before_action :set_meal, except: %i[index next]
+      before_action :authorize_one, except: %i[index next]
       before_action :set_guest, only: [:destroy_guest]
-      before_action :set_meal_resident, only: [:destroy_meal_resident, :update_meal_resident]
-      after_action :trigger_pusher, except: [:index, :next, :show, :history, :show_cooks]
+      before_action :set_meal_resident, only: %i[destroy_meal_resident update_meal_resident]
+      after_action :trigger_pusher, except: %i[index next show history show_cooks]
 
       # GET /api/v1/meals
       def index
-        if params[:start].present? && params[:end].present?
-          meals = Meal.where(community_id: params[:community_id]).where("date >= ?", params[:start]).where("date <= ?", params[:end])
-        else
-          meals = Meal.where(community_id: params[:community_id]).all
-        end
+        meals = if params[:start].present? && params[:end].present?
+                  Meal.where(community_id: params[:community_id])
+                      .where(date: (params[:start])..)
+                      .where(date: ..(params[:end]))
+                else
+                  Meal.where(community_id: params[:community_id]).all
+                end
 
         render json: meals
       end
@@ -23,7 +27,7 @@ module Api
       # GET /api/v1/meals/next
       def next
         next_meal = Meal.where(community_id: current_resident_api.community_id)
-                        .where("date >= ?", Time.now.to_date)
+                        .where(date: Time.zone.now.to_date..)
                         .order(:date).first
 
         if next_meal.nil?
@@ -42,7 +46,8 @@ module Api
       def history
         render json: {
           date: @meal.date,
-          items: ActiveModelSerializers::SerializableResource.new(@meal.total_audits, each_serializer: AuditSerializer).as_json
+          items: ActiveModelSerializers::SerializableResource.new(@meal.total_audits,
+                                                                  each_serializer: AuditSerializer).as_json
         }
       end
 
@@ -76,11 +81,9 @@ module Api
 
       # PATCH /api/v1/meals/:meal_id/residents/:resident_id { late, vegetarian }
       def update_meal_resident
-        if @meal_resident.update(meal_resident_params)
-          render json: { message: 'MealResident updated.' } and return
-        else
-          render json: { message: @meal_resident.errors.full_messages.join("\n") }, status: :bad_request and return
-        end
+        render json: { message: 'MealResident updated.' } and return if @meal_resident.update(meal_resident_params)
+
+        render json: { message: @meal_resident.errors.full_messages.join("\n") }, status: :bad_request
       end
 
       # POST /api/v1/meals/:meal_id/residents/:resident_id/guests { vegetarian }
@@ -111,7 +114,8 @@ module Api
         cached_value = Rails.cache.read(key)
 
         if cached_value.nil?
-          result = ActiveModelSerializers::SerializableResource.new(@meal, serializer: MealFormSerializer, scope: @meal).as_json
+          result = ActiveModelSerializers::SerializableResource.new(@meal, serializer: MealFormSerializer,
+                                                                           scope: @meal).as_json
           Rails.cache.write(key, result)
         else
           result = cached_value
@@ -122,73 +126,71 @@ module Api
 
       # PATCH /api/v1/meals/:meal_id/description { description }
       def update_description
-        if @meal.update(:description => params[:description])
-          render json: { message: 'Description updated.' } and return
-        else
-          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
-        end
+        render json: { message: 'Description updated.' } and return if @meal.update(description: params[:description])
+
+        render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request
       end
 
       # PATCH /api/v1/meals/:meal_id/max { max }
       def update_max
-        if @meal.update(:max => params[:max])
-          render json: { message: 'Meal max value updated.' } and return
-        else
-          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
-        end
+        render json: { message: 'Meal max value updated.' } and return if @meal.update(max: params[:max])
+
+        render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request
       end
 
       # PATCH /meals/:meal_id/bills
-      # PAYLOAD {id: 1, bills: [{resident_id: 3, amount: "0.00", no_cost: true}, {resident_id: "4", amount: "0.00", no_cost: true}]}
-      def update_bills
+      # PAYLOAD {id: 1, bills: [{resident_id: 3, amount: "0.00",
+      #   no_cost: true}, {resident_id: "4", amount: "0.00",
+      #   no_cost: true}]}
+      def update_bills # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength --multi-step bill validation + cook-scheduling guards
         if @meal.reconciliation_id.present?
-          render json: { message: 'Cost change not permitted. Meal has already been reconciled.' }, status: :bad_request and return
+          render json: { message: 'Cost change not permitted. Meal has already been reconciled.' },
+                 status: :bad_request and return
         end
 
         message = 'Form submitted.'
         request_symbol = :ok
 
         # Cooks
-        cook_ids = []
-        params[:bills].each do |bill|
-          cook_ids.push(bill['resident_id'])
-        end
+        cook_ids = params[:bills].pluck('resident_id')
 
         # Future meal
-        if @meal.date > Date.today
-          # More than two cooks
-          if cook_ids.length > 2
-            # Scenario #1: adding cooks
-            if cook_ids.length > @meal.bills.count
-              if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
-                message = "Warning: third cooks should not be added until all meals in the rotation have at least two cooks."
-                request_symbol = :bad_request
-              end
-            end
+        # More than two cooks
+        if (@meal.date > Time.zone.today) && (cook_ids.length > 2)
+          # Scenario #1: adding cooks
+          if (cook_ids.length > @meal.bills.count) && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+            message = 'Warning: third cooks should not be added until all meals ' \
+                      'in the rotation have at least two cooks.'
+            request_symbol = :bad_request
+          end
 
-            # Scenario #2: switching cooks
-            if cook_ids.length == @meal.bills.count
-              if @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
-                message = "Warning: third cook should not be switched when there are other meals in the rotation without at least two cooks."
-                request_symbol = :bad_request
-              end
-            end
+          # Scenario #2: switching cooks
+          if (cook_ids.length == @meal.bills.count) && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+            message = 'Warning: third cook should not be switched when there are ' \
+                      'other meals in the rotation without at least two cooks.'
+            request_symbol = :bad_request
           end
         end
 
-        @meal.update(:cook_ids => cook_ids)
+        @meal.update(cook_ids: cook_ids)
         @meal.reload
 
-        # Bill Cost
+        # Bill Cost --validate all amounts before persisting any changes
+        parsed_bills = []
         params[:bills].each do |bill|
+          amount_str = bill['amount'].to_s
+          amount_str = '0' if amount_str.blank?
           begin
-            amount_str = bill['amount'].to_s
-            amount_str = '0' if amount_str.blank?
             amount_value = BigDecimal(amount_str)
           rescue ArgumentError
-            render json: { message: "Invalid amount: #{bill['amount']}" }, status: :bad_request and return
+            render json: { message: "Invalid amount: #{bill['amount']}" }, status: :bad_request
+            return # rubocop:disable Lint/NonLocalExitFromIterator -- intentional: render error and exit action
           end
-          @meal.bills.find_by(resident_id: bill['resident_id']).update({amount: amount_value, no_cost: bill['no_cost']})
+          parsed_bills << { resident_id: bill['resident_id'], amount: amount_value, no_cost: bill['no_cost'] }
+        end
+
+        parsed_bills.each do |bill|
+          @meal.bills.find_by(resident_id: bill[:resident_id]).update(amount: bill[:amount], no_cost: bill[:no_cost])
         end
 
         render json: { message: message }, status: request_symbol
@@ -196,22 +198,21 @@ module Api
 
       # PATCH /api/v1/meals/:meal_id/closed { closed }
       def update_closed
-        if @meal.update(closed: params[:closed])
-          render json: { message: 'Meal closed value updated.' } and return
-        else
-          render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request and return
-        end
+        render json: { message: 'Meal closed value updated.' } and return if @meal.update(closed: params[:closed])
+
+        render json: { message: @meal.errors.full_messages.join("\n") }, status: :bad_request
       end
 
       private
+
       def meal_resident_params
         params.permit(:late, :vegetarian)
       end
 
       def set_meal
-        @meal ||= Meal.includes(:bills, :meal_residents, :guests).find_by(id: params[:meal_id])
+        @meal = Meal.includes(:bills, :meal_residents, :guests).find_by(id: params[:meal_id]) unless defined?(@meal)
 
-        return not_found_api unless @meal.present?
+        return not_found_api if @meal.blank?
 
         @meal.socket_id = params[:socket_id]
       end
@@ -219,13 +220,15 @@ module Api
       def set_guest
         @guest = @meal.guests.find_by(id: params[:guest_id])
 
-        not_found_api unless @guest.present?
+        not_found_api if @guest.blank?
       end
 
       def set_meal_resident
-        @meal_resident ||= MealResident.find_by(meal_id: params[:meal_id], resident_id: params[:resident_id])
+        unless defined?(@meal_resident)
+          @meal_resident = MealResident.find_by(meal_id: params[:meal_id], resident_id: params[:resident_id])
+        end
 
-        not_found_api unless @meal_resident.present?
+        not_found_api if @meal_resident.blank?
       end
 
       def trigger_pusher
@@ -243,7 +246,6 @@ module Api
       def authorize_one
         not_authorized_api unless current_resident_api.community_id == @meal.community_id
       end
-
     end
   end
 end

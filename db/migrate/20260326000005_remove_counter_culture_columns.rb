@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveCounterCultureColumns < ActiveRecord::Migration[7.0]
   def up
     remove_column :meals, :bills_count

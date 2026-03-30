@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateBills < ActiveRecord::Migration[5.1]
   def change
     create_table :bills do |t|
@@ -5,12 +7,11 @@ class CreateBills < ActiveRecord::Migration[5.1]
       t.references :resident, foreign_key: true, null: false
       t.references :community, foreign_key: true, null: false
       t.integer :amount_cents, null: false, default: 0
-      t.string :amount_currency, null: false, default: "USD"
+      t.string :amount_currency, null: false, default: 'USD'
 
       t.timestamps
     end
 
-    add_index :bills, [:meal_id, :resident_id], unique: true
-
+    add_index :bills, %i[meal_id resident_id], unique: true
   end
 end

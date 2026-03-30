@@ -1,5 +1,6 @@
-namespace :residents do
+# frozen_string_literal: true
 
+namespace :residents do
   desc "Automatically set residents' multiplier based on their age."
   task set_multiplier: :environment do
     start_time = Time.current

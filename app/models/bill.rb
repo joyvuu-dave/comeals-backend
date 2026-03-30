@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: bills
@@ -37,11 +39,8 @@ class Bill < ApplicationRecord
 
   before_validation :set_community_id
 
-  validates :meal, presence: true
-  validates :resident, presence: true
-  validates :community, presence: true
   validates :amount, numericality: { greater_than_or_equal_to: 0 }
-  validates_uniqueness_of :resident_id, scope: :meal_id
+  validates :resident_id, uniqueness: { scope: :meal_id }
 
   def set_community_id
     self.community_id = meal&.community_id
@@ -50,13 +49,14 @@ class Bill < ApplicationRecord
   # The amount used for cost-splitting purposes.
   # If no_cost is true, this cook's bill does not contribute to the meal cost.
   def effective_amount
-    no_cost? ? BigDecimal("0") : amount
+    no_cost? ? BigDecimal('0') : amount
   end
 
   # Per-multiplier-unit cost for this bill.
   # Uses effective_amount so no_cost bills contribute 0.
   def unit_cost
-    return BigDecimal("0") if meal.multiplier == 0
+    return BigDecimal('0') if meal.multiplier.zero?
+
     capped_amount / meal.multiplier
   end
 
@@ -69,7 +69,7 @@ class Bill < ApplicationRecord
     return amt unless meal.capped?
 
     total = meal.total_cost
-    return amt if total == 0
+    return amt if total.zero?
 
     max = meal.max_cost
     return amt if total <= max
@@ -77,7 +77,5 @@ class Bill < ApplicationRecord
     (amt / total) * max
   end
 
-  def reconciled?
-    meal.reconciled?
-  end
+  delegate :reconciled?, to: :meal
 end

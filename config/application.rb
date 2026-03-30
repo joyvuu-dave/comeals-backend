@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 require_relative 'boot'
 
-require "rails"
+require 'rails'
 # Pick the frameworks you want:
-require "active_model/railtie"
-require "active_job/railtie"
-require "active_record/railtie"
+require 'active_model/railtie'
+require 'active_job/railtie'
+require 'active_record/railtie'
 # require "active_storage/engine"
-require "action_controller/railtie"
-require "action_mailer/railtie"
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
 # require "action_mailbox/engine"
 # require "action_text/engine"
-require "action_view/railtie"
+require 'action_view/railtie'
 # require "action_cable/engine"
-require "sprockets/railtie"
+require 'sprockets/railtie'
 # require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
@@ -48,11 +50,11 @@ module Comeals
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins(
-          /\Ahttps?:\/\/([\w-]+\.)*comeals\.com\z/,  # comeals.com and any subdomain(s)
-          /\Ahttps?:\/\/localhost(:\d+)?\z/,           # localhost (any port, for development)
-          /\Ahttps?:\/\/([\w-]+\.)?lvh\.me(:\d+)?\z/  # lvh.me and subdomains (for development)
+          %r{\Ahttps?://([\w-]+\.)*comeals\.com\z}, # comeals.com and any subdomain(s)
+          %r{\Ahttps?://localhost(:\d+)?\z}, # localhost (any port, for development)
+          %r{\Ahttps?://([\w-]+\.)?lvh\.me(:\d+)?\z} # lvh.me and subdomains (for development)
         )
-        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options], credentials: true
+        resource '*', headers: :any, methods: %i[get post put patch delete options], credentials: true
       end
     end
 
@@ -60,6 +62,6 @@ module Comeals
     config.action_controller.permit_all_parameters = true
 
     # Set Time Zone
-    config.time_zone = "America/Los_Angeles"
+    config.time_zone = 'America/Los_Angeles'
   end
 end

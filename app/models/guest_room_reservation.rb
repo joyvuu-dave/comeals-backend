@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: guest_room_reservations
@@ -24,14 +26,12 @@ class GuestRoomReservation < ApplicationRecord
   belongs_to :community
   belongs_to :resident
 
-  validates_presence_of :resident
-  validates_presence_of :date
-  validates_uniqueness_of :date, { scope: :community_id }
+  validates :date, presence: true
+  validates :date, uniqueness: { scope: :community_id } # rubocop:disable Rails/UniqueValidationWithoutIndex -- enforced at application level
 
   after_commit :trigger_pusher
 
   def trigger_pusher
-    community.trigger_pusher(self.date)
+    community.trigger_pusher(date)
   end
-
 end

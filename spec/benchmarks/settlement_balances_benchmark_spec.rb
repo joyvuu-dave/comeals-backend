@@ -1,5 +1,7 @@
-require "rails_helper"
-require "benchmark"
+# frozen_string_literal: true
+
+require 'rails_helper'
+require 'benchmark'
 
 # This benchmark compares the original N+1 settlement_balances implementation
 # against the optimized batch-loaded version. It builds a large dataset (40
@@ -14,32 +16,30 @@ require "benchmark"
 # This is intentional — update the naive version to match. The authoritative
 # correctness tests live in spec/models/reconciliation_spec.rb.
 
-RSpec.describe "Reconciliation#settlement_balances performance", :benchmark, type: :model do
+RSpec.describe 'Reconciliation#settlement_balances performance', :benchmark, type: :model do
   # ---------------------------------------------------------------------------
   # Helpers
   # ---------------------------------------------------------------------------
 
   # Count SQL queries executed during a block, excluding schema/cache queries.
-  def count_queries(&block)
+  def count_queries(&)
     count = 0
     counter = lambda { |*, payload|
-      unless payload[:name] == "SCHEMA" || payload[:cached]
-        count += 1
-      end
+      count += 1 unless payload[:name] == 'SCHEMA' || payload[:cached]
     }
-    ActiveSupport::Notifications.subscribed(counter, "sql.active_record", &block)
+    ActiveSupport::Notifications.subscribed(counter, 'sql.active_record', &)
     count
   end
 
   # Run a block and collect all four metrics.
-  def measure_all(label, &block)
+  def measure_all(label)
     result = nil
     GC.start
     alloc_before = GC.stat[:total_allocated_objects]
     cpu_before = Process.times
 
     query_count = count_queries do
-      @_timing = Benchmark.measure { result = block.call }
+      @_timing = Benchmark.measure { result = yield }
     end
 
     cpu_after = Process.times
@@ -48,7 +48,7 @@ RSpec.describe "Reconciliation#settlement_balances performance", :benchmark, typ
     {
       label: label,
       result: result,
-      wall_time: @_timing.real,
+      wall_time: @_timing.real, # rubocop:disable RSpec/InstanceVariable -- benchmark harness uses instance var for timing
       cpu_user: cpu_after.utime - cpu_before.utime,
       cpu_system: cpu_after.stime - cpu_before.stime,
       query_count: query_count,
@@ -83,18 +83,18 @@ RSpec.describe "Reconciliation#settlement_balances performance", :benchmark, typ
   # Benchmark
   # ---------------------------------------------------------------------------
 
-  it "optimized version matches naive results with dramatically fewer queries" do
+  it 'optimized version matches naive results with dramatically fewer queries' do
     # Deterministic RNG for reproducible data.
     srand(42)
 
     # -- Build community + unit --
-    community = FactoryBot.create(:community, cap: BigDecimal("4.50"))
-    unit = FactoryBot.create(:unit, community: community)
+    community = create(:community, cap: BigDecimal('4.50'))
+    unit = create(:unit, community: community)
 
     # -- Build residents (40: 30 adults, 10 children) --
     now = Time.current
-    password_digest = "benchmark_not_a_real_hash"
-    resident_rows = 40.times.map do |i|
+    password_digest = 'benchmark_not_a_real_hash'
+    resident_rows = Array.new(40) do |i|
       {
         community_id: community.id,
         unit_id: unit.id,
@@ -116,12 +116,12 @@ RSpec.describe "Reconciliation#settlement_balances performance", :benchmark, typ
     # -- Build meals (200, sequential dates, ~30% uncapped) --
     start_date = Date.new(2025, 1, 1)
     end_date = start_date + 199.days
-    meal_rows = 200.times.map do |i|
+    meal_rows = Array.new(200) do |i|
       date = start_date + i.days
       {
         community_id: community.id,
         date: date,
-        description: "",
+        description: '',
         closed: false,
         cap: i % 3 == 0 ? nil : community.cap, # ~33% uncapped
         start_time: date.wday == 0 ? date.to_datetime + 18.hours : date.to_datetime + 19.hours,
@@ -187,30 +187,30 @@ RSpec.describe "Reconciliation#settlement_balances performance", :benchmark, typ
 
     # -- Create reconciliation (bypass callbacks via insert_all) --
     Reconciliation.insert_all([{
-      community_id: community.id,
-      start_date: start_date,
-      end_date: end_date,
-      date: end_date,
-      created_at: now,
-      updated_at: now
-    }])
+                                community_id: community.id,
+                                start_date: start_date,
+                                end_date: end_date,
+                                date: end_date,
+                                created_at: now,
+                                updated_at: now
+                              }])
     reconciliation = Reconciliation.find_by!(community_id: community.id, start_date: start_date, end_date: end_date)
     reconciliation.assign_meals
 
     # Report dataset size
-    total_bills = Bill.where(meal_id: meals.map(&:id)).count
-    total_mrs = MealResident.where(meal_id: meals.map(&:id)).count
-    total_guests = Guest.where(meal_id: meals.map(&:id)).count
+    Bill.where(meal_id: meals.map(&:id)).count
+    MealResident.where(meal_id: meals.map(&:id)).count
+    Guest.where(meal_id: meals.map(&:id)).count
 
     # -- Run naive (N+1) implementation --
-    naive = measure_all("Naive (N+1)") { naive_settlement_balances(reconciliation) }
+    naive = measure_all('Naive (N+1)') { naive_settlement_balances(reconciliation) }
 
     # Clear all caches between runs
     reconciliation.reload
     ActiveRecord::Base.connection.clear_query_cache
 
     # -- Run optimized implementation --
-    optimized = measure_all("Optimized (batch)") { reconciliation.settlement_balances }
+    optimized = measure_all('Optimized (batch)') { reconciliation.settlement_balances }
 
     # -----------------------------------------------------------------------
     # Assertions
@@ -218,47 +218,35 @@ RSpec.describe "Reconciliation#settlement_balances performance", :benchmark, typ
 
     # Correctness: both must produce identical balances.
     expect(optimized[:result]).to eq(naive[:result]),
-      "Optimized and naive implementations produced different balances!\n" \
-      "Diff: #{(naive[:result].keys | optimized[:result].keys).select { |k| naive[:result][k] != optimized[:result][k] }.map { |k| "resident #{k}: naive=#{naive[:result][k]} opt=#{optimized[:result][k]}" }.join(', ')}"
+                                  "Optimized and naive implementations produced different balances!\n" \
+                                  "Diff: #{
+                                    (naive[:result].keys | optimized[:result].keys)
+                                      .reject { |k| naive[:result][k] == optimized[:result][k] }
+                                      .map do |k|
+                                      "resident #{k}: naive=#{naive[:result][k]} " \
+                                        "opt=#{optimized[:result][k]}"
+                                    end
+                                      .join(', ')
+                                  }"
 
     # Performance: optimized must use dramatically fewer queries.
     expect(optimized[:query_count]).to be < (naive[:query_count] / 10),
-      "Expected at least 10x query reduction. Naive: #{naive[:query_count]}, Optimized: #{optimized[:query_count]}"
+                                       'Expected at least 10x query reduction. ' \
+                                       "Naive: #{naive[:query_count]}, " \
+                                       "Optimized: #{optimized[:query_count]}"
 
     # -----------------------------------------------------------------------
     # Report
     # -----------------------------------------------------------------------
 
-    query_speedup = naive[:query_count].to_f / optimized[:query_count]
-    time_speedup = naive[:wall_time] / [optimized[:wall_time], 0.0001].max
-    alloc_ratio = naive[:allocations].to_f / [optimized[:allocations], 1].max
+    naive[:query_count].to_f
+    optimized[:query_count]
+    naive[:wall_time]
+    [optimized[:wall_time], 0.0001].max
+    naive[:allocations].to_f
+    [optimized[:allocations], 1].max
     naive_cpu = naive[:cpu_user] + naive[:cpu_system]
     opt_cpu = optimized[:cpu_user] + optimized[:cpu_system]
-    cpu_speedup = naive_cpu / [opt_cpu, 0.0001].max
-
-    puts "\n"
-    puts "=" * 72
-    puts "  SETTLEMENT BALANCES BENCHMARK"
-    puts "  Dataset: #{residents.size} residents, #{meals.size} meals, " \
-         "#{total_bills} bills, #{total_mrs} attendees, #{total_guests} guests"
-    puts "  Note: Goldiloader is active — naive query count reflects batched meal loads"
-    puts "=" * 72
-    puts ""
-    puts format("  %-24s %18s %18s %10s", "", "Naive (N+1)", "Optimized", "Speedup")
-    puts "  " + "-" * 70
-    puts format("  %-24s %17.3fs %17.3fs %9.0fx", "Wall clock time",
-                naive[:wall_time], optimized[:wall_time], time_speedup)
-    puts format("  %-24s %18d %18d %9.0fx", "SQL queries",
-                naive[:query_count], optimized[:query_count], query_speedup)
-    puts format("  %-24s %18s %18s %9.0fx", "Objects allocated",
-                naive[:allocations].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse,
-                optimized[:allocations].to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse,
-                alloc_ratio)
-    puts format("  %-24s %17.3fs %17.3fs %9.0fx", "CPU time (user+sys)",
-                naive_cpu, opt_cpu, cpu_speedup)
-    puts ""
-    puts "  Correctness: PASS (both implementations produce identical balances)"
-    puts "=" * 72
-    puts ""
+    naive_cpu / [opt_cpu, 0.0001].max
   end
 end

@@ -1,48 +1,50 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "4.0.2"
+ruby '4.0.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 8.1.0"
+gem 'rails', '~> 8.1.0'
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
+gem 'sprockets-rails'
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.5"
+gem 'pg', '~> 1.5'
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 7.0"
+gem 'puma', '~> 7.0'
 gem 'sassc-rails'
 
 # Gems transitioning from stdlib to bundled gems in Ruby 3.4+
 # (warnings in 3.3, required in 3.4)
+gem 'base64'
 gem 'bigdecimal'
 gem 'csv'
-gem 'mutex_m'
-gem 'base64'
 gem 'drb'
+gem 'mutex_m'
 
 gem 'concurrent-ruby'
 
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 5.0'
 
-gem 'rack-cors', :require => 'rack/cors'
+gem 'rack-cors', require: 'rack/cors'
 
 gem 'activeadmin', '~> 3.0'
+gem 'active_model_serializers', '~> 0.10'
+gem 'audited'
+gem 'benchmark'
+gem 'dalli'
 gem 'devise'
 gem 'friendly_id'
-gem 'scrypt'
-gem 'active_model_serializers', '~> 0.10'
-gem 'pusher'
-gem 'audited'
-gem 'newrelic_rpm'
-gem 'letter_opener', group: :development
-gem 'icalendar'
-gem 'platform-api'
-gem 'skylight', group: :production
 gem 'goldiloader'
-gem 'dalli'
-gem 'benchmark'
+gem 'icalendar'
+gem 'letter_opener', group: :development
+gem 'newrelic_rpm'
+gem 'platform-api'
+gem 'pusher'
+gem 'scrypt'
+gem 'skylight', group: :production
 
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
@@ -52,22 +54,28 @@ gem 'bootsnap', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug', platforms: [:ruby, :mri, :windows]
-  gem 'rspec-rails'
+  gem 'byebug', platforms: %i[ruby mri windows]
   gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'rspec-rails'
+  gem 'rubocop', require: false
+  gem 'rubocop-factory_bot', require: false
+  gem 'rubocop-performance', require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'rubocop-rspec_rails', require: false
 end
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
+  gem 'annotaterb'
   gem 'better_errors'
   gem 'binding_of_caller'
-  gem 'xipio'
   gem 'bullet'
-  gem 'annotaterb'
+  gem 'web-console', '>= 3.3.0'
+  gem 'xipio'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:jruby, :windows]
+gem 'tzinfo-data', platforms: %i[jruby windows]

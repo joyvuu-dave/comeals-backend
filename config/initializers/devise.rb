@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
@@ -6,7 +8,9 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
+  # rubocop:disable Layout/LineLength
   # config.secret_key = '436713fe26a8fbc31f7ee8074afef4d77fed4590b80ab2a5bfc87888265782de4b10521cf8e2af759146d50d8fb39e41422df964a4f62604ec52e7e118475100'
+  # rubocop:enable Layout/LineLength
 
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
@@ -108,7 +112,9 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 11
 
   # Set up a pepper to generate the hashed password.
+  # rubocop:disable Layout/LineLength
   # config.pepper = '1bd09dce63f4e7e678ebd7a5b62ee38fcf98724faaf8ddb499c3c4aa4abc7f7cde4b2c49dc6f7290278fba59863ab3ffe691d0f4170e12837b98d20445301da0'
+  # rubocop:enable Layout/LineLength
 
   # Send a notification to the original email when the user's email is changed.
   # config.send_email_changed_notification = false

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: common_house_reservations
@@ -24,8 +26,8 @@
 
 FactoryBot.define do
   factory :common_house_reservation do
-    community 
-    resident 
+    community
+    resident
     start_date { 72.hours.ago }
     end_date { 71.hours.ago }
   end

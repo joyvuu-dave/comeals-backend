@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe MailInterceptor do
   around do |example|
-    original = ENV['MAIL_INTERCEPT_TO']
+    original = ENV.fetch('MAIL_INTERCEPT_TO', nil)
     ENV['MAIL_INTERCEPT_TO'] = 'intercepted@example.com'
     example.run
   ensure
@@ -20,7 +22,7 @@ RSpec.describe MailInterceptor do
     end
 
     before do
-      MailInterceptor.delivering_email(message)
+      described_class.delivering_email(message)
     end
 
     it 'redirects the recipient to MAIL_INTERCEPT_TO' do
@@ -49,7 +51,7 @@ RSpec.describe MailInterceptor do
     end
 
     before do
-      MailInterceptor.delivering_email(message)
+      described_class.delivering_email(message)
     end
 
     it 'includes all original recipients in the subject' do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class RotationsController < ApiController
@@ -10,8 +12,8 @@ module Api
       def index
         if params[:start].present? && params[:end].present?
           rotation_ids = Meal.where(community_id: params[:community_id])
-                             .where("date >= ?", params[:start])
-                             .where("date <= ?", params[:end])
+                             .where(date: (params[:start])..)
+                             .where(date: ..(params[:end]))
                              .where.not(rotation_id: nil)
                              .pluck(:rotation_id).uniq
           rotations = Rotation.find(rotation_ids)
@@ -28,14 +30,15 @@ module Api
       end
 
       private
+
       def authenticate
         not_authenticated_api unless signed_in_resident_api?
       end
 
       def set_resource
-        @rotation = Rotation.includes({:residents => :unit}).find_by(id: params[:id])
+        @rotation = Rotation.includes({ residents: :unit }).find_by(id: params[:id])
 
-        not_found_api unless @rotation.present?
+        not_found_api if @rotation.blank?
       end
 
       def authorize

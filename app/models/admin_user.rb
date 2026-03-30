@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: admin_users
@@ -42,7 +44,6 @@ class AdminUser < ApplicationRecord
   has_many :meals, through: :community
   has_many :reconciliations, through: :community
   has_many :residents, through: :community
-  has_many :units, through: :community
   has_many :rotations, through: :community
   has_many :events, through: :community
   has_many :guest_room_reservations, through: :community

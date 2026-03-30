@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: guests
@@ -29,17 +31,14 @@ class Guest < ApplicationRecord
 
   audited associated_with: :meal
 
-  validates :meal, presence: true
-  validates :resident, presence: true
   validates :multiplier, numericality: { only_integer: true }
   validate :meal_has_open_spots
 
   def meal_has_open_spots
-    errors.add(:base, "Meal has no open spots.") unless meal.max.nil? || meal.attendees_count < meal.max
+    errors.add(:base, 'Meal has no open spots.') unless meal.max.nil? || meal.attendees_count < meal.max
   end
 
   def cost
     meal.unit_cost * multiplier
   end
-
 end

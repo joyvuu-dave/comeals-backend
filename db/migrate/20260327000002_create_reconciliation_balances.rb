@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateReconciliationBalances < ActiveRecord::Migration[7.0]
   def change
     create_table :reconciliation_balances do |t|
@@ -8,7 +10,7 @@ class CreateReconciliationBalances < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_index :reconciliation_balances, [:reconciliation_id, :resident_id],
-              unique: true, name: "index_recon_balances_on_recon_id_and_resident_id"
+    add_index :reconciliation_balances, %i[reconciliation_id resident_id],
+              unique: true, name: 'index_recon_balances_on_recon_id_and_resident_id'
   end
 end

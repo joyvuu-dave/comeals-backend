@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: events
@@ -24,8 +26,8 @@
 class Event < ApplicationRecord
   belongs_to :community
 
-  validates_presence_of :title
-  validates_presence_of :start_date
+  validates :title, presence: true
+  validates :start_date, presence: true
 
   validate :end_date_or_allday
   validate :start_date_is_before_end_date
@@ -33,18 +35,18 @@ class Event < ApplicationRecord
   after_commit :trigger_pusher
 
   def end_date_or_allday
-    unless end_date.present? || allday
-      errors.add(:base, "Event must end or be all day")
-    end
+    return if end_date.present? || allday
+
+    errors.add(:base, 'Event must end or be all day')
   end
 
   def start_date_is_before_end_date
-    unless allday || end_date.blank?
-      errors.add(:base, "Start time must occur before end time") if end_date < start_date
-    end
+    return if allday || end_date.blank?
+
+    errors.add(:base, 'Start time must occur before end time') if end_date < start_date
   end
 
   def trigger_pusher
-    community.trigger_pusher(self.start_date)
+    community.trigger_pusher(start_date)
   end
 end

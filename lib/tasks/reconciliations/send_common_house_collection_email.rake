@@ -1,9 +1,10 @@
-namespace :reconciliations do
+# frozen_string_literal: true
 
-  desc "Send Common House Committee links to balance pages for current reconciliation period."
+namespace :reconciliations do
+  desc 'Send Common House Committee links to balance pages for current reconciliation period.'
   task send_common_house_collection_email: :environment do
     start_time = Time.current
-    
+
     begin
       ReconciliationMailer.common_house_collection_email.deliver_now
     rescue *MAIL_DELIVERY_ERRORS => e

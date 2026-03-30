@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'rake'
 
@@ -14,22 +16,22 @@ RSpec.describe 'billing:recalculate correctness', :benchmark, type: :task do
     srand(42)
 
     # Build a community with varied meal data
-    community = FactoryBot.create(:community, cap: BigDecimal("4.50"))
-    unit = FactoryBot.create(:unit, community: community)
+    community = create(:community, cap: BigDecimal('4.50'))
+    unit = create(:unit, community: community)
 
-    residents = 10.times.map do |i|
-      FactoryBot.create(:resident, community: community, unit: unit, multiplier: i < 7 ? 2 : 1)
+    residents = Array.new(10) do |i|
+      create(:resident, community: community, unit: unit, multiplier: i < 7 ? 2 : 1)
     end
 
     # Create 20 meals with varied properties
     now = Time.current
     start_date = Date.new(2025, 6, 1)
-    meal_rows = 20.times.map do |i|
+    meal_rows = Array.new(20) do |i|
       date = start_date + i.days
       {
         community_id: community.id,
         date: date,
-        description: "",
+        description: '',
         closed: false,
         cap: i % 3 == 0 ? nil : community.cap,
         start_time: date.to_datetime + 19.hours,
@@ -81,7 +83,7 @@ RSpec.describe 'billing:recalculate correctness', :benchmark, type: :task do
           meal_id: meal.id,
           resident_id: host.id,
           multiplier: 2,
-          name: "Guest",
+          name: 'Guest',
           vegetarian: false,
           late: false,
           created_at: now,
@@ -104,9 +106,11 @@ RSpec.describe 'billing:recalculate correctness', :benchmark, type: :task do
     # Verify each resident's cached balance matches the oracle.
     # Compare at DECIMAL(12,8) precision since that's what the DB stores.
     residents.each do |resident|
-      cached = ResidentBalance.find_by(resident_id: resident.id)&.amount || BigDecimal("0")
+      cached = ResidentBalance.find_by(resident_id: resident.id)&.amount || BigDecimal('0')
       expect(cached.round(8)).to eq(expected[resident.id].round(8)),
-        "Resident #{resident.name}: expected #{expected[resident.id].round(8)}, got #{cached.round(8)}"
+                                 "Resident #{resident.name}: " \
+                                 "expected #{expected[resident.id].round(8)}, " \
+                                 "got #{cached.round(8)}"
     end
   end
 end

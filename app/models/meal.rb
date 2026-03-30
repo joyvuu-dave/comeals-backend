@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: meals
@@ -30,6 +32,9 @@
 #  fk_rails_...  (rotation_id => rotations.id)
 #
 class Meal < ApplicationRecord
+  ALTERNATING_DAYS = [1, 2].freeze
+  TEMPLATE_WDAYS = [0, 4].freeze
+
   audited
   has_associated_audits
 
@@ -43,7 +48,7 @@ class Meal < ApplicationRecord
   # A bill on a meal with no attendees has zero financial impact —
   # the cook absorbs the cost and is not reimbursed.
   # Uses EXISTS (not JOIN) to avoid multiplying rows in SUM queries.
-  scope :with_attendees, -> {
+  scope :with_attendees, lambda {
     mr = MealResident.arel_table
     g = Guest.arel_table
     where(
@@ -67,20 +72,26 @@ class Meal < ApplicationRecord
   before_validation :set_start_time, on: :create
 
   validates :date, presence: true
-  validates :community, presence: true
-  validates :max, numericality: { greater_than_or_equal_to: :attendees_count, message: "Max can't be less than current number of attendees." }, allow_nil: true
+  validates :max,
+            numericality: {
+              greater_than_or_equal_to: :attendees_count,
+              message: "Max can't be less than current number of attendees."
+            },
+            allow_nil: true
 
-  validates_uniqueness_of :date, { scope: :community_id }
+  validates :date, uniqueness: { scope: :community_id }
 
-  before_create :set_cap
   before_save :conditionally_set_max
   before_save :conditionally_set_closed_at
+  before_create :set_cap
 
   accepts_nested_attributes_for :guests, allow_destroy: true, reject_if: proc { |attributes| attributes['name'].blank? }
-  accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes| attributes['resident_id'].blank? }
+  accepts_nested_attributes_for :bills, allow_destroy: true, reject_if: proc { |attributes|
+    attributes['resident_id'].blank?
+  }
 
-  def get_start_time
-    self.start_time.in_time_zone(community.timezone)
+  def get_start_time # rubocop:disable Naming/AccessorMethodName -- frontend API expects get_start_time
+    start_time.in_time_zone(community.timezone)
   end
 
   # NULL cap means "no cap". No more Float::INFINITY.
@@ -97,7 +108,7 @@ class Meal < ApplicationRecord
   end
 
   def set_start_time
-    self.start_time = date.wday == 0 ? date.to_datetime + 18.hours : date.to_datetime + 19.hours
+    self.start_time = date.wday.zero? ? date.to_datetime + 18.hours : date.to_datetime + 19.hours
   end
 
   def conditionally_set_max
@@ -124,9 +135,9 @@ class Meal < ApplicationRecord
     )
 
     # Update Calendar
-    community.trigger_pusher(self.date)
+    community.trigger_pusher(date)
 
-    return true
+    true
   end
 
   # DERIVED DATA — all computed from source, no cached columns.
@@ -139,9 +150,7 @@ class Meal < ApplicationRecord
     meal_residents.count + guests.count
   end
 
-  def bills_count
-    bills.count
-  end
+  delegate :count, to: :bills, prefix: true
 
   # Total cost computed from source bills via SQL SUM.
   # No memoization — bills can change within a request, and stale data
@@ -156,13 +165,15 @@ class Meal < ApplicationRecord
   def effective_total_cost
     tc = total_cost
     return tc unless capped?
+
     mc = max_cost
-    tc > mc ? mc : tc
+    [tc, mc].min
   end
 
   # Per-multiplier-unit cost. Single division, no per-bill iteration.
   def unit_cost
-    return BigDecimal("0") if multiplier == 0
+    return BigDecimal('0') if multiplier.zero?
+
     effective_total_cost / multiplier
   end
 
@@ -175,12 +186,14 @@ class Meal < ApplicationRecord
   # Returns nil if uncapped.
   def max_cost
     return nil unless capped?
+
     cap * multiplier
   end
 
   def subsidized?
-    return false if multiplier == 0
+    return false if multiplier.zero?
     return false unless capped?
+
     total_cost > max_cost
   end
 
@@ -189,12 +202,13 @@ class Meal < ApplicationRecord
   end
 
   def total_audits
-    (associated_audits + audits).sort { |a,b| b.created_at <=> a.created_at }
+    (associated_audits + audits).sort { |a, b| b.created_at <=> a.created_at }
   end
 
   # HELPERS
   def another_meal_in_this_rotation_has_less_than_two_cooks?
     return false if rotation_id.nil?
+
     Meal.where(rotation_id: rotation_id).where.not(id: id)
         .left_joins(:bills)
         .group(:id)
@@ -206,7 +220,7 @@ class Meal < ApplicationRecord
   # Typical 3x a week schedule with alternating Mon / Tues
   def self.create_templates(community_id, start_date, end_date, alternating_dinner_day)
     count = 0
-    community = Community.find(community_id)
+    Community.find(community_id)
     dates = (start_date..end_date).to_a
 
     dates.each do |date|
@@ -214,17 +228,21 @@ class Meal < ApplicationRecord
       next if Meal.is_holiday?(date)
 
       # Skip days without dinner
-      next unless [0, alternating_dinner_day, 4].any? { |num| num == date.wday }
+      next unless [0, alternating_dinner_day, 4].any?(date.wday)
 
       # Flip the alternating dinner day
-      alternating_dinner_day = [1, 2].find { |val| val != alternating_dinner_day } if date.wday == alternating_dinner_day
+      if date.wday == alternating_dinner_day
+        alternating_dinner_day = ALTERNATING_DAYS.find do |val|
+          val != alternating_dinner_day
+        end
+      end
 
       # Create the meal
       meal = Meal.new(date: date, community_id: community_id)
       if meal.save
         count += 1
       else
-        puts meal.errors.to_s
+        Rails.logger.debug meal.errors
       end
     end
 
@@ -235,7 +253,7 @@ class Meal < ApplicationRecord
   # Modified twice a week schedule
   def self.create_modified_templates(community_id, start_date, end_date)
     count = 0
-    community = Community.find(community_id)
+    Community.find(community_id)
     dates = (start_date..end_date).to_a
 
     dates.each do |date|
@@ -243,14 +261,14 @@ class Meal < ApplicationRecord
       next if Meal.is_holiday?(date)
 
       # Skip days without dinner
-      next unless [0, 4].any? { |num| num == date.wday }
+      next unless TEMPLATE_WDAYS.any?(date.wday)
 
       # Create the meal
       meal = Meal.new(date: date, community_id: community_id)
       if meal.save
         count += 1
       else
-        puts meal.errors.to_s
+        Rails.logger.debug meal.errors
       end
     end
 
@@ -264,36 +282,41 @@ class Meal < ApplicationRecord
                     Meal.is_mothers_day(date)   ||
                     Meal.is_easter(date)        ||
                     Meal.is_july_fourth(date)
+
     false
   end
 
   def self.is_thanksgiving(date)
-    return false unless date.class == Date
+    return false unless date.instance_of?(Date)
     return false unless date.month == 11
     return false unless date.thursday?
-    return false unless date.day >= 22 && date.day <= 28
+    return false unless date.day.between?(22, 28)
+
     true
   end
 
   def self.is_christmas(date)
     return true if date.month == 12 && date.day == 25
+
     false
   end
 
   def self.is_newyears(date)
     return true if date.month == 1 && date.day == 1
+
     false
   end
 
   def self.is_mothers_day(date)
-    return false unless date.class == Date
+    return false unless date.instance_of?(Date)
     return false unless date.month == 5
     return false unless date.sunday?
-    return false unless date.day >= 8 && date.day <= 14
+    return false unless date.day.between?(8, 14)
+
     true
   end
 
-  def self.is_easter(date)
+  def self.is_easter(date) # rubocop:disable Metrics/AbcSize -- Anonymous Gregorian algorithm, inherently arithmetic-heavy
     y = date.year
     a = y % 19
     b = y / 100
@@ -302,22 +325,23 @@ class Meal < ApplicationRecord
     e = b % 4
     f = (b + 8) / 25
     g = (b - f + 1) / 3
-    h = (19 * a + b - d - g + 15) % 30
+    h = ((19 * a) + b - d - g + 15) % 30
     i = c / 4
     k = c % 4
-    l = (32 + 2 * e + 2 * i - h - k) % 7
-    m = (a + 11 * h + 22 * l) / 451
+    l = (32 + (2 * e) + (2 * i) - h - k) % 7
+    m = (a + (11 * h) + (22 * l)) / 451
 
-    month = (h + l - 7 * m + 114) / 31
-    day = ((h + l - 7 * m + 114) % 31) + 1
+    month = (h + l - (7 * m) + 114) / 31
+    day = ((h + l - (7 * m) + 114) % 31) + 1
 
     return true if date.month == month && date.day == day
+
     false
   end
 
   def self.is_july_fourth(date)
     return true if date.month == 7 && date.day == 4
+
     false
   end
-
 end
