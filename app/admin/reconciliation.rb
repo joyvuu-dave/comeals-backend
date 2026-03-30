@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Reconciliation do
-  menu label: "Recon."
+  menu label: 'Recon.'
 
   # SCOPE
   scope_to :current_admin_user
@@ -27,14 +29,14 @@ ActiveAdmin.register Reconciliation do
       row :number_of_meals
     end
 
-    panel "Settlement Balances" do
+    panel 'Settlement Balances' do
       table_for reconciliation.reconciliation_balances
-                             .includes(resident: :unit)
-                             .joins(resident: :unit)
-                             .order("units.name, residents.name") do
-        column("Resident") { |rb| link_to rb.resident.name, admin_resident_path(rb.resident) }
-        column("Unit") { |rb| rb.resident.unit.name }
-        column("Balance") { |rb| number_to_currency(rb.amount) }
+                              .includes(resident: :unit)
+                              .joins(resident: :unit)
+                              .order('units.name, residents.name') do
+        column('Resident') { |rb| link_to rb.resident.name, admin_resident_path(rb.resident) }
+        column('Unit') { |rb| rb.resident.unit.name }
+        column('Balance') { |rb| number_to_currency(rb.amount) }
       end
     end
   end

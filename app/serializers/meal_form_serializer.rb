@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MealFormSerializer < ActiveModel::Serializer
   attributes :id,
              :description,
@@ -16,14 +18,14 @@ class MealFormSerializer < ActiveModel::Serializer
   def next_id
     # Next meal by date, or self if this is the last meal
     Meal.where(community_id: scope.community_id)
-        .where("date > ? OR (date = ? AND id > ?)", scope.date, scope.date, scope.id)
+        .where('date > ? OR (date = ? AND id > ?)', scope.date, scope.date, scope.id)
         .order(:date, :id).limit(1).pick(:id) || scope.id
   end
 
   def prev_id
     # Previous meal by date, or self if this is the first meal
     Meal.where(community_id: scope.community_id)
-        .where("date < ? OR (date = ? AND id < ?)", scope.date, scope.date, scope.id)
+        .where('date < ? OR (date = ? AND id < ?)', scope.date, scope.date, scope.id)
         .order(date: :desc, id: :desc).limit(1).pick(:id) || scope.id
   end
 
@@ -69,7 +71,7 @@ class MealFormSerializer < ActiveModel::Serializer
     end
 
     def attending_at
-      meal_resident.present? ? meal_resident.created_at : nil
+      meal_resident.presence&.created_at
     end
 
     def name
@@ -85,6 +87,7 @@ class MealFormSerializer < ActiveModel::Serializer
     end
 
     private
+
     def meal_resident
       @meal_resident = MealResident.find_by(meal_id: scope.id, resident_id: object.id)
     end
@@ -98,5 +101,4 @@ class MealFormSerializer < ActiveModel::Serializer
                :vegetarian,
                :created_at
   end
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: events
@@ -64,12 +66,11 @@ class EventSerializer < ActiveModel::Serializer
     "events/edit/#{object.id}"
   end
 
-  def allDay
+  def allDay # rubocop:disable Naming/MethodName -- camelCase required by frontend API contract
     object.allday
   end
 
   def color
-    "#7ebc35"
+    '#7ebc35'
   end
-
 end

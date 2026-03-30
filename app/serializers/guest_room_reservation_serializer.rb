@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: guest_room_reservations
@@ -61,7 +63,6 @@ class GuestRoomReservationSerializer < ActiveModel::Serializer
   end
 
   def color
-    "#bc7335"
+    '#bc7335'
   end
-
 end

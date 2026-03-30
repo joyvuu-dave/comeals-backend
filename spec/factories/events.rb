@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: events
@@ -23,7 +25,7 @@
 
 FactoryBot.define do
   factory :event do
-    title { "Maintenance Committee Meeting" }
+    title { 'Maintenance Committee Meeting' }
     start_date { 49.hours.ago }
     end_date { 48.hours.ago }
     allday { false }

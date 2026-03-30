@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class AuditSerializer < ActiveModel::Serializer
   include ApplicationHelper
+
   attributes :id,
              :user_name,
              :description,

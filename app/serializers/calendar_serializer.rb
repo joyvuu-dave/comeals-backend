@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CalendarSerializer < ActiveModel::Serializer
   attributes :id,
              :month,
@@ -21,16 +23,16 @@ class CalendarSerializer < ActiveModel::Serializer
 
   def meals
     object.meals
-          .where("date >= ?", instance_options[:start_date])
-          .where("date <= ?", instance_options[:end_date])
+          .where(date: (instance_options[:start_date])..)
+          .where(date: ..(instance_options[:end_date]))
   end
 
   def bills
     object.bills
-          .includes(:meal, { :resident => :unit })
+          .includes(:meal, { resident: :unit })
           .joins(:meal)
-          .where("meals.date >= ?", instance_options[:start_date])
-          .where("meals.date <= ?", instance_options[:end_date])
+          .where(meals: { date: (instance_options[:start_date]).. })
+          .where(meals: { date: ..(instance_options[:end_date]) })
   end
 
   def rotations
@@ -40,33 +42,32 @@ class CalendarSerializer < ActiveModel::Serializer
   end
 
   def birthdays
-    object.residents.active.where("extract(month from birthday) in (?)", instance_options[:month_int_array])
+    object.residents.active.where('extract(month from birthday) in (?)', instance_options[:month_int_array])
   end
 
   def common_house_reservations
     object.common_house_reservations
-          .includes({ :resident => :unit })
-          .where("start_date >= ?", instance_options[:start_date])
-          .where("start_date <= ?", instance_options[:end_date])
+          .includes({ resident: :unit })
+          .where(start_date: (instance_options[:start_date])..)
+          .where(start_date: ..(instance_options[:end_date]))
   end
 
   def guest_room_reservations
     object.guest_room_reservations
-          .includes({ :resident => :unit })
-          .where("date >= ?", instance_options[:start_date])
-          .where("date <= ?", instance_options[:end_date])
+          .includes({ resident: :unit })
+          .where(date: (instance_options[:start_date])..)
+          .where(date: ..(instance_options[:end_date]))
   end
 
   def events
     object.events
-          .where("start_date >= ?", instance_options[:start_date])
-          .where("start_date <= ?", instance_options[:end_date])
+          .where(start_date: (instance_options[:start_date])..)
+          .where(start_date: ..(instance_options[:end_date]))
           .or(object.events
-                    .where("end_date >= ?", instance_options[:start_date])
-                    .where("end_date <= ?", instance_options[:end_date]))
+                    .where(end_date: (instance_options[:start_date])..)
+                    .where(end_date: ..(instance_options[:end_date])))
           .or(object.events
-                    .where("start_date < ?", instance_options[:start_date])
-                    .where("end_date > ?", instance_options[:end_date]))
+                    .where(start_date: ...(instance_options[:start_date]))
+                    .where('end_date > ?', instance_options[:end_date]))
   end
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: rotations
@@ -28,18 +30,18 @@ class Rotation < ApplicationRecord
   has_many :meals, dependent: :nullify
   has_many :bills, through: :meals
   has_many :cooks, -> { distinct }, through: :bills, source: :resident
-  has_many :residents, -> { where(active: true, can_cook: true).where("multiplier >= ?", 2) }, through: :community
+  has_many :residents, -> { where(active: true, can_cook: true).where(multiplier: 2..) }, through: :community
 
   before_validation :set_color, on: :create
   after_save :set_description
   after_save :set_start_date
-  after_commit :set_place_value, on: [:create, :destroy]
+  after_commit :set_place_value, on: %i[create destroy]
   after_create_commit :notify_residents
-  validates_presence_of :color
+  validates :color, presence: true
 
   accepts_nested_attributes_for :meals
 
-  COLORS = ["#3DC656", "#009EDC", "#D9443F", "#FFC857", "#E9724C"]
+  COLORS = ['#3DC656', '#009EDC', '#D9443F', '#FFC857', '#E9724C'].freeze
   def set_color
     used_colors = Rotation.where(community_id: community_id).pluck(:color).reverse
     prev_colors = []
@@ -52,20 +54,19 @@ class Rotation < ApplicationRecord
   end
 
   def set_description
-    self.update_columns(description: "#{self.meals&.order(:date)&.first&.date&.to_s} to #{self.meals&.order(:date)&.last&.date&.to_s}")
+    ordered = meals.order(:date)
+    update_columns(description: "#{ordered.first&.date} to #{ordered.last&.date}")
   end
 
   def set_start_date
-    self.update_columns(start_date: self.meals&.order(:date)&.first&.date)
+    update_columns(start_date: meals.order(:date).first&.date)
   end
 
-  def meals_count
-    meals.count
-  end
+  delegate :count, to: :meals, prefix: true
 
   def set_place_value
     Rotation.where(community_id: community_id)
-            .order('start_date ASC', 'id ASC')
+            .order(:start_date, :id)
             .pluck(:id)
             .each_with_index do |rot_id, index|
       Rotation.where(id: rot_id).update_all(place_value: index + 1)
@@ -77,13 +78,9 @@ class Rotation < ApplicationRecord
 
     residents = community.residents.where(active: true).where.not(email: nil)
     residents.each do |resident|
-      begin
-        ResidentMailer.new_rotation_email(resident, self, community).deliver_now
-      rescue *MAIL_DELIVERY_ERRORS => e
-        Rails.logger.error("new_rotation_email failed for #{resident.email}: #{e.class} - #{e.message}")
-      end
+      ResidentMailer.new_rotation_email(resident, self, community).deliver_now
+    rescue *MAIL_DELIVERY_ERRORS => e
+      Rails.logger.error("new_rotation_email failed for #{resident.email}: #{e.class} - #{e.message}")
     end
   end
-
-
 end

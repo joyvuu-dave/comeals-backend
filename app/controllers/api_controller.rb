@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class ApiController < ActionController::API
   def root_url
-    @root_url ||= Rails.env.production? ? "https://comeals.com" : "http://localhost:3001"
+    @root_url ||= Rails.env.production? ? 'https://comeals.com' : 'http://localhost:3001'
   end
 
   def current_resident_api
@@ -12,15 +14,21 @@ class ApiController < ActionController::API
   end
 
   def not_authenticated_api
-    render json: {message: "You are not authenticated. Please try signing in and then try again."}, status: 401 and return
+    render json: { message: 'You are not authenticated. Please try signing in and then try again.' },
+           status: :unauthorized and return
   end
 
   def not_authorized_api
-    render json: {message: "You are not authorized to view the page. You may have mistyped the address or might be signed into the wrong account."}, status: 403 and return
+    msg = 'You are not authorized to view the page. You may have mistyped ' \
+          'the address or might be signed into the wrong account.'
+    render json: { message: msg },
+           status: :forbidden and return
   end
 
   def not_found_api
-    render json: {message: "The page you were looking for doesn't exist. You may have mistyped the address or the page may have moved."}, status: 404 and return
+    msg = "The page you were looking for doesn't exist. You may have " \
+          'mistyped the address or the page may have moved.'
+    render json: { message: msg },
+           status: :not_found and return
   end
-
 end

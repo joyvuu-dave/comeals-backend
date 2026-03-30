@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'rake'
 
@@ -6,18 +8,18 @@ RSpec.describe 'reconciliation email tasks' do
     Rails.application.load_tasks
   end
 
-  let(:community) { FactoryBot.create(:community) }
-  let(:unit) { FactoryBot.create(:unit, community: community) }
+  let(:community) { create(:community) }
+  let(:unit) { create(:unit, community: community) }
 
   describe 'reconciliations:send_cooking_slot_email' do
     after { Rake::Task['reconciliations:send_cooking_slot_email'].reenable }
 
     it 'sends notification emails to cooks from the latest reconciliation' do
-      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-      meal = FactoryBot.create(:meal, community: community, date: Date.yesterday)
-      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("40"))
+      cook = create(:resident, community: community, unit: unit, multiplier: 2)
+      meal = create(:meal, community: community, date: Date.yesterday)
+      create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal('40'))
       reconciliation = Reconciliation.create!(
-        community: community, start_date: 1.year.ago.to_date, end_date: Date.today
+        community: community, start_date: 1.year.ago.to_date, end_date: Time.zone.today
       )
 
       mail_double = instance_double(ActionMailer::MessageDelivery)
@@ -31,11 +33,11 @@ RSpec.describe 'reconciliation email tasks' do
     end
 
     it 'handles email delivery failures gracefully' do
-      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-      meal = FactoryBot.create(:meal, community: community, date: Date.yesterday)
-      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("40"))
+      cook = create(:resident, community: community, unit: unit, multiplier: 2)
+      meal = create(:meal, community: community, date: Date.yesterday)
+      create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal('40'))
       Reconciliation.create!(
-        community: community, start_date: 1.year.ago.to_date, end_date: Date.today
+        community: community, start_date: 1.year.ago.to_date, end_date: Time.zone.today
       )
 
       mail_double = instance_double(ActionMailer::MessageDelivery)
@@ -64,7 +66,7 @@ RSpec.describe 'reconciliation email tasks' do
     it 'handles email delivery failures gracefully' do
       mail_double = instance_double(ActionMailer::MessageDelivery)
       allow(ReconciliationMailer).to receive(:common_house_collection_email).and_return(mail_double)
-      allow(mail_double).to receive(:deliver_now).and_raise(Net::SMTPAuthenticationError.new("auth failed"))
+      allow(mail_double).to receive(:deliver_now).and_raise(Net::SMTPAuthenticationError.new('auth failed'))
       allow(Rails.logger).to receive(:error)
 
       expect { Rake::Task['reconciliations:send_common_house_collection_email'].invoke }.not_to raise_error

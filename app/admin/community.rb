@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Community do
   # MENU
-  menu label: "Community"
+  menu label: 'Community'
 
   # STRONG PARAMS
   permit_params :name, :cap, :slug
@@ -9,7 +11,7 @@ ActiveAdmin.register Community do
   config.filters = false
 
   # ACTIONS
-  actions :all, except: [:destroy, :new]
+  actions :all, except: %i[destroy new]
 
   controller do
     def find_resource
@@ -48,13 +50,10 @@ ActiveAdmin.register Community do
     f.inputs do
       f.input :name
       f.input :cap, label: 'Cap ($)'
-      if f.object.persisted?
-        f.input :slug
-      end
+      f.input :slug if f.object.persisted?
     end
 
     f.actions
     f.semantic_errors
   end
-
 end

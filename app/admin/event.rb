@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Event do
   # STRONG PARAMS
   permit_params :title, :description, :start_date, :end_date, :allday, :community_id

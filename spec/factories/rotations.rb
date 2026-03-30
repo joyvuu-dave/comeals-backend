@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: rotations
@@ -23,7 +25,7 @@
 FactoryBot.define do
   factory :rotation do
     community
-    color { "blue" }
+    color { 'blue' }
     no_email { true }
   end
 end

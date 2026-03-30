@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateUnits < ActiveRecord::Migration[5.1]
   def change
     create_table :units do |t|
@@ -8,6 +10,6 @@ class CreateUnits < ActiveRecord::Migration[5.1]
       t.timestamps
     end
 
-    add_index :units, [:community_id, :name], unique: true
+    add_index :units, %i[community_id name], unique: true
   end
 end

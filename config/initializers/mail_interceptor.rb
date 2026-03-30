@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'net/smtp'
 
 # Exceptions that indicate an email delivery infrastructure failure
@@ -24,7 +26,7 @@ class MailInterceptor
   def self.delivering_email(message)
     original_to = Array(message.to).join(', ')
     message.subject = "[To: #{original_to}] #{message.subject}"
-    message.to = ENV['MAIL_INTERCEPT_TO']
+    message.to = ENV.fetch('MAIL_INTERCEPT_TO', nil)
     message.cc = nil
     message.bcc = nil
   end
@@ -32,7 +34,7 @@ end
 
 if ENV['MAIL_INTERCEPT_TO'].present?
   if Rails.env.production?
-    Rails.logger.warn("MAIL_INTERCEPT_TO is set in production — ignoring. Remove this env var.")
+    Rails.logger.warn('MAIL_INTERCEPT_TO is set in production — ignoring. Remove this env var.')
   else
     ActionMailer::Base.register_interceptor(MailInterceptor)
   end

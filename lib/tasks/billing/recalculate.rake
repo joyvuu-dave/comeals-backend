@@ -21,12 +21,12 @@ namespace :billing do
       unreconciled_meals.each do |meal|
         total_mult = meal.meal_residents.sum(&:multiplier) + meal.guests.sum(&:multiplier)
 
-        if total_mult == 0
-          unit_costs[meal.id] = BigDecimal("0")
+        if total_mult.zero?
+          unit_costs[meal.id] = BigDecimal('0')
           next
         end
 
-        total_cost = meal.bills.reject(&:no_cost).sum(BigDecimal("0"), &:amount)
+        total_cost = meal.bills.reject(&:no_cost).sum(BigDecimal('0'), &:amount)
         effective_cost = total_cost
         if meal.capped?
           max_cost = meal.cap * total_mult
@@ -37,9 +37,9 @@ namespace :billing do
       end
 
       # Accumulate credits, debits, and guest debits from in-memory data (0 queries).
-      credits = Hash.new(BigDecimal("0"))
-      debits = Hash.new(BigDecimal("0"))
-      guest_debits = Hash.new(BigDecimal("0"))
+      credits = Hash.new(BigDecimal('0'))
+      debits = Hash.new(BigDecimal('0'))
+      guest_debits = Hash.new(BigDecimal('0'))
 
       unreconciled_meals.each do |meal|
         uc = unit_costs[meal.id]

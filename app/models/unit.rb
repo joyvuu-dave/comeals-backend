@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: units
@@ -22,16 +24,18 @@ class Unit < ApplicationRecord
   has_many :residents, dependent: :destroy
   belongs_to :community
 
-  validates_uniqueness_of :name, scope: :community_id
+  validates :name, uniqueness: { scope: :community_id }
 
   # DERIVED DATA
   def balance
-    return BigDecimal("0") if Meal.where(community_id: community_id).unreconciled.count == 0
-    residents.reduce(BigDecimal("0")) { |sum, resident| sum + resident.balance }
+    return BigDecimal('0') if Meal.where(community_id: community_id).unreconciled.none?
+
+    residents.reduce(BigDecimal('0')) { |sum, resident| sum + resident.balance }
   end
 
   def meals_cooked
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
+    return 0 if Meal.where(community_id: community_id).unreconciled.none?
+
     residents.reduce(0) { |sum, resident| sum + resident.bills.joins(:meal).merge(Meal.unreconciled).count }
   end
 

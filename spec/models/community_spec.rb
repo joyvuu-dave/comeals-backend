@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: communities
@@ -17,14 +19,14 @@
 #
 require 'rails_helper'
 
-RSpec.describe Community, type: :model do
-  let(:community) { FactoryBot.create(:community, cap: BigDecimal("4.50")) }
-  let(:unit) { FactoryBot.create(:unit, community: community) }
+RSpec.describe Community do
+  let(:community) { create(:community, cap: BigDecimal('4.50')) }
+  let(:unit) { create(:unit, community: community) }
 
   describe 'validations' do
     it 'enforces unique community names (case-insensitive)' do
-      FactoryBot.create(:community, name: "Swan's Way")
-      duplicate = FactoryBot.build(:community, name: "swan's way")
+      create(:community, name: "Swan's Way")
+      duplicate = build(:community, name: "swan's way")
 
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:name]).to be_present
@@ -33,17 +35,17 @@ RSpec.describe Community, type: :model do
 
   describe '#unreconciled_ave_cost' do
     it 'returns average cost per adult for unreconciled meals' do
-      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-      diner = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      cook = create(:resident, community: community, unit: unit, multiplier: 2)
+      diner = create(:resident, community: community, unit: unit, multiplier: 2)
 
-      meal = FactoryBot.create(:meal, community: community)
-      FactoryBot.create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal("40"))
-      FactoryBot.create(:meal_resident, meal: meal, resident: cook, community: community)
-      FactoryBot.create(:meal_resident, meal: meal, resident: diner, community: community)
+      meal = create(:meal, community: community)
+      create(:bill, meal: meal, resident: cook, community: community, amount: BigDecimal('40'))
+      create(:meal_resident, meal: meal, resident: cook, community: community)
+      create(:meal_resident, meal: meal, resident: diner, community: community)
 
       result = community.unreconciled_ave_cost
       # total_multiplier = 2 + 2 = 4, total_cost = 40, cost_per_unit = 10, per_adult = 20
-      expect(result).to eq("$20.00/adult")
+      expect(result).to eq('$20.00/adult')
     end
 
     it 'returns -- when no unreconciled meals exist' do
@@ -51,10 +53,10 @@ RSpec.describe Community, type: :model do
     end
 
     it 'returns -- when total multiplier is zero' do
-      child = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 0)
-      meal = FactoryBot.create(:meal, community: community)
-      FactoryBot.create(:bill, meal: meal, resident: child, community: community, amount: BigDecimal("10"))
-      FactoryBot.create(:meal_resident, meal: meal, resident: child, community: community, multiplier: 0)
+      child = create(:resident, community: community, unit: unit, multiplier: 0)
+      meal = create(:meal, community: community)
+      create(:bill, meal: meal, resident: child, community: community, amount: BigDecimal('10'))
+      create(:meal_resident, meal: meal, resident: child, community: community, multiplier: 0)
 
       expect(community.unreconciled_ave_cost).to eq('--')
     end
@@ -62,15 +64,15 @@ RSpec.describe Community, type: :model do
 
   describe '#unreconciled_ave_number_of_attendees' do
     it 'returns average attendee count across unreconciled meals' do
-      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-      diner = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
+      cook = create(:resident, community: community, unit: unit, multiplier: 2)
+      diner = create(:resident, community: community, unit: unit, multiplier: 2)
 
-      meal1 = FactoryBot.create(:meal, community: community)
-      FactoryBot.create(:meal_resident, meal: meal1, resident: cook, community: community)
-      FactoryBot.create(:meal_resident, meal: meal1, resident: diner, community: community)
+      meal1 = create(:meal, community: community)
+      create(:meal_resident, meal: meal1, resident: cook, community: community)
+      create(:meal_resident, meal: meal1, resident: diner, community: community)
 
-      meal2 = FactoryBot.create(:meal, community: community)
-      FactoryBot.create(:meal_resident, meal: meal2, resident: cook, community: community)
+      meal2 = create(:meal, community: community)
+      create(:meal_resident, meal: meal2, resident: cook, community: community)
 
       # meal1: 2 attendees, meal2: 1 attendee, average = 1.5
       expect(community.unreconciled_ave_number_of_attendees).to eq(1.5)
@@ -81,10 +83,10 @@ RSpec.describe Community, type: :model do
     end
 
     it 'counts guests in addition to residents' do
-      cook = FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2)
-      meal = FactoryBot.create(:meal, community: community)
-      FactoryBot.create(:meal_resident, meal: meal, resident: cook, community: community)
-      FactoryBot.create(:guest, meal: meal, resident: cook)
+      cook = create(:resident, community: community, unit: unit, multiplier: 2)
+      meal = create(:meal, community: community)
+      create(:meal_resident, meal: meal, resident: cook, community: community)
+      create(:guest, meal: meal, resident: cook)
 
       # 1 resident + 1 guest = 2 attendees / 1 meal = 2.0
       expect(community.unreconciled_ave_number_of_attendees).to eq(2.0)
@@ -97,15 +99,15 @@ RSpec.describe Community, type: :model do
     end
 
     it 'returns false when cap is nil' do
-      uncapped = FactoryBot.create(:community, cap: nil)
+      uncapped = create(:community, cap: nil)
       expect(uncapped.capped?).to be false
     end
   end
 
   describe '#auto_rotation_length' do
     it 'calculates half the number of cookable adults' do
-      4.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
-      2.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 1, can_cook: true) }
+      4.times { create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
+      2.times { create(:resident, community: community, unit: unit, multiplier: 1, can_cook: true) }
       # 4 adults (multiplier >= 2) who can cook, divided by 2 = 2
       expect(community.auto_rotation_length).to eq(2)
     end
@@ -114,12 +116,12 @@ RSpec.describe Community, type: :model do
   describe '#auto_create_rotations' do
     it 'groups unassigned meals into rotations based on auto_rotation_length' do
       # Need cookable adults for auto_rotation_length to be > 0
-      4.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
+      4.times { create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
       # auto_rotation_length = 4/2 = 2
 
-      FactoryBot.create(:meal, community: community, date: Date.new(2026, 5, 1))
-      FactoryBot.create(:meal, community: community, date: Date.new(2026, 5, 3))
-      FactoryBot.create(:meal, community: community, date: Date.new(2026, 5, 5))
+      create(:meal, community: community, date: Date.new(2026, 5, 1))
+      create(:meal, community: community, date: Date.new(2026, 5, 3))
+      create(:meal, community: community, date: Date.new(2026, 5, 5))
 
       allow(Pusher).to receive(:trigger)
       community.auto_create_rotations
@@ -135,7 +137,7 @@ RSpec.describe Community, type: :model do
 
     it 'creates a rotation with meals_per_rotation meals' do
       # Need cookable adults
-      4.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
+      4.times { create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
 
       community.create_next_rotation
 
@@ -144,7 +146,7 @@ RSpec.describe Community, type: :model do
     end
 
     it 'creates meals only on valid days (Sun, Mon/Tue alternating, Fri)' do
-      4.times { FactoryBot.create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
+      4.times { create(:resident, community: community, unit: unit, multiplier: 2, can_cook: true) }
 
       community.create_next_rotation
 
@@ -153,7 +155,7 @@ RSpec.describe Community, type: :model do
     end
 
     it 'raises when unassigned meals exist' do
-      FactoryBot.create(:meal, community: community)
+      create(:meal, community: community)
 
       expect { community.create_next_rotation }.to raise_error(RuntimeError, /not assigned to Rotations/)
     end

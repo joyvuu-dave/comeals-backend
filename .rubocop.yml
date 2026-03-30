@@ -1,0 +1,122 @@
+plugins:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-rspec_rails
+  - rubocop-factory_bot
+
+AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - 'db/schema.rb'
+    - 'bin/**/*'
+    - 'vendor/**/*'
+    - 'node_modules/**/*'
+    - 'tmp/**/*'
+
+# --- RSpec ---
+# Financial tests need thorough, multi-assertion examples that validate
+# complete calculation chains. Artificially splitting them makes tests
+# harder to follow and easier to accidentally break.
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+# Complex test setups with many let declarations are legitimate for
+# financial scenarios that require multiple residents, meals, bills, etc.
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+# Numbered lets (item_1, item_2) are clear in financial tests with
+# multiple similar objects.
+RSpec/IndexedLet:
+  Enabled: false
+
+# Some specs describe rake tasks or request paths, not classes.
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/tasks/**/*'
+    - 'spec/requests/**/*'
+
+# before(:all) is used for expensive test setup (e.g., seeding shared
+# records). Acceptable when tests are wrapped in transactions.
+RSpec/BeforeAfterAll:
+  Enabled: false
+
+# --- Style ---
+# Rails app — class names and file structure are the documentation.
+Style/Documentation:
+  Enabled: false
+
+# --- Rails ---
+# API backend with no user-facing views. No i18n needed.
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+# update_column/update_all are used intentionally in rake tasks and
+# batch operations to bypass callbacks for performance.
+Rails/SkipsModelValidations:
+  Enabled: false
+
+# Historical migrations — changing ALTER TABLE grouping in already-applied
+# migrations is pointless churn. Not-yet-applied migrations are few enough
+# to review individually.
+Rails/BulkChangeTable:
+  Enabled: false
+
+# --- Metrics ---
+# ActiveAdmin DSL, spec files, config blocks, routes, seeds, rake tasks,
+# and migrations all have legitimately large blocks.
+Metrics/BlockLength:
+  Exclude:
+    - 'app/admin/**/*'
+    - 'config/**/*'
+    - 'db/**/*'
+    - 'lib/tasks/**/*'
+    - 'spec/**/*'
+
+# Defaults (AbcSize 17, MethodLength 10) are too aggressive for real-world
+# Rails controllers and financial models. These thresholds catch genuinely
+# problematic methods while allowing normal business logic.
+# Admin DSL forms have unavoidably long collection queries.
+Layout/LineLength:
+  Exclude:
+    - 'app/admin/**/*'
+
+Metrics/AbcSize:
+  Max: 45
+
+Metrics/MethodLength:
+  Max: 25
+  Exclude:
+    - 'db/migrate/**/*'
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Metrics/ClassLength:
+  Max: 250
+
+Metrics/ModuleLength:
+  Max: 150
+
+# --- Naming ---
+# Variable numbering style (admin1 vs admin_1) is a purely aesthetic choice.
+# Both styles are used in this codebase and are locally consistent and readable.
+Naming/VariableNumber:
+  Enabled: false
+
+# Rails uses conventions like is_active, has_children that don't follow
+# Ruby's predicate naming (active?, children?). These are model attributes
+# and database columns, not arbitrary method names.
+Naming/PredicateMethod:
+  Enabled: false
+
+Naming/PredicatePrefix:
+  Enabled: false

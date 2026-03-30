@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ConvertMealDateToDateTime < ActiveRecord::Migration[5.1]
   def up
     add_column :meals, :start_time, :datetime
@@ -8,7 +10,7 @@ class ConvertMealDateToDateTime < ActiveRecord::Migration[5.1]
 
       Time.use_zone(zone) do
         time = date.at_beginning_of_day + 19.hours
-        time -= 1.hour if date.wday == 0
+        time -= 1.hour if date.wday.zero?
 
         meal.start_time = time
         meal.save!

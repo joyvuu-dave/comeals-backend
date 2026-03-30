@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateCommonHouseReservations < ActiveRecord::Migration[5.1]
   def change
     create_table :common_house_reservations do |t|

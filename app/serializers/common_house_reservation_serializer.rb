@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: common_house_reservations
@@ -43,7 +45,12 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   end
 
   def title
-    "#{object.start_date.strftime('%l:%M%P')} - #{object.end_date.strftime('%l:%M%P')}\nCommon House\n#{object.title.present? ? "#{object.title}\n" : ''}#{resident_name_helper(object.resident.name)} - Unit #{object.resident.unit.name}"
+    time_range = "#{object.start_date.strftime('%l:%M%P')} - " \
+                 "#{object.end_date.strftime('%l:%M%P')}"
+    title_line = "#{object.title}\n" if object.title.present?
+    name = resident_name_helper(object.resident.name)
+    unit_name = object.resident.unit.name
+    "#{time_range}\nCommon House\n#{title_line}#{name} - Unit #{unit_name}"
   end
 
   def description
@@ -51,7 +58,7 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   end
 
   def start
-    object.start_date + 1.minutes
+    object.start_date + 1.minute
   end
 
   def end
@@ -63,7 +70,6 @@ class CommonHouseReservationSerializer < ActiveModel::Serializer
   end
 
   def color
-    "#bc357e"
+    '#bc357e'
   end
-
 end

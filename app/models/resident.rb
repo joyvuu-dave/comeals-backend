@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: residents
@@ -34,13 +36,13 @@
 class Resident < ApplicationRecord
   attr_reader :password
 
-  scope :adult, -> { where("multiplier >= 2") }
+  scope :adult, -> { where('multiplier >= 2') }
   scope :active, -> { where(active: true) }
 
   belongs_to :community
   belongs_to :unit
 
-  has_one :key, as: :identity, autosave: true
+  has_one :key, as: :identity, autosave: true, dependent: :destroy
   has_one :resident_balance, dependent: :destroy
   has_many :bills, dependent: :destroy
   has_many :meal_residents, dependent: :destroy
@@ -63,7 +65,6 @@ class Resident < ApplicationRecord
   before_save { self.email = email.downcase unless email.nil? }
   before_save :update_token
 
-
   # PASSWORD STUFF
   def authenticate(unencrypted_password)
     SCrypt::Password.new(password_digest).is_password?(unencrypted_password) && self
@@ -75,35 +76,36 @@ class Resident < ApplicationRecord
   end
 
   def update_token
-    if password_digest_changed?
-      if persisted?
-        key.set_token
-      else
-        self.build_key
-      end
+    return unless password_digest_changed?
+
+    if persisted?
+      key.set_token
+    else
+      build_key
     end
   end
 
-
   # HELPERS
   def email_presence
-    errors.add(:email,'cannot be blank.') if active && can_cook && multiplier >= 2 && email.nil?
+    errors.add(:email, 'cannot be blank.') if active && can_cook && multiplier >= 2 && email.nil?
   end
 
   def set_email
-    self.email = nil if email == ""
+    self.email = nil if email == ''
   end
 
   def age
     now = Time.now.utc.to_date
-    now.year - birthday.year - ((now.month > birthday.month || (now.month == birthday.month && now.day >= birthday.day)) ? 0 : 1)
+    had_birthday = now.month > birthday.month ||
+                   (now.month == birthday.month && now.day >= birthday.day)
+    now.year - birthday.year - (had_birthday ? 0 : 1)
   end
-
 
   # DERIVED DATA
 
   def calc_balance
-    return BigDecimal("0") unless Meal.where(community_id: community_id).unreconciled.exists?
+    return BigDecimal('0') unless Meal.where(community_id: community_id).unreconciled.exists?
+
     bill_reimbursements - meal_resident_costs - guest_costs
   end
 
@@ -122,16 +124,17 @@ class Resident < ApplicationRecord
   # Balance is read from the cached resident_balances table (unreconciled preview).
   # The daily billing:recalculate rake task refreshes this value.
   def balance
-    resident_balance&.amount || BigDecimal("0")
+    resident_balance&.amount || BigDecimal('0')
   end
 
   # Historical balance for a specific reconciliation period.
   def balance_for_reconciliation(reconciliation)
-    reconciliation_balances.find_by(reconciliation_id: reconciliation.id)&.amount || BigDecimal("0")
+    reconciliation_balances.find_by(reconciliation_id: reconciliation.id)&.amount || BigDecimal('0')
   end
 
   def meals_attended
-    return 0 if Meal.where(community_id: community_id).unreconciled.count == 0
-    meal_residents.joins(:meal).where({:meals => {:reconciliation_id =>  nil}}).count
+    return 0 if Meal.where(community_id: community_id).unreconciled.none?
+
+    meal_residents.joins(:meal).where({ meals: { reconciliation_id: nil } }).count
   end
 end

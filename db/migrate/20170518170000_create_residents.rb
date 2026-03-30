@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateResidents < ActiveRecord::Migration[5.1]
   def change
     create_table :residents do |t|
@@ -17,7 +19,7 @@ class CreateResidents < ActiveRecord::Migration[5.1]
       t.timestamps
     end
 
-    add_index :residents, [:name, :community_id], unique: true
+    add_index :residents, %i[name community_id], unique: true
     add_index :residents, :email, unique: true
     add_index :residents, :reset_password_token, unique: true
   end

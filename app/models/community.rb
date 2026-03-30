@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: communities
@@ -18,9 +20,10 @@
 
 class Community < ApplicationRecord
   extend FriendlyId
+
   friendly_id :name, use: :slugged
   validates :name, uniqueness: { case_sensitive: false }
-  validates_length_of :slug, within: 3..40
+  validates :slug, length: { within: 3..40 }
 
   has_many :bills, dependent: :destroy
   has_many :meals, dependent: :destroy
@@ -49,21 +52,23 @@ class Community < ApplicationRecord
   # Report Methods
   def unreconciled_ave_cost
     unreconciled = meals.unreconciled.preload(:bills, :meal_residents, :guests).to_a
-    total_multiplier = unreconciled.sum { |meal|
+    total_multiplier = unreconciled.sum do |meal|
       meal.meal_residents.sum(&:multiplier) + meal.guests.sum(&:multiplier)
-    }
-    return '--' if total_multiplier == 0
-    total_cost = unreconciled.sum { |meal|
-      meal.bills.reject(&:no_cost).sum(BigDecimal("0"), &:amount)
-    }
+    end
+    return '--' if total_multiplier.zero?
+
+    total_cost = unreconciled.sum do |meal|
+      meal.bills.reject(&:no_cost).sum(BigDecimal('0'), &:amount)
+    end
     val = 2 * (total_cost / total_multiplier)
-    "$#{sprintf('%0.02f', val)}/adult"
+    "$#{format('%0.02f', val)}/adult"
   end
 
   def unreconciled_ave_number_of_attendees
     unreconciled = meals.unreconciled
     meal_count = unreconciled.count
-    return '--' if meal_count == 0
+    return '--' if meal_count.zero?
+
     mr_count = MealResident.where(meal_id: unreconciled.select(:id)).count
     g_count = Guest.where(meal_id: unreconciled.select(:id)).count
     ((mr_count + g_count).to_f / meal_count).round(1)
@@ -82,47 +87,65 @@ class Community < ApplicationRecord
   end
 
   def auto_rotation_length
-    residents.where("multiplier >= 2").where(can_cook: true).size / 2
+    residents.where('multiplier >= 2').where(can_cook: true).size / 2
   end
 
   def auto_create_rotations
     meals = Meal.where(community_id: id, rotation_id: nil).order(:date)
     rotation = nil
     meals.find_each do |meal|
-      rotation = Rotation.create!(community_id: id, description: "#{meal.date.to_s} to #{meal.date.to_s}", no_email: true) if rotation.nil?
+      if rotation.nil?
+        rotation = Rotation.create!(community_id: id, description: "#{meal.date} to #{meal.date}",
+                                    no_email: true)
+      end
       meal.update!(rotation_id: rotation.id)
-      rotation.update!(description: "#{rotation.meals.order(:date).first.date.to_s} to #{rotation.meals.order(:date).last.date.to_s}")
+      first_date = rotation.meals.order(:date).first.date
+      last_date = rotation.meals.order(:date).last.date
+      rotation.update!(description: "#{first_date} to #{last_date}")
       rotation = nil if rotation.meals.count == auto_rotation_length
     end
   end
 
-  def create_next_rotation
-    raise "Currently #{Meal.where(rotation_id: nil).count} Meals not assigned to Rotations" if Meal.where(rotation_id: nil).count > 0
-
-    day_after_last_meal = meals.order(:date).last&.date&.tomorrow
-    current_date = day_after_last_meal.nil? ? Date.today : [Date.today, day_after_last_meal].max
-
-    last_alternating_date = meals.where("extract(dow from date) = ?", alternating_meal_days[0])
-                                 .or(
-                            meals.where("extract(dow from date) = ?", alternating_meal_days[1]))
-                                 .order(:date).last&.date
-    if last_alternating_date.nil?
-      last_alternating_date = current_date.beginning_of_week(Date::DAYNAMES[alternating_meal_days.last].downcase.to_sym) - 7
+  def create_next_rotation # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity -- rotation scheduling with date arithmetic and alternating-day logic
+    if Meal.where(rotation_id: nil).any?
+      raise "Currently #{Meal.where(rotation_id: nil).count} Meals not assigned to Rotations"
     end
 
-    current_alternating_day = last_alternating_date.wday == alternating_meal_days[0] ? alternating_meal_days[1] : alternating_meal_days[0]
+    day_after_last_meal = meals.order(:date).last&.date&.tomorrow
+    current_date = day_after_last_meal.nil? ? Time.zone.today : [Time.zone.today, day_after_last_meal].max
+
+    last_alternating_date = meals.where('extract(dow from date) = ?', alternating_meal_days[0])
+                                 .or(
+                                   meals.where('extract(dow from date) = ?', alternating_meal_days[1])
+                                 )
+                                 .order(:date).last&.date
+    if last_alternating_date.nil?
+      day_sym = Date::DAYNAMES[alternating_meal_days.last].downcase.to_sym
+      last_alternating_date = current_date.beginning_of_week(day_sym) - 7
+    end
+
+    current_alternating_day = if last_alternating_date.wday == alternating_meal_days[0]
+                                alternating_meal_days[1]
+                              else
+                                alternating_meal_days[0]
+                              end
 
     rotation_meals = []
-    until rotation_meals.length == meals_per_rotation do
-      unless Meal.is_holiday?(current_date)
-        if permanent_meal_days.include?(current_date.wday) || (current_date.wday == current_alternating_day && current_date.cweek != last_alternating_date.cweek)
-          rotation_meals.push({ date: current_date, community_id: id })
-        end
+    until rotation_meals.length == meals_per_rotation
+      is_permanent = permanent_meal_days.include?(current_date.wday)
+      is_alternating = current_date.wday == current_alternating_day &&
+                       current_date.cweek != last_alternating_date.cweek
+      if !Meal.is_holiday?(current_date) && (is_permanent || is_alternating)
+        rotation_meals.push({ date: current_date, community_id: id })
       end
 
       if current_date.wday == current_alternating_day && current_date.cweek != last_alternating_date.cweek
         last_alternating_date = current_date
-        current_alternating_day = current_alternating_day == alternating_meal_days[0] ? alternating_meal_days[1] : alternating_meal_days[0]
+        current_alternating_day = if current_alternating_day == alternating_meal_days[0]
+                                    alternating_meal_days[1]
+                                  else
+                                    alternating_meal_days[0]
+                                  end
       end
       current_date = current_date.tomorrow
     end
@@ -130,7 +153,7 @@ class Community < ApplicationRecord
     Rotation.create!(community_id: id, meals_attributes: rotation_meals)
   end
 
-  def trigger_pusher(date)
+  def trigger_pusher(date) # rubocop:disable Metrics/MethodLength -- builds multiple Pusher channel payloads
     ###############
     # CURRENT MONTH
     ###############
@@ -145,7 +168,6 @@ class Community < ApplicationRecord
       'update',
       { message: 'current calendar month updated' }
     )
-
 
     ############
     # NEXT MONTH
@@ -164,14 +186,14 @@ class Community < ApplicationRecord
       )
     end
 
-
     ################
     # PREVIOUS MONTH
     ################
-    range_start = ( (date.beginning_of_month - 1.day).beginning_of_month.beginning_of_week)
+    range_start = (date.beginning_of_month - 1.day).beginning_of_month.beginning_of_week
 
-    if date >= range_start && date <= (range_start + 41.days)
-      key = "community-#{id}-calendar-#{(date.beginning_of_month - 1.day).year}-#{(date.beginning_of_month - 1.day).month}"
+    if date.between?(range_start, range_start + 41.days)
+      prev_month = date.beginning_of_month - 1.day
+      key = "community-#{id}-calendar-#{prev_month.year}-#{prev_month.month}"
 
       # Delete Cache
       Rails.cache.delete(key)
@@ -184,7 +206,6 @@ class Community < ApplicationRecord
       )
     end
 
-    return true
+    true
   end
-
 end

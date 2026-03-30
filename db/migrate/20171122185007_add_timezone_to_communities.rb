@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class AddTimezoneToCommunities < ActiveRecord::Migration[5.1]
   def up
-    add_column :communities, :timezone, :string, null: false, default: "America/Los_Angeles"
+    add_column :communities, :timezone, :string, null: false, default: 'America/Los_Angeles'
   end
 
   def down

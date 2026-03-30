@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: meal_residents
@@ -36,10 +38,7 @@ class MealResident < ApplicationRecord
   before_validation :set_multiplier
   before_validation :set_community_id
 
-  validates :meal, presence: true
-  validates :resident, presence: true
-  validates :community, presence: true
-  validates_uniqueness_of :meal_id, { scope: :resident_id }
+  validates :meal_id, uniqueness: { scope: :resident_id }
   validates :multiplier, numericality: { only_integer: true }
   validate :meal_has_open_spots, on: :create
   before_destroy :record_can_be_removed
@@ -52,10 +51,13 @@ class MealResident < ApplicationRecord
     return true if meal.closed == true && meal.max.present? && meal.attendees_count < meal.max
 
     # Scenario: Meal is closed and, max has NOT been set
-    errors.add(:base, "Meal has been closed.") if meal.closed == true && meal.max.nil?
+    errors.add(:base, 'Meal has been closed.') if meal.closed == true && meal.max.nil?
 
     # Scenario: Meal is closed, max has been set, there are NOT open spots
-    errors.add(:base, "Meal has no open spots.") if meal.closed == true && meal.max.present? && meal.attendees_count == meal.max
+    return unless meal.closed == true && meal.max.present? && meal.attendees_count == meal.max
+
+    errors.add(:base,
+               'Meal has no open spots.')
   end
 
   def record_can_be_removed
@@ -66,7 +68,7 @@ class MealResident < ApplicationRecord
     return true if meal.closed == true && created_at > meal.closed_at
 
     # Scenario: Meal is closed, resident signed up before meal was closed
-    errors.add(:base, "Meal has been closed.")
+    errors.add(:base, 'Meal has been closed.')
     throw(:abort)
   end
 

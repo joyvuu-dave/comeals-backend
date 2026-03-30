@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: reconciliations
@@ -63,7 +65,7 @@ class Reconciliation < ApplicationRecord
   # Memory: loads all reconciled meals + associations into RAM. For a co-housing
   # community (~500 meals max), this is ~18K AR objects (~36 MB). Bounded by the
   # physical size of the community.
-  def settlement_balances
+  def settlement_balances # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity -- financial settlement calculation, intentionally kept as single method for auditability
     # Step 1: Eager-load all reconciled meals with their financial associations.
     # Uses preload (not includes) to guarantee separate IN(?) queries — includes
     # can silently switch to LEFT JOIN if a .where is later chained on an
@@ -77,12 +79,12 @@ class Reconciliation < ApplicationRecord
     reconciled_meals.each do |meal|
       total_mult = meal.meal_residents.sum(&:multiplier) + meal.guests.sum(&:multiplier)
 
-      if total_mult == 0
-        unit_costs[meal.id] = BigDecimal("0")
+      if total_mult.zero?
+        unit_costs[meal.id] = BigDecimal('0')
         next
       end
 
-      total_cost = meal.bills.reject(&:no_cost).sum(BigDecimal("0"), &:amount)
+      total_cost = meal.bills.reject(&:no_cost).sum(BigDecimal('0'), &:amount)
       effective_cost = total_cost
       if meal.capped?
         max_cost = meal.cap * total_mult
@@ -94,9 +96,9 @@ class Reconciliation < ApplicationRecord
 
     # Step 3: Accumulate credits, debits, and guest debits from in-memory data.
     # All three use the already-loaded associations — zero additional queries.
-    credits_by_resident = Hash.new(BigDecimal("0"))
-    debits_by_resident = Hash.new(BigDecimal("0"))
-    guest_debits_by_resident = Hash.new(BigDecimal("0"))
+    credits_by_resident = Hash.new(BigDecimal('0'))
+    debits_by_resident = Hash.new(BigDecimal('0'))
+    guest_debits_by_resident = Hash.new(BigDecimal('0'))
 
     reconciled_meals.each do |meal|
       uc = unit_costs[meal.id]
@@ -121,12 +123,12 @@ class Reconciliation < ApplicationRecord
     # Zero-attendee meals are already excluded (with_attendees scope), so the
     # only source of imbalance is banker's rounding — at most 0.5 cents per
     # resident. Anything beyond that is a calculation bug.
-    total = balances.values.reduce(BigDecimal("0"), :+)
-    theoretical_max = BigDecimal("0.005") * balances.size
+    total = balances.values.sum(BigDecimal('0'))
+    theoretical_max = BigDecimal('0.005') * balances.size
     if total.abs > theoretical_max
       raise "settlement_balances: books do not balance for reconciliation #{id}. " \
             "Discrepancy: #{total} exceeds theoretical rounding maximum of #{theoretical_max}. " \
-            "This indicates a bug in cost calculations."
+            'This indicates a bug in cost calculations.'
     end
 
     balances
@@ -138,12 +140,13 @@ class Reconciliation < ApplicationRecord
     balances = settlement_balances
     balances.each do |resident_id, amount|
       next if amount.zero?
+
       reconciliation_balances.create!(resident_id: resident_id, amount: amount)
     end
   end
 
   def balance_for(resident)
-    reconciliation_balances.find_by(resident_id: resident.id)&.amount || BigDecimal("0")
+    reconciliation_balances.find_by(resident_id: resident.id)&.amount || BigDecimal('0')
   end
 
   private
@@ -154,11 +157,12 @@ class Reconciliation < ApplicationRecord
   end
 
   def set_date
-    self.date ||= Date.today
+    self.date ||= Time.zone.today
   end
 
   def start_date_not_after_end_date
     return unless start_date.present? && end_date.present?
-    errors.add(:start_date, "must be on or before end date") if start_date > end_date
+
+    errors.add(:start_date, 'must be on or before end date') if start_date > end_date
   end
 end

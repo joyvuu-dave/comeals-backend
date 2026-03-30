@@ -33,3 +33,6 @@ comeals.sublime-workspace
 
 # Mac
 .DS_Store
+
+# RuboCop
+.rubocop-cache/
