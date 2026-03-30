@@ -13,20 +13,30 @@ ActiveAdmin.register Bill do
     Reconciliation.pluck('date', 'id')
   }, include_blank: true
   config.current_filters = false
-  config.sort_order = 'date'
+  config.sort_order = 'meals.date_desc'
 
   controller do
     before_action { @page_title = 'Cooking Slots' }
 
     def scoped_collection
-      end_of_association_chain.includes(:meal, :resident, resident: :unit)
+      # eager_load (not includes) guarantees LEFT OUTER JOINs, which is required
+      # because index columns sort on associated tables: meals.date, residents.name,
+      # units.name. includes uses a heuristic to choose between separate queries and
+      # JOINs — if it chooses separate queries, ORDER BY on an associated table's
+      # column will fail silently or error.
+      # preload (not eager_load) for has_many associations to avoid cartesian product
+      end_of_association_chain
+        .eager_load(:meal, :resident, resident: :unit)
+        .preload(meal: %i[meal_residents guests])
     end
   end
 
   # INDEX
   index do
     column Meal.model_name.human, :date, sortable: 'meals.date'
-    column 'Attendees', :attendees_count
+    column 'Attendees' do |bill|
+      bill.meal.meal_residents.size + bill.meal.guests.size
+    end
     column '$', :amount do |bill|
       number_to_currency(bill.amount) unless bill.amount.zero?
     end

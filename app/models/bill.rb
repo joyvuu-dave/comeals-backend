@@ -27,6 +27,15 @@
 #  fk_rails_...  (resident_id => residents.id)
 #
 class Bill < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin filtering and sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id amount no_cost meal_id resident_id community_id created_at updated_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[meal resident]
+  end
+
   belongs_to :meal, inverse_of: :bills, touch: true
   belongs_to :resident
   belongs_to :community

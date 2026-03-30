@@ -25,6 +25,11 @@
 #
 
 class CommonHouseReservation < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id community_id created_at end_date resident_id start_date title updated_at]
+  end
+
   belongs_to :community
   belongs_to :resident
 

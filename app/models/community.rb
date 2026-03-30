@@ -19,6 +19,11 @@
 #
 
 class Community < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id cap name slug timezone created_at updated_at]
+  end
+
   extend FriendlyId
 
   friendly_id :name, use: :slugged

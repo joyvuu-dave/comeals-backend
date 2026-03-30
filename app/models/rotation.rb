@@ -24,6 +24,11 @@
 #
 
 class Rotation < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id color community_id created_at description place_value residents_notified start_date updated_at]
+  end
+
   attr_accessor :no_email
 
   belongs_to :community
