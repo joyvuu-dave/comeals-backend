@@ -23,6 +23,11 @@
 #
 
 class GuestRoomReservation < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id community_id created_at date resident_id updated_at]
+  end
+
   belongs_to :community
   belongs_to :resident
 

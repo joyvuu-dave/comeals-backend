@@ -32,6 +32,14 @@
 #
 
 class AdminUser < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin sorting.
+  # Deliberately excludes encrypted_password, reset_password_token,
+  # reset_password_sent_at, and IP address fields.
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id community_id created_at current_sign_in_at email last_sign_in_at remember_created_at sign_in_count
+       superuser updated_at]
+  end
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable,

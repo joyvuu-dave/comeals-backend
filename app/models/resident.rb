@@ -34,6 +34,12 @@
 #
 
 class Resident < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin filtering and sorting.
+  # Deliberately excludes password_digest and reset_password_token.
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id active birthday can_cook community_id created_at email multiplier name unit_id updated_at vegetarian]
+  end
+
   attr_reader :password
 
   scope :adult, -> { where('multiplier >= 2') }

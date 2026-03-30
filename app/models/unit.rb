@@ -21,6 +21,11 @@
 #
 
 class Unit < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id community_id created_at name updated_at]
+  end
+
   has_many :residents, dependent: :destroy
   belongs_to :community
 

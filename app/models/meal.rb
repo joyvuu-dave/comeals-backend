@@ -32,6 +32,12 @@
 #  fk_rails_...  (rotation_id => rotations.id)
 #
 class Meal < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin filtering and sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id cap closed closed_at community_id created_at date description max reconciliation_id rotation_id start_time
+       updated_at]
+  end
+
   ALTERNATING_DAYS = [1, 2].freeze
   TEMPLATE_WDAYS = [0, 4].freeze
 

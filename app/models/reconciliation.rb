@@ -21,6 +21,11 @@
 #  fk_rails_...  (community_id => communities.id)
 #
 class Reconciliation < ApplicationRecord
+  # Ransack allowlists for ActiveAdmin sorting
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[id community_id date end_date start_date created_at updated_at]
+  end
+
   has_many :meals, dependent: :nullify
   has_many :bills, through: :meals
   has_many :cooks, through: :bills, source: :resident
