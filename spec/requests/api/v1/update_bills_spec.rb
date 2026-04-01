@@ -230,6 +230,138 @@ RSpec.describe 'PATCH /api/v1/meals/:meal_id/bills' do
     end
   end
 
+  describe 'third-cook warnings' do
+    let(:rotation) { create(:rotation, community: community) }
+    let(:future_meal) { create(:meal, community: community, date: 1.week.from_now, rotation: rotation) }
+    let(:other_meal) { create(:meal, community: community, date: 2.weeks.from_now, rotation: rotation) }
+
+    let(:cook_1) { create(:resident, community: community, unit: unit) }
+    let(:cook_2) { create(:resident, community: community, unit: unit) }
+    let(:cook_3) { create(:resident, community: community, unit: unit) }
+    let(:cook_4) { create(:resident, community: community, unit: unit) }
+
+    before do
+      # future_meal starts with 2 cooks
+      create(:bill, meal: future_meal, resident: cook_1, community: community, amount: BigDecimal('0'))
+      create(:bill, meal: future_meal, resident: cook_2, community: community, amount: BigDecimal('0'))
+      # other_meal in the rotation has < 2 cooks (only 1)
+      create(:bill, meal: other_meal, resident: cook_1, community: community, amount: BigDecimal('0'))
+    end
+
+    it 'warns when adding a 3rd cook' do
+      update_bills(
+        meal_id: future_meal.id,
+        bills: [
+          { resident_id: cook_1.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_2.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_3.id, amount: '0', no_cost: false }
+        ]
+      )
+
+      expect(response).to have_http_status(:bad_request)
+      expect(response.parsed_body['message']).to include('Warning')
+      expect(response.parsed_body['message']).to include('added')
+      expect(response.parsed_body['type']).to eq('warning')
+      # Bills are still saved despite the warning
+      expect(future_meal.bills.count).to eq(3)
+    end
+
+    it 'warns when switching a 3rd cook' do
+      # Add a 3rd cook first
+      create(:bill, meal: future_meal, resident: cook_3, community: community, amount: BigDecimal('0'))
+
+      update_bills(
+        meal_id: future_meal.id,
+        bills: [
+          { resident_id: cook_1.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_2.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_4.id, amount: '0', no_cost: false }
+        ]
+      )
+
+      expect(response).to have_http_status(:bad_request)
+      expect(response.parsed_body['message']).to include('Warning')
+      expect(response.parsed_body['message']).to include('switched')
+      expect(response.parsed_body['type']).to eq('warning')
+      # Cook was switched despite the warning
+      expect(future_meal.bills.find_by(resident: cook_4)).to be_present
+    end
+
+    it 'does not warn when only updating cost for existing 3rd cook' do
+      # Add a 3rd cook first
+      create(:bill, meal: future_meal, resident: cook_3, community: community, amount: BigDecimal('0'))
+
+      update_bills(
+        meal_id: future_meal.id,
+        bills: [
+          { resident_id: cook_1.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_2.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_3.id, amount: '25.00', no_cost: false }
+        ]
+      )
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body['message']).to eq('Form submitted.')
+      expect(response.parsed_body).not_to have_key('type')
+      cook_3_bill = future_meal.bills.find_by(resident: cook_3)
+      cook_3_bill.reload
+      expect(cook_3_bill.amount).to eq(BigDecimal('25'))
+    end
+
+    it 'does not warn when all rotation meals have 2+ cooks' do
+      # Give other_meal a 2nd cook so rotation is fully staffed
+      create(:bill, meal: other_meal, resident: cook_2, community: community, amount: BigDecimal('0'))
+
+      update_bills(
+        meal_id: future_meal.id,
+        bills: [
+          { resident_id: cook_1.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_2.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_3.id, amount: '0', no_cost: false }
+        ]
+      )
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body['message']).to eq('Form submitted.')
+    end
+
+    it 'does not warn for future meal with no rotation' do
+      no_rotation_meal = create(:meal, community: community, date: 3.weeks.from_now)
+      create(:bill, meal: no_rotation_meal, resident: cook_1, community: community, amount: BigDecimal('0'))
+      create(:bill, meal: no_rotation_meal, resident: cook_2, community: community, amount: BigDecimal('0'))
+
+      update_bills(
+        meal_id: no_rotation_meal.id,
+        bills: [
+          { resident_id: cook_1.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_2.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_3.id, amount: '0', no_cost: false }
+        ]
+      )
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body['message']).to eq('Form submitted.')
+    end
+
+    it 'does not warn for past meals' do
+      past_meal = create(:meal, community: community, date: 1.week.ago, rotation: rotation)
+      create(:bill, meal: past_meal, resident: cook_1, community: community, amount: BigDecimal('0'))
+      create(:bill, meal: past_meal, resident: cook_2, community: community, amount: BigDecimal('0'))
+
+      update_bills(
+        meal_id: past_meal.id,
+        bills: [
+          { resident_id: cook_1.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_2.id, amount: '10.00', no_cost: false },
+          { resident_id: cook_3.id, amount: '0', no_cost: false }
+        ]
+      )
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body['message']).to eq('Form submitted.')
+    end
+  end
+
   describe 'meal not found' do
     it 'returns 404 for a nonexistent meal' do
       update_bills(
