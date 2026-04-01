@@ -150,6 +150,7 @@ module Api
 
         message = 'Form submitted.'
         request_symbol = :ok
+        message_type = nil
 
         # Cooks
         cook_ids = params[:bills].pluck('resident_id')
@@ -157,18 +158,24 @@ module Api
         # Future meal
         # More than two cooks
         if (@meal.date > Time.zone.today) && (cook_ids.length > 2)
+          existing_cook_ids = @meal.bills.pluck(:resident_id).map(&:to_s).sort
+          new_cook_ids = cook_ids.map(&:to_s).sort
+          cooks_changed = new_cook_ids != existing_cook_ids
+
           # Scenario #1: adding cooks
-          if (cook_ids.length > @meal.bills.count) && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+          if (cook_ids.length > existing_cook_ids.length) && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
             message = 'Warning: third cooks should not be added until all meals ' \
                       'in the rotation have at least two cooks.'
             request_symbol = :bad_request
+            message_type = 'warning'
           end
 
           # Scenario #2: switching cooks
-          if (cook_ids.length == @meal.bills.count) && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+          if (cook_ids.length == existing_cook_ids.length) && cooks_changed && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
             message = 'Warning: third cook should not be switched when there are ' \
                       'other meals in the rotation without at least two cooks.'
             request_symbol = :bad_request
+            message_type = 'warning'
           end
         end
 
@@ -193,7 +200,9 @@ module Api
           @meal.bills.find_by(resident_id: bill[:resident_id]).update(amount: bill[:amount], no_cost: bill[:no_cost])
         end
 
-        render json: { message: message }, status: request_symbol
+        payload = { message: message }
+        payload[:type] = message_type if message_type
+        render json: payload, status: request_symbol
       end
 
       # PATCH /api/v1/meals/:meal_id/closed { closed }
