@@ -23,24 +23,17 @@ gem 'csv'
 gem 'drb'
 gem 'mutex_m'
 
-gem 'concurrent-ruby'
-
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 5.0'
-
 gem 'rack-cors', require: 'rack/cors'
 
 gem 'activeadmin', '~> 3.0'
 gem 'active_model_serializers', '~> 0.10'
 gem 'audited'
-gem 'benchmark'
 gem 'dalli'
 gem 'devise'
 gem 'friendly_id'
 gem 'goldiloader'
 gem 'icalendar'
 gem 'letter_opener', group: :development
-gem 'newrelic_rpm'
 gem 'platform-api'
 gem 'pusher'
 gem 'scrypt'
@@ -54,6 +47,7 @@ gem 'bootsnap', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'benchmark'
   gem 'byebug', platforms: %i[ruby mri windows]
   gem 'dotenv-rails'
   gem 'factory_bot_rails'

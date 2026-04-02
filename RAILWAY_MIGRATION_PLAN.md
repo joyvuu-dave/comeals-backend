@@ -32,7 +32,7 @@
 | PostgreSQL | Heroku Postgres | Source of truth for all data |
 | Memcached | MemCachier (Heroku add-on) | Cache layer |
 | Scheduled Jobs | Heroku Scheduler | `rake billing:recalculate` daily at 3am Pacific |
-| APM | New Relic + Skylight | Performance monitoring |
+| APM | Skylight | Performance monitoring |
 | Real-time | Pusher | WebSocket push (external service, no migration needed) |
 | Email | Gmail SMTP | External service, no migration needed |
 
@@ -163,9 +163,8 @@ Heroku Scheduler runs `rake billing:recalculate` daily. Railway options:
 **Recommended:** Option A. Railway cron services are first-class. Create a separate service in the same project that shares the database connection.
 
 ### Step 2.8: Decide on APM
-- **New Relic:** Works anywhere — just set the `NEW_RELIC_LICENSE_KEY` env var. No Heroku dependency.
-- **Skylight:** Also works anywhere — set `SKYLIGHT_AUTHENTICATION` env var. No Heroku dependency.
-- Both can continue as-is on Railway. No changes needed beyond ensuring env vars are set.
+- **Skylight:** Works anywhere — set `SKYLIGHT_AUTHENTICATION` env var. No Heroku dependency.
+- Can continue as-is on Railway. No changes needed beyond ensuring the env var is set.
 
 ---
 
@@ -487,7 +486,7 @@ curl -s -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
 
 ### Step 6.2: Monitor for 48 Hours
 - Watch Railway logs for errors: `railway logs`
-- Monitor response times via New Relic / Skylight
+- Monitor response times via Skylight
 - Check that no requests are still hitting Heroku (Heroku logs)
 
 ### Step 6.3: Code Cleanup
@@ -503,7 +502,6 @@ curl -s -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
 ### Step 6.4: Remove Hardcoded Credentials
 While you're in the code, move these to environment variables:
 - Pusher credentials in `config/initializers/pusher.rb`
-- New Relic license key in `config/newrelic.yml`
 - Skylight auth token in `config/skylight.yml`
 
 ### Step 6.5: Decommission Heroku

@@ -125,13 +125,6 @@ GEM
       activesupport
     childprocess (5.1.0)
       logger (~> 1.5)
-    coffee-rails (5.0.0)
-      coffee-script (>= 2.2.0)
-      railties (>= 5.2.0)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.12.2)
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
     crass (1.0.6)
@@ -157,7 +150,6 @@ GEM
     erubis (2.7.0)
     excon (1.4.2)
       logger
-    execjs (2.10.0)
     factory_bot (6.5.6)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.5.1)
@@ -271,8 +263,6 @@ GEM
       timeout
     net-smtp (0.5.1)
       net-protocol
-    newrelic_rpm (10.2.0)
-      logger
     nio4r (2.7.5)
     nokogiri (1.19.2-aarch64-linux-gnu)
       racc (~> 1.4)
@@ -510,8 +500,6 @@ DEPENDENCIES
   bootsnap
   bullet
   byebug
-  coffee-rails (~> 5.0)
-  concurrent-ruby
   csv
   dalli
   devise
@@ -524,7 +512,6 @@ DEPENDENCIES
   icalendar
   letter_opener
   mutex_m
-  newrelic_rpm
   pg (~> 1.5)
   platform-api
   puma (~> 7.0)
@@ -579,9 +566,6 @@ CHECKSUMS
   byebug (13.0.0) sha256=d2263efe751941ca520fa29744b71972d39cbc41839496706f5d9b22e92ae05d
   case_transform (0.2) sha256=e2ad4418dceeb227cf474cc332cd5004c95c136c04186c1cceaad8ab8de6fe3b
   childprocess (5.1.0) sha256=9a8d484be2fd4096a0e90a0cd3e449a05bc3aa33f8ac9e4d6dcef6ac1455b6ec
-  coffee-rails (5.0.0) sha256=5daaa1ba51fd4907c98a333b6a9e7c1a99b1fff57fcef999b6c62d813cb91a9c
-  coffee-script (2.4.1) sha256=82fe281e11b93c8117b98c5ea8063e71741870f1c4fbb27177d7d6333dd38765
-  coffee-script-source (1.12.2) sha256=e12b16fd8927fbbf8b87cb2e9a85a6cf457c6881cc7ff8b1af15b31f70da07a4
   concurrent-ruby (1.3.6) sha256=6b56837e1e7e5292f9864f34b69c5a2cbc75c0cf5338f1ce9903d10fa762d5ab
   connection_pool (3.0.2) sha256=33fff5ba71a12d2aa26cb72b1db8bba2a1a01823559fb01d29eb74c286e62e0a
   crass (1.0.6) sha256=dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d
@@ -598,7 +582,6 @@ CHECKSUMS
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
   erubis (2.7.0) sha256=63653f5174a7997f6f1d6f465fbe1494dcc4bdab1fb8e635f6216989fb1148ba
   excon (1.4.2) sha256=32d8d8eda619717d9b8043b4675e096fb5c2139b080e2ad3b267f88c545aaa35
-  execjs (2.10.0) sha256=6bcb8be8f0052ff9d370b65d1c080f2406656e150452a0abdb185a133048450d
   factory_bot (6.5.6) sha256=12beb373214dccc086a7a63763d6718c49769d5606f0501e0a4442676917e077
   factory_bot_rails (6.5.1) sha256=d3cc4851eae4dea8a665ec4a4516895045e710554d2b5ac9e68b94d351bc6d68
   faker (3.6.1) sha256=c513d23c1d26b426283e913b25e0b714576011d7c1ad368a9ac6ea2113a1ccde
@@ -650,7 +633,6 @@ CHECKSUMS
   net-pop (0.1.2) sha256=848b4e982013c15b2f0382792268763b748cce91c9e91e36b0f27ed26420dff3
   net-protocol (0.2.2) sha256=aa73e0cba6a125369de9837b8d8ef82a61849360eba0521900e2c3713aa162a8
   net-smtp (0.5.1) sha256=ed96a0af63c524fceb4b29b0d352195c30d82dd916a42f03c62a3a70e5b70736
-  newrelic_rpm (10.2.0) sha256=5a648409df7c8d44d7dd9307edafac6bd726ea43144a2de80162f1145209bbfe
   nio4r (2.7.5) sha256=6c90168e48fb5f8e768419c93abb94ba2b892a1d0602cb06eef16d8b7df1dca1
   nokogiri (1.19.2-aarch64-linux-gnu) sha256=c34d5c8208025587554608e98fd88ab125b29c80f9352b821964e9a5d5cfbd19
   nokogiri (1.19.2-aarch64-linux-musl) sha256=7f6b4b0202d507326841a4f790294bf75098aef50c7173443812e3ac5cb06515
