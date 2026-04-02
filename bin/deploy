@@ -192,6 +192,16 @@ deploy_frontend() {
   ok "Web dynos scaled to 1"
 }
 
+capture_backup() {
+  step "Capturing database backup"
+  heroku pg:backups:capture -a "$BACKEND_APP"
+  ok "Backup complete"
+
+  local backup_info
+  backup_info=$(heroku pg:backups:info -a "$BACKEND_APP" 2>&1 || true)
+  info "$backup_info"
+}
+
 disable_maintenance() {
   step "Disabling maintenance mode"
   heroku maintenance:off -a "$BACKEND_APP"
@@ -306,6 +316,7 @@ main() {
 
   DEPLOY_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S")
 
+  capture_backup
   enable_maintenance
   deploy_backend
   deploy_frontend
