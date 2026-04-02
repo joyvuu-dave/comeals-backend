@@ -11,13 +11,12 @@ set -euo pipefail
 #      Skips apps that are already up to date.
 #   2. For the backend, diffs db/migrate/ between the deployed and local SHAs.
 #      - If migrations changed → maintenance deploy (scale to 0, push, scale up).
-#      - If no migrations    → rolling deploy (push only; preboot handles restart).
-#   3. The frontend is always a rolling deploy (no database).
+#      - If no migrations    → push deploy (brief downtime during restart).
+#   3. The frontend is always a simple push deploy (no database).
 #   4. If neither app has changes, exits early with nothing to do.
 #
-# Both apps run 1× Standard-1X dyno with Heroku Preboot for zero-downtime
-# rolling deploys. Maintenance mode is only used when database migrations
-# require it.
+# Both apps run 1× Basic dyno. Deploys cause brief downtime during dyno
+# restart. Maintenance mode is only used when database migrations require it.
 # ==============================================================================
 
 BACKEND_PATH="/Users/tejo/workspace/comeals-backend"
@@ -26,8 +25,6 @@ BACKEND_APP="comeals-backend"
 FRONTEND_APP="comeals-ui"
 FRONTEND_URL="https://comeals.com"
 BACKEND_URL="https://admin.comeals.com"
-DYNO_COUNT=1
-
 MAINTENANCE_ENABLED=false
 DEPLOY_TIMESTAMP=""
 DEPLOY_BACKEND=false
@@ -62,8 +59,8 @@ cleanup() {
     yellow "Web dynos may be scaled to 0."
     yellow "Investigate the failure, then manually run:"
     echo
-    echo "  heroku ps:scale web=$DYNO_COUNT -a $BACKEND_APP"
-    echo "  heroku ps:scale web=$DYNO_COUNT -a $FRONTEND_APP"
+    echo "  heroku ps:scale web=1 -a $BACKEND_APP"
+    echo "  heroku ps:scale web=1 -a $FRONTEND_APP"
     echo "  heroku maintenance:off -a $BACKEND_APP"
     echo "  heroku maintenance:off -a $FRONTEND_APP"
     echo
@@ -104,21 +101,6 @@ preflight_environment() {
       exit 1
     fi
     ok "heroku remote in $path -> $remote_url"
-  done
-}
-
-preflight_preboot() {
-  step "Pre-flight: Heroku preboot"
-  for app in "$BACKEND_APP" "$FRONTEND_APP"; do
-    local enabled
-    enabled=$(heroku features:info preboot -a "$app" 2>/dev/null | grep "Enabled" || true)
-    if echo "$enabled" | grep -q "true"; then
-      ok "Preboot enabled on $app"
-    else
-      warn "Preboot is NOT enabled on $app"
-      info "Rolling deploys will have brief downtime without preboot."
-      info "Enable with: heroku features:enable preboot -a $app"
-    fi
   done
 }
 
@@ -284,7 +266,7 @@ detect_pending_migrations() {
       info "  $f"
     done
   else
-    ok "No migration changes — rolling deploy"
+    ok "No migration changes — push deploy"
   fi
 }
 
@@ -308,13 +290,12 @@ disable_maintenance() {
   MAINTENANCE_ENABLED=false
 }
 
-deploy_backend_rolling() {
-  step "Deploying backend — rolling ($BACKEND_APP)"
+deploy_backend() {
+  step "Deploying backend ($BACKEND_APP)"
   cd "$BACKEND_PATH"
 
-  # Rolling deploy: just push code. Heroku Preboot (if enabled) starts new
-  # dynos before stopping old ones. The release phase (db:migrate) runs but
-  # is a no-op since there are no pending migrations.
+  # Push deploy: dyno restarts with brief downtime. The release phase
+  # (db:migrate) runs but is a no-op since there are no pending migrations.
   info "Pushing master:main to Heroku (no migrations)..."
   git push heroku master:main --force
   ok "Code pushed — release phase complete"
@@ -371,13 +352,13 @@ deploy_backend_maintenance() {
     warn "billing:recalculate failed — balances may be stale until next daily run"
   fi
 
-  info "Scaling web dynos to $DYNO_COUNT..."
-  heroku ps:scale web=$DYNO_COUNT -a "$BACKEND_APP"
-  ok "Web dynos scaled to $DYNO_COUNT"
+  info "Scaling web dyno back up..."
+  heroku ps:scale web=1 -a "$BACKEND_APP"
+  ok "Web dyno running"
 }
 
-deploy_frontend_rolling() {
-  step "Deploying frontend — rolling ($FRONTEND_APP)"
+deploy_frontend() {
+  step "Deploying frontend ($FRONTEND_APP)"
   cd "$FRONTEND_PATH"
 
   info "Pushing master:main to Heroku..."
@@ -397,9 +378,9 @@ deploy_frontend_maintenance() {
   git push heroku master:main --force
   ok "Code pushed"
 
-  info "Scaling web dynos to $DYNO_COUNT..."
-  heroku ps:scale web=$DYNO_COUNT -a "$FRONTEND_APP"
-  ok "Web dynos scaled to $DYNO_COUNT"
+  info "Scaling web dyno back up..."
+  heroku ps:scale web=1 -a "$FRONTEND_APP"
+  ok "Web dyno running"
 }
 
 capture_backup() {
@@ -504,7 +485,6 @@ main() {
 
   # --- Pre-flight: environment & repo state ---
   preflight_environment
-  preflight_preboot
   preflight_check "Backend"  "$BACKEND_PATH"
   preflight_check "Frontend" "$FRONTEND_PATH"
 
@@ -545,7 +525,7 @@ main() {
     if [ "$NEEDS_MAINTENANCE" = true ]; then
       yellow "    Backend ($backend_sha):  MAINTENANCE deploy (has migrations)"
     else
-      green "    Backend ($backend_sha):  ROLLING deploy (no migrations)"
+      green "    Backend ($backend_sha):  PUSH deploy (no migrations)"
     fi
     git -C "$BACKEND_PATH" log --oneline -5 | while IFS= read -r line; do
       info "  $line"
@@ -558,7 +538,7 @@ main() {
   if [ "$DEPLOY_FRONTEND" = true ]; then
     local frontend_sha
     frontend_sha=$(git -C "$FRONTEND_PATH" rev-parse --short HEAD)
-    green "    Frontend ($frontend_sha): ROLLING deploy"
+    green "    Frontend ($frontend_sha): PUSH deploy"
     git -C "$FRONTEND_PATH" log --oneline -5 | while IFS= read -r line; do
       info "  $line"
     done
@@ -602,20 +582,17 @@ main() {
 
     disable_maintenance
   else
-    # Rolling deploy: no downtime, no maintenance pages. Heroku Preboot
-    # (if enabled) starts new dynos before stopping old ones.
+    # Push deploy: brief downtime during dyno restart, no maintenance pages.
     if [ "$DEPLOY_BACKEND" = true ]; then
-      deploy_backend_rolling
+      deploy_backend
     fi
     if [ "$DEPLOY_FRONTEND" = true ]; then
-      deploy_frontend_rolling
+      deploy_frontend
     fi
   fi
 
   # --- Post-deploy verification ---
-  # Give dynos a moment to boot before checking. For maintenance deploys,
-  # dynos were just scaled up. For rolling deploys with preboot, the new
-  # dynos should already be serving traffic by now.
+  # Give dynos a moment to boot before checking.
   info "Waiting 10s for dynos to settle..."
   sleep 10
 
