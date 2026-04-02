@@ -39,12 +39,15 @@ cleanup() {
   if [ $exit_code -ne 0 ] && [ "$MAINTENANCE_ENABLED" = true ]; then
     echo
     red "============================================"
-    red "  DEPLOY FAILED — MAINTENANCE MODE IS STILL ON"
+    red "  DEPLOY FAILED — MANUAL RECOVERY REQUIRED"
     red "============================================"
     echo
     yellow "Both apps may still be in maintenance mode."
+    yellow "Web dynos may be scaled to 0."
     yellow "Investigate the failure, then manually run:"
     echo
+    echo "  heroku ps:scale web=1 -a $BACKEND_APP"
+    echo "  heroku ps:scale web=1 -a $FRONTEND_APP"
     echo "  heroku maintenance:off -a $BACKEND_APP"
     echo "  heroku maintenance:off -a $FRONTEND_APP"
     echo
@@ -156,19 +159,31 @@ deploy_backend() {
   heroku ps:scale web=0 -a "$BACKEND_APP"
   ok "Web dynos scaled to 0"
 
-  info "Pushing master:main to Heroku..."
+  # git push is synchronous — it blocks until build AND release phase complete.
+  # The release phase (Procfile: bin/rake db:migrate) runs migrations automatically.
+  # If the release phase fails, git push exits non-zero and set -e aborts here.
+  info "Pushing master:main to Heroku (release phase runs migrations)..."
   git push heroku master:main --force
-  ok "Code pushed"
+  ok "Code pushed and migrations complete"
 
-  # The release phase (Procfile) runs db:migrate automatically.
-  # Run it explicitly as a safety net.
-  info "Running migrations (belt-and-suspenders — release phase also runs these)..."
-  heroku run bin/rake db:migrate -a "$BACKEND_APP"
-  ok "Migrations complete"
+  # Flush stale cached serializer data. Non-fatal — a transient MemCachier
+  # issue shouldn't leave the app down with 0 dynos and maintenance on.
+  info "Flushing MemCachier..."
+  if heroku run bin/rails runner 'Rails.cache.clear' -a "$BACKEND_APP"; then
+    ok "Cache flushed"
+  else
+    warn "Cache flush failed — stale entries may persist until naturally invalidated"
+  fi
 
+  # billing:recalculate refreshes a derived cache (resident_balances).
+  # Failure is not catastrophic — stale balances are wrong but not dangerous.
+  # Don't let it block the deploy.
   info "Running billing:recalculate..."
-  heroku run bin/rake billing:recalculate -a "$BACKEND_APP"
-  ok "Billing recalculated"
+  if heroku run bin/rake billing:recalculate -a "$BACKEND_APP"; then
+    ok "Billing recalculated"
+  else
+    warn "billing:recalculate failed — balances may be stale until next daily run"
+  fi
 
   info "Scaling web dynos to 1..."
   heroku ps:scale web=1 -a "$BACKEND_APP"
@@ -307,6 +322,16 @@ main() {
 
   echo
   bold "Ready to deploy both apps to production."
+  echo
+  info "Backend  ($(git -C "$BACKEND_PATH" rev-parse --short HEAD)):"
+  git -C "$BACKEND_PATH" log --oneline -5 | while IFS= read -r line; do
+    info "  $line"
+  done
+  info "Frontend ($(git -C "$FRONTEND_PATH" rev-parse --short HEAD)):"
+  git -C "$FRONTEND_PATH" log --oneline -5 | while IFS= read -r line; do
+    info "  $line"
+  done
+  echo
   printf "Continue? (y/n) "
   read -r confirm
   if [ "$confirm" != "y" ] && [ "$confirm" != "Y" ]; then
