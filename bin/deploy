@@ -4,9 +4,20 @@ set -euo pipefail
 # ==============================================================================
 # Comeals Deploy Script
 #
-# Deploys both the backend (comeals-backend) and frontend (comeals-ui) to Heroku.
-# Runs pre-flight checks, enables maintenance mode, pushes code, runs migrations
-# and billing recalculation, then verifies both apps are healthy.
+# Deploys the backend (comeals-backend) and/or frontend (comeals-ui) to Heroku.
+#
+# Smart deploy logic:
+#   1. Compares local HEAD vs Heroku's deployed SHA for each app independently.
+#      Skips apps that are already up to date.
+#   2. For the backend, diffs db/migrate/ between the deployed and local SHAs.
+#      - If migrations changed → maintenance deploy (scale to 0, push, scale up).
+#      - If no migrations    → rolling deploy (push only; preboot handles restart).
+#   3. The frontend is always a rolling deploy (no database).
+#   4. If neither app has changes, exits early with nothing to do.
+#
+# Both apps run 1× Standard-1X dyno with Heroku Preboot for zero-downtime
+# rolling deploys. Maintenance mode is only used when database migrations
+# require it.
 # ==============================================================================
 
 BACKEND_PATH="/Users/tejo/workspace/comeals-backend"
@@ -15,9 +26,14 @@ BACKEND_APP="comeals-backend"
 FRONTEND_APP="comeals-ui"
 FRONTEND_URL="https://comeals.com"
 BACKEND_URL="https://admin.comeals.com"
+DYNO_COUNT=1
 
 MAINTENANCE_ENABLED=false
 DEPLOY_TIMESTAMP=""
+DEPLOY_BACKEND=false
+DEPLOY_FRONTEND=false
+NEEDS_MAINTENANCE=false
+BACKEND_HEROKU_SHA=""
 
 # --- Output helpers -----------------------------------------------------------
 
@@ -46,8 +62,8 @@ cleanup() {
     yellow "Web dynos may be scaled to 0."
     yellow "Investigate the failure, then manually run:"
     echo
-    echo "  heroku ps:scale web=1 -a $BACKEND_APP"
-    echo "  heroku ps:scale web=1 -a $FRONTEND_APP"
+    echo "  heroku ps:scale web=$DYNO_COUNT -a $BACKEND_APP"
+    echo "  heroku ps:scale web=$DYNO_COUNT -a $FRONTEND_APP"
     echo "  heroku maintenance:off -a $BACKEND_APP"
     echo "  heroku maintenance:off -a $FRONTEND_APP"
     echo
@@ -88,6 +104,21 @@ preflight_environment() {
       exit 1
     fi
     ok "heroku remote in $path -> $remote_url"
+  done
+}
+
+preflight_preboot() {
+  step "Pre-flight: Heroku preboot"
+  for app in "$BACKEND_APP" "$FRONTEND_APP"; do
+    local enabled
+    enabled=$(heroku features:info preboot -a "$app" 2>/dev/null | grep "Enabled" || true)
+    if echo "$enabled" | grep -q "true"; then
+      ok "Preboot enabled on $app"
+    else
+      warn "Preboot is NOT enabled on $app"
+      info "Rolling deploys will have brief downtime without preboot."
+      info "Enable with: heroku features:enable preboot -a $app"
+    fi
   done
 }
 
@@ -170,6 +201,93 @@ preflight_frontend_quality() {
   ok "Playwright passed"
 }
 
+# --- Deploy detection ---------------------------------------------------------
+
+detect_deploy_needs() {
+  step "Detecting what needs to deploy"
+
+  # --- Backend ---
+  local backend_local_sha backend_heroku_sha
+  backend_local_sha=$(git -C "$BACKEND_PATH" rev-parse HEAD)
+  backend_heroku_sha=$(git -C "$BACKEND_PATH" ls-remote heroku refs/heads/main 2>/dev/null | awk '{print $1}')
+
+  if [ -z "$backend_heroku_sha" ]; then
+    warn "Cannot read backend Heroku SHA (first deploy or endpoint unreachable)"
+    info "Will deploy backend with maintenance mode for safety"
+    DEPLOY_BACKEND=true
+    NEEDS_MAINTENANCE=true
+  elif [ "$backend_heroku_sha" = "$backend_local_sha" ]; then
+    ok "Backend: up to date (${backend_local_sha:0:7})"
+  else
+    info "Backend: heroku=${backend_heroku_sha:0:7} -> local=${backend_local_sha:0:7}"
+    DEPLOY_BACKEND=true
+    BACKEND_HEROKU_SHA="$backend_heroku_sha"
+  fi
+
+  # --- Frontend ---
+  local frontend_local_sha frontend_heroku_sha
+  frontend_local_sha=$(git -C "$FRONTEND_PATH" rev-parse HEAD)
+  frontend_heroku_sha=$(git -C "$FRONTEND_PATH" ls-remote heroku refs/heads/main 2>/dev/null | awk '{print $1}')
+
+  if [ -z "$frontend_heroku_sha" ]; then
+    warn "Cannot read frontend Heroku SHA (first deploy or endpoint unreachable)"
+    info "Will deploy frontend"
+    DEPLOY_FRONTEND=true
+  elif [ "$frontend_heroku_sha" = "$frontend_local_sha" ]; then
+    ok "Frontend: up to date (${frontend_local_sha:0:7})"
+  else
+    info "Frontend: heroku=${frontend_heroku_sha:0:7} -> local=${frontend_local_sha:0:7}"
+    DEPLOY_FRONTEND=true
+  fi
+}
+
+detect_pending_migrations() {
+  local heroku_sha="$1"
+
+  step "Checking for pending migrations"
+  cd "$BACKEND_PATH"
+
+  # Ensure heroku SHA exists in local object store.
+  # It might be missing if history was rewritten via force push.
+  if ! git cat-file -e "$heroku_sha" 2>/dev/null; then
+    info "Heroku SHA not in local history (force push?) — fetching from Heroku..."
+    if git fetch heroku main --quiet 2>/dev/null; then
+      ok "Fetched Heroku main branch"
+    else
+      warn "Cannot fetch from Heroku — assuming migrations needed"
+      NEEDS_MAINTENANCE=true
+      return
+    fi
+
+    # Verify the SHA is now available after fetch
+    if ! git cat-file -e "$heroku_sha" 2>/dev/null; then
+      warn "Heroku SHA still not in object store after fetch — assuming migrations needed"
+      NEEDS_MAINTENANCE=true
+      return
+    fi
+  fi
+
+  # Diff the migration directory between Heroku's version and local HEAD.
+  # git diff A B compares two trees directly — works regardless of ancestry,
+  # so this is correct even when history was rewritten via force push.
+  local migration_diff
+  if ! migration_diff=$(git diff --name-only "$heroku_sha" HEAD -- db/migrate/ 2>/dev/null); then
+    warn "git diff failed — assuming migrations needed"
+    NEEDS_MAINTENANCE=true
+    return
+  fi
+
+  if [ -n "$migration_diff" ]; then
+    NEEDS_MAINTENANCE=true
+    warn "Migration changes detected — maintenance deploy required:"
+    echo "$migration_diff" | while IFS= read -r f; do
+      info "  $f"
+    done
+  else
+    ok "No migration changes — rolling deploy"
+  fi
+}
+
 # --- Deploy functions ---------------------------------------------------------
 
 enable_maintenance() {
@@ -181,8 +299,47 @@ enable_maintenance() {
   MAINTENANCE_ENABLED=true
 }
 
-deploy_backend() {
-  step "Deploying backend ($BACKEND_APP)"
+disable_maintenance() {
+  step "Disabling maintenance mode"
+  heroku maintenance:off -a "$BACKEND_APP"
+  ok "$BACKEND_APP maintenance OFF"
+  heroku maintenance:off -a "$FRONTEND_APP"
+  ok "$FRONTEND_APP maintenance OFF"
+  MAINTENANCE_ENABLED=false
+}
+
+deploy_backend_rolling() {
+  step "Deploying backend — rolling ($BACKEND_APP)"
+  cd "$BACKEND_PATH"
+
+  # Rolling deploy: just push code. Heroku Preboot (if enabled) starts new
+  # dynos before stopping old ones. The release phase (db:migrate) runs but
+  # is a no-op since there are no pending migrations.
+  info "Pushing master:main to Heroku (no migrations)..."
+  git push heroku master:main --force
+  ok "Code pushed — release phase complete"
+
+  # Flush stale cached serializer data. Non-fatal — a transient MemCachier
+  # issue shouldn't block the deploy.
+  info "Flushing MemCachier..."
+  if heroku run bin/rails runner 'Rails.cache.clear' -a "$BACKEND_APP"; then
+    ok "Cache flushed"
+  else
+    warn "Cache flush failed — stale entries may persist until naturally invalidated"
+  fi
+
+  # billing:recalculate refreshes a derived cache (resident_balances).
+  # Failure is not catastrophic — stale balances are wrong but not dangerous.
+  info "Running billing:recalculate..."
+  if heroku run bin/rake billing:recalculate -a "$BACKEND_APP"; then
+    ok "Billing recalculated"
+  else
+    warn "billing:recalculate failed — balances may be stale until next daily run"
+  fi
+}
+
+deploy_backend_maintenance() {
+  step "Deploying backend — maintenance ($BACKEND_APP)"
   cd "$BACKEND_PATH"
 
   info "Scaling web dynos to 0..."
@@ -207,7 +364,6 @@ deploy_backend() {
 
   # billing:recalculate refreshes a derived cache (resident_balances).
   # Failure is not catastrophic — stale balances are wrong but not dangerous.
-  # Don't let it block the deploy.
   info "Running billing:recalculate..."
   if heroku run bin/rake billing:recalculate -a "$BACKEND_APP"; then
     ok "Billing recalculated"
@@ -215,13 +371,22 @@ deploy_backend() {
     warn "billing:recalculate failed — balances may be stale until next daily run"
   fi
 
-  info "Scaling web dynos to 1..."
-  heroku ps:scale web=1 -a "$BACKEND_APP"
-  ok "Web dynos scaled to 1"
+  info "Scaling web dynos to $DYNO_COUNT..."
+  heroku ps:scale web=$DYNO_COUNT -a "$BACKEND_APP"
+  ok "Web dynos scaled to $DYNO_COUNT"
 }
 
-deploy_frontend() {
-  step "Deploying frontend ($FRONTEND_APP)"
+deploy_frontend_rolling() {
+  step "Deploying frontend — rolling ($FRONTEND_APP)"
+  cd "$FRONTEND_PATH"
+
+  info "Pushing master:main to Heroku..."
+  git push heroku master:main --force
+  ok "Code pushed"
+}
+
+deploy_frontend_maintenance() {
+  step "Deploying frontend — maintenance ($FRONTEND_APP)"
   cd "$FRONTEND_PATH"
 
   info "Scaling web dynos to 0..."
@@ -232,9 +397,9 @@ deploy_frontend() {
   git push heroku master:main --force
   ok "Code pushed"
 
-  info "Scaling web dynos to 1..."
-  heroku ps:scale web=1 -a "$FRONTEND_APP"
-  ok "Web dynos scaled to 1"
+  info "Scaling web dynos to $DYNO_COUNT..."
+  heroku ps:scale web=$DYNO_COUNT -a "$FRONTEND_APP"
+  ok "Web dynos scaled to $DYNO_COUNT"
 }
 
 capture_backup() {
@@ -245,15 +410,6 @@ capture_backup() {
   local backup_info
   backup_info=$(heroku pg:backups:info -a "$BACKEND_APP" 2>&1 || true)
   info "$backup_info"
-}
-
-disable_maintenance() {
-  step "Disabling maintenance mode"
-  heroku maintenance:off -a "$BACKEND_APP"
-  ok "$BACKEND_APP maintenance OFF"
-  heroku maintenance:off -a "$FRONTEND_APP"
-  ok "$FRONTEND_APP maintenance OFF"
-  MAINTENANCE_ENABLED=false
 }
 
 # --- Post-deploy checks ------------------------------------------------------
@@ -346,23 +502,75 @@ main() {
   bold "  Comeals Deploy"
   bold "============================================"
 
+  # --- Pre-flight: environment & repo state ---
   preflight_environment
+  preflight_preboot
   preflight_check "Backend"  "$BACKEND_PATH"
   preflight_check "Frontend" "$FRONTEND_PATH"
-  preflight_backend_quality
-  preflight_frontend_quality
+
+  # --- Determine what needs deploying ---
+  detect_deploy_needs
+
+  if [ "$DEPLOY_BACKEND" = false ] && [ "$DEPLOY_FRONTEND" = false ]; then
+    echo
+    green "============================================"
+    green "  Both apps are up to date — nothing to deploy."
+    green "============================================"
+    exit 0
+  fi
+
+  # Check for pending migrations (only if backend is deploying and we
+  # have the heroku SHA to diff against — otherwise NEEDS_MAINTENANCE
+  # was already set to true as a safe default in detect_deploy_needs).
+  if [ "$DEPLOY_BACKEND" = true ] && [ -n "$BACKEND_HEROKU_SHA" ]; then
+    detect_pending_migrations "$BACKEND_HEROKU_SHA"
+  fi
+
+  # --- Quality checks (only for apps being deployed) ---
+  if [ "$DEPLOY_BACKEND" = true ]; then
+    preflight_backend_quality
+  fi
+  if [ "$DEPLOY_FRONTEND" = true ]; then
+    preflight_frontend_quality
+  fi
+
+  # --- Confirmation ---
+  echo
+  bold "Deploy plan:"
+  echo
+
+  if [ "$DEPLOY_BACKEND" = true ]; then
+    local backend_sha
+    backend_sha=$(git -C "$BACKEND_PATH" rev-parse --short HEAD)
+    if [ "$NEEDS_MAINTENANCE" = true ]; then
+      yellow "    Backend ($backend_sha):  MAINTENANCE deploy (has migrations)"
+    else
+      green "    Backend ($backend_sha):  ROLLING deploy (no migrations)"
+    fi
+    git -C "$BACKEND_PATH" log --oneline -5 | while IFS= read -r line; do
+      info "  $line"
+    done
+  else
+    info "Backend:  SKIP (up to date)"
+  fi
 
   echo
-  bold "Ready to deploy both apps to production."
-  echo
-  info "Backend  ($(git -C "$BACKEND_PATH" rev-parse --short HEAD)):"
-  git -C "$BACKEND_PATH" log --oneline -5 | while IFS= read -r line; do
-    info "  $line"
-  done
-  info "Frontend ($(git -C "$FRONTEND_PATH" rev-parse --short HEAD)):"
-  git -C "$FRONTEND_PATH" log --oneline -5 | while IFS= read -r line; do
-    info "  $line"
-  done
+  if [ "$DEPLOY_FRONTEND" = true ]; then
+    local frontend_sha
+    frontend_sha=$(git -C "$FRONTEND_PATH" rev-parse --short HEAD)
+    green "    Frontend ($frontend_sha): ROLLING deploy"
+    git -C "$FRONTEND_PATH" log --oneline -5 | while IFS= read -r line; do
+      info "  $line"
+    done
+  else
+    info "Frontend: SKIP (up to date)"
+  fi
+
+  if [ "$NEEDS_MAINTENANCE" = true ]; then
+    echo
+    yellow "    Both apps will enter maintenance mode during backend migration."
+  fi
+
   echo
   printf "Continue? (y/n) "
   read -r confirm
@@ -373,19 +581,53 @@ main() {
 
   DEPLOY_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S")
 
-  capture_backup
-  enable_maintenance
-  deploy_backend
-  deploy_frontend
-  disable_maintenance
+  # --- Backup (only when deploying backend — that's the only app with a DB) ---
+  if [ "$DEPLOY_BACKEND" = true ]; then
+    capture_backup
+  fi
 
-  # Give dynos a moment to boot before checking
-  info "Waiting 10s for dynos to boot..."
+  # --- Deploy ---
+  if [ "$NEEDS_MAINTENANCE" = true ]; then
+    # Maintenance deploy: both apps get maintenance pages while backend
+    # migrations run. This is better UX than letting the frontend show
+    # broken API errors during the migration window.
+    enable_maintenance
+
+    if [ "$DEPLOY_BACKEND" = true ]; then
+      deploy_backend_maintenance
+    fi
+    if [ "$DEPLOY_FRONTEND" = true ]; then
+      deploy_frontend_maintenance
+    fi
+
+    disable_maintenance
+  else
+    # Rolling deploy: no downtime, no maintenance pages. Heroku Preboot
+    # (if enabled) starts new dynos before stopping old ones.
+    if [ "$DEPLOY_BACKEND" = true ]; then
+      deploy_backend_rolling
+    fi
+    if [ "$DEPLOY_FRONTEND" = true ]; then
+      deploy_frontend_rolling
+    fi
+  fi
+
+  # --- Post-deploy verification ---
+  # Give dynos a moment to boot before checking. For maintenance deploys,
+  # dynos were just scaled up. For rolling deploys with preboot, the new
+  # dynos should already be serving traffic by now.
+  info "Waiting 10s for dynos to settle..."
   sleep 10
 
-  check_logs "$BACKEND_APP"
-  check_logs "$FRONTEND_APP"
+  if [ "$DEPLOY_BACKEND" = true ]; then
+    check_logs "$BACKEND_APP"
+  fi
+  if [ "$DEPLOY_FRONTEND" = true ]; then
+    check_logs "$FRONTEND_APP"
+  fi
 
+  # Always health-check both apps — even the one we didn't deploy could
+  # have been affected (e.g., maintenance mode toggling, shared DB changes).
   check_health "Frontend" "$FRONTEND_URL"
   check_health "Backend"  "$BACKEND_URL"
 
