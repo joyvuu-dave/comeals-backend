@@ -140,6 +140,36 @@ preflight_check() {
   fi
 }
 
+preflight_backend_quality() {
+  step "Pre-flight: backend linting & tests"
+  cd "$BACKEND_PATH"
+
+  info "Running RuboCop..."
+  bundle exec rubocop --parallel
+  ok "RuboCop passed"
+
+  info "Running RSpec..."
+  bundle exec rspec
+  ok "RSpec passed"
+}
+
+preflight_frontend_quality() {
+  step "Pre-flight: frontend linting & tests"
+  cd "$FRONTEND_PATH"
+
+  info "Running ESLint..."
+  npx eslint src/
+  ok "ESLint passed"
+
+  info "Running Vitest..."
+  npx vitest run
+  ok "Vitest passed"
+
+  info "Running Playwright e2e tests..."
+  npx playwright test
+  ok "Playwright passed"
+}
+
 # --- Deploy functions ---------------------------------------------------------
 
 enable_maintenance() {
@@ -319,6 +349,8 @@ main() {
   preflight_environment
   preflight_check "Backend"  "$BACKEND_PATH"
   preflight_check "Frontend" "$FRONTEND_PATH"
+  preflight_backend_quality
+  preflight_frontend_quality
 
   echo
   bold "Ready to deploy both apps to production."
