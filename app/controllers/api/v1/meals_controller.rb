@@ -142,7 +142,7 @@ module Api
       # PAYLOAD {id: 1, bills: [{resident_id: 3, amount: "0.00",
       #   no_cost: true}, {resident_id: "4", amount: "0.00",
       #   no_cost: true}]}
-      def update_bills # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength --multi-step bill validation + cook-scheduling guards
+      def update_bills # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength --multi-step bill validation + cook-scheduling guards
         if @meal.reconciliation_id.present?
           render json: { message: 'Cost change not permitted. Meal has already been reconciled.' },
                  status: :bad_request and return
@@ -163,7 +163,8 @@ module Api
           cooks_changed = new_cook_ids != existing_cook_ids
 
           # Scenario #1: adding cooks
-          if (cook_ids.length > existing_cook_ids.length) && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+          if (cook_ids.length > existing_cook_ids.length) &&
+             @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
             message = 'Warning: third cooks should not be added until all meals ' \
                       'in the rotation have at least two cooks.'
             request_symbol = :bad_request
@@ -171,7 +172,8 @@ module Api
           end
 
           # Scenario #2: switching cooks
-          if (cook_ids.length == existing_cook_ids.length) && cooks_changed && @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
+          if (cook_ids.length == existing_cook_ids.length) && cooks_changed &&
+             @meal.another_meal_in_this_rotation_has_less_than_two_cooks?
             message = 'Warning: third cook should not be switched when there are ' \
                       'other meals in the rotation without at least two cooks.'
             request_symbol = :bad_request
