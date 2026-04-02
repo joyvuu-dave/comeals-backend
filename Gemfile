@@ -5,8 +5,15 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '4.0.2'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 8.1.0'
+# Individual Rails frameworks (instead of the `rails` meta-gem)
+# to avoid installing unused gems (actionmailbox, actioncable, activestorage, actiontext)
+gem 'railties',     '~> 8.1.0'
+gem 'activerecord', '~> 8.1.0'
+gem 'actionmailer', '~> 8.1.0'
+gem 'activejob',    '~> 8.1.0'
+gem 'actionpack',   '~> 8.1.0'
+gem 'actionview',   '~> 8.1.0'
+gem 'activemodel',  '~> 8.1.0'
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
 # Use postgresql as the database for Active Record
