@@ -5,8 +5,8 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": ">=24",
-    "npm": ">=11"
+    "node": "24",
+    "npm": "11"
   },
   "dependencies": {
     "moment": "2.30.1"
