@@ -100,8 +100,7 @@ GEM
     connection_pool (3.0.2)
     crass (1.0.6)
     csv (3.3.5)
-    dalli (5.0.2)
-      logger
+    dalli (3.2.8)
     date (3.5.1)
     debug_inspector (1.2.0)
     devise (5.0.3)
@@ -472,7 +471,7 @@ DEPENDENCIES
   bullet
   byebug
   csv
-  dalli
+  dalli (~> 3.2)
   devise
   dotenv-rails
   drb
@@ -540,7 +539,7 @@ CHECKSUMS
   connection_pool (3.0.2) sha256=33fff5ba71a12d2aa26cb72b1db8bba2a1a01823559fb01d29eb74c286e62e0a
   crass (1.0.6) sha256=dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d
   csv (3.3.5) sha256=6e5134ac3383ef728b7f02725d9872934f523cb40b961479f69cf3afa6c8e73f
-  dalli (5.0.2) sha256=818469227b9acdd9da3fc65ec5ae75d4020115545879e5e8f95634085e9a8749
+  dalli (3.2.8) sha256=2e63595084d91fae2655514a02c5d4fc0f16c0799893794abe23bf628bebaaa5
   date (3.5.1) sha256=750d06384d7b9c15d562c76291407d89e368dda4d4fff957eb94962d325a0dc0
   debug_inspector (1.2.0) sha256=9bdfa02eebc3da163833e6a89b154084232f5766087e59573b70521c77ea68a2
   devise (5.0.3) sha256=c4c065051cdc4ace11547b2b7f5c3c4c97d0f1269250f5fe90f614ff78f29546
