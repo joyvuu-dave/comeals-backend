@@ -20,8 +20,7 @@
 #
 # Indexes
 #
-#  index_meals_on_community_id           (community_id)
-#  index_meals_on_date_and_community_id  (date,community_id) UNIQUE
+#  index_meals_on_community_id_and_date  (community_id,date) UNIQUE
 #  index_meals_on_reconciliation_id      (reconciliation_id)
 #  index_meals_on_rotation_id            (rotation_id)
 #
@@ -226,6 +225,24 @@ RSpec.describe Meal do
       meal = create(:meal, community: community)
       expect(meal.multiplier).to eq(0)
     end
+
+    it 'returns identical results whether associations are preloaded or not' do
+      meal = create(:meal, community: community)
+      resident = create(:resident, community: community, unit: unit, multiplier: 2)
+      create(:meal_resident, meal: meal, resident: resident, community: community)
+      create(:guest, meal: meal, resident: resident, multiplier: 1, name: 'Guest')
+
+      # Unloaded path (SQL SUM)
+      unloaded = described_class.find(meal.id)
+      sql_mult = unloaded.multiplier
+
+      # Loaded path (Ruby Enumerable#sum)
+      loaded = described_class.preload(:meal_residents, :guests).find(meal.id)
+      expect(loaded.meal_residents).to be_loaded
+      mem_mult = loaded.multiplier
+
+      expect(mem_mult).to eq(sql_mult)
+    end
   end
 
   describe '#attendees_count' do
@@ -242,6 +259,24 @@ RSpec.describe Meal do
     it 'returns 0 when no one is attending' do
       meal = create(:meal, community: community)
       expect(meal.attendees_count).to eq(0)
+    end
+
+    it 'returns identical results whether associations are preloaded or not' do
+      meal = create(:meal, community: community)
+      resident = create(:resident, community: community, unit: unit, multiplier: 2)
+      create(:meal_resident, meal: meal, resident: resident, community: community)
+      create(:guest, meal: meal, resident: resident, multiplier: 1, name: 'A Guest')
+
+      # Unloaded path (SQL COUNT)
+      unloaded = described_class.find(meal.id)
+      sql_count = unloaded.attendees_count
+
+      # Loaded path (in-memory .size)
+      loaded = described_class.preload(:meal_residents, :guests).find(meal.id)
+      expect(loaded.meal_residents).to be_loaded
+      mem_count = loaded.attendees_count
+
+      expect(mem_count).to eq(sql_count)
     end
   end
 

@@ -53,7 +53,6 @@ gem 'skylight', group: :production
 gem 'bootsnap', require: false
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'benchmark'
   gem 'byebug', platforms: %i[ruby mri windows]
   gem 'dotenv-rails'
@@ -68,15 +67,22 @@ group :development, :test do
   gem 'rubocop-rspec_rails', require: false
 end
 
+group :test do
+  gem 'simplecov', require: false
+end
+
 group :development do
-  # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'annotaterb'
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'bullet'
+  gem 'rack-mini-profiler'
+  gem 'stackprof' # flamegraph support for rack-mini-profiler
   gem 'web-console', '>= 3.3.0'
   gem 'xipio'
 end
+
+gem 'oj'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[jruby windows]

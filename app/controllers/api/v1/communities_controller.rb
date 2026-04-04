@@ -74,22 +74,17 @@ module Api
         start_date = start_date.to_s
         end_date = end_date.to_s
 
-        key = "community-#{@community.id}-calendar-#{year}-#{month}"
-        cached_value = Rails.cache.read(key)
+        key = @community.calendar_cache_key(year, month)
 
-        result = if cached_value.nil?
-                   ActiveModelSerializers::SerializableResource.new(
-                     @community,
-                     month: month, year: year,
-                     start_date: start_date, end_date: end_date,
-                     month_int_array: month_int_array,
-                     serializer: CalendarSerializer
-                   ).as_json
-                 # FIXME: cache not getting properly deleted
-                 # Rails.cache.write(key, result)
-                 else
-                   cached_value
-                 end
+        result = Rails.cache.fetch(key, expires_in: 1.hour) do
+          ActiveModelSerializers::SerializableResource.new(
+            @community,
+            month: month, year: year,
+            start_date: start_date, end_date: end_date,
+            month_int_array: month_int_array,
+            serializer: CalendarSerializer
+          ).as_json
+        end
 
         render json: result
       end

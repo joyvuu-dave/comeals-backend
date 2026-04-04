@@ -70,6 +70,7 @@ class Resident < ApplicationRecord
   before_validation :set_email
   before_save { self.email = email.downcase unless email.nil? }
   before_save :update_token
+  after_commit :invalidate_calendar_cache_if_birthday_changed
 
   # PASSWORD STUFF
   def authenticate(unencrypted_password)
@@ -142,5 +143,24 @@ class Resident < ApplicationRecord
     return 0 if Meal.where(community_id: community_id).unreconciled.none?
 
     meal_residents.joins(:meal).where({ meals: { reconciliation_id: nil } }).count
+  end
+
+  private
+
+  def invalidate_calendar_cache_if_birthday_changed
+    return unless saved_change_to_birthday?
+
+    # Birthdays appear on the calendar. See CalendarSerializer for the full
+    # cache invalidation contract. Invalidate both the old and new month
+    # (if birthday moved from March to April, both months need refreshing).
+    old_birthday = birthday_before_last_save
+    if old_birthday.present?
+      old_date = Date.new(Time.zone.today.year, old_birthday.month, 1)
+      community.invalidate_calendar_cache(old_date)
+    end
+
+    # Invalidate the new month
+    new_date = Date.new(Time.zone.today.year, birthday.month, 1)
+    community.invalidate_calendar_cache(new_date)
   end
 end

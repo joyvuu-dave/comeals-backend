@@ -162,14 +162,40 @@ RSpec.describe Community do
   end
 
   describe '#trigger_pusher' do
-    it 'triggers pusher notifications and clears cache' do
+    before do
       allow(Pusher).to receive(:trigger)
       allow(Rails.cache).to receive(:delete)
+    end
 
+    it 'triggers pusher notifications and clears cache' do
       community.trigger_pusher(Date.new(2026, 4, 15))
 
       expect(Pusher).to have_received(:trigger).at_least(:once)
       expect(Rails.cache).to have_received(:delete).at_least(:once)
+    end
+
+    # Pusher channels and cache keys use the same format, which must match
+    # the frontend subscription in data_store.js: "community-{id}-calendar-{year}-{month}".
+    # If these ever diverge (e.g., someone adds a version prefix to cache keys),
+    # Pusher notifications would go to the wrong channel and real-time updates break silently.
+    it 'uses the same key format for both Pusher channels and cache keys' do
+      community.trigger_pusher(Date.new(2026, 4, 15))
+
+      expected_format = /\Acommunity-\d+-calendar-\d+-\d+\z/
+
+      pusher_channels = []
+      expect(Pusher).to have_received(:trigger).at_least(:once) do |channel, _event, _data|
+        pusher_channels << channel
+      end
+      expect(pusher_channels).to all match(expected_format)
+
+      cache_keys = []
+      expect(Rails.cache).to have_received(:delete).at_least(:once) do |key|
+        cache_keys << key
+      end
+      expect(cache_keys).to all match(expected_format)
+
+      expect(pusher_channels.sort).to eq(cache_keys.sort)
     end
   end
 end

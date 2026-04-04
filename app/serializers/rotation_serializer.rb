@@ -41,11 +41,21 @@ class RotationSerializer < ActiveModel::Serializer
   end
 
   def start
-    object.meals.order(:date).first.date + 1.minute
+    first_date = if object.meals.loaded?
+                   object.meals.min_by(&:date)&.date
+                 else
+                   object.meals.minimum(:date)
+                 end
+    first_date&.+(1.minute)
   end
 
   def end
-    object.meals.order(:date).last.date + 1.day - 1.minute # b/c ReactBigCalendar date ranges are exclusive
+    last_date = if object.meals.loaded?
+                  object.meals.max_by(&:date)&.date
+                else
+                  object.meals.maximum(:date)
+                end
+    last_date && (last_date + 1.day - 1.minute) # ReactBigCalendar date ranges are exclusive
   end
 
   def title

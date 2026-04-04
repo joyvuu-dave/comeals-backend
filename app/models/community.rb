@@ -158,59 +158,60 @@ class Community < ApplicationRecord
     Rotation.create!(community_id: id, meals_attributes: rotation_meals)
   end
 
-  def trigger_pusher(date) # rubocop:disable Metrics/MethodLength -- builds multiple Pusher channel payloads
-    ###############
-    # CURRENT MONTH
-    ###############
-    key = "community-#{id}-calendar-#{date.year}-#{date.month}"
+  # Cache key for a specific calendar month. Same format as the Pusher channel
+  # name in data_store.js — one key serves both cache and real-time notification.
+  # Stale cache across deploys is handled by bin/deploy flushing Memcachier.
+  def calendar_cache_key(year, month)
+    "community-#{id}-calendar-#{year}-#{month}"
+  end
 
-    # Delete Cache
-    Rails.cache.delete(key)
+  # Invalidate calendar cache entries that may include meals on this date.
+  # Must be called synchronously (before the response) so the next request
+  # doesn't get stale data. See CalendarSerializer for the full list of models
+  # that must call this when their data changes.
+  def invalidate_calendar_cache(date)
+    affected_calendar_keys(date).each { |key| Rails.cache.delete(key) }
+  end
 
-    # Notify
-    Pusher.trigger(
-      key,
-      'update',
-      { message: 'current calendar month updated' }
-    )
-
-    ############
-    # NEXT MONTH
-    ############
-    if date.end_of_week.month != date.month
-      key = "community-#{id}-calendar-#{date.end_of_week.year}-#{date.end_of_week.month}"
-
-      # Delete Cache
-      Rails.cache.delete(key)
-
-      # Notify
-      Pusher.trigger(
-        key,
-        'update',
-        { message: 'next calendar month updated' }
-      )
+  # Send Pusher notifications for calendar channels affected by this date.
+  # Fire-and-forget — safe to call asynchronously.
+  def notify_pusher(date)
+    affected_calendar_keys(date).each do |key|
+      Pusher.trigger(key, 'update', { message: 'calendar updated' })
     end
+  end
 
-    ################
-    # PREVIOUS MONTH
-    ################
+  # Invalidate calendar cache and send Pusher notifications for the
+  # affected month(s). Called by Meal#trigger_pusher and by calendar-visible
+  # models (Event, CommonHouseReservation, GuestRoomReservation) via
+  # after_commit. See CalendarSerializer for the full invalidation contract.
+  def trigger_pusher(date)
+    invalidate_calendar_cache(date)
+    notify_pusher(date)
+    true
+  end
+
+  private
+
+  # The set of calendar keys affected when a meal on `date` changes.
+  # A calendar view shows ~42 days (6 weeks), so a meal near a month boundary
+  # can appear in the current, next, or previous month's calendar.
+  def affected_calendar_keys(date)
+    keys = []
+
+    # Current month
+    keys << calendar_cache_key(date.year, date.month)
+
+    # Next month — if the date's week spills into the following month
+    keys << calendar_cache_key(date.end_of_week.year, date.end_of_week.month) if date.end_of_week.month != date.month
+
+    # Previous month — if the date falls within the previous month's 42-day window
     range_start = (date.beginning_of_month - 1.day).beginning_of_month.beginning_of_week
-
     if date.between?(range_start, range_start + 41.days)
       prev_month = date.beginning_of_month - 1.day
-      key = "community-#{id}-calendar-#{prev_month.year}-#{prev_month.month}"
-
-      # Delete Cache
-      Rails.cache.delete(key)
-
-      # Notify
-      Pusher.trigger(
-        key,
-        'update',
-        { message: 'previous calendar month updated' }
-      )
+      keys << calendar_cache_key(prev_month.year, prev_month.month)
     end
 
-    true
+    keys
   end
 end

@@ -41,6 +41,7 @@ class Rotation < ApplicationRecord
   after_save :set_description
   after_save :set_start_date
   after_commit :set_place_value, on: %i[create destroy]
+  after_commit :invalidate_calendar_cache
   after_create_commit :notify_residents
   validates :color, presence: true
 
@@ -75,6 +76,16 @@ class Rotation < ApplicationRecord
             .pluck(:id)
             .each_with_index do |rot_id, index|
       Rotation.where(id: rot_id).update_all(place_value: index + 1)
+    end
+  end
+
+  def invalidate_calendar_cache
+    # Rotations appear as colored bars on the calendar.
+    # See CalendarSerializer for the full cache invalidation contract.
+    # Uses a direct DB query (not `meals` association) to avoid eagerly
+    # loading and tainting the association proxy.
+    Meal.where(rotation_id: id).distinct.pluck(:date).each do |date|
+      community.invalidate_calendar_cache(date)
     end
   end
 

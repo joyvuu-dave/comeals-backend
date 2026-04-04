@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_28_045422) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_024713) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -53,9 +53,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_28_045422) do
     t.integer "version", default: 0
     t.index ["associated_type", "associated_id"], name: "associated_index"
     t.index ["auditable_type", "auditable_id"], name: "auditable_index"
-    t.index ["created_at"], name: "index_audits_on_created_at"
-    t.index ["request_uuid"], name: "index_audits_on_request_uuid"
-    t.index ["user_id", "user_type"], name: "user_index"
   end
 
   create_table "bills", force: :cascade do |t|
@@ -184,8 +181,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_28_045422) do
     t.bigint "rotation_id"
     t.datetime "start_time", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.index ["community_id"], name: "index_meals_on_community_id"
-    t.index ["date", "community_id"], name: "index_meals_on_date_and_community_id", unique: true
+    t.index ["community_id", "date"], name: "index_meals_on_community_id_and_date", unique: true
     t.index ["reconciliation_id"], name: "index_meals_on_reconciliation_id"
     t.index ["rotation_id"], name: "index_meals_on_rotation_id"
     t.check_constraint "cap IS NULL OR cap > 0::numeric", name: "meals_cap_positive_or_null"

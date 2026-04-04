@@ -51,6 +51,8 @@ class Event < ApplicationRecord
     errors.add(:base, 'Start time must occur before end time') if end_date < start_date
   end
 
+  # Events appear on the calendar. See CalendarSerializer for the full
+  # cache invalidation contract.
   def trigger_pusher
     community.trigger_pusher(start_date)
   end

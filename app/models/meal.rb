@@ -20,8 +20,7 @@
 #
 # Indexes
 #
-#  index_meals_on_community_id           (community_id)
-#  index_meals_on_date_and_community_id  (date,community_id) UNIQUE
+#  index_meals_on_community_id_and_date  (community_id,date) UNIQUE
 #  index_meals_on_reconciliation_id      (reconciliation_id)
 #  index_meals_on_rotation_id            (rotation_id)
 #
@@ -126,13 +125,15 @@ class Meal < ApplicationRecord
     self.closed_at = nil if closed == false && closed_was == true
   end
 
+  # Invalidate caches and notify connected clients via Pusher.
+  # Called by MealsController after_action for all write operations.
+  # Also handles calendar cache invalidation for meals, bills, meal_residents,
+  # and guests. See CalendarSerializer for the full cache invalidation contract.
   def trigger_pusher
     key = "meal-#{id}"
 
-    # Delete Cache
     Rails.cache.delete(key)
 
-    # Notify
     Pusher.trigger(
       key,
       'update',
@@ -140,7 +141,6 @@ class Meal < ApplicationRecord
       { socket_id: socket_id }
     )
 
-    # Update Calendar
     community.trigger_pusher(date)
 
     true
@@ -149,11 +149,19 @@ class Meal < ApplicationRecord
   # DERIVED DATA — all computed from source, no cached columns.
 
   def multiplier
-    meal_residents.sum(:multiplier) + guests.sum(:multiplier)
+    if meal_residents.loaded? && guests.loaded?
+      meal_residents.sum(&:multiplier) + guests.sum(&:multiplier)
+    else
+      meal_residents.sum(:multiplier) + guests.sum(:multiplier)
+    end
   end
 
   def attendees_count
-    meal_residents.count + guests.count
+    if meal_residents.loaded? && guests.loaded?
+      meal_residents.size + guests.size
+    else
+      meal_residents.count + guests.count
+    end
   end
 
   delegate :count, to: :bills, prefix: true

@@ -36,6 +36,8 @@ class GuestRoomReservation < ApplicationRecord
 
   after_commit :trigger_pusher
 
+  # Reservations appear on the calendar. See CalendarSerializer for the full
+  # cache invalidation contract.
   def trigger_pusher
     community.trigger_pusher(date)
   end

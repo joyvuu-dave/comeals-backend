@@ -1,5 +1,28 @@
 # frozen_string_literal: true
 
+# Serializes a community's calendar month for the frontend.
+#
+# CACHING: The calendar response is cached by CommunitiesController#calendar
+# via Rails.cache.fetch. Any model whose data appears in this serializer
+# MUST invalidate the cache when its data changes, or users will see stale
+# calendars. Call community.invalidate_calendar_cache(date) where `date` is
+# a date that falls within the affected calendar month.
+#
+# Current invalidation points (if you add a new one, add it to this list):
+#
+#   Model                      Trigger                         How
+#   -------------------------  ------------------------------  ---------------------------------
+#   Meal                       after_action in controller      Meal#trigger_pusher
+#   Bill                       after_action in controller      (through Meal#trigger_pusher)
+#   MealResident               after_action in controller      (through Meal#trigger_pusher)
+#   Guest                      after_action in controller      (through Meal#trigger_pusher)
+#   Event                      after_commit :trigger_pusher    community.trigger_pusher(start_date)
+#   CommonHouseReservation     after_commit :trigger_pusher    community.trigger_pusher(start_date)
+#   GuestRoomReservation       after_commit :trigger_pusher    community.trigger_pusher(date)
+#   Rotation                   after_commit                    community.invalidate_calendar_cache
+#   Resident (birthday)        after_commit                    community.invalidate_calendar_cache
+#
+# The deploy script (bin/deploy) also flushes the entire cache on every deploy.
 class CalendarSerializer < ActiveModel::Serializer
   attributes :id,
              :month,
@@ -25,6 +48,7 @@ class CalendarSerializer < ActiveModel::Serializer
     object.meals
           .where(date: (instance_options[:start_date])..)
           .where(date: ..(instance_options[:end_date]))
+          .preload(:meal_residents, :guests)
   end
 
   def bills
@@ -38,7 +62,7 @@ class CalendarSerializer < ActiveModel::Serializer
   def rotations
     rotation_ids = meals.where.not(rotation_id: nil)
                         .pluck(:rotation_id).uniq
-    Rotation.find(rotation_ids)
+    Rotation.where(id: rotation_ids).preload(:meals).to_a
   end
 
   def birthdays

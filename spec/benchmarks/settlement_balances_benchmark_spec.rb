@@ -17,19 +17,11 @@ require 'benchmark'
 # correctness tests live in spec/models/reconciliation_spec.rb.
 
 RSpec.describe 'Reconciliation#settlement_balances performance', :benchmark, type: :model do
+  include QueryCounter
+
   # ---------------------------------------------------------------------------
   # Helpers
   # ---------------------------------------------------------------------------
-
-  # Count SQL queries executed during a block, excluding schema/cache queries.
-  def count_queries(&)
-    count = 0
-    counter = lambda { |*, payload|
-      count += 1 unless payload[:name] == 'SCHEMA' || payload[:cached]
-    }
-    ActiveSupport::Notifications.subscribed(counter, 'sql.active_record', &)
-    count
-  end
 
   # Run a block and collect all four metrics.
   def measure_all(label)

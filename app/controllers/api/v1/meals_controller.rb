@@ -114,8 +114,11 @@ module Api
         cached_value = Rails.cache.read(key)
 
         if cached_value.nil?
+          # @meal.meal_residents is already loaded by set_meal's .includes()
+          lookup = @meal.meal_residents.index_by(&:resident_id)
           result = ActiveModelSerializers::SerializableResource.new(@meal, serializer: MealFormSerializer,
-                                                                           scope: @meal).as_json
+                                                                           scope: @meal,
+                                                                           meal_residents_lookup: lookup).as_json
           Rails.cache.write(key, result)
         else
           result = cached_value

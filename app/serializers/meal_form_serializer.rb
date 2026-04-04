@@ -89,7 +89,12 @@ class MealFormSerializer < ActiveModel::Serializer
     private
 
     def meal_resident
-      @meal_resident = MealResident.find_by(meal_id: scope.id, resident_id: object.id)
+      @meal_resident ||= meal_residents_lookup[object.id]
+    end
+
+    def meal_residents_lookup
+      instance_options[:meal_residents_lookup] ||
+        instance_options[:meal_residents_lookup] = MealResident.where(meal_id: scope.id).index_by(&:resident_id)
     end
   end
 

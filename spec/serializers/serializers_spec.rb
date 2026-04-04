@@ -45,6 +45,45 @@ RSpec.describe 'Serializers', type: :serializer do
       result = serialize(meal, described_class)
       expect(result[:title]).to include('signed up')
     end
+
+    it 'shows extras count for future closed meals with a max' do
+      meal = create(:meal, community: community, date: Date.tomorrow)
+      create(:meal_resident, meal: meal, resident: resident, community: community)
+      meal.update!(closed: true, max: 10)
+
+      result = serialize(meal, described_class)
+      expect(result[:title]).to include('9 extras')
+    end
+
+    it 'shows "1 extra" (singular) when exactly 1 spot remains' do
+      meal = create(:meal, community: community, date: Date.tomorrow)
+      create(:meal_resident, meal: meal, resident: resident, community: community)
+      meal.update!(closed: true, max: 2)
+
+      result = serialize(meal, described_class)
+      expect(result[:title]).to include('1 extra')
+      expect(result[:title]).not_to include('1 extras')
+    end
+  end
+
+  describe MealFormSerializer::BillSerializer do
+    # BigDecimal amounts must serialize as JSON strings, not floats.
+    # Floats lose precision (0.1 + 0.2 != 0.3). This test ensures
+    # Oj.optimize_rails preserves the string convention. If this test
+    # fails, financial data is being silently corrupted in transit.
+    it 'serializes BigDecimal amounts as strings, not floats' do
+      meal = create(:meal, community: community)
+      bill = create(:bill, meal: meal, resident: resident, community: community,
+                           amount: BigDecimal('50.12345678'))
+
+      json = ActiveModelSerializers::SerializableResource.new(
+        bill, serializer: described_class
+      ).to_json
+      parsed = JSON.parse(json)
+
+      expect(parsed['amount']).to be_a(String)
+      expect(BigDecimal(parsed['amount'])).to eq(BigDecimal('50.12345678'))
+    end
   end
 
   describe BillSerializer do
@@ -109,6 +148,14 @@ RSpec.describe 'Serializers', type: :serializer do
       expect(result[:start].to_date).to eq(Date.new(2026, 3, 1))
       expect(result[:title]).to include('Rotation')
       expect(result[:url]).to eq("rotations/show/#{rotation.id}")
+    end
+
+    it 'returns nil start/end for a rotation with no meals' do
+      rotation = create(:rotation, community: community)
+
+      result = serialize(rotation, described_class)
+      expect(result[:start]).to be_nil
+      expect(result[:end]).to be_nil
     end
   end
 

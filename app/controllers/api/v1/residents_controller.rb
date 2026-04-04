@@ -99,7 +99,12 @@ module Api
 
         cal.x_wr_calname = "My #{resident.community.name}"
 
-        Bill.where(resident_id: resident.id).find_each do |bill|
+        # Precompute cook dates to avoid a query per meal_resident in the loop below
+        cook_dates = Bill.joins(:meal)
+                         .where(resident_id: resident.id)
+                         .pluck('meals.date').to_set
+
+        Bill.where(resident_id: resident.id).includes(:meal).find_each do |bill|
           event = Icalendar::Event.new
 
           meal_date = bill.meal.date
@@ -115,7 +120,7 @@ module Api
           cal.add_event(event)
         end
 
-        MealResident.where(resident_id: resident.id).find_each do |mr|
+        MealResident.where(resident_id: resident.id).includes(:meal).find_each do |mr|
           event = Icalendar::Event.new
 
           meal_date = mr.meal.date
@@ -128,9 +133,7 @@ module Api
           event.dtend = Icalendar::Values::DateTime.new meal_date_time_end, 'tzid' => tzid
           event.summary = 'Attend Common Dinner'
           event.description = "#{mr.meal.description}\n\n\n\nView here: #{root_url}/meals/#{mr.meal.id}/edit"
-          if Bill.joins(:meal).where(resident_id: resident.id).where(meals: { date: mr.meal.date }).blank?
-            cal.add_event(event)
-          end
+          cal.add_event(event) unless cook_dates.include?(mr.meal.date)
         end
 
         render plain: cal.to_ical, content_type: 'text/calendar'

@@ -36,3 +36,10 @@ comeals.sublime-workspace
 
 # RuboCop
 .rubocop-cache/
+
+# Heroku database dumps (production data — never commit)
+latest.dump
+*.dump
+
+# SimpleCov coverage reports
+/coverage/
