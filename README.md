@@ -1,3 +1,6 @@
+## Frontend and backend consolidated into [comeals-monorepo](https://github.com/joyvuu-dave/comeals-monorepo)
+
+
 # Comeals
 
 This app was designed to allow
